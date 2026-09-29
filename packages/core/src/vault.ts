@@ -361,8 +361,10 @@ export class Vault extends Emitter<VaultEvents> {
       const changes: TextEdit[] = [];
       for (const { link, target } of links) {
         const newTarget = mapping.get(target) ?? target;
-        // Leave links that still resolve correctly untouched.
-        if (this.cache.resolve(link.target, source) === newTarget) continue;
+        // Leave links that still resolve correctly untouched, unless the name itself changed
+        // ("note" to "Note": links are case-insensitive but should read like the new name).
+        const renamed = basename(target) !== basename(newTarget);
+        if (!renamed && this.cache.resolve(link.target, source) === newTarget) continue;
         const replacement = retargetLink(link, newTarget, source, this.cache.resolver);
         if (replacement !== null && text.slice(link.from, link.to) === link.raw) {
           changes.push({ from: link.from, to: link.to, insert: replacement });

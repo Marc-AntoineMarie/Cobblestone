@@ -52,6 +52,12 @@ describe('LinkResolver', () => {
 });
 
 describe('Vault', () => {
+  it('gives links the new case of a note renamed from "note" to "Note"', async () => {
+    const { vault } = await vaultOf({ 'idea.md': 'x', 'A.md': 'See [[idea]] and [[idea|alias]].' });
+    await vault.rename('idea.md', 'Idea.md');
+    expect(await vault.read('A.md')).toBe('See [[Idea]] and [[Idea|alias]].');
+  });
+
   it('reports its progress and can be stopped while loading', async () => {
     const files = Object.fromEntries(Array.from({ length: 150 }, (_, i) => [`N${i}.md`, `note ${i}`]));
     const progress: number[] = [];
