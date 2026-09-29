@@ -51,6 +51,8 @@ export const DEFAULT_PREFERENCES: Preferences = { theme: 'system', language: 'au
 const SETTINGS_PATH = '.cobblestone/app.json';
 
 async function readJson(adapter: VaultAdapter, path: string): Promise<Record<string, unknown> | null> {
+  // Most vaults lack some of these files: check first rather than fail (the desktop app logs every failed read).
+  if ((await adapter.stat(path))?.type !== 'file') return null;
   try {
     const value: unknown = JSON.parse(await adapter.read(path));
     return value && typeof value === 'object' ? (value as Record<string, unknown>) : null;

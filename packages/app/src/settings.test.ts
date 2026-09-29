@@ -45,3 +45,17 @@ describe('vault settings', () => {
     expect(formatDate(date, 'dddd D MMMM YYYY', 'fr')).toBe('mardi 29 septembre 2026');
   });
 });
+
+describe('missing settings files', () => {
+  it('never reads a file that does not exist', async () => {
+    const adapter = new MemoryAdapter('v', { '.obsidian/app.json': '{}' });
+    const reads: string[] = [];
+    const read = adapter.read.bind(adapter);
+    adapter.read = async (path: string) => {
+      reads.push(path);
+      return read(path);
+    };
+    await loadVaultSettings(adapter);
+    expect(reads).toEqual(['.obsidian/app.json']);
+  });
+});
