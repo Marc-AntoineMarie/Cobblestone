@@ -1,41 +1,91 @@
-// Reads docs/RECETTE.md, checks its format and prints it as JSON (used to build the test page).
-// `node scripts/recette.mjs` checks only; `--json` prints the sections and tests.
-import { readFileSync } from 'node:fs';
+// Checks docs/RECETTE.md against the automated checklist (tests/recette/).
+//   node scripts/recette.mjs          format of each line, every check covered on each of its platforms, statuses up to date
+//   node scripts/recette.mjs sync     rewrites the status of each line (auto, manuel, à automatiser) from the tests
+//   node scripts/recette.mjs --json   prints the sections and checks as JSON
+import { execFileSync } from 'node:child_process';
+import { parseRecette, statusLabel, withStatuses, writeRecette } from './lib/recette-md.mjs';
 
-const text = readFileSync(new URL('../docs/RECETTE.md', import.meta.url), 'utf8');
-const sections = [];
-const problems = [];
-const seen = new Set();
-const PLACES = { Bureau: ['desktop'], Web: ['web'], 'Les deux': ['desktop', 'web'] };
+const parsed = parseRecette();
+const problems = [...parsed.problems];
 
-for (const [n, line] of text.split('\n').entries()) {
-  const heading = /^## (\d+)\. (.+)$/.exec(line);
-  if (heading) {
-    sections.push({ id: heading[1], title: heading[2], tests: [] });
+if (process.argv.includes('--json')) {
+  console.log(JSON.stringify(parsed.sections));
+  process.exit(0);
+}
+
+/** Every test of the suite, without running it: [{ id, project, kind }]. */
+function listTests() {
+  const output = execFileSync('npx', ['playwright', 'test', '--list', '--reporter=json'], {
+    encoding: 'utf8',
+    maxBuffer: 64 * 1024 * 1024,
+    stdio: ['ignore', 'pipe', 'inherit'],
+  });
+  const report = JSON.parse(output);
+  if (report.errors?.length) {
+    problems.push(...report.errors.map((e) => `tests : ${e.message?.split('\n')[0]}`));
+  }
+  const tests = [];
+  const walk = (suite) => {
+    for (const spec of suite.specs ?? []) {
+      for (const test of spec.tests) {
+        const kind = test.annotations.find((a) => a.type === 'recette')?.description ?? 'auto';
+        tests.push({ id: spec.title.split(' · ')[0], project: test.projectName, kind, file: spec.file });
+      }
+    }
+    for (const child of suite.suites ?? []) walk(child);
+  };
+  for (const suite of report.suites ?? []) walk(suite);
+  return tests;
+}
+
+const listed = listTests();
+/** id → { bureau: 'auto', web: 'manuel' } */
+const byId = new Map();
+for (const t of listed) {
+  const check = parsed.tests.get(t.id);
+  if (!check) {
+    problems.push(`${t.file} : le test ${t.id} n'existe pas dans la recette`);
     continue;
   }
-  if (!line.startsWith('- **')) continue;
-  const m = /^- \*\*(\d+)\.(\d+)\*\* · (Bureau|Web|Les deux) · (.+)$/.exec(line);
-  const section = sections[sections.length - 1];
-  if (!m || !section) {
-    problems.push(`ligne ${n + 1} : format non reconnu`);
-    continue;
-  }
-  const [, sectionId, index, place, rest] = m;
-  const id = `${sectionId}.${index}`;
-  const parts = rest.split(' → ');
-  if (parts.length !== 2) problems.push(`${id} : ${parts.length - 1} flèches au lieu d'une`);
-  if (sectionId !== section.id) problems.push(`${id} : hors de sa section ${section.id}`);
-  if (Number(index) !== section.tests.length + 1)
-    problems.push(`${id} : numéro attendu ${section.id}.${section.tests.length + 1}`);
-  if (seen.has(id)) problems.push(`${id} : en double`);
-  seen.add(id);
-  section.tests.push({ id, where: PLACES[place], action: parts[0], expected: parts.slice(1).join(' → ') });
+  const states = byId.get(t.id) ?? {};
+  if (states[t.project]) problems.push(`${t.id} (${t.project}) : décrit deux fois dans les tests`);
+  states[t.project] = t.kind;
+  byId.set(t.id, states);
+}
+
+const missing = [];
+for (const check of parsed.tests.values()) {
+  for (const platform of check.where) if (!byId.get(check.id)?.[platform]) missing.push(`${check.id} (${platform})`);
+}
+if (missing.length) {
+  problems.push(
+    `${missing.length} vérifications sans test : ${missing.slice(0, 12).join(', ')}${missing.length > 12 ? '…' : ''}\n` +
+      '  Chaque ligne de la recette a un test dans tests/recette/ : recette(id, …), recette.manuel(id, raison), recette.ci(id, quoi) ou recette.aFaire(id).',
+  );
+}
+
+const statusOf = (check) => statusLabel(check, byId.get(check.id) ?? {});
+const stale = [...parsed.tests.values()].filter((check) => check.status !== statusOf(check));
+
+if (process.argv.includes('sync')) {
+  writeRecette(withStatuses(parsed, statusOf));
+  console.log(`Recette : statut de ${stale.length} lignes mis à jour.`);
+} else if (stale.length) {
+  problems.push(
+    `statut de ${stale.length} lignes à mettre à jour (${stale
+      .slice(0, 6)
+      .map((c) => c.id)
+      .join(', ')}…) : npm run recette -- sync`,
+  );
 }
 
 if (problems.length) {
-  console.error(problems.join('\n'));
+  console.error(`Recette :\n- ${problems.join('\n- ')}`);
   process.exit(1);
 }
-if (process.argv.includes('--json')) console.log(JSON.stringify(sections));
-else console.log(`${sections.length} sections, ${seen.size} tests : format correct.`);
+
+const count = { auto: 0, ci: 0, manuel: 0, 'à automatiser': 0 };
+for (const states of byId.values()) for (const kind of Object.values(states)) count[kind]++;
+console.log(
+  `Recette : ${parsed.tests.size} vérifications, ${count.auto} tests automatiques, ${count.ci} par la CI, ${count.manuel} manuels, ${count['à automatiser']} à automatiser.`,
+);
