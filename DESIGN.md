@@ -58,18 +58,18 @@ typography:
     fontVariation: "'wdth' 100"
   heading-1:
     fontFamily: 'Archivo Variable, Archivo, system-ui, sans-serif'
-    fontSize: '1.9rem'
+    fontSize: '1.84em'
     fontWeight: 780
     lineHeight: 1.25
     fontVariation: "'wdth' 112"
   heading-2:
     fontFamily: 'Archivo Variable, Archivo, system-ui, sans-serif'
-    fontSize: '1.45rem'
+    fontSize: '1.4em'
     fontWeight: 740
     fontVariation: "'wdth' 106"
   heading-3:
     fontFamily: 'Archivo Variable, Archivo, system-ui, sans-serif'
-    fontSize: '1.2rem'
+    fontSize: '1.16em'
     fontWeight: 720
   settings-title:
     fontFamily: 'Archivo Variable, Archivo, system-ui, sans-serif'
@@ -165,7 +165,7 @@ One family, Archivo (variable weight and width), carries the whole system; Commi
 - **Chrome** 13px, weight 450, width 92: every label, button, tab, tree row and menu. No other chrome size exists.
 - **Chrome labels** 13px, weight 650, width 80, uppercase, +0.06em tracking: section labels in the rail and marginalia.
 - **Title** expanded (width 118), weight 800, tight leading: the note title prints like a poster headline.
-- **Body** 16.5px/1.65, width 100, measure 70ch. Note headings step down in width and weight from the title (h1 width 112/760, h2 106/720, h3 100/700).
+- **Body** 16.5px/1.65 by default (each vault picks 13 to 24px), width 100, measure 42 times the body size (about 80 characters; 34 narrow, 54 wide). Note headings scale with the body and step down in width and weight from the title (h1 width 112/760, h2 106/720, h3 100/700).
 - **Numbers** in dates, counts, sizes and word counts use tabular figures and align in columns.
 - **Other steps**: the launcher prints the name at display size (expanded 125, weight 850) with a 1.15rem lead; the settings page title uses 2rem; code is Commit Mono at 0.86rem.
 

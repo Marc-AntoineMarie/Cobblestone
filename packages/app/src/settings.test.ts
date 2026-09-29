@@ -14,6 +14,7 @@ describe('vault settings', () => {
         defaultViewMode: 'preview',
       }),
       '.obsidian/daily-notes.json': JSON.stringify({ folder: 'Journal', format: 'DD-MM-YYYY' }),
+      '.obsidian/appearance.json': JSON.stringify({ baseFontSize: 18, theme: 'obsidian' }),
     };
     const adapter = new MemoryAdapter('v', obsidian);
     const { settings, imported } = await loadVaultSettings(adapter);
@@ -27,6 +28,7 @@ describe('vault settings', () => {
       defaultMode: 'read',
       dailyFolder: 'Journal',
       dailyFormat: 'DD-MM-YYYY',
+      textSize: 18,
     });
 
     await saveVaultSettings(adapter, { ...settings, dailyFolder: 'Days' });

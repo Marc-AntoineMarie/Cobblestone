@@ -57,7 +57,7 @@
   line-height: 1.25;
 }
 .cm-line.cm-h1 {
-  font-size: 1.9rem;
+  font-size: 1.84em;
   font-stretch: 112%;
   font-weight: 780;
   letter-spacing: -0.015em;
@@ -65,7 +65,7 @@
   padding-bottom: 0.15em;
 }
 .cm-line.cm-h2 {
-  font-size: 1.45rem;
+  font-size: 1.4em;
   font-stretch: 106%;
   font-weight: 740;
   letter-spacing: -0.01em;
@@ -73,14 +73,14 @@
   padding-bottom: 0.1em;
 }
 .cm-line.cm-h3 {
-  font-size: 1.2rem;
+  font-size: 1.16em;
   font-weight: 720;
   padding-top: 0.6em;
 }
 .cm-line.cm-h4,
 .cm-line.cm-h5,
 .cm-line.cm-h6 {
-  font-size: 1rem;
+  font-size: 0.97em;
   font-weight: 720;
   padding-top: 0.5em;
 }

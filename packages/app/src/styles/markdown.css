@@ -36,25 +36,25 @@
   text-wrap: balance;
 }
 .markdown-rendered h1 {
-  font-size: 1.9rem;
+  font-size: 1.84em;
   font-stretch: 112%;
   font-weight: 780;
   letter-spacing: -0.015em;
 }
 .markdown-rendered h2 {
-  font-size: 1.45rem;
+  font-size: 1.4em;
   font-stretch: 106%;
   font-weight: 740;
   letter-spacing: -0.01em;
 }
 .markdown-rendered h3 {
-  font-size: 1.2rem;
+  font-size: 1.16em;
   font-weight: 720;
 }
 .markdown-rendered h4,
 .markdown-rendered h5,
 .markdown-rendered h6 {
-  font-size: 1rem;
+  font-size: 0.97em;
   font-weight: 720;
 }
 .markdown-rendered h5,
