@@ -152,7 +152,10 @@ export function Launcher({ platform, opening, error, onOpen }: Props) {
                 <li key={entry.id} className="recent-row">
                   <button className="recent-open" onClick={() => open(entry)} disabled={busy}>
                     <span className="recent-name">{entry.name}</span>
-                    <span className="recent-where">{entry.location ?? t(`launcher.kind.${entry.kind}`)}</span>
+                    <span className="recent-where">
+                      {/* Cut from the left, so the end of the path stays visible; the marks keep slashes in place. */}
+                      {entry.location ? `\u200e${entry.location}\u200e` : t(`launcher.kind.${entry.kind}`)}
+                    </span>
                     <time className="recent-date" dateTime={new Date(entry.lastOpened).toISOString()}>
                       {new Date(entry.lastOpened).toLocaleDateString(undefined, {
                         day: '2-digit',
