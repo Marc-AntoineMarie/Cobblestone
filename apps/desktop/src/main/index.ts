@@ -5,6 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { NodeFsAdapter } from '@cobblestone/node';
 import { FS_METHODS, type DesktopVaultEntry, type FsMethod } from './ipc-types';
+import { JsonFile } from './json-file';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const devServer = process.env.COBBLESTONE_DEV_SERVER;
@@ -16,34 +17,21 @@ if (process.env.COBBLESTONE_USER_DATA) app.setPath('userData', process.env.COBBL
 // ------------------------------------------------------------- app data
 
 const dataFile = (name: string) => path.join(app.getPath('userData'), name);
+const vaultList = new JsonFile<DesktopVaultEntry[]>(dataFile('vaults.json'), () => []);
+const storage = new JsonFile<Record<string, unknown>>(dataFile('storage.json'), () => ({}));
 
-async function readJson<T>(name: string, fallback: T): Promise<T> {
-  try {
-    return JSON.parse(await fs.readFile(dataFile(name), 'utf8')) as T;
-  } catch {
-    return fallback;
-  }
-}
-
-async function writeJson(name: string, value: unknown) {
-  await fs.mkdir(app.getPath('userData'), { recursive: true });
-  const target = dataFile(name);
-  await fs.writeFile(target + '.tmp', JSON.stringify(value, null, 2));
-  await fs.rename(target + '.tmp', target);
-}
-
-const recentVaults = () => readJson<DesktopVaultEntry[]>('vaults.json', []);
+const recentVaults = () => vaultList.read();
 
 async function rememberVault(location: string): Promise<DesktopVaultEntry> {
-  const vaults = await recentVaults();
-  let entry = vaults.find((v) => v.location === location);
-  if (entry) entry.lastOpened = Date.now();
-  else {
-    entry = { id: randomUUID(), name: path.basename(location), kind: 'folder', location, lastOpened: Date.now() };
-    vaults.push(entry);
-  }
-  await writeJson('vaults.json', vaults);
-  return entry;
+  let entry: DesktopVaultEntry | undefined;
+  await vaultList.update((vaults) => {
+    const known = vaults.find((v) => v.location === location);
+    entry = known
+      ? { ...known, lastOpened: Date.now() }
+      : { id: randomUUID(), name: path.basename(location), kind: 'folder', location, lastOpened: Date.now() };
+    return [...vaults.filter((v) => v.id !== entry!.id), entry];
+  });
+  return entry!;
 }
 
 // ------------------------------------------------------------- vault access
@@ -84,10 +72,7 @@ ipcMain.handle('vaults:create', async (event, name: string) => {
 });
 
 ipcMain.handle('vaults:forget', async (_event, id: string) => {
-  await writeJson(
-    'vaults.json',
-    (await recentVaults()).filter((v) => v.id !== id),
-  );
+  await vaultList.update((vaults) => vaults.filter((v) => v.id !== id));
 });
 
 ipcMain.handle('vaults:open', async (event, id: string) => {
@@ -123,12 +108,10 @@ ipcMain.handle('fs:unwatch', (event, vaultId: string) => {
   watchers.delete(key);
 });
 
-ipcMain.handle('storage:get', async (_event, key: string) => (await readJson<Record<string, unknown>>('storage.json', {}))[key]);
+ipcMain.handle('storage:get', async (_event, key: string) => (await storage.read())[key]);
 
 ipcMain.handle('storage:set', async (_event, key: string, value: unknown) => {
-  const store = await readJson<Record<string, unknown>>('storage.json', {});
-  store[key] = value;
-  await writeJson('storage.json', store);
+  await storage.update((store) => ({ ...store, [key]: value }));
 });
 
 ipcMain.handle('shell:openExternal', async (_event, url: string) => {
