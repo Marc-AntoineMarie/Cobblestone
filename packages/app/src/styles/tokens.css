@@ -10,7 +10,7 @@
  * backlinks, search and commands where hands expect them; anyone can hand out a
  * copy from the pink Share stamp.
  * FIRST VIEWPORT: Stack rail at 264px (vault, find field, tree, tags, press
- * status), the sheet at a 72ch measure under an expanded 800-weight title,
+ * status), the sheet at a measure of about 80 characters under an expanded 800-weight title,
  * marginalia at 288px with backlinks and outline, Share top right of the sheet.
  * FORM: Community risograph print shop, 6th of 7, staging "the sheet on the
  * press", seed 073faebc.
@@ -59,6 +59,8 @@
   --mono: 'Commit Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
   --chrome: 13px;
   --body: 16.5px;
+  /* Readable line length, in multiples of --body (set per vault). */
+  --line-width: 42;
   --radius: 3px;
   --rail-width: 264px;
   --margin-width: 288px;

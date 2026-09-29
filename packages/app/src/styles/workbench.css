@@ -736,8 +736,9 @@ button.crumb:hover {
   padding: clamp(20px, 5vh, 52px) clamp(20px, 5vw, 64px) 40vh;
 }
 
+/* The measure follows the note text, not the smaller interface text around it. */
 .page.is-readable {
-  max-width: calc(72ch + 2 * clamp(20px, 5vw, 64px));
+  max-width: calc(var(--body) * var(--line-width) + 2 * clamp(20px, 5vw, 64px));
 }
 
 .note-title {
