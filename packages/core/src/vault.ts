@@ -77,8 +77,14 @@ export class Vault extends Emitter<VaultEvents> {
     this.options = { ...this.options, ...options };
   }
 
-  async load(): Promise<void> {
+  /**
+   * Indexes the vault. `onProgress` reports notes read so far; aborting `signal`
+   * stops between batches (a vault opened by mistake can be a huge folder).
+   */
+  async load(options: { signal?: AbortSignal; onProgress?: (done: number, total: number) => void } = {}): Promise<void> {
+    const { signal, onProgress } = options;
     const entries = (await this.adapter.list()).filter((e) => !isHidden(e.path));
+    signal?.throwIfAborted();
     for (const entry of entries) {
       if (entry.type === 'folder') this.folders.set(entry.path, toFolder(entry.path));
       else this.files.set(entry.path, toFile(entry));
@@ -86,13 +92,16 @@ export class Vault extends Emitter<VaultEvents> {
     for (const file of this.files.values()) this.cache.addFile(file.path);
     const notes = [...this.files.values()].filter((f) => isMarkdown(f.path));
     // Read notes in parallel batches: fast on disk, gentle on browser storage.
+    onProgress?.(0, notes.length);
     for (let i = 0; i < notes.length; i += 64) {
       const batch = notes.slice(i, i + 64);
       const texts = await Promise.all(batch.map((f) => this.adapter.read(f.path).catch(() => '')));
+      signal?.throwIfAborted();
       batch.forEach((file, k) => {
         this.remember(file.path, texts[k]!);
         this.cache.setContent(file.path, texts[k]!);
       });
+      onProgress?.(i + batch.length, notes.length);
     }
     if (this.adapter.watch) {
       this.stopWatching = this.adapter.watch((change) => {
