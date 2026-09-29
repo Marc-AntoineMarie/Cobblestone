@@ -99,6 +99,37 @@ Un exemple de projet : organiser un jardin partagé avec les voisins.
 Réunion sur le [[Projets/Jardin partagé|jardin]]. Idée : partager ce coffre avec l'association. #journal
 `,
   'schema.svg': DIAGRAM,
+  'Carte des idées.canvas': JSON.stringify(
+    {
+      nodes: [
+        { id: 'g', type: 'group', label: 'Exemple', x: -40, y: -80, width: 980, height: 520 },
+        {
+          id: 'a',
+          type: 'text',
+          text: '## Un canvas\nDes cartes, des notes et des flèches, au format **JSON Canvas** d’Obsidian.',
+          x: 0,
+          y: 0,
+          width: 320,
+          height: 160,
+          color: '5',
+        },
+        { id: 'b', type: 'file', file: 'Projets/Jardin partagé.md', x: 460, y: -20, width: 400, height: 280 },
+        {
+          id: 'c',
+          type: 'text',
+          text: 'Double-clique pour écrire.\nGlisse une poignée pour relier.',
+          x: 0,
+          y: 240,
+          width: 320,
+          height: 120,
+          color: '3',
+        },
+      ],
+      edges: [{ id: 'e', fromNode: 'a', fromSide: 'right', toNode: 'b', toSide: 'left', toEnd: 'arrow', label: 'mène à' }],
+    },
+    null,
+    '\t',
+  ),
 };
 
 const EN: Record<string, string> = {
@@ -185,4 +216,35 @@ A sample project: run a community garden with the neighbours.
 Meeting about the [[Projects/Community garden|garden]]. Idea: share this vault with the association. #journal
 `,
   'diagram.svg': DIAGRAM,
+  'Idea map.canvas': JSON.stringify(
+    {
+      nodes: [
+        { id: 'g', type: 'group', label: 'Sample', x: -40, y: -80, width: 980, height: 520 },
+        {
+          id: 'a',
+          type: 'text',
+          text: '## A canvas\nCards, notes and arrows, in Obsidian’s **JSON Canvas** format.',
+          x: 0,
+          y: 0,
+          width: 320,
+          height: 160,
+          color: '5',
+        },
+        { id: 'b', type: 'file', file: 'Projects/Community garden.md', x: 460, y: -20, width: 400, height: 280 },
+        {
+          id: 'c',
+          type: 'text',
+          text: 'Double-click to write.\nDrag a handle to connect.',
+          x: 0,
+          y: 240,
+          width: 320,
+          height: 120,
+          color: '3',
+        },
+      ],
+      edges: [{ id: 'e', fromNode: 'a', fromSide: 'right', toNode: 'b', toSide: 'left', toEnd: 'arrow', label: 'leads to' }],
+    },
+    null,
+    '\t',
+  ),
 };
