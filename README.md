@@ -8,7 +8,7 @@ A local-first knowledge base built to replace Obsidian entirely: your notes stay
 
 Early development (v0.1). What works today, on the desktop app and in the browser:
 
-- **Vaults**: open any folder (desktop, or Chrome/Edge on the web), create a vault stored in the browser, or try the demo. The last vault reopens on launch.
+- **Vaults**: open any folder (desktop, or Chrome/Edge on the web), create a vault stored in the browser, or try the demo. The last vault reopens on launch. On the desktop, a vault whose folder was renamed or moved is found again, and notes and folders can be shown in the system's file manager.
 - **Editor**: live preview that renders Markdown as you type (headings, emphasis, `==highlights==`, links, embeds, tasks you can tick, callouts, math, code, tables in source), plus a reading view and a source mode.
 - **Obsidian Flavored Markdown**: wikilinks with headings, block ids and aliases, `![[embeds]]` of notes, sections, blocks, images, audio, video and PDFs, tags and nested tags, YAML properties, callouts, `%%comments%%`, KaTeX math, Mermaid diagrams, footnotes.
 - **Links**: backlinks with context, outgoing links, pending links that create the note when followed, and link updates in every note when a file or folder is renamed or moved.
@@ -16,8 +16,8 @@ Early development (v0.1). What works today, on the desktop app and in the browse
 - **Obsidian's daily helpers**: bookmarks (imported from `.obsidian/bookmarks.json`), templates with `{{title}}`, `{{date}}` and `{{time}}`, previews of a link's target on hover, and unlinked mentions you can turn into links in one click.
 - **Canvas**: Obsidian's `.canvas` files open and edit as they are (cards, notes, images, links, groups, labelled arrows, colours, undo), and an untouched canvas is never rewritten.
 - **Views**: file tree with drag and drop, tags, outline, properties, graph (local and global, notes pin where you drop them), daily notes, tabs and split panes, settings.
-- **Obsidian migration**: attachment folder, new note location, line breaks, trash, default view and daily note settings are imported from `.obsidian/` the first time.
-- **Two paper stocks**: day and night themes, following the system by default. English and French.
+- **Obsidian migration**: attachment folder, new note location, line breaks, trash, default view, text size and daily note settings are imported from `.obsidian/` the first time.
+- **Two paper stocks**: day and night themes, following the system by default; text size and line length per vault. English and French.
 
 Sync, sharing and collaboration are the next milestone. See [docs/ROADMAP.md](docs/ROADMAP.md).
 
@@ -49,7 +49,7 @@ How we work — commit conventions, checks, versions and releases — is in [CON
 | `packages/app`            | The shared interface (React, CodeMirror 6): editor, reading view, workspace, views, styles.               |
 | `apps/web`                | Web host: folders through the File System Access API, or the browser's private storage.                   |
 | `apps/desktop`            | Desktop host (Electron): sandboxed renderer, file access through a narrow IPC bridge.                     |
-| `docs/`                   | Roadmap and architecture.                                                                                 |
+| `docs/`                   | Roadmap, architecture, distribution plan and the manual acceptance checklist (`RECETTE.md`).              |
 | `PRODUCT.md`, `DESIGN.md` | Product brief and design system.                                                                          |
 
 ## License
