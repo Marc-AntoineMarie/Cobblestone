@@ -175,11 +175,11 @@ function FindResults({
     const operator = /^[\w-]+:|^\[|^\/|^"|^-/.test(q) || /\s(OR|-)/.test(q);
     const out: Hit[] = [];
 
-    if (!operator) {
+    const addNames = (text: string) => {
       const names: Hit[] = [];
       for (const file of session.vault.getFiles()) {
         const label = file.extension === 'md' ? file.basename : file.name;
-        const match = fuzzyMatch(q, label);
+        const match = fuzzyMatch(text, label);
         if (match)
           names.push({
             key: 'n:' + file.path,
@@ -193,6 +193,17 @@ function FindResults({
       }
       names.sort((a, b) => (b as Hit & { score: number }).score - (a as Hit & { score: number }).score);
       out.push(...names.slice(0, 8));
+      return names;
+    };
+
+    // A regular expression still being typed ("/abc", not closed yet): names only, for now.
+    if (/^\/[^/]*$/.test(q)) {
+      if (q.length > 1) addNames(q.slice(1));
+      return out;
+    }
+
+    if (!operator) {
+      const names = addNames(q);
       const exact = names.some((h) => h.label.toLowerCase() === q.toLowerCase());
       if (!exact && !/[\\/:*?"<>|#^[\]]/.test(q)) out.push({ key: 'create', kind: 'create', label: q });
     }
@@ -232,7 +243,9 @@ function FindResults({
         });
       }
     } catch {
-      // Unfinished query syntax (e.g. an open regex): show name matches only.
+      // Query syntax that cannot be searched yet: name matches for the words typed.
+      const words = q.replace(/[/"()[\]]/g, ' ').trim();
+      if (operator && words && !out.some((h) => h.kind === 'name')) addNames(words);
     }
     return out;
   }, [session, deferred, revision]);
