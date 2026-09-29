@@ -52,7 +52,8 @@ export function App({ platform }: { platform: Platform }) {
           previous?.dispose();
           return next;
         });
-        await platform.storage.set(LAST_VAULT, entry.id);
+        // The vault is open: failing to remember it for next launch is not an opening error.
+        void platform.storage.set(LAST_VAULT, entry.id).catch((e: unknown) => console.error('Could not save the last vault', e));
       } catch (e) {
         setError(e instanceof Error ? e.message : String(e));
       } finally {
