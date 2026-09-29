@@ -1,12 +1,14 @@
-import { useCallback, useEffect, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
 import { detectLanguage, setLanguage } from '../i18n';
 import type { Platform, VaultEntry } from '../platform';
-import { Session } from '../session';
+import type { Session } from '../session';
 import { DEFAULT_PREFERENCES, type Preferences } from '../settings';
 import { PreferencesContext } from './preferences';
 import { SessionContext, useMediaQuery } from './hooks';
 import { Launcher } from './Launcher';
-import { Workbench } from './Workbench';
+
+// The workspace (editor, index, renderers) loads only once a vault opens: the first screen stays light.
+const Workbench = lazy(() => import('./Workbench').then((m) => ({ default: m.Workbench })));
 
 const LAST_VAULT = 'lastVault';
 
@@ -44,7 +46,7 @@ export function App({ platform }: { platform: Platform }) {
       setOpening(entry);
       setError(null);
       try {
-        const adapter = await platform.openVault(entry);
+        const [adapter, { Session }] = await Promise.all([platform.openVault(entry), import('../session')]);
         const next = await Session.open(platform, entry, adapter);
         setSession((previous) => {
           previous?.dispose();
@@ -89,7 +91,9 @@ export function App({ platform }: { platform: Platform }) {
     <PreferencesContext.Provider value={{ preferences, update: updatePreferences, paper }}>
       {session ? (
         <SessionContext.Provider value={session}>
-          <Workbench key={session.entry.id} onSwitchVault={closeVault} />
+          <Suspense fallback={null}>
+            <Workbench key={session.entry.id} onSwitchVault={closeVault} />
+          </Suspense>
         </SessionContext.Provider>
       ) : booted ? (
         <Launcher platform={platform} opening={opening} error={error} onOpen={(entry) => void openEntry(entry)} />
