@@ -1,0 +1,370 @@
+/* Canvas: a large sheet with a halftone dot grid; cards are paper cut-outs, colours are ink washes. */
+
+.canvas-view {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  background-color: var(--paper);
+  background-image: radial-gradient(circle, var(--rule-strong) 1px, transparent 1.2px);
+  cursor: default;
+  touch-action: none;
+  user-select: none;
+}
+
+.canvas-view:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--pink);
+}
+
+.canvas-world {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+}
+
+.canvas-node {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius);
+  box-shadow: 0 1px 2px rgb(20 25 50 / 0.06);
+  cursor: grab;
+}
+
+.canvas-node.is-colored {
+  border-color: var(--node-ink);
+  background: color-mix(in srgb, var(--node-ink) 10%, var(--paper));
+}
+
+.canvas-node.is-selected {
+  outline: 2px solid var(--pink);
+  outline-offset: 2px;
+}
+
+.canvas-node.is-editing {
+  cursor: text;
+}
+
+.canvas-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 12px 16px;
+  font-size: 15px;
+  user-select: text;
+}
+
+.canvas-body > :last-child {
+  margin-bottom: 0;
+}
+
+.canvas-text-editor {
+  flex: 1;
+  width: 100%;
+  resize: none;
+  border: 0;
+  padding: 12px 16px;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 0.86rem;
+  line-height: 1.6;
+}
+
+.canvas-text-editor:focus-visible {
+  outline: none;
+}
+
+.canvas-file-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--rule);
+  font-size: var(--chrome);
+  font-stretch: 85%;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  text-align: left;
+  flex: none;
+}
+
+.canvas-file-title:hover {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--pink);
+  text-underline-offset: 3px;
+}
+
+.canvas-image {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.canvas-missing {
+  padding: 12px 16px;
+  color: var(--ink-3);
+}
+
+.canvas-link {
+  flex: 1;
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  gap: 6px;
+  padding: 14px 16px;
+  color: var(--ink-2);
+}
+
+.canvas-link strong {
+  color: var(--ink);
+  font-stretch: 100%;
+}
+
+.canvas-link-url {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Groups: a dashed frame whose label sits above it like a printed caption. */
+.canvas-node.is-group {
+  background: color-mix(in srgb, var(--ink) 3%, transparent);
+  border: 1.5px dashed var(--rule-strong);
+  box-shadow: none;
+}
+
+.canvas-node.is-group.is-colored {
+  background: color-mix(in srgb, var(--node-ink) 7%, transparent);
+  border-color: var(--node-ink);
+}
+
+.canvas-group-label {
+  position: absolute;
+  left: -1px;
+  bottom: 100%;
+  margin-bottom: 6px;
+  padding: 0 2px;
+  font-size: 18px;
+  font-stretch: 85%;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.canvas-group-label.is-input {
+  height: auto;
+  padding: 2px 6px;
+  border: 1px solid var(--pink);
+  background: var(--paper);
+  text-transform: none;
+}
+
+.canvas-group-background {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.35;
+  pointer-events: none;
+  border-radius: var(--radius);
+}
+
+/* Ports: where arrows start, shown on hover. */
+.canvas-port {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  opacity: 0;
+  cursor: crosshair;
+  transition: opacity 120ms var(--ease);
+}
+
+.canvas-node:hover > .canvas-port,
+.canvas-node.is-selected > .canvas-port {
+  opacity: 1;
+}
+
+.canvas-port:hover {
+  background: var(--pink);
+  border-color: var(--pink);
+}
+
+.canvas-port.is-top {
+  left: calc(50% - 6px);
+  top: -7px;
+}
+.canvas-port.is-bottom {
+  left: calc(50% - 6px);
+  bottom: -7px;
+}
+.canvas-port.is-left {
+  top: calc(50% - 6px);
+  left: -7px;
+}
+.canvas-port.is-right {
+  top: calc(50% - 6px);
+  right: -7px;
+}
+
+.canvas-resize {
+  position: absolute;
+  right: -5px;
+  bottom: -5px;
+  width: 12px;
+  height: 12px;
+  background: var(--pink);
+  border: 2px solid var(--paper);
+  border-radius: 2px;
+  cursor: nwse-resize;
+}
+
+/* Edges */
+.canvas-edges {
+  position: absolute;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.canvas-edge {
+  --edge-ink: var(--ink-2);
+}
+
+.canvas-edge-line {
+  fill: none;
+  stroke: var(--edge-ink);
+  stroke-width: 2;
+}
+
+.canvas-edge-line.is-wire {
+  stroke: var(--pink);
+  stroke-dasharray: 6 5;
+}
+
+.canvas-edge-arrow {
+  fill: var(--edge-ink);
+}
+
+.canvas-edge-hit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 14;
+  pointer-events: stroke;
+  cursor: pointer;
+}
+
+.canvas-edge.is-selected {
+  --edge-ink: var(--pink);
+}
+
+.canvas-edge-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 2px 8px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  font-size: var(--chrome);
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.canvas-edge-label input {
+  height: 22px;
+  border: 0;
+  padding: 0 2px;
+  background: transparent;
+}
+
+.canvas-band {
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: var(--pink-overprint);
+  border: 1px solid var(--pink);
+  pointer-events: none;
+}
+
+.canvas-empty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--ink-3);
+  pointer-events: none;
+}
+
+/* Floating tool strips, printed on their own slip of paper. */
+.canvas-toolbar,
+.canvas-selection-bar {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  background: var(--paper);
+  border: 1px solid var(--rule-strong);
+  border-radius: 4px;
+  box-shadow: var(--shadow-sheet);
+}
+
+.canvas-toolbar {
+  left: 12px;
+  top: 12px;
+}
+
+.canvas-selection-bar {
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+}
+
+.canvas-toolbar-rule {
+  width: 1px;
+  height: 20px;
+  margin: 0 4px;
+  background: var(--rule);
+}
+
+.canvas-zoom {
+  min-width: 48px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-2);
+}
+
+.canvas-swatch {
+  width: 20px;
+  height: 20px;
+  margin: 0 2px;
+  border-radius: 50%;
+  border: 2px solid var(--paper);
+  box-shadow: 0 0 0 1px var(--rule-strong);
+}
+
+.canvas-swatch.is-none {
+  background: linear-gradient(135deg, transparent 45%, var(--red) 45%, var(--red) 55%, transparent 55%), var(--paper);
+}
+
+.canvas-swatch.is-current {
+  box-shadow: 0 0 0 2px var(--ink);
+}
