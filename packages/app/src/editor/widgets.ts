@@ -1,8 +1,8 @@
 import { WidgetType, type EditorView } from '@codemirror/view';
-import katex from 'katex';
 import { parse as parseYaml } from 'yaml';
 import { extname, parseEmbedSize } from '@cobblestone/core';
 import { t } from '../i18n';
+import { renderTex } from '../markdown/katex';
 import { editorHost } from './host';
 
 const IMAGE_EXT = new Set(['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'bmp', 'avif']);
@@ -65,11 +65,7 @@ export class MathWidget extends WidgetType {
   toDOM() {
     const el = document.createElement(this.display ? 'div' : 'span');
     el.className = this.display ? 'cm-math-block' : 'cm-math-inline';
-    try {
-      katex.render(this.tex, el, { displayMode: this.display, throwOnError: false });
-    } catch {
-      el.textContent = this.tex;
-    }
+    renderTex(el, this.tex, this.display);
     return el;
   }
   override ignoreEvent() {

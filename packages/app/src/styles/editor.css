@@ -540,3 +540,10 @@ div.cm-embed {
   margin: 0;
   color: var(--red-deep);
 }
+
+.cm-math-inline.is-pending,
+.cm-math-block.is-pending {
+  font-family: var(--mono);
+  font-size: 0.86em;
+  color: var(--ink-3);
+}

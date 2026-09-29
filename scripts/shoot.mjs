@@ -1,8 +1,14 @@
 // Screenshots the web app for visual checks: node scripts/shoot.mjs <out-dir> [steps...]
 import { chromium } from 'playwright-core';
+import { mkdir } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
+import { serveWeb } from './lib/serve-web.mjs';
 
-const out = process.argv[2] ?? 'shots';
-const base = process.env.URL ?? 'http://localhost:5173/';
+const out = process.argv[2] ?? path.join(tmpdir(), 'cobblestone-shots');
+await mkdir(out, { recursive: true });
+const web = await serveWeb();
+const base = web.url;
 const browser = await chromium.launch({
   executablePath: process.env.CHROME_PATH ?? '/usr/bin/google-chrome',
   args: ['--no-sandbox'],
@@ -65,4 +71,6 @@ await session('mobile', { width: 390, height: 844 }, async (page, shot) => {
 });
 
 await browser.close();
+await web.stop();
 console.log(errors.length ? errors.join('\n') : 'no page errors');
+process.exit(0);

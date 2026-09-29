@@ -372,3 +372,10 @@
 .reading-view {
   padding-bottom: 2px;
 }
+
+/* Formula source shown while KaTeX loads. */
+.math.is-pending {
+  font-family: var(--mono);
+  font-size: 0.86em;
+  color: var(--ink-3);
+}

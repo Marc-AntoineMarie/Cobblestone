@@ -3,3 +3,5 @@ declare module 'markdown-it-footnote' {
   const footnote: (md: MarkdownIt) => void;
   export default footnote;
 }
+
+declare module '*.css';

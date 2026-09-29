@@ -1,5 +1,6 @@
 import DOMPurify from 'dompurify';
 import { extname, parseEmbedSize, splitSubpath } from '@cobblestone/core';
+import { renderTex } from '../markdown/katex';
 import { renderMarkdown, stripFrontmatter } from '../markdown/render';
 import { t } from '../i18n';
 import type { Session } from '../session';
@@ -132,6 +133,11 @@ export function renderNoteInto(container: HTMLElement, text: string, ctx: Render
         toggle();
       }
     });
+  }
+
+  // Formulas, then diagrams: each loads its renderer only when a note needs it.
+  for (const math of container.querySelectorAll<HTMLElement>('.math[data-tex]')) {
+    renderTex(math, math.dataset.tex ?? '', math.classList.contains('math-block'));
   }
 
   // Diagrams load their renderer only when a note has one.

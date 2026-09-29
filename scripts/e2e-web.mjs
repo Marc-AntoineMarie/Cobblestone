@@ -1,21 +1,14 @@
 // End-to-end check of the web app with a vault stored in the browser (OPFS).
-// Builds the web app and serves it with Vite's preview server unless URL is set (the dev server can
-// reload the page mid-test while it optimises dependencies). Screenshots go to the directory given.
 import { chromium } from 'playwright-core';
 import { mkdir, mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { build, preview } from 'vite';
+import { serveWeb } from './lib/serve-web.mjs';
 
 const out = process.argv[2] ?? path.join(tmpdir(), 'cobblestone-shots');
 await mkdir(out, { recursive: true });
-let server = null;
-if (!process.env.URL) {
-  const config = { configFile: path.resolve('apps/web/vite.config.ts'), root: path.resolve('apps/web'), logLevel: 'warn' };
-  await build(config);
-  server = await preview({ ...config, preview: { port: 5199, strictPort: false } });
-}
-const base = process.env.URL ?? server.resolvedUrls.local[0];
+const web = await serveWeb();
+const base = web.url;
 const profile = await mkdtemp(path.join(tmpdir(), 'cobblestone-web-'));
 const context = await chromium.launchPersistentContext(profile, {
   executablePath: process.env.CHROME_PATH ?? '/usr/bin/google-chrome',
@@ -65,6 +58,6 @@ await page.screenshot({ path: `${out}/web-e2e-created.png`, timeout: 5000 }).cat
 
 await context.close();
 await rm(profile, { recursive: true, force: true });
-await server?.close();
+await web.stop();
 console.log(errors.length ? 'page errors:\n' + errors.join('\n') : 'no page errors');
 process.exit(process.exitCode ?? 0);
