@@ -2,125 +2,125 @@
 name: Cobblestone
 description: Your notes as sheets you own, printed in spot inks — shared by distribution, edited together by overprint.
 colors:
-  paper: "#F4F4F0"
-  paper-2: "#EBEBE4"
-  paper-3: "#E1E1D8"
-  ink: "#1E2A4F"
-  ink-2: "#4B5575"
-  ink-3: "#6E7797"
-  rule: "#1E2A4F26"
-  pink: "#FF48B0"
-  pink-deep: "#C0277E"
-  yellow: "#FFE800"
-  green: "#00A95C"
-  green-deep: "#0E7A4A"
-  red: "#F15060"
-  red-deep: "#C8283C"
-  teal: "#00838A"
-  orange: "#FF6C2F"
-  purple: "#765BA7"
-  night-paper: "#15192A"
-  night-paper-2: "#1B2034"
-  night-paper-3: "#232942"
-  night-ink: "#ECEBE4"
-  night-ink-2: "#A3A9C0"
-  night-pink: "#FF5CBA"
-  night-yellow: "#FFE14D"
-  danger-plate: "#C8283C"
-  on-danger: "#FFFFFF"
-  night-danger-plate: "#A51F31"
-  night-mark-ink: "#FFF6C4"
+  paper: '#F4F4F0'
+  paper-2: '#EBEBE4'
+  paper-3: '#E1E1D8'
+  ink: '#1E2A4F'
+  ink-2: '#4B5575'
+  ink-3: '#6E7797'
+  rule: '#1E2A4F26'
+  pink: '#FF48B0'
+  pink-deep: '#C0277E'
+  yellow: '#FFE800'
+  green: '#00A95C'
+  green-deep: '#0E7A4A'
+  red: '#F15060'
+  red-deep: '#C8283C'
+  teal: '#00838A'
+  orange: '#FF6C2F'
+  purple: '#765BA7'
+  night-paper: '#15192A'
+  night-paper-2: '#1B2034'
+  night-paper-3: '#232942'
+  night-ink: '#ECEBE4'
+  night-ink-2: '#A3A9C0'
+  night-pink: '#FF5CBA'
+  night-yellow: '#FFE14D'
+  danger-plate: '#C8283C'
+  on-danger: '#FFFFFF'
+  night-danger-plate: '#A51F31'
+  night-mark-ink: '#FFF6C4'
 typography:
   chrome:
-    fontFamily: "Archivo Variable, Archivo, system-ui, sans-serif"
-    fontSize: "13px"
+    fontFamily: 'Archivo Variable, Archivo, system-ui, sans-serif'
+    fontSize: '13px'
     fontWeight: 450
     lineHeight: 1.4
     fontVariation: "'wdth' 92"
   chrome-label:
-    fontFamily: "Archivo Variable, Archivo, system-ui, sans-serif"
-    fontSize: "13px"
+    fontFamily: 'Archivo Variable, Archivo, system-ui, sans-serif'
+    fontSize: '13px'
     fontWeight: 650
-    letterSpacing: "0.06em"
+    letterSpacing: '0.06em'
     fontVariation: "'wdth' 80"
   title:
-    fontFamily: "Archivo Variable, Archivo, system-ui, sans-serif"
-    fontSize: "clamp(1.9rem, 3.2vw, 2.6rem)"
+    fontFamily: 'Archivo Variable, Archivo, system-ui, sans-serif'
+    fontSize: 'clamp(1.9rem, 3.2vw, 2.6rem)'
     fontWeight: 800
     lineHeight: 1.08
-    letterSpacing: "-0.02em"
+    letterSpacing: '-0.02em'
     fontVariation: "'wdth' 118"
   body:
-    fontFamily: "Archivo Variable, Archivo, system-ui, sans-serif"
-    fontSize: "16.5px"
+    fontFamily: 'Archivo Variable, Archivo, system-ui, sans-serif'
+    fontSize: '16.5px'
     fontWeight: 400
     lineHeight: 1.65
     fontVariation: "'wdth' 100"
   heading-1:
-    fontFamily: "Archivo Variable, Archivo, system-ui, sans-serif"
-    fontSize: "1.9rem"
+    fontFamily: 'Archivo Variable, Archivo, system-ui, sans-serif'
+    fontSize: '1.9rem'
     fontWeight: 780
     lineHeight: 1.25
     fontVariation: "'wdth' 112"
   heading-2:
-    fontFamily: "Archivo Variable, Archivo, system-ui, sans-serif"
-    fontSize: "1.45rem"
+    fontFamily: 'Archivo Variable, Archivo, system-ui, sans-serif'
+    fontSize: '1.45rem'
     fontWeight: 740
     fontVariation: "'wdth' 106"
   heading-3:
-    fontFamily: "Archivo Variable, Archivo, system-ui, sans-serif"
-    fontSize: "1.2rem"
+    fontFamily: 'Archivo Variable, Archivo, system-ui, sans-serif'
+    fontSize: '1.2rem'
     fontWeight: 720
   settings-title:
-    fontFamily: "Archivo Variable, Archivo, system-ui, sans-serif"
-    fontSize: "2rem"
+    fontFamily: 'Archivo Variable, Archivo, system-ui, sans-serif'
+    fontSize: '2rem'
     fontWeight: 800
     fontVariation: "'wdth' 118"
   launcher-display:
-    fontFamily: "Archivo Variable, Archivo, system-ui, sans-serif"
-    fontSize: "clamp(3rem, 9vw, 5.6rem)"
+    fontFamily: 'Archivo Variable, Archivo, system-ui, sans-serif'
+    fontSize: 'clamp(3rem, 9vw, 5.6rem)'
     fontWeight: 850
     lineHeight: 0.92
-    letterSpacing: "-0.035em"
+    letterSpacing: '-0.035em'
     fontVariation: "'wdth' 125"
   lead:
-    fontFamily: "Archivo Variable, Archivo, system-ui, sans-serif"
-    fontSize: "1.15rem"
+    fontFamily: 'Archivo Variable, Archivo, system-ui, sans-serif'
+    fontSize: '1.15rem'
     lineHeight: 1.5
   code:
-    fontFamily: "Commit Mono, ui-monospace, monospace"
-    fontSize: "0.86rem"
+    fontFamily: 'Commit Mono, ui-monospace, monospace'
+    fontSize: '0.86rem'
 rounded:
-  none: "0px"
-  hairline: "1px"
-  image: "2px"
-  cut: "3px"
-  sheet: "4px"
-  pill: "999px"
+  none: '0px'
+  hairline: '1px'
+  image: '2px'
+  cut: '3px'
+  sheet: '4px'
+  pill: '999px'
 spacing:
-  xs: "4px"
-  sm: "8px"
-  md: "12px"
-  lg: "20px"
-  xl: "32px"
-  xxl: "56px"
+  xs: '4px'
+  sm: '8px'
+  md: '12px'
+  lg: '20px'
+  xl: '32px'
+  xxl: '56px'
 components:
   button-primary:
-    backgroundColor: "{colors.pink}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.cut}"
-    padding: "6px 14px"
+    backgroundColor: '{colors.pink}'
+    textColor: '{colors.ink}'
+    rounded: '{rounded.cut}'
+    padding: '6px 14px'
   button-secondary:
-    backgroundColor: "{colors.paper}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.cut}"
-    padding: "6px 12px"
+    backgroundColor: '{colors.paper}'
+    textColor: '{colors.ink}'
+    rounded: '{rounded.cut}'
+    padding: '6px 12px'
   tree-item-selected:
-    backgroundColor: "{colors.yellow}"
-    textColor: "{colors.ink}"
+    backgroundColor: '{colors.yellow}'
+    textColor: '{colors.ink}'
   mark:
-    backgroundColor: "{colors.yellow}"
-    textColor: "{colors.ink}"
+    backgroundColor: '{colors.yellow}'
+    textColor: '{colors.ink}'
 ---
 
 # Design System: Cobblestone
@@ -136,6 +136,7 @@ It is an operating surface first. The sheet leads and the chrome recedes: a newc
 Rejected on purpose: the charcoal IDE shell with a purple accent, the grey-sidebar white page with emoji icons, any Obsidian look-alike, and cold developer aesthetics.
 
 **Key Characteristics:**
+
 - Paper grounds, ink text: body text is navy ink, never pure black or grey.
 - Spot colours have jobs: pink acts, yellow marks, green and red report state. Nothing is decorative.
 - Overprint is the signature: selection, link hover and highlights multiply ink over ink.

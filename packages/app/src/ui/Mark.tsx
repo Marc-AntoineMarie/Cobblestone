@@ -4,7 +4,14 @@
  */
 export function Mark({ size = 28, title }: { size?: number; title?: string }) {
   return (
-    <svg className="mark" width={size} height={size} viewBox="0 0 64 64" role={title ? 'img' : undefined} aria-hidden={title ? undefined : true}>
+    <svg
+      className="mark"
+      width={size}
+      height={size}
+      viewBox="0 0 64 64"
+      role={title ? 'img' : undefined}
+      aria-hidden={title ? undefined : true}
+    >
       {title && <title>{title}</title>}
       <g className="mark-pink">
         <path d="M9 13c0-3 2-5 5-5h13c3 0 5 2 5 5v11c0 3-2 5-5 5H14c-3 0-5-2-5-5z" />

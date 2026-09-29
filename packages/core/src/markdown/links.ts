@@ -25,7 +25,10 @@ export function parseSubpath(subpath: string): Subpath {
   if (!subpath || subpath === '#') return null;
   const body = subpath.startsWith('#') ? subpath.slice(1) : subpath;
   if (body.startsWith('^')) return { type: 'block', id: body.slice(1) };
-  const headings = body.split('#').map((h) => h.trim()).filter(Boolean);
+  const headings = body
+    .split('#')
+    .map((h) => h.trim())
+    .filter(Boolean);
   return headings.length ? { type: 'heading', headings } : null;
 }
 

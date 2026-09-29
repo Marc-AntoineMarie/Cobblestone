@@ -37,9 +37,7 @@ export class NodeFsAdapter implements VaultAdapter {
     const wanted = entries.filter((e) => e.isFile() || e.isDirectory());
     for (let i = 0; i < wanted.length; i += 256) {
       const batch = wanted.slice(i, i + 256);
-      const stats = await Promise.all(
-        batch.map((entry) => fs.stat(path.join(entry.parentPath, entry.name)).catch(() => null)),
-      );
+      const stats = await Promise.all(batch.map((entry) => fs.stat(path.join(entry.parentPath, entry.name)).catch(() => null)));
       batch.forEach((entry, k) => {
         const stat = stats[k];
         if (stat) out.push(toStat(this.toVaultPath(path.join(entry.parentPath, entry.name)), stat));

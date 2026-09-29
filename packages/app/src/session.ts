@@ -412,7 +412,10 @@ export class Session {
   /** Saves a pasted or dropped file next to its note; returns the embed to insert. */
   async saveAttachment(file: File, sourcePath: string): Promise<string> {
     const ext = extname(file.name) || mimeExtension(file.type) || 'bin';
-    const baseName = stem(file.name) && stem(file.name) !== 'image' ? stem(file.name) : `Pasted image ${formatDate(new Date(), 'YYYYMMDDHHmmss')}`;
+    const baseName =
+      stem(file.name) && stem(file.name) !== 'image'
+        ? stem(file.name)
+        : `Pasted image ${formatDate(new Date(), 'YYYYMMDDHHmmss')}`;
     const path = this.availablePath(this.attachmentFolder(sourcePath), baseName.replace(/[\\/:*?"<>|#^[\]]/g, '-'), ext);
     await this.vault.createBinary(path, new Uint8Array(await file.arrayBuffer()));
     return `![[${this.vault.cache.resolver.linkText(path, sourcePath)}]]`;

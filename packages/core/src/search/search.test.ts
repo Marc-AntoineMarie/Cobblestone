@@ -4,13 +4,17 @@ import { parseQuery } from './query';
 import { searchDocuments } from './search';
 
 const notes: Record<string, string> = {
-  'Projects/Alpha.md': '---\nstatus: active\nowner: [Alice, Bob]\n---\n# Plan\nShip the alpha release #work\n- [ ] write docs\n- [x] fix bug\n\n# Notes\nMeeting with Carol',
+  'Projects/Alpha.md':
+    '---\nstatus: active\nowner: [Alice, Bob]\n---\n# Plan\nShip the alpha release #work\n- [ ] write docs\n- [x] fix bug\n\n# Notes\nMeeting with Carol',
   'Projects/Beta.md': '---\nstatus: paused\n---\nBeta is on hold #work/later\n- [ ] restart beta',
   'Journal/2026-09-29.md': 'Went hiking. Alpha thoughts. #personal',
   'Recipes/Pancakes.md': 'Flour, eggs, milk. Case Sensitive Word',
 };
 const docs = Object.entries(notes).map(([path, content]) => ({ path, content, metadata: parseMarkdown(content) }));
-const find = (q: string) => searchDocuments(docs, q).map((r) => r.path).sort();
+const find = (q: string) =>
+  searchDocuments(docs, q)
+    .map((r) => r.path)
+    .sort();
 
 describe('query parser', () => {
   it('parses boolean structure', () => {

@@ -28,12 +28,7 @@ export function detectFormat(target: string): LinkFormat {
  * Rebuilds a link so it points to `newTargetPath`, keeping its kind, embed
  * flag, subpath, alias and path style. Returns null when nothing changes.
  */
-export function retargetLink(
-  link: LinkRef,
-  newTargetPath: string,
-  sourcePath: string,
-  resolver: LinkResolver,
-): string | null {
+export function retargetLink(link: LinkRef, newTargetPath: string, sourcePath: string, resolver: LinkResolver): string | null {
   const format = detectFormat(link.target);
   const keepExtension = link.kind === 'markdown' || extname(link.target) === 'md';
   const text = resolver.linkText(newTargetPath, sourcePath, format, keepExtension);
@@ -50,8 +45,7 @@ export function retargetLink(
   const leading = destRaw[0].length - destRaw[1]!.length;
   const angled = destRaw[1]!.startsWith('<');
   const dest = angled ? `<${text}${link.subpath}>` : encodeMarkdownDestination(text + link.subpath);
-  const next =
-    link.raw.slice(0, destStart + leading) + dest + link.raw.slice(destStart + leading + destRaw[1]!.length);
+  const next = link.raw.slice(0, destStart + leading) + dest + link.raw.slice(destStart + leading + destRaw[1]!.length);
   return next === link.raw ? null : next;
 }
 

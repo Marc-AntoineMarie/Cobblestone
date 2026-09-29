@@ -28,8 +28,7 @@ export interface Pane {
 }
 
 export type Layout =
-  | { type: 'pane'; pane: Pane }
-  | { type: 'split'; id: string; direction: 'row' | 'column'; children: Layout[]; sizes: number[] };
+  { type: 'pane'; pane: Pane } | { type: 'split'; id: string; direction: 'row' | 'column'; children: Layout[]; sizes: number[] };
 
 export interface WorkspaceState {
   layout: Layout;
@@ -135,7 +134,10 @@ export function open(state: WorkspaceState, view: ViewState, target: OpenTarget 
   if (sameView(current.view, view)) return state;
   if (current.view.type === 'note' && view.type === 'note' && current.view.path === view.path) {
     const next: ViewState = { ...view, mode: view.mode ?? current.view.mode };
-    return updatePane(state, pane.id, (p) => ({ ...p, tabs: p.tabs.map((t) => (t.id === current.id ? { ...t, view: next } : t)) }));
+    return updatePane(state, pane.id, (p) => ({
+      ...p,
+      tabs: p.tabs.map((t) => (t.id === current.id ? { ...t, view: next } : t)),
+    }));
   }
   return updatePane(state, pane.id, (p) => ({
     ...p,
@@ -186,7 +188,10 @@ export function closeTab(state: WorkspaceState, paneId: string, tabId: string): 
     if (all.length > 1) {
       const layout = removePane(state.layout, paneId)!;
       const next = panes(layout);
-      return { layout, activePane: state.activePane === paneId ? next[Math.max(0, all.indexOf(pane) - 1)]!.id : state.activePane };
+      return {
+        layout,
+        activePane: state.activePane === paneId ? next[Math.max(0, all.indexOf(pane) - 1)]!.id : state.activePane,
+      };
     }
     const tab = newTab();
     return updatePane(state, paneId, (p) => ({ ...p, tabs: [tab], activeTab: tab.id }));
@@ -211,7 +216,10 @@ export function moveTab(state: WorkspaceState, paneId: string, tabId: string, to
 }
 
 export function togglePin(state: WorkspaceState, paneId: string, tabId: string): WorkspaceState {
-  return updatePane(state, paneId, (p) => ({ ...p, tabs: p.tabs.map((t) => (t.id === tabId ? { ...t, pinned: !t.pinned } : t)) }));
+  return updatePane(state, paneId, (p) => ({
+    ...p,
+    tabs: p.tabs.map((t) => (t.id === tabId ? { ...t, pinned: !t.pinned } : t)),
+  }));
 }
 
 export function navigate(state: WorkspaceState, direction: 'back' | 'forward'): WorkspaceState {

@@ -484,13 +484,7 @@ function buildSections(lines: string[], lineKind: (AtomicKind | null)[], atomId:
   return sections;
 }
 
-function resolveBlock(
-  id: string,
-  line: number,
-  lines: string[],
-  sections: SectionRef[],
-  listItems: ListItemRef[],
-): BlockRef {
+function resolveBlock(id: string, line: number, lines: string[], sections: SectionRef[], listItems: ListItemRef[]): BlockRef {
   const index = sections.findIndex((s) => s.startLine <= line && line <= s.endLine);
   const section = sections[index];
   const standalone = /^[ \t]*\^[A-Za-z0-9-]+[ \t]*$/.test(lines[line]!);

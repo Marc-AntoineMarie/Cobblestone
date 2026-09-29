@@ -150,7 +150,15 @@ interface Hit {
 }
 
 /** One field that finds notes by name, searches their text, or creates one. */
-function FindResults({ query, onDone, inputRef }: { query: string; onDone: () => void; inputRef: React.RefObject<HTMLInputElement | null> }) {
+function FindResults({
+  query,
+  onDone,
+  inputRef,
+}: {
+  query: string;
+  onDone: () => void;
+  inputRef: React.RefObject<HTMLInputElement | null>;
+}) {
   const session = useSession();
   const revision = useVaultRevision();
   const deferred = useDeferredValue(query);
@@ -168,9 +176,18 @@ function FindResults({ query, onDone, inputRef }: { query: string; onDone: () =>
       for (const file of session.vault.getFiles()) {
         const label = file.extension === 'md' ? file.basename : file.name;
         const match = fuzzyMatch(q, label);
-        if (match) names.push({ key: 'n:' + file.path, kind: 'name', path: file.path, label, indices: match.indices, folder: file.parent, ...{ score: match.score } } as Hit);
+        if (match)
+          names.push({
+            key: 'n:' + file.path,
+            kind: 'name',
+            path: file.path,
+            label,
+            indices: match.indices,
+            folder: file.parent,
+            ...{ score: match.score },
+          } as Hit);
       }
-      names.sort((a, b) => ((b as Hit & { score: number }).score - (a as Hit & { score: number }).score));
+      names.sort((a, b) => (b as Hit & { score: number }).score - (a as Hit & { score: number }).score);
       out.push(...names.slice(0, 8));
       const exact = names.some((h) => h.label.toLowerCase() === q.toLowerCase());
       if (!exact && !/[\\/:*?"<>|#^[\]]/.test(q)) out.push({ key: 'create', kind: 'create', label: q });
@@ -201,7 +218,14 @@ function FindResults({ query, onDone, inputRef }: { query: string; onDone: () =>
           };
         }
         if (!snippet && !operator) continue;
-        out.push({ key: 't:' + result.path, kind: 'text', path: result.path, label: stem(result.path), snippet, folder: result.path.includes('/') ? result.path.slice(0, result.path.lastIndexOf('/')) : '' });
+        out.push({
+          key: 't:' + result.path,
+          kind: 'text',
+          path: result.path,
+          label: stem(result.path),
+          snippet,
+          folder: result.path.includes('/') ? result.path.slice(0, result.path.lastIndexOf('/')) : '',
+        });
       }
     } catch {
       // Unfinished query syntax (e.g. an open regex): show name matches only.
@@ -260,7 +284,9 @@ function FindResults({ query, onDone, inputRef }: { query: string; onDone: () =>
         <>
           <span className="find-name">
             {hit.kind === 'name'
-              ? highlightSegments(hit.label, hit.indices ?? []).map((s, i) => (s.hit ? <mark key={i}>{s.text}</mark> : <span key={i}>{s.text}</span>))
+              ? highlightSegments(hit.label, hit.indices ?? []).map((s, i) =>
+                  s.hit ? <mark key={i}>{s.text}</mark> : <span key={i}>{s.text}</span>,
+                )
               : hit.label}
           </span>
           {hit.folder && <span className="find-folder">{hit.folder}</span>}
@@ -277,7 +303,13 @@ function FindResults({ query, onDone, inputRef }: { query: string; onDone: () =>
   );
 
   return (
-    <div className="find-results" ref={listRef} role="listbox" aria-label={t('rail.find')} onKeyDown={(e: KeyboardEvent) => e.stopPropagation()}>
+    <div
+      className="find-results"
+      ref={listRef}
+      role="listbox"
+      aria-label={t('rail.find')}
+      onKeyDown={(e: KeyboardEvent) => e.stopPropagation()}
+    >
       {names.length > 0 && (
         <section>
           <h2 className="label find-group">{t('rail.inNames')}</h2>

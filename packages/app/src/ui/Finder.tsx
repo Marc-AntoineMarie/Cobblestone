@@ -98,13 +98,22 @@ function FinderBox({ initialMode }: { initialMode: 'notes' | 'commands' }) {
           label,
           detail: file.parent,
           indices: byName?.indices ?? [],
-          score: (byName?.score ?? (byPath!.score - 20)) + (session.recent.includes(file.path) ? 6 : 0),
+          score: (byName?.score ?? byPath!.score - 20) + (session.recent.includes(file.path) ? 6 : 0),
           path: file.path,
         });
       }
       for (const alias of session.vault.cache.getMetadata(file.path)?.aliases ?? []) {
         const match = fuzzyMatch(text, alias);
-        if (match) out.push({ key: `${file.path}|${alias}`, kind: 'alias', label: alias, detail: `→ ${label}`, indices: match.indices, score: match.score - 2, path: file.path });
+        if (match)
+          out.push({
+            key: `${file.path}|${alias}`,
+            kind: 'alias',
+            label: alias,
+            detail: `→ ${label}`,
+            indices: match.indices,
+            score: match.score - 2,
+            path: file.path,
+          });
       }
     }
     out.sort((a, b) => b.score - a.score);
@@ -134,9 +143,18 @@ function FinderBox({ initialMode }: { initialMode: 'notes' | 'commands' }) {
 
   return (
     <div className="finder-layer" onPointerDown={(e) => e.target === e.currentTarget && close()}>
-      <div className="finder" role="dialog" aria-modal="true" aria-label={commandMode ? t('palette.placeholderCommands') : t('cmd.openFinder')}>
+      <div
+        className="finder"
+        role="dialog"
+        aria-modal="true"
+        aria-label={commandMode ? t('palette.placeholderCommands') : t('cmd.openFinder')}
+      >
         <div className="finder-input">
-          {commandMode ? <Terminal size={16} strokeWidth={1.75} aria-hidden /> : <FileText size={16} strokeWidth={1.75} aria-hidden />}
+          {commandMode ? (
+            <Terminal size={16} strokeWidth={1.75} aria-hidden />
+          ) : (
+            <FileText size={16} strokeWidth={1.75} aria-hidden />
+          )}
           <input
             ref={input}
             value={query}
@@ -150,7 +168,11 @@ function FinderBox({ initialMode }: { initialMode: 'notes' | 'commands' }) {
               if (e.key === 'Escape') close();
               else if (e.key === 'ArrowDown') setSelected((i) => Math.min(items.length - 1, i + 1));
               else if (e.key === 'ArrowUp') setSelected((i) => Math.max(0, i - 1));
-              else if (e.key === 'Enter' && e.shiftKey && !commandMode && text) run(items.find((i) => i.kind === 'create'), false);
+              else if (e.key === 'Enter' && e.shiftKey && !commandMode && text)
+                run(
+                  items.find((i) => i.kind === 'create'),
+                  false,
+                );
               else if (e.key === 'Enter') run(items[selected], e.metaKey || e.ctrlKey);
               else return;
               e.preventDefault();
@@ -159,7 +181,9 @@ function FinderBox({ initialMode }: { initialMode: 'notes' | 'commands' }) {
           />
         </div>
         <div className="finder-list" id="finder-list" role="listbox" ref={list}>
-          {items.length === 0 && <p className="finder-empty">{commandMode ? t('palette.noCommands') : t('rail.noResults', { query: text })}</p>}
+          {items.length === 0 && (
+            <p className="finder-empty">{commandMode ? t('palette.noCommands') : t('rail.noResults', { query: text })}</p>
+          )}
           {items.map((item, i) => (
             <div
               key={item.key}
@@ -173,7 +197,9 @@ function FinderBox({ initialMode }: { initialMode: 'notes' | 'commands' }) {
             >
               {item.kind === 'create' && <FilePlus2 size={15} strokeWidth={1.75} aria-hidden />}
               <span className="finder-label">
-                {highlightSegments(item.label, item.indices).map((s, k) => (s.hit ? <mark key={k}>{s.text}</mark> : <span key={k}>{s.text}</span>))}
+                {highlightSegments(item.label, item.indices).map((s, k) =>
+                  s.hit ? <mark key={k}>{s.text}</mark> : <span key={k}>{s.text}</span>,
+                )}
               </span>
               {item.detail && <span className="finder-detail">{item.detail}</span>}
               {item.hotkey && <kbd>{item.hotkey}</kbd>}

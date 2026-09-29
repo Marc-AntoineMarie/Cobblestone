@@ -135,7 +135,10 @@ export class EmbedWidget extends WidgetType {
       const media =
         ext === 'pdf'
           ? Object.assign(document.createElement('iframe'), { className: 'cm-embed-pdf', title: linkpath ?? '' })
-          : Object.assign(document.createElement(AUDIO_EXT.has(ext) ? 'audio' : 'video'), { controls: true, className: 'cm-embed-media' });
+          : Object.assign(document.createElement(AUDIO_EXT.has(ext) ? 'audio' : 'video'), {
+              controls: true,
+              className: 'cm-embed-media',
+            });
       void host.resourceUrl(path).then((url) => (media.src = url));
       wrap.append(media);
       return wrap;
@@ -221,5 +224,7 @@ function formatProperty(value: unknown): string {
   if (value == null) return '—';
   if (value instanceof Date) return value.toISOString().slice(0, 10);
   if (typeof value === 'object') return JSON.stringify(value);
-  return String(value).replace(/^\[\[(.*?)(\|.*)?\]\]$/, (_m, target: string, alias?: string) => (alias ? alias.slice(1) : target));
+  return String(value).replace(/^\[\[(.*?)(\|.*)?\]\]$/, (_m, target: string, alias?: string) =>
+    alias ? alias.slice(1) : target,
+  );
 }

@@ -40,7 +40,10 @@ check('titles the note from the title field', (await page.locator('.tab.is-activ
 await page.reload();
 await page.waitForTimeout(1500);
 check('reopens the last vault after a reload', (await page.locator('.vault-name').innerText()) === 'Browser notes');
-const text = await page.locator('.cm-content').innerText().catch(() => '');
+const text = await page
+  .locator('.cm-content')
+  .innerText()
+  .catch(() => '');
 check('keeps the note content', text.includes('eggs') && text.includes('Recipes'));
 check('lists the tag', (await page.locator('.tag-list').innerText()).includes('shopping'));
 

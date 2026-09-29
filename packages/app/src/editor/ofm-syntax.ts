@@ -160,7 +160,9 @@ export const MathSyntax: MarkdownConfig = {
           const close = cx.slice(pos + 2, cx.end).indexOf('$$');
           if (close === -1) return -1;
           const end = pos + 2 + close + 2;
-          return cx.addElement(cx.elt('InlineMath', pos, end, [cx.elt('MathMark', pos, pos + 2), cx.elt('MathMark', end - 2, end)]));
+          return cx.addElement(
+            cx.elt('InlineMath', pos, end, [cx.elt('MathMark', pos, pos + 2), cx.elt('MathMark', end - 2, end)]),
+          );
         }
         if (isSpace(cx.char(pos + 1))) return -1;
         for (let i = pos + 1; i < cx.end; i++) {
@@ -171,7 +173,9 @@ export const MathSyntax: MarkdownConfig = {
             continue;
           }
           if (c === 36 && !isSpace(cx.char(i - 1)) && !(cx.char(i + 1) >= 48 && cx.char(i + 1) <= 57)) {
-            return cx.addElement(cx.elt('InlineMath', pos, i + 1, [cx.elt('MathMark', pos, pos + 1), cx.elt('MathMark', i, i + 1)]));
+            return cx.addElement(
+              cx.elt('InlineMath', pos, i + 1, [cx.elt('MathMark', pos, pos + 1), cx.elt('MathMark', i, i + 1)]),
+            );
           }
         }
         return -1;

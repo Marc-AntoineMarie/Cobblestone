@@ -52,7 +52,11 @@ export function matchesHotkey(event: KeyboardEvent, hotkey: Hotkey): boolean {
   const mod = isMac ? event.metaKey : event.ctrlKey;
   const key = event.key.length === 1 ? event.key.toLowerCase() : event.key.toLowerCase();
   // With Shift, some layouts change the key ("," -> "<"); compare the physical key for letters and digits too.
-  const code = event.code.startsWith('Key') ? event.code.slice(3).toLowerCase() : event.code.startsWith('Digit') ? event.code.slice(5) : null;
+  const code = event.code.startsWith('Key')
+    ? event.code.slice(3).toLowerCase()
+    : event.code.startsWith('Digit')
+      ? event.code.slice(5)
+      : null;
   return (
     !!hotkey.mod === mod &&
     !!hotkey.shift === event.shiftKey &&

@@ -32,7 +32,13 @@ export function SettingsView() {
   const settings = useStore(session.settings, (s) => s);
   const { preferences, update } = usePreferences();
   const set = (patch: Partial<VaultSettings>) => session.settings.setState(patch);
-  const folders = ['', ...session.vault.getFolders().map((f) => f.path).sort()];
+  const folders = [
+    '',
+    ...session.vault
+      .getFolders()
+      .map((f) => f.path)
+      .sort(),
+  ];
 
   return (
     <div className="settings-view">
@@ -44,14 +50,24 @@ export function SettingsView() {
           <Row label={t('settings.theme')}>
             <div className="segmented" role="radiogroup" aria-label={t('settings.theme')}>
               {(['system', 'day', 'night'] as const).map((theme) => (
-                <button key={theme} role="radio" aria-checked={preferences.theme === theme} aria-pressed={preferences.theme === theme} onClick={() => update({ theme })}>
+                <button
+                  key={theme}
+                  role="radio"
+                  aria-checked={preferences.theme === theme}
+                  aria-pressed={preferences.theme === theme}
+                  onClick={() => update({ theme })}
+                >
                   {t(`settings.theme.${theme}`)}
                 </button>
               ))}
             </div>
           </Row>
           <Row label={t('settings.language')} htmlFor="set-language">
-            <select id="set-language" value={preferences.language} onChange={(e) => update({ language: e.target.value as 'auto' | 'en' | 'fr' })}>
+            <select
+              id="set-language"
+              value={preferences.language}
+              onChange={(e) => update({ language: e.target.value as 'auto' | 'en' | 'fr' })}
+            >
               <option value="auto">Auto</option>
               {Object.entries(LANGUAGES).map(([code, name]) => (
                 <option key={code} value={code}>
@@ -65,7 +81,11 @@ export function SettingsView() {
         <section>
           <h2 className="label">{t('settings.editor')}</h2>
           <Row label={t('settings.defaultMode')} htmlFor="set-mode">
-            <select id="set-mode" value={settings.defaultMode} onChange={(e) => set({ defaultMode: e.target.value as VaultSettings['defaultMode'] })}>
+            <select
+              id="set-mode"
+              value={settings.defaultMode}
+              onChange={(e) => set({ defaultMode: e.target.value as VaultSettings['defaultMode'] })}
+            >
               <option value="live">{t('note.modeEdit')}</option>
               <option value="read">{t('note.modeRead')}</option>
               <option value="source">{t('note.modeSource')}</option>
@@ -104,7 +124,11 @@ export function SettingsView() {
             </select>
           </Row>
           <Row label={t('settings.attachmentFolder')} htmlFor="set-attach">
-            <select id="set-attach" value={settings.attachmentLocation} onChange={(e) => set({ attachmentLocation: e.target.value })}>
+            <select
+              id="set-attach"
+              value={settings.attachmentLocation}
+              onChange={(e) => set({ attachmentLocation: e.target.value })}
+            >
               <option value="/">{t('settings.vaultRoot')}</option>
               <option value="./">./</option>
               {folders.filter(Boolean).map((f) => (
@@ -121,7 +145,11 @@ export function SettingsView() {
             <Toggle id="set-links" checked={settings.updateLinks} onChange={(updateLinks) => set({ updateLinks })} />
           </Row>
           <Row label={t('settings.trash')} htmlFor="set-trash">
-            <select id="set-trash" value={settings.trash} onChange={(e) => set({ trash: e.target.value as VaultSettings['trash'] })}>
+            <select
+              id="set-trash"
+              value={settings.trash}
+              onChange={(e) => set({ trash: e.target.value as VaultSettings['trash'] })}
+            >
               <option value="vault">{t('settings.trash.vault')}</option>
               <option value="permanent">{t('settings.trash.permanent')}</option>
             </select>

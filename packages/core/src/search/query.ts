@@ -7,9 +7,7 @@
  * Terms separated by spaces are ANDed.
  */
 
-export type Matcher =
-  | { kind: 'text'; value: string; exact: boolean }
-  | { kind: 'regex'; regex: RegExp };
+export type Matcher = { kind: 'text'; value: string; exact: boolean } | { kind: 'regex'; regex: RegExp };
 
 export type QueryNode =
   | { type: 'and'; children: QueryNode[] }
@@ -203,7 +201,12 @@ export function parseQuery(input: string): QueryNode | null {
 function termOf(token: Extract<Token, { t: 'word' }>, field: Field, caseSensitive: boolean): QueryNode {
   if (token.regex) {
     try {
-      return { type: 'term', field, caseSensitive, matcher: { kind: 'regex', regex: new RegExp(token.value, caseSensitive ? '' : 'i') } };
+      return {
+        type: 'term',
+        field,
+        caseSensitive,
+        matcher: { kind: 'regex', regex: new RegExp(token.value, caseSensitive ? '' : 'i') },
+      };
     } catch {
       throw new QuerySyntaxError(`Invalid regular expression: /${token.value}/`);
     }

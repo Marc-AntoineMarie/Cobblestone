@@ -104,15 +104,13 @@ function buildInline(view: EditorView): DecorationSet {
             return;
           }
           case 'Tag':
-            decorations.push(
-              mark('cm-tag', { 'data-tag': state.doc.sliceString(node.from, node.to) }).range(node.from, node.to),
-            );
+            decorations.push(mark('cm-tag', { 'data-tag': state.doc.sliceString(node.from, node.to) }).range(node.from, node.to));
             return;
           case 'Comment':
             decorations.push(mark('cm-comment').range(node.from, node.to));
             return;
           case 'CommentBlock':
-            for (let pos = node.from; pos <= node.to; ) {
+            for (let pos = node.from; pos <= node.to;) {
               const l = state.doc.lineAt(pos);
               decorations.push(line('cm-comment-line').range(l.from));
               pos = l.to + 1;
@@ -133,7 +131,7 @@ function buildInline(view: EditorView): DecorationSet {
             return false;
           }
           case 'Frontmatter':
-            for (let pos = node.from; pos <= node.to; ) {
+            for (let pos = node.from; pos <= node.to;) {
               const l = state.doc.lineAt(pos);
               decorations.push(line('cm-frontmatter').range(l.from));
               pos = l.to + 1;
@@ -387,7 +385,8 @@ const blockPreview = StateField.define<DecorationSet>({
   create: buildBlocks,
   update(value, tr) {
     const focusChanged = tr.effects.some((e) => e.is(setFocused));
-    if (tr.docChanged || tr.selection || focusChanged || syntaxTree(tr.startState) !== syntaxTree(tr.state)) return buildBlocks(tr.state);
+    if (tr.docChanged || tr.selection || focusChanged || syntaxTree(tr.startState) !== syntaxTree(tr.state))
+      return buildBlocks(tr.state);
     return value;
   },
   provide: (field) => EditorView.decorations.from(field),
@@ -425,7 +424,15 @@ const clickBelow = EditorView.domEventHandlers({
 });
 
 export function livePreview(): Extension {
-  return [focusField, focusTracker, inlinePreview, blockPreview, linkClicks, clickBelow, EditorView.editorAttributes.of({ class: 'cm-live-preview' })];
+  return [
+    focusField,
+    focusTracker,
+    inlinePreview,
+    blockPreview,
+    linkClicks,
+    clickBelow,
+    EditorView.editorAttributes.of({ class: 'cm-live-preview' }),
+  ];
 }
 
 /** Source mode still sizes headings and follows links with Ctrl/Cmd-click. */

@@ -23,7 +23,17 @@ export interface RenderContext {
 
 export function sanitize(html: string): string {
   return DOMPurify.sanitize(html, {
-    ADD_ATTR: ['target', 'data-line', 'data-task', 'data-callout', 'data-href', 'data-src', 'data-alt', 'data-tag', 'data-source'],
+    ADD_ATTR: [
+      'target',
+      'data-line',
+      'data-task',
+      'data-callout',
+      'data-href',
+      'data-src',
+      'data-alt',
+      'data-tag',
+      'data-source',
+    ],
     ADD_TAGS: ['input'],
     FORBID_TAGS: ['style', 'form', 'script', 'iframe', 'object', 'embed'],
     FORBID_ATTR: ['onerror', 'onload', 'onclick'],
@@ -135,7 +145,8 @@ export function renderNoteInto(container: HTMLElement, text: string, ctx: Render
     if (!link || !container.contains(link)) return;
     event.preventDefault();
     const newTab = event.metaKey || event.ctrlKey || event.button === 1;
-    if (link.classList.contains('internal-link')) void session.openLink(link.dataset.href ?? '', sourcePath, newTab ? 'tab' : 'current');
+    if (link.classList.contains('internal-link'))
+      void session.openLink(link.dataset.href ?? '', sourcePath, newTab ? 'tab' : 'current');
     else if (link.classList.contains('tag')) session.findTag(link.dataset.tag ?? '');
     else session.platform.openExternal(link.href);
   };
@@ -156,7 +167,8 @@ function renderEmbeddedNote(embed: HTMLElement, path: string, subpath: string, c
   const header = document.createElement('button');
   header.className = 'embed-header';
   header.type = 'button';
-  header.textContent = path.replace(/\.md$/, '').split('/').pop()! + (subpath ? ` › ${subpath.replace(/^#\^?/, '').replace(/#/g, ' › ')}` : '');
+  header.textContent =
+    path.replace(/\.md$/, '').split('/').pop()! + (subpath ? ` › ${subpath.replace(/^#\^?/, '').replace(/#/g, ' › ')}` : '');
   header.addEventListener('click', () => session.openPath(path, 'current', subpath || undefined));
   const content = document.createElement('div');
   content.className = 'embed-content markdown-rendered';
@@ -199,7 +211,12 @@ let mermaidLoader: Promise<typeof import('mermaid').default> | null = null;
 async function renderDiagrams(elements: HTMLElement[]) {
   mermaidLoader ??= import('mermaid').then((m) => {
     const night = document.documentElement.dataset.paper === 'night';
-    m.default.initialize({ startOnLoad: false, securityLevel: 'strict', theme: night ? 'dark' : 'neutral', fontFamily: 'inherit' });
+    m.default.initialize({
+      startOnLoad: false,
+      securityLevel: 'strict',
+      theme: night ? 'dark' : 'neutral',
+      fontFamily: 'inherit',
+    });
     return m.default;
   });
   const mermaid = await mermaidLoader;

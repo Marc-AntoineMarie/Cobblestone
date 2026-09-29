@@ -24,7 +24,13 @@ describe('NodeFsAdapter', () => {
     const adapter = new NodeFsAdapter(root);
 
     const listing = (await adapter.list()).map((s) => `${s.type}:${s.path}`).sort();
-    expect(listing).toEqual(['file:.obsidian/app.json', 'file:Notes/Deep/A.md', 'folder:.obsidian', 'folder:Notes', 'folder:Notes/Deep']);
+    expect(listing).toEqual([
+      'file:.obsidian/app.json',
+      'file:Notes/Deep/A.md',
+      'folder:.obsidian',
+      'folder:Notes',
+      'folder:Notes/Deep',
+    ]);
     expect(await adapter.read('Notes/Deep/A.md')).toBe('# A');
 
     await adapter.write('New/B.md', 'b');

@@ -42,15 +42,15 @@ npm run dev:web & node scripts/e2e-web.mjs /tmp
 
 ## Repository
 
-| Path | What it is |
-| --- | --- |
-| `packages/core` | Runtime-independent engine: Markdown metadata parser, link resolution and rewriting, vault index, search. |
-| `packages/node` | File system storage for the desktop app and future server tools. |
-| `packages/app` | The shared interface (React, CodeMirror 6): editor, reading view, workspace, views, styles. |
-| `apps/web` | Web host: folders through the File System Access API, or the browser's private storage. |
-| `apps/desktop` | Desktop host (Electron): sandboxed renderer, file access through a narrow IPC bridge. |
-| `docs/` | Roadmap and architecture. |
-| `PRODUCT.md`, `DESIGN.md` | Product brief and design system. |
+| Path                      | What it is                                                                                                |
+| ------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `packages/core`           | Runtime-independent engine: Markdown metadata parser, link resolution and rewriting, vault index, search. |
+| `packages/node`           | File system storage for the desktop app and future server tools.                                          |
+| `packages/app`            | The shared interface (React, CodeMirror 6): editor, reading view, workspace, views, styles.               |
+| `apps/web`                | Web host: folders through the File System Access API, or the browser's private storage.                   |
+| `apps/desktop`            | Desktop host (Electron): sandboxed renderer, file access through a narrow IPC bridge.                     |
+| `docs/`                   | Roadmap and architecture.                                                                                 |
+| `PRODUCT.md`, `DESIGN.md` | Product brief and design system.                                                                          |
 
 ## License
 

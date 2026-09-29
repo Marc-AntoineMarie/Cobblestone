@@ -43,7 +43,11 @@ function wikilinks(md: Md) {
   md.renderer.rules.wikilink = (tokens, idx) => {
     const { target, subpath, display } = tokens[idx]!.meta as ReturnType<typeof parseWikiInner>;
     const href = target + subpath;
-    const label = display ?? (target ? target + (subpath ? ' > ' + subpath.replace(/^#\^?/, '').replace(/#/g, ' > ') : '') : subpath.replace(/^#\^?/, ''));
+    const label =
+      display ??
+      (target
+        ? target + (subpath ? ' > ' + subpath.replace(/^#\^?/, '').replace(/#/g, ' > ') : '')
+        : subpath.replace(/^#\^?/, ''));
     return `<a class="internal-link" data-href="${md.utils.escapeHtml(href)}" href="#">${md.utils.escapeHtml(label)}</a>`;
   };
 
@@ -191,8 +195,10 @@ function math(md: Md) {
   });
 
   md.renderer.rules.math_block = (tokens, idx) => `<div class="math math-block">${renderMath(tokens[idx]!.content, true)}</div>`;
-  md.renderer.rules.math_block_inline = (tokens, idx) => `<span class="math math-block">${renderMath(tokens[idx]!.content, true)}</span>`;
-  md.renderer.rules.math_inline = (tokens, idx) => `<span class="math math-inline">${renderMath(tokens[idx]!.content, false)}</span>`;
+  md.renderer.rules.math_block_inline = (tokens, idx) =>
+    `<span class="math math-block">${renderMath(tokens[idx]!.content, true)}</span>`;
+  md.renderer.rules.math_inline = (tokens, idx) =>
+    `<span class="math math-inline">${renderMath(tokens[idx]!.content, false)}</span>`;
 }
 
 /** Task list items: "- [ ] todo" gets a checkbox that knows its source line. */
@@ -201,7 +207,8 @@ function tasks(md: Md) {
     const tokens = state.tokens;
     for (let i = 2; i < tokens.length; i++) {
       const inline = tokens[i]!;
-      if (inline.type !== 'inline' || tokens[i - 1]!.type !== 'paragraph_open' || tokens[i - 2]!.type !== 'list_item_open') continue;
+      if (inline.type !== 'inline' || tokens[i - 1]!.type !== 'paragraph_open' || tokens[i - 2]!.type !== 'list_item_open')
+        continue;
       const m = /^\[(.)\](?=\s|$)/.exec(inline.content);
       if (!m) continue;
       const status = m[1]!;
@@ -310,7 +317,16 @@ function sourceLines(md: Md) {
 
 export function createRenderer(options: RenderOptions = {}): Md {
   const md = MarkdownItFactory({ html: true, linkify: true, breaks: options.breaks ?? true, typographer: false });
-  md.use(wikilinks).use(tags).use(highlights).use(comments).use(math).use(tasks).use(callouts).use(blockIds).use(fences).use(sourceLines);
+  md.use(wikilinks)
+    .use(tags)
+    .use(highlights)
+    .use(comments)
+    .use(math)
+    .use(tasks)
+    .use(callouts)
+    .use(blockIds)
+    .use(fences)
+    .use(sourceLines);
   md.use(footnote);
   // Internal markdown links ([text](Note.md)) are resolved by the React layer.
   const linkOpen = md.renderer.rules.link_open ?? ((tokens, idx, opts, _env, self) => self.renderToken(tokens, idx, opts));

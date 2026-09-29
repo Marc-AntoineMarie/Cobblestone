@@ -127,9 +127,7 @@ function evaluateProperty(node: Extract<QueryNode, { type: 'property' }>, doc: D
   if (key === undefined) return false;
   if (!node.value) return true;
   const values = flatten(data[key]);
-  return values.some((value) =>
-    evaluate(node.value!, doc, { text: value, lower: value.toLowerCase(), offset: 0, scoped: true }),
-  );
+  return values.some((value) => evaluate(node.value!, doc, { text: value, lower: value.toLowerCase(), offset: 0, scoped: true }));
 }
 
 function flatten(value: unknown): string[] {
@@ -230,7 +228,10 @@ function collectMatches(node: QueryNode, doc: Doc, max: number): SearchMatch[] {
   const found: { from: number; to: number }[] = [];
   for (const { matcher, caseSensitive } of matchers) {
     if (matcher.kind === 'regex') {
-      const global = new RegExp(matcher.regex.source, matcher.regex.flags.includes('g') ? matcher.regex.flags : matcher.regex.flags + 'g');
+      const global = new RegExp(
+        matcher.regex.source,
+        matcher.regex.flags.includes('g') ? matcher.regex.flags : matcher.regex.flags + 'g',
+      );
       for (const m of doc.content.matchAll(global)) {
         if (m[0].length === 0) break;
         found.push({ from: m.index, to: m.index + m[0].length });

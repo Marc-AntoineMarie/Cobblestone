@@ -59,7 +59,9 @@ describe('wikilinks', () => {
 
 describe('markdown links', () => {
   it('keeps internal links and decodes them', () => {
-    const [a, b] = parseMarkdown('[text](My%20Note.md#Sec) ![](<assets/a b.png>) [web](https://x.org) [mail](mailto:a@b.c)').links;
+    const [a, b] = parseMarkdown(
+      '[text](My%20Note.md#Sec) ![](<assets/a b.png>) [web](https://x.org) [mail](mailto:a@b.c)',
+    ).links;
     expect(a).toMatchObject({ kind: 'markdown', target: 'My Note.md', subpath: '#Sec', display: 'text' });
     expect(b).toMatchObject({ embed: true, target: 'assets/a b.png', display: null });
     expect(parseMarkdown('[web](https://x.org)').links).toHaveLength(0);
@@ -88,7 +90,9 @@ describe('tags', () => {
 
 describe('frontmatter', () => {
   it('parses properties, aliases and property links', () => {
-    const meta = parseMarkdown('---\ntitle: Hello\naliases:\n  - Hi\n  - Salut\nrelated: "[[Other#Top]]"\nlist: ["[[A]]", "[[B|b]]"]\n---\n# Body');
+    const meta = parseMarkdown(
+      '---\ntitle: Hello\naliases:\n  - Hi\n  - Salut\nrelated: "[[Other#Top]]"\nlist: ["[[A]]", "[[B|b]]"]\n---\n# Body',
+    );
     expect(meta.frontmatter?.data.title).toBe('Hello');
     expect(meta.frontmatter?.endLine).toBe(7);
     expect(meta.aliases).toEqual(['Hi', 'Salut']);

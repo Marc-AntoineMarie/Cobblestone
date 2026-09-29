@@ -24,7 +24,13 @@ export function ShareSheet() {
   };
 
   return (
-    <div className="share-sheet" ref={ref} role="dialog" aria-label={t('share.title', { name: stem(path) })} onKeyDown={(e) => e.key === 'Escape' && close()}>
+    <div
+      className="share-sheet"
+      ref={ref}
+      role="dialog"
+      aria-label={t('share.title', { name: stem(path) })}
+      onKeyDown={(e) => e.key === 'Escape' && close()}
+    >
       <header>
         <h2>{t('share.title', { name: stem(path) })}</h2>
         <button className="icon-button" onClick={close} aria-label={t('note.close')} autoFocus>
@@ -34,11 +40,19 @@ export function ShareSheet() {
       <p>{t('share.soon')}</p>
       <div className="share-actions">
         <button className="button" onClick={() => void copy('link')}>
-          {copied === 'link' ? <Check size={15} strokeWidth={2} aria-hidden /> : <Copy size={15} strokeWidth={1.75} aria-hidden />}
+          {copied === 'link' ? (
+            <Check size={15} strokeWidth={2} aria-hidden />
+          ) : (
+            <Copy size={15} strokeWidth={1.75} aria-hidden />
+          )}
           {t('cmd.copyLink')}
         </button>
         <button className="button" onClick={() => void copy('markdown')}>
-          {copied === 'markdown' ? <Check size={15} strokeWidth={2} aria-hidden /> : <Copy size={15} strokeWidth={1.75} aria-hidden />}
+          {copied === 'markdown' ? (
+            <Check size={15} strokeWidth={2} aria-hidden />
+          ) : (
+            <Copy size={15} strokeWidth={1.75} aria-hidden />
+          )}
           Markdown
         </button>
       </div>

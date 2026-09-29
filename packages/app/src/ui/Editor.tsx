@@ -2,7 +2,14 @@ import { useEffect, useRef } from 'react';
 import { EditorSelection } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 import { basename, stem } from '@cobblestone/core';
-import { createEditorState, modeCompartment, modeExtension, spellcheckCompartment, spellcheckExtension, type EditorModeName } from '../editor/setup';
+import {
+  createEditorState,
+  modeCompartment,
+  modeExtension,
+  spellcheckCompartment,
+  spellcheckExtension,
+  type EditorModeName,
+} from '../editor/setup';
 import type { EditorHost } from '../editor/host';
 import type { Session } from '../session';
 import { renderNoteInto } from './render-note';
@@ -112,7 +119,10 @@ export function Editor({ path, mode, subpath, onView }: Props) {
       const v = viewRef.current;
       if (target !== pathRef.current || !v) return;
       const pos = v.state.doc.line(Math.min(v.state.doc.lines, line + 1)).from;
-      v.dispatch({ selection: EditorSelection.cursor(pos), effects: EditorView.scrollIntoView(pos, { y: 'start', yMargin: 48 }) });
+      v.dispatch({
+        selection: EditorSelection.cursor(pos),
+        effects: EditorView.scrollIntoView(pos, { y: 'start', yMargin: 48 }),
+      });
       v.focus();
     });
     return () => {

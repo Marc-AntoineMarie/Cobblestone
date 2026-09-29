@@ -67,7 +67,11 @@ function SplitView({ node }: { node: Extract<Layout, { type: 'split' }> }) {
   return (
     <div className={`split is-${node.direction}`} ref={ref}>
       {node.children.map((child, i) => (
-        <div key={child.type === 'pane' ? child.pane.id : child.id} className="split-cell" style={{ flexGrow: node.sizes[i] ?? 1 }}>
+        <div
+          key={child.type === 'pane' ? child.pane.id : child.id}
+          className="split-cell"
+          style={{ flexGrow: node.sizes[i] ?? 1 }}
+        >
           <LayoutNode node={child} />
           {i < node.children.length - 1 && (
             <div
@@ -226,7 +230,10 @@ function TabButton({
             x: e.clientX,
             y: e.clientY,
             items: [
-              { label: tab.pinned ? t('note.unpin') : t('note.pin'), run: () => session.workspace.setState((s) => togglePin(s, pane.id, tab.id)) },
+              {
+                label: tab.pinned ? t('note.unpin') : t('note.pin'),
+                run: () => session.workspace.setState((s) => togglePin(s, pane.id, tab.id)),
+              },
               { label: t('note.close'), run: close },
             ],
           },

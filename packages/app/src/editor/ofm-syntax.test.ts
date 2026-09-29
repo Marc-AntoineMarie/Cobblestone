@@ -31,16 +31,21 @@ describe('Obsidian syntax for the editor', () => {
   });
 
   it('parses highlights with nested emphasis', () => {
-    expect(nodes('==marked **bold**==', ['Highlight', 'StrongEmphasis'])).toEqual(['Highlight:==marked **bold**==', 'StrongEmphasis:**bold**']);
+    expect(nodes('==marked **bold**==', ['Highlight', 'StrongEmphasis'])).toEqual([
+      'Highlight:==marked **bold**==',
+      'StrongEmphasis:**bold**',
+    ]);
   });
 
   it('parses comments and math', () => {
-    expect(nodes('a %%hidden%% $x^2$ costs $5\n\n%%\nblock\n%%\n\n$$\nE=mc^2\n$$', ['Comment', 'CommentBlock', 'InlineMath', 'MathBlock'])).toEqual([
-      'Comment:%%hidden%%',
-      'InlineMath:$x^2$',
-      'CommentBlock:%%\nblock\n%%',
-      'MathBlock:$$\nE=mc^2\n$$',
-    ]);
+    expect(
+      nodes('a %%hidden%% $x^2$ costs $5\n\n%%\nblock\n%%\n\n$$\nE=mc^2\n$$', [
+        'Comment',
+        'CommentBlock',
+        'InlineMath',
+        'MathBlock',
+      ]),
+    ).toEqual(['Comment:%%hidden%%', 'InlineMath:$x^2$', 'CommentBlock:%%\nblock\n%%', 'MathBlock:$$\nE=mc^2\n$$']);
   });
 
   it('parses block ids only at the end of a line', () => {
@@ -48,7 +53,10 @@ describe('Obsidian syntax for the editor', () => {
   });
 
   it('parses closed frontmatter only', () => {
-    expect(nodes('---\na: 1\n---\n# H', ['Frontmatter', 'ATXHeading1'])).toEqual(['Frontmatter:---\na: 1\n---', 'ATXHeading1:# H']);
+    expect(nodes('---\na: 1\n---\n# H', ['Frontmatter', 'ATXHeading1'])).toEqual([
+      'Frontmatter:---\na: 1\n---',
+      'ATXHeading1:# H',
+    ]);
     expect(nodes('---\nno closing', ['Frontmatter'])).toEqual([]);
   });
 

@@ -58,7 +58,12 @@ describe('Vault', () => {
       'folder/B.md': '---\ntags: [tag]\n---\nBack to [[A|home]].',
       '.obsidian/app.json': '{}',
     });
-    expect(vault.getFiles().map((f) => f.path).sort()).toEqual(['A.md', 'folder/B.md']);
+    expect(
+      vault
+        .getFiles()
+        .map((f) => f.path)
+        .sort(),
+    ).toEqual(['A.md', 'folder/B.md']);
     expect(vault.getFolders().map((f) => f.path)).toEqual(['folder']);
     expect([...vault.cache.getResolvedLinks('A.md').keys()]).toEqual(['folder/B.md']);
     expect([...vault.cache.getUnresolvedLinks('A.md').keys()]).toEqual(['Missing']);
@@ -120,9 +125,7 @@ describe('Vault', () => {
     // Partial paths that still resolve are left untouched, like any unaffected link.
     expect(await vault.read('Home.md')).toBe('[[docs/Guide]] [[Guide]]');
     expect(vault.cache.getResolvedLinks('Home.md').get('archive/docs/Guide.md')).toBe(2);
-    expect(await vault.read('archive/docs/Guide.md')).toBe(
-      'See [sibling](./Sibling.md) and [[Home]] and [up](../../Home.md)',
-    );
+    expect(await vault.read('archive/docs/Guide.md')).toBe('See [sibling](./Sibling.md) and [[Home]] and [up](../../Home.md)');
   });
 
   it('handles case-only renames', async () => {

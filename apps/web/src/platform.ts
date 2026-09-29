@@ -99,7 +99,11 @@ export const webPlatform: Platform = {
 
   async forgetVault(id) {
     const entry = (await entries()).find((e) => e.id === id);
-    await set(ENTRIES, (await entries()).filter((e) => e.id !== id), db);
+    await set(
+      ENTRIES,
+      (await entries()).filter((e) => e.id !== id),
+      db,
+    );
     await del(handleKey(id), db);
     // Browser vaults live only here: forgetting one deletes it.
     if (entry?.kind === 'browser') await (await browserVaultsRoot()).removeEntry(id, { recursive: true }).catch(() => undefined);
@@ -110,7 +114,7 @@ export const webPlatform: Platform = {
   },
 
   storage: {
-    get: <T,>(key: string) => get<T>(`storage:${key}`, db),
-    set: <T,>(key: string, value: T) => set(`storage:${key}`, value, db),
+    get: <T>(key: string) => get<T>(`storage:${key}`, db),
+    set: <T>(key: string, value: T) => set(`storage:${key}`, value, db),
   },
 };

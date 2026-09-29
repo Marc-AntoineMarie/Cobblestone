@@ -7,7 +7,12 @@ const browser = await chromium.launch({ executablePath: '/usr/bin/google-chrome'
 const errors = [];
 
 async function session(name, { width = 1440, height = 900, paper = 'light', lang = 'fr-FR' } = {}, steps = async () => {}) {
-  const context = await browser.newContext({ viewport: { width, height }, colorScheme: paper, locale: lang, deviceScaleFactor: 1 });
+  const context = await browser.newContext({
+    viewport: { width, height },
+    colorScheme: paper,
+    locale: lang,
+    deviceScaleFactor: 1,
+  });
   const page = await context.newPage();
   page.on('pageerror', (e) => errors.push(`${name}: ${e.message}`));
   page.on('console', (m) => m.type() === 'error' && errors.push(`${name} console: ${m.text()}`));
@@ -43,7 +48,10 @@ await session('demo', {}, async (page, shot) => {
 await session('demo-night', { paper: 'dark' }, async (page, shot) => {
   await demo(page);
   await shot('welcome');
-  await page.getByRole('button', { name: /Graphe/ }).first().click();
+  await page
+    .getByRole('button', { name: /Graphe/ })
+    .first()
+    .click();
   await page.waitForTimeout(1500);
   await shot('graph');
 });

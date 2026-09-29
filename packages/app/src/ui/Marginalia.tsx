@@ -48,7 +48,9 @@ function MarginNotes({ path }: { path: string }) {
     });
     const resolved = [...cache.getResolvedLinks(path).keys()].filter((p) => p !== path);
     const unresolved = [...cache.getUnresolvedLinks(path).keys()];
-    const properties = Object.entries(meta?.frontmatter?.data ?? {}).filter(([key]) => !['tags', 'tag', 'aliases', 'alias'].includes(key));
+    const properties = Object.entries(meta?.frontmatter?.data ?? {}).filter(
+      ([key]) => !['tags', 'tag', 'aliases', 'alias'].includes(key),
+    );
     return { meta, backlinks, resolved, unresolved, properties };
   }, [session, cache, path, revision]);
 
@@ -64,7 +66,10 @@ function MarginNotes({ path }: { path: string }) {
           <ul className="backlinks">
             {data.backlinks.map((b) => (
               <li key={b.source}>
-                <button className="margin-link" onClick={(e) => session.openPath(b.source, e.metaKey || e.ctrlKey ? 'tab' : 'current')}>
+                <button
+                  className="margin-link"
+                  onClick={(e) => session.openPath(b.source, e.metaKey || e.ctrlKey ? 'tab' : 'current')}
+                >
                   {stem(b.source)}
                 </button>
                 {b.contexts.map((c, i) => (
@@ -201,8 +206,14 @@ export function contextSegments(line: string, hitAt: number, radius = 70): { tex
 
   // Keep a window of text around the hit.
   if (hitIndex !== -1) {
-    const before = segments.slice(0, hitIndex).map((s) => s.text).join('');
-    const after = segments.slice(hitIndex + 1).map((s) => s.text).join('');
+    const before = segments
+      .slice(0, hitIndex)
+      .map((s) => s.text)
+      .join('');
+    const after = segments
+      .slice(hitIndex + 1)
+      .map((s) => s.text)
+      .join('');
     return [
       { text: before.length > radius ? '…' + before.slice(-radius).replace(/^\S*\s/, '') : before, hit: false },
       { text: segments[hitIndex]!.text, hit: true },

@@ -62,7 +62,14 @@ export function FileTree() {
       const entry = children.get(parent);
       if (!entry) return;
       for (const path of [...entry.folders].sort((a, b) => collator.compare(a, b))) {
-        out.push({ path, name: path.slice(path.lastIndexOf('/') + 1), depth, kind: 'folder', extension: '', count: noteCount.get(path) ?? 0 });
+        out.push({
+          path,
+          name: path.slice(path.lastIndexOf('/') + 1),
+          depth,
+          kind: 'folder',
+          extension: '',
+          count: noteCount.get(path) ?? 0,
+        });
         if (expanded[path]) walk(path, depth + 1);
       }
       for (const file of [...entry.files].sort((a, b) => collator.compare(a.name, b.name))) {
@@ -321,11 +328,7 @@ const TreeRow = memo(function TreeRow({ row, top, open, active, focused, reveale
         {row.kind === 'folder' && <ChevronRight size={14} strokeWidth={2} className={open ? 'is-open' : undefined} />}
       </span>
       <Icon size={15} strokeWidth={1.75} className="tree-icon" aria-hidden />
-      {renaming ? (
-        <RenameField path={row.path} initial={row.name} />
-      ) : (
-        <span className="tree-name">{row.name}</span>
-      )}
+      {renaming ? <RenameField path={row.path} initial={row.name} /> : <span className="tree-name">{row.name}</span>}
       {row.kind === 'file' && row.extension !== 'md' && <span className="tree-ext">{row.extension}</span>}
       {row.kind === 'folder' && row.count > 0 && <span className="tree-count">{row.count}</span>}
     </div>

@@ -1,5 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { forceCenter, forceCollide, forceLink, forceManyBody, forceSimulation, type Simulation, type SimulationLinkDatum, type SimulationNodeDatum } from 'd3-force';
+import {
+  forceCenter,
+  forceCollide,
+  forceLink,
+  forceManyBody,
+  forceSimulation,
+  type Simulation,
+  type SimulationLinkDatum,
+  type SimulationNodeDatum,
+} from 'd3-force';
 import { RotateCcw } from 'lucide-react';
 import { stem } from '@cobblestone/core';
 import { t } from '../i18n';
@@ -202,7 +211,10 @@ export function GraphView({ focus, visible }: { focus?: string; visible: boolean
       .force('link', forceLink(links).distance(64).strength(0.35))
       .force('charge', forceManyBody().strength(-110).distanceMax(420))
       .force('center', forceCenter(0, 0).strength(0.04))
-      .force('collide', forceCollide<GraphNode>((n) => n.radius + 3))
+      .force(
+        'collide',
+        forceCollide<GraphNode>((n) => n.radius + 3),
+      )
       .alphaDecay(0.03)
       .on('tick', () => {
         ticks++;
@@ -229,7 +241,10 @@ export function GraphView({ focus, visible }: { focus?: string; visible: boolean
       view = { k, x: -((minX + maxX) / 2) * k, y: -((minY + maxY) / 2) * k };
     }
 
-    const toWorld = (sx: number, sy: number) => ({ x: (sx - width / 2 - view.x) / view.k, y: (sy - height / 2 - view.y) / view.k });
+    const toWorld = (sx: number, sy: number) => ({
+      x: (sx - width / 2 - view.x) / view.k,
+      y: (sy - height / 2 - view.y) / view.k,
+    });
 
     const nodeAt = (sx: number, sy: number) => {
       const p = toWorld(sx, sy);
@@ -254,7 +269,8 @@ export function GraphView({ focus, visible }: { focus?: string; visible: boolean
 
       context.lineWidth = 1 / view.k;
       for (const link of links) {
-        const on = lit && lit.has(link.source.id) && lit.has(link.target.id) && (link.source === hovered || link.target === hovered);
+        const on =
+          lit && lit.has(link.source.id) && lit.has(link.target.id) && (link.source === hovered || link.target === hovered);
         context.strokeStyle = on ? inks.pink : inks.rule;
         context.globalAlpha = lit && !on ? 0.35 : 1;
         context.lineWidth = (on ? 2 : 1) / view.k;

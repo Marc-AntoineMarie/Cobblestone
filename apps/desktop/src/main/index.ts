@@ -84,7 +84,10 @@ ipcMain.handle('vaults:create', async (event, name: string) => {
 });
 
 ipcMain.handle('vaults:forget', async (_event, id: string) => {
-  await writeJson('vaults.json', (await recentVaults()).filter((v) => v.id !== id));
+  await writeJson(
+    'vaults.json',
+    (await recentVaults()).filter((v) => v.id !== id),
+  );
 });
 
 ipcMain.handle('vaults:open', async (event, id: string) => {

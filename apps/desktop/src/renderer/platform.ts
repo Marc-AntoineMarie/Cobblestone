@@ -57,7 +57,7 @@ export const desktopPlatform: Platform = {
   },
   openExternal: (url) => void bridge().openExternal(url),
   storage: {
-    get: async <T,>(key: string) => (await bridge().storage.get(key)) as T | undefined,
-    set: async <T,>(key: string, value: T) => void (await bridge().storage.set(key, value)),
+    get: async <T>(key: string) => (await bridge().storage.get(key)) as T | undefined,
+    set: async <T>(key: string, value: T) => void (await bridge().storage.set(key, value)),
   },
 };

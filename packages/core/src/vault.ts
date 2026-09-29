@@ -242,7 +242,12 @@ export class Vault extends Emitter<VaultEvents> {
     if (this.exists(to) && !caseOnly) throw new Error(`"${to}" already exists`);
     if (kind === 'folder' && isInside(to, from)) throw new Error('Cannot move a folder into itself');
 
-    const moved = kind === 'file' ? [from] : this.getFiles().map((f) => f.path).filter((p) => isInside(p, from));
+    const moved =
+      kind === 'file'
+        ? [from]
+        : this.getFiles()
+            .map((f) => f.path)
+            .filter((p) => isInside(p, from));
     const mapping = new Map(moved.map((p) => [p, to + p.slice(from.length)]));
 
     // Snapshot links to the moved files before the index changes.
@@ -319,10 +324,7 @@ export class Vault extends Emitter<VaultEvents> {
     return result;
   }
 
-  private async applyLinkEdits(
-    edits: Map<string, { link: LinkRef; target: string }[]>,
-    mapping: Map<string, string>,
-  ) {
+  private async applyLinkEdits(edits: Map<string, { link: LinkRef; target: string }[]>, mapping: Map<string, string>) {
     for (const [oldSource, links] of edits) {
       const source = mapping.get(oldSource) ?? oldSource;
       const text = await this.read(source);
@@ -364,7 +366,12 @@ export class Vault extends Emitter<VaultEvents> {
   }
 
   private forget(path: string, kind: 'file' | 'folder') {
-    const removed = kind === 'file' ? [path] : this.getFiles().map((f) => f.path).filter((p) => isInside(p, path));
+    const removed =
+      kind === 'file'
+        ? [path]
+        : this.getFiles()
+            .map((f) => f.path)
+            .filter((p) => isInside(p, path));
     for (const p of removed) {
       this.files.delete(p);
       this.contents.delete(p);
@@ -433,7 +440,11 @@ export class Vault extends Emitter<VaultEvents> {
         if (this.exists(change.path) || !this.exists(change.oldPath)) return;
         const kind = this.files.has(change.oldPath) ? 'file' : 'folder';
         const moved =
-          kind === 'file' ? [change.oldPath] : this.getFiles().map((f) => f.path).filter((p) => isInside(p, change.oldPath));
+          kind === 'file'
+            ? [change.oldPath]
+            : this.getFiles()
+                .map((f) => f.path)
+                .filter((p) => isInside(p, change.oldPath));
         for (const oldPath of moved) {
           const newPath = change.path + oldPath.slice(change.oldPath.length);
           const file = this.files.get(oldPath)!;

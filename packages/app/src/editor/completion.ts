@@ -57,7 +57,13 @@ export function linkCompletion(context: CompletionContext): CompletionResult | n
       const folder = dirname(candidate.path);
       options.push({ label: candidate.name, detail: folder || undefined, apply: applyLink(text), type: 'note' });
       for (const alias of candidate.aliases) {
-        options.push({ label: alias, detail: `→ ${candidate.name}`, apply: applyLink(`${text}|${alias}`), type: 'alias', boost: -1 });
+        options.push({
+          label: alias,
+          detail: `→ ${candidate.name}`,
+          apply: applyLink(`${text}|${alias}`),
+          type: 'alias',
+          boost: -1,
+        });
       }
     }
     return { from: start, options, validFor: /^[^[\]\n#|]*$/ };

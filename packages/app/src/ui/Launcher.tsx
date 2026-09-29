@@ -21,7 +21,8 @@ export function Launcher({ platform, opening, error, onOpen }: Props) {
   /** Browser vaults exist only here: removing one asks first. */
   const [confirming, setConfirming] = useState<string | null>(null);
 
-  const refresh = () => void platform.recentVaults().then((list) => setRecent([...list].sort((a, b) => b.lastOpened - a.lastOpened)));
+  const refresh = () =>
+    void platform.recentVaults().then((list) => setRecent([...list].sort((a, b) => b.lastOpened - a.lastOpened)));
   useEffect(refresh, [platform]);
 
   const pick = async () => {
@@ -135,7 +136,11 @@ export function Launcher({ platform, opening, error, onOpen }: Props) {
                     <span className="recent-name">{entry.name}</span>
                     <span className="recent-where">{entry.location ?? t(`launcher.kind.${entry.kind}`)}</span>
                     <time className="recent-date" dateTime={new Date(entry.lastOpened).toISOString()}>
-                      {new Date(entry.lastOpened).toLocaleDateString(undefined, { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                      {new Date(entry.lastOpened).toLocaleDateString(undefined, {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                      })}
                     </time>
                   </button>
                   {confirming === entry.id ? (
