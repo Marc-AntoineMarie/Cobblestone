@@ -316,8 +316,11 @@ export class Session {
 
   openBookmark(bookmark: Bookmark, target: OpenTarget = 'current') {
     if (bookmark.type === 'file') this.openPath(bookmark.path, target, bookmark.subpath);
-    else if (bookmark.type === 'folder') this.revealInTree(bookmark.path);
-    else if (bookmark.type === 'search') this.ui.setState({ railOpen: true, railQuery: bookmark.query });
+    else if (bookmark.type === 'folder') {
+      // A bookmarked folder is shown open, its notes in view.
+      this.revealInTree(bookmark.path);
+      this.ui.setState((s) => ({ expanded: { ...s.expanded, [bookmark.path]: true } }));
+    } else if (bookmark.type === 'search') this.ui.setState({ railOpen: true, railQuery: bookmark.query });
   }
 
   /** Lists the notes carrying a tag in the rail. */
