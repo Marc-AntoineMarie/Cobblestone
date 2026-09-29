@@ -19,7 +19,8 @@ linux:
   syncDesktopName: true
   target: [AppImage, deb]
   category: Office
-  icon: build/icon.png
+  # One PNG per size: desktops only look up the sizes their icon theme lists (up to 512).
+  icon: build/icons
   synopsis: Local-first knowledge base
   artifactName: Cobblestone-${version}-${arch}.${ext}
 deb:

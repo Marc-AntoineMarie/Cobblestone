@@ -5,7 +5,7 @@ import { spawn } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import electron from 'electron';
-import { mainOptions, preloadOptions } from './build.mjs';
+import { copyWindowIcon, mainOptions, preloadOptions } from './build.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const server = await createServer({ configFile: path.join(root, 'vite.config.ts') });
@@ -29,6 +29,7 @@ const restart = () => {
 
 const restartPlugin = { name: 'restart-electron', setup: (b) => b.onEnd((r) => r.errors.length === 0 && restart()) };
 const main = await context({ ...mainOptions, plugins: [restartPlugin] });
+await copyWindowIcon();
 const preload = await context(preloadOptions);
 await preload.rebuild();
 await preload.watch();
