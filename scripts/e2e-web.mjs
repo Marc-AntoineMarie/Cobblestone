@@ -81,6 +81,24 @@ check(
   (await page.locator('.cm-content').innerText()).includes(`Standup on ${new Date().getFullYear()}`),
 );
 
+// Canvas: create one, add a card, and find it again after a reload.
+await page.keyboard.press('Control+k');
+await page.keyboard.type('>canvas');
+await page.keyboard.press('Enter');
+await page.waitForTimeout(700);
+const sheet = page.locator('.canvas-view');
+const box = await sheet.boundingBox();
+await sheet.dblclick({ position: { x: box.width / 2, y: box.height / 2 } });
+await page.keyboard.type('Hello canvas');
+await page.keyboard.press('Escape');
+await page.waitForTimeout(900);
+await page.reload();
+await page.waitForTimeout(1500);
+check(
+  'keeps canvas cards after a reload',
+  (await page.locator('.canvas-node.is-text').allInnerTexts()).join(' ').includes('Hello canvas'),
+);
+
 await context.close();
 await rm(profile, { recursive: true, force: true });
 await web.stop();
