@@ -4,6 +4,7 @@ import { renderTex } from '../markdown/katex';
 import { renderMarkdown, stripFrontmatter } from '../markdown/render';
 import { t } from '../i18n';
 import type { Session } from '../session';
+import { hidePreviewNow, hidePreviewSoon, schedulePreview } from './preview';
 
 const IMAGE = new Set(['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'bmp', 'avif']);
 const AUDIO = new Set(['mp3', 'wav', 'm4a', 'ogg', 'flac']);
@@ -151,6 +152,7 @@ export function renderNoteInto(container: HTMLElement, text: string, ctx: Render
     // Links inside an embedded note belong to that note's own renderer.
     if (!link || link.closest('.markdown-rendered') !== container) return;
     event.preventDefault();
+    hidePreviewNow(session);
     const newTab = event.metaKey || event.ctrlKey || event.button === 1;
     if (link.classList.contains('internal-link'))
       void session.openLink(link.dataset.href ?? '', sourcePath, newTab ? 'tab' : 'current');
@@ -159,6 +161,23 @@ export function renderNoteInto(container: HTMLElement, text: string, ctx: Render
   };
   container.addEventListener('click', onClick);
   cleanups.push(() => container.removeEventListener('click', onClick));
+
+  // Hovering an internal link previews its target.
+  const onOver = (event: MouseEvent) => {
+    const link = (event.target as HTMLElement).closest<HTMLAnchorElement>('a.internal-link');
+    if (!link || link.closest('.markdown-rendered') !== container) return;
+    schedulePreview(session, link.dataset.href ?? '', sourcePath, link);
+  };
+  const onOut = (event: MouseEvent) => {
+    const link = (event.target as HTMLElement).closest('a.internal-link');
+    if (link && !link.contains(event.relatedTarget as Node)) hidePreviewSoon(session);
+  };
+  container.addEventListener('mouseover', onOver);
+  container.addEventListener('mouseout', onOut);
+  cleanups.push(() => {
+    container.removeEventListener('mouseover', onOver);
+    container.removeEventListener('mouseout', onOut);
+  });
   return () => cleanups.forEach((c) => c());
 }
 

@@ -412,6 +412,22 @@ const linkClicks = EditorView.domEventHandlers({
   },
 });
 
+/** Ctrl/Cmd + hover on a link previews its target, as in Obsidian's editing mode. */
+const linkHovers = EditorView.domEventHandlers({
+  mousemove(event, view) {
+    const host = view.state.facet(editorHost);
+    const link = (event.target as HTMLElement).closest<HTMLElement>('[data-link-target]');
+    if (!host || !link || !(event.ctrlKey || event.metaKey)) return false;
+    host.previewLink(link.dataset.linkTarget ?? '', link);
+    return false;
+  },
+  mouseout(event, view) {
+    const link = (event.target as HTMLElement).closest('[data-link-target]');
+    if (link && !link.contains(event.relatedTarget as Node)) view.state.facet(editorHost)?.endPreview();
+    return false;
+  },
+});
+
 /** Clicking below a trailing block widget should still place the cursor at the end. */
 const clickBelow = EditorView.domEventHandlers({
   mousedown(event, view) {

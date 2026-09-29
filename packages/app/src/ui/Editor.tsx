@@ -12,6 +12,7 @@ import {
 } from '../editor/setup';
 import type { EditorHost } from '../editor/host';
 import type { Session } from '../session';
+import { hidePreviewSoon, schedulePreview } from './preview';
 import { renderNoteInto } from './render-note';
 import { useSession, useStore } from './hooks';
 
@@ -31,6 +32,8 @@ function createHost(session: Session, pathRef: { current: string }): EditorHost 
     resolve: (target) => cache.resolve(target, pathRef.current),
     openLink: (target, { newTab }) => void session.openLink(target, pathRef.current, newTab ? 'tab' : 'current'),
     openTag: (tag) => session.findTag(tag),
+    previewLink: (target, anchor) => schedulePreview(session, target, pathRef.current, anchor, 150),
+    endPreview: () => hidePreviewSoon(session),
     openExternal: (url) => session.platform.openExternal(url),
     resourceUrl: (path) => session.resourceUrl(path),
     renderEmbed: (container, target, _display) => {

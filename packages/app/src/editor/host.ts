@@ -9,6 +9,9 @@ export interface EditorHost {
   /** Follows a link target ("Note#Heading"). */
   openLink(target: string, options: { newTab: boolean }): void;
   openTag(tag: string): void;
+  /** Shows the hover preview of a link target next to `anchor`, or hides it. */
+  previewLink(target: string, anchor: Element): void;
+  endPreview(): void;
   openExternal(url: string): void;
   /** Object URL for an attachment, for images, audio, video and PDFs. */
   resourceUrl(path: string): Promise<string>;

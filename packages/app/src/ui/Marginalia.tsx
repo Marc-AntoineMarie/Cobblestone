@@ -3,6 +3,7 @@ import { PanelRightClose } from 'lucide-react';
 import { stem } from '@cobblestone/core';
 import { t } from '../i18n';
 import { useNoteRevision, useSession, useStore } from './hooks';
+import { hidePreviewSoon, schedulePreview } from './preview';
 
 /**
  * Notes in the margin of the sheet: who links here, the outline, links out
@@ -32,6 +33,11 @@ function MarginNotes({ path }: { path: string }) {
   const session = useSession();
   const revision = useNoteRevision(path);
   const cache = session.vault.cache;
+  // Margin links preview their note on hover.
+  const hover = (target: string) => ({
+    onMouseEnter: (e: React.MouseEvent) => schedulePreview(session, target, '', e.currentTarget),
+    onMouseLeave: () => hidePreviewSoon(session),
+  });
 
   const data = useMemo(() => {
     void revision;
@@ -68,6 +74,7 @@ function MarginNotes({ path }: { path: string }) {
               <li key={b.source}>
                 <button
                   className="margin-link"
+                  {...hover(b.source)}
                   onClick={(e) => session.openPath(b.source, e.metaKey || e.ctrlKey ? 'tab' : 'current')}
                 >
                   {stem(b.source)}
@@ -122,7 +129,11 @@ function MarginNotes({ path }: { path: string }) {
           <ul className="outgoing">
             {data.resolved.map((p) => (
               <li key={p}>
-                <button className="margin-link" onClick={(e) => session.openPath(p, e.metaKey || e.ctrlKey ? 'tab' : 'current')}>
+                <button
+                  className="margin-link"
+                  {...hover(p)}
+                  onClick={(e) => session.openPath(p, e.metaKey || e.ctrlKey ? 'tab' : 'current')}
+                >
                   {stem(p)}
                 </button>
               </li>

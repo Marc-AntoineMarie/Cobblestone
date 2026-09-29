@@ -68,6 +68,8 @@ export interface UIState {
   revealed: string | null;
   /** Text of the rail's find field. */
   railQuery: string;
+  /** Hover preview of a link target. */
+  preview: { linktext: string; sourcePath: string; rect: { left: number; right: number; top: number; bottom: number } } | null;
   toasts: Toast[];
 }
 
@@ -115,6 +117,7 @@ export class Session {
       expanded: {},
       revealed: null,
       railQuery: '',
+      preview: null,
       toasts: [],
     }));
 

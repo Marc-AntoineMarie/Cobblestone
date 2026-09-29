@@ -87,6 +87,7 @@ const en = {
   'note.splitDown': 'Split down',
   'note.close': 'Close',
   'note.pin': 'Pin',
+  'preview.open': 'Open note',
   'note.unpin': 'Unpin',
 
   'margin.backlinks': 'Backlinks',
@@ -282,6 +283,7 @@ const fr: Messages = {
   'note.splitDown': 'Diviser en bas',
   'note.close': 'Fermer',
   'note.pin': 'Épingler',
+  'preview.open': 'Ouvrir la note',
   'note.unpin': 'Désépingler',
 
   'margin.backlinks': 'Rétroliens',

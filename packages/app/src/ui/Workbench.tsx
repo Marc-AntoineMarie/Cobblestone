@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { registerAppCommands } from './app-commands';
 import { ContextMenu } from './ContextMenu';
 import { Finder } from './Finder';
+import { HoverPreview } from './HoverPreview';
 import { useMediaQuery, useSession, useStore } from './hooks';
 import { LayoutView } from './LayoutView';
 import { Marginalia } from './Marginalia';
@@ -55,6 +56,7 @@ export function Workbench({ onSwitchVault }: { onSwitchVault: () => void }) {
       <Finder />
       <ContextMenu />
       <ShareSheet />
+      <HoverPreview />
       <Toasts />
     </div>
   );
