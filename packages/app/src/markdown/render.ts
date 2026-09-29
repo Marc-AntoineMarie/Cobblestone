@@ -1,7 +1,6 @@
 /// <reference path="../types/modules.d.ts" />
 import MarkdownItFactory, { type MarkdownIt, type StateCore, type StateInline, type Token } from 'markdown-it';
 import footnote from 'markdown-it-footnote';
-import katex from 'katex';
 import { isValidTagName, parseWikiInner } from '@cobblestone/core';
 
 /*
@@ -122,13 +121,9 @@ function comments(md: Md) {
 }
 
 function math(md: Md) {
-  const renderMath = (tex: string, displayMode: boolean) => {
-    try {
-      return katex.renderToString(tex, { displayMode, throwOnError: false, output: 'html', trust: false });
-    } catch {
-      return `<code class="math-error">${md.utils.escapeHtml(tex)}</code>`;
-    }
-  };
+  // Formulas are typeset later by the page (KaTeX loads on demand): only the TeX travels here.
+  const placeholder = (tag: string, cls: string, tex: string) =>
+    `<${tag} class="math ${cls}" data-tex="${md.utils.escapeHtml(tex)}">${md.utils.escapeHtml(tex)}</${tag}>`;
 
   md.block.ruler.before('fence', 'math_block', (state, startLine, endLine, silent) => {
     const start = state.bMarks[startLine]! + state.tShift[startLine]!;
@@ -194,11 +189,9 @@ function math(md: Md) {
     return false;
   });
 
-  md.renderer.rules.math_block = (tokens, idx) => `<div class="math math-block">${renderMath(tokens[idx]!.content, true)}</div>`;
-  md.renderer.rules.math_block_inline = (tokens, idx) =>
-    `<span class="math math-block">${renderMath(tokens[idx]!.content, true)}</span>`;
-  md.renderer.rules.math_inline = (tokens, idx) =>
-    `<span class="math math-inline">${renderMath(tokens[idx]!.content, false)}</span>`;
+  md.renderer.rules.math_block = (tokens, idx) => placeholder('div', 'math-block', tokens[idx]!.content);
+  md.renderer.rules.math_block_inline = (tokens, idx) => placeholder('span', 'math-block', tokens[idx]!.content);
+  md.renderer.rules.math_inline = (tokens, idx) => placeholder('span', 'math-inline', tokens[idx]!.content);
 }
 
 /** Task list items: "- [ ] todo" gets a checkbox that knows its source line. */
