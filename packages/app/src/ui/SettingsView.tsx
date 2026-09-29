@@ -173,6 +173,38 @@ export function SettingsView() {
         </section>
 
         <section>
+          <h2 className="label">{t('settings.templates')}</h2>
+          <Row label={t('settings.templatesFolder')} htmlFor="set-templates">
+            <select
+              id="set-templates"
+              value={settings.templatesFolder}
+              onChange={(e) => set({ templatesFolder: e.target.value })}
+            >
+              <option value="">{t('settings.templatesAuto')}</option>
+              {folders.filter(Boolean).map((f) => (
+                <option key={f} value={f}>
+                  {f}
+                </option>
+              ))}
+            </select>
+          </Row>
+          <Row label={t('settings.dateFormat')} htmlFor="set-tpl-date" hint="{{date}}">
+            <input
+              id="set-tpl-date"
+              value={settings.templateDateFormat}
+              onChange={(e) => set({ templateDateFormat: e.target.value })}
+            />
+          </Row>
+          <Row label={t('settings.timeFormat')} htmlFor="set-tpl-time" hint="{{time}}">
+            <input
+              id="set-tpl-time"
+              value={settings.templateTimeFormat}
+              onChange={(e) => set({ templateTimeFormat: e.target.value })}
+            />
+          </Row>
+        </section>
+
+        <section>
           <h2 className="label">{t('settings.about')}</h2>
           <p className="settings-about">{t('settings.aboutText', { version: VERSION })}</p>
         </section>

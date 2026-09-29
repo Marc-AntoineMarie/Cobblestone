@@ -170,6 +170,14 @@ export function registerAppCommands(
       run: () => session.ui.setState({ focusTitle: session.activePath }),
     },
     {
+      id: 'note:insert-template',
+      name: t('cmd.insertTemplate'),
+      section: t('cmd.section.note'),
+      hotkeys: hk('Alt+T'),
+      when: noteOpen,
+      run: () => session.insertTemplate(),
+    },
+    {
       id: 'note:bookmark',
       name: t('cmd.bookmark'),
       section: t('cmd.section.note'),

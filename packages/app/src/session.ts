@@ -22,14 +22,17 @@ import {
   toggleFileBookmark,
   type Bookmark,
 } from './bookmarks';
+import type { EditorView } from '@codemirror/view';
 import { CommandRegistry } from './commands';
 import { getLanguage, t } from './i18n';
 import type { Platform, VaultEntry } from './platform';
 import { DEFAULT_SETTINGS, formatDate, loadVaultSettings, saveVaultSettings, type VaultSettings } from './settings';
+import { applyTemplate, findTemplatesFolder, listTemplates } from './templates';
 import {
   activeTab,
   initialWorkspace,
   open,
+  panes,
   removePaths,
   renamePaths,
   viewForPath,
@@ -46,6 +49,14 @@ export interface MenuItem {
   separatorBefore?: boolean;
 }
 
+/** A list to choose from in the finder (templates, and later other pickers). */
+export interface PickRequest {
+  mode: 'pick';
+  placeholder: string;
+  items: { id: string; label: string; detail?: string }[];
+  onPick: (id: string) => void;
+}
+
 export interface Toast {
   id: number;
   text: string;
@@ -55,7 +66,7 @@ export interface Toast {
 export interface UIState {
   railOpen: boolean;
   marginOpen: boolean;
-  finder: { mode: 'notes' | 'commands' } | null;
+  finder: { mode: 'notes' | 'commands' } | PickRequest | null;
   menu: { x: number; y: number; items: MenuItem[] } | null;
   share: string | null;
   /** Tree item being renamed inline. */
@@ -92,6 +103,8 @@ export class Session {
   /** Recently opened files, most recent first. */
   recent: string[] = [];
   private resourceUrls = new Map<string, string>();
+  /** Editors by tab id, so commands can act on the active one. */
+  private editors = new Map<string, EditorView>();
   private disposers: (() => void)[] = [];
   private toastId = 0;
 
@@ -407,11 +420,90 @@ export class Session {
     let content = '';
     if (settings.dailyTemplate) {
       const template = this.vault.cache.resolve(settings.dailyTemplate, '');
-      if (template) content = applyTemplate(await this.vault.read(template), name, date);
+      if (template) content = applyTemplate(await this.vault.read(template), this.templateContext(name, date));
     }
     try {
       const file = await this.vault.create(path, content);
       this.openPath(file.path);
+    } catch (error) {
+      this.fail(error);
+    }
+  }
+
+  // --------------------------------------------------------------- editors and templates
+
+  registerEditor(tabId: string, view: EditorView): () => void {
+    this.editors.set(tabId, view);
+    return () => {
+      if (this.editors.get(tabId) === view) this.editors.delete(tabId);
+    };
+  }
+
+  /** The editor of the active tab, when it shows a note in edit mode. */
+  get activeEditor(): EditorView | undefined {
+    const tab = activeTab(this.workspace.getState());
+    return tab ? this.editors.get(tab.id) : undefined;
+  }
+
+  private templateContext(title: string, date = new Date()) {
+    const settings = this.settings.getState();
+    return {
+      title,
+      date,
+      dateFormat: settings.templateDateFormat,
+      timeFormat: settings.templateTimeFormat,
+      locale: getLanguage(),
+    };
+  }
+
+  /** Lets the user pick a template and inserts it at the cursor of the active note. */
+  insertTemplate() {
+    const target = this.activePath;
+    const tab = activeTab(this.workspace.getState());
+    if (!target || !tab || !target.endsWith('.md')) return;
+    const folder = findTemplatesFolder(this.settings.getState().templatesFolder, this.vault.getFolders());
+    if (!folder) {
+      this.notify(t('template.noFolder'), 'error');
+      return;
+    }
+    const templates = listTemplates(
+      folder,
+      this.vault.getMarkdownFiles().map((f) => f.path),
+    );
+    if (templates.length === 0) {
+      this.notify(t('template.none', { folder }), 'error');
+      return;
+    }
+    this.ui.setState({
+      finder: {
+        mode: 'pick',
+        placeholder: t('template.pick'),
+        items: templates.map((path) => ({
+          id: path,
+          label: stem(path),
+          detail: dirname(path).slice(folder.length + 1) || undefined,
+        })),
+        // Follow the tab, not the path: the note may be renamed while the list is open.
+        onPick: (path) => void this.applyTemplateTo(path, tab.id),
+      },
+    });
+  }
+
+  private async applyTemplateTo(templatePath: string, tabId: string) {
+    try {
+      const tab = panes(this.workspace.getState().layout)
+        .flatMap((p) => p.tabs)
+        .find((t) => t.id === tabId);
+      const notePath = tab ? viewPath(tab.view) : null;
+      if (!notePath) return;
+      const text = applyTemplate(await this.vault.read(templatePath), this.templateContext(stem(notePath)));
+      const view = this.editors.get(tabId);
+      if (view) {
+        view.dispatch(view.state.replaceSelection(text));
+        view.focus();
+      } else {
+        await this.vault.process(notePath, (current) => (current.trim() ? `${current.replace(/\n*$/, '')}\n\n${text}` : text));
+      }
     } catch (error) {
       this.fail(error);
     }
@@ -509,15 +601,6 @@ function allViewPaths(state: WorkspaceState): string[] {
   };
   walk(state.layout);
   return out;
-}
-
-/** Core template variables: {{title}}, {{date}}, {{time}}, {{date:FORMAT}}. */
-export function applyTemplate(template: string, title: string, date = new Date()): string {
-  return template.replace(/\{\{\s*(title|date|time)(?::([^}]+))?\s*\}\}/g, (_m, name: string, format?: string) => {
-    if (name === 'title') return title;
-    if (name === 'time') return formatDate(date, format ?? 'HH:mm');
-    return formatDate(date, format ?? 'YYYY-MM-DD');
-  });
 }
 
 const MIME: Record<string, string> = {

@@ -132,6 +132,7 @@ export function NoteView({ tab, paneId, view, visible }: { tab: Tab; paneId: str
             <Editor
               key={`${tab.id}:${tab.nav ?? 0}`}
               path={view.path}
+              tabId={tab.id}
               mode={mode === 'source' ? 'source' : 'live'}
               subpath={view.subpath}
               onView={(v) => (editorView.current = v)}
