@@ -21,6 +21,7 @@ await writeFile(
   JSON.stringify({ items: [{ type: 'file', ctime: 1, path: 'Home.md' }] }),
 );
 await writeFile(path.join(vault, 'Home.md'), '# Home\n\nSee [[Projects/Plan]] and [[Missing]].\n');
+await writeFile(path.join(vault, 'Ideas.md'), 'The plan needs work.\n');
 await writeFile(path.join(vault, 'Projects/Plan.md'), '---\nstatus: draft\n---\nBack to [[Home]].\n');
 await writeFile(
   path.join(userData, 'vaults.json'),
@@ -78,6 +79,15 @@ await page.locator('.tree-row', { hasText: 'Projects' }).click();
 await page.locator('.tree-row', { hasText: 'Plan' }).click();
 await page.waitForTimeout(600);
 check('picks up external edits', (await page.locator('.cm-content').innerText()).includes('Edited outside.'));
+
+// Unlinked mentions: "plan" in Ideas.md becomes a link to Plan.
+await page.locator('#m-unlinked').click();
+await page.locator('.mention-link').first().click();
+await page.waitForTimeout(600);
+check(
+  'links an unlinked mention on disk',
+  (await readFile(path.join(vault, 'Ideas.md'), 'utf8')).includes('The [[Plan|plan]] needs work.'),
+);
 await page.screenshot({ path: `${out}/e2e-plan.png`, timeout: 5000 }).catch(() => undefined);
 
 // Obsidian settings were imported into .cobblestone and .obsidian was left alone.
