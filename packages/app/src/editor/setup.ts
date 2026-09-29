@@ -69,7 +69,7 @@ const formattingKeys: KeyBinding[] = [
   { key: 'Mod-b', run: (v) => toggleWrap(v, '**') },
   { key: 'Mod-i', run: (v) => toggleWrap(v, '*') },
   { key: 'Mod-Shift-h', run: (v) => toggleWrap(v, '==') },
-  { key: 'Mod-e', run: (v) => toggleWrap(v, '`') },
+  // Ctrl/Cmd+E is left to the app: it switches between editing and reading, as in Obsidian.
   { key: 'Mod-Shift-x', run: (v) => toggleWrap(v, '~~') },
   { key: 'Mod-l', run: toggleTask },
   { key: 'Mod-Shift-k', run: insertWikiLink },
