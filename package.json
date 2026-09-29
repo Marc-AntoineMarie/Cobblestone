@@ -19,8 +19,9 @@
     "e2e": "npm run build -w @cobblestone/desktop && node scripts/e2e-desktop.mjs && node scripts/e2e-web.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "npm run format:check && npm run typecheck && npm test",
-    "release": "node scripts/release.mjs"
+    "check": "npm run format:check && npm run typecheck && npm test && npm run recette",
+    "release": "node scripts/release.mjs",
+    "recette": "node scripts/recette.mjs"
   },
   "engines": {
     "node": ">=22"

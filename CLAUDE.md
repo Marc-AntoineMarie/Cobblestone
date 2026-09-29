@@ -25,6 +25,10 @@ Ces règles s'appliquent strictement à chaque session. La méthode complète es
   renommage, stockage). Les scénarios sont dans `scripts/e2e-*.mjs` : en ajouter pour chaque
   nouveau parcours.
 - Pour l'interface : captures avec `node scripts/shoot.mjs <dossier>` et relecture visuelle.
+- Chaque fonctionnalité ajoute ses cas à [docs/RECETTE.md](docs/RECETTE.md) (recette manuelle avant
+  chaque version). Les résultats de l'utilisateur sont dans la page « Recette Cobblestone »
+  (https://claude.ai/artifact/FoWbZmBNQuuuJ3ksmWVj1c, collection `results`, un document par test avec
+  `desktop`, `web`, `noteDesktop`, `noteWeb`) : les relire avant de corriger.
 
 ## Versions
 

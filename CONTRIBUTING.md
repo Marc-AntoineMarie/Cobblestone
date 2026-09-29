@@ -66,6 +66,10 @@ Avant une pull request ou une release, en plus :
 npm run e2e          # scénarios de bout en bout sur l'app web et l'app de bureau
 ```
 
+Avant une release, dérouler aussi la recette manuelle [docs/RECETTE.md](docs/RECETTE.md) sur une copie
+d'un coffre réel, sur le bureau et sur le web. Toute nouvelle fonctionnalité y ajoute ses lignes (même
+format, numéros suivants de sa section) ; `npm run check` vérifie ce format.
+
 La CI refait tout ça sur chaque push et chaque pull request ; une branche rouge ne se fusionne pas.
 
 ## 4. Branches et pull requests
