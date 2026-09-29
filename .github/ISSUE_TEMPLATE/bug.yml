@@ -1,0 +1,37 @@
+name: Bug
+description: Quelque chose ne marche pas comme prévu
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: Ce qui se passe
+      description: Ce que tu as fait, ce que tu attendais, ce qui s'est passé à la place.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Étapes pour reproduire
+      placeholder: "1. Ouvrir un coffre…\n2. …"
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version de Cobblestone
+      placeholder: 0.1.0
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Où
+      options: [App de bureau, App web]
+    validations:
+      required: true
+  - type: input
+    id: system
+    attributes:
+      label: Système et navigateur
+      placeholder: Ubuntu 24.04, Windows 11, macOS 15, Chrome 140…

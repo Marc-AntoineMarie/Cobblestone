@@ -25,20 +25,18 @@ Requires Node.js 22 or newer.
 
 ```bash
 npm install
-npm run dev:web       # web app on http://localhost:5173
-npm run dev:desktop   # desktop app (Electron)
-npm test              # unit tests
-npm run typecheck
-```
-
-End-to-end checks against the real apps (they use the system Google Chrome):
-
-```bash
-npm run build -w @cobblestone/desktop && node scripts/e2e-desktop.mjs /tmp
-npm run dev:web & node scripts/e2e-web.mjs /tmp
+npm run dev:web        # web app on http://localhost:5173
+npm run dev:desktop    # desktop app (Electron)
+npm run check          # formatting, types and unit tests
+npm run e2e            # end-to-end scenarios on the real desktop and web apps (uses Google Chrome)
+npm run dist -w @cobblestone/desktop   # desktop installers into apps/desktop/release
 ```
 
 > Running from VS Code's terminal: VS Code exports `ELECTRON_RUN_AS_NODE=1`, which would start Electron as plain Node. The desktop scripts remove it for you.
+
+## Contributing
+
+How we work — commit conventions, checks, versions and releases — is in [CONTRIBUTING.md](CONTRIBUTING.md). Changes are listed in [CHANGELOG.md](CHANGELOG.md). Security issues: see [SECURITY.md](SECURITY.md).
 
 ## Repository
 

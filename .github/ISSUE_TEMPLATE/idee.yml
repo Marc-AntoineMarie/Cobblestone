@@ -1,0 +1,16 @@
+name: Idée
+description: Une fonctionnalité ou une amélioration
+labels: [idée]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: Le besoin
+      description: Ce que tu cherches à faire, et pourquoi ce n'est pas possible ou pénible aujourd'hui.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: L'idée
+      description: Comment tu imagines la solution (facultatif).
