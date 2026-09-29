@@ -23,6 +23,7 @@ const en = {
   'launcher.createAction': 'Create',
   'launcher.cancel': 'Cancel',
   'launcher.opening': 'Opening {name}…',
+  'launcher.openingProgress': 'Opening {name}… {done} of {total} notes read',
   'launcher.error': 'Could not open this vault: {error}',
   'launcher.kind.folder': 'Folder',
   'launcher.kind.browser': 'In this browser',
@@ -257,6 +258,11 @@ const en = {
   'error.nameTooLong': 'the name is too long for the system.',
   'error.vaultMissing': 'its folder is no longer there. It may have been renamed, moved or deleted.',
   'error.appDataFolder': 'this folder holds Cobblestone’s own settings. Choose another one.',
+  'error.tooBroad':
+    'this is your whole home folder or a whole drive: opening it would read every file you have. Choose the vault’s folder inside it.',
+  'error.vaultParent':
+    'this is the folder that contained the vault, not the vault itself. Open the vault’s folder, then confirm.',
+  'error.otherVault': 'this folder is already another vault in your list.',
   'launcher.createError': 'Could not create the vault: {error}',
 };
 
@@ -284,6 +290,7 @@ const fr: Messages = {
   'launcher.createAction': 'Créer',
   'launcher.cancel': 'Annuler',
   'launcher.opening': 'Ouverture de {name}…',
+  'launcher.openingProgress': 'Ouverture de {name}… {done} notes lues sur {total}',
   'launcher.error': 'Impossible d’ouvrir ce coffre : {error}',
   'launcher.kind.folder': 'Dossier',
   'launcher.kind.browser': 'Dans ce navigateur',
@@ -520,6 +527,11 @@ const fr: Messages = {
   'error.nameTooLong': 'le nom est trop long pour le système.',
   'error.vaultMissing': 'son dossier n’est plus là. Il a peut-être été renommé, déplacé ou supprimé.',
   'error.appDataFolder': 'ce dossier contient les réglages de Cobblestone lui-même. Choisis-en un autre.',
+  'error.tooBroad':
+    'c’est ton dossier personnel entier ou tout un disque : l’ouvrir lirait tous tes fichiers. Choisis le dossier du coffre à l’intérieur.',
+  'error.vaultParent':
+    'c’est le dossier qui contenait le coffre, pas le coffre lui-même. Entre dans le dossier du coffre, puis valide.',
+  'error.otherVault': 'ce dossier est déjà un autre coffre de ta liste.',
   'launcher.createError': 'Impossible de créer le coffre : {error}',
 };
 

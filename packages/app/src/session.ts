@@ -190,10 +190,15 @@ export class Session {
     );
   }
 
-  static async open(platform: Platform, entry: VaultEntry, adapter: VaultAdapter): Promise<Session> {
+  static async open(
+    platform: Platform,
+    entry: VaultEntry,
+    adapter: VaultAdapter,
+    loading: { signal?: AbortSignal; onProgress?: (done: number, total: number) => void } = {},
+  ): Promise<Session> {
     const { settings, imported } = await loadVaultSettings(adapter);
     const vault = new Vault(adapter, { trash: settings.trash, updateLinksOnRename: settings.updateLinks });
-    await vault.load();
+    await vault.load(loading);
     if (imported && entry.kind !== 'demo') await saveVaultSettings(adapter, settings).catch(() => undefined);
 
     let workspace = (await platform.storage.get<WorkspaceState>(WORKSPACE_KEY(entry.id))) ?? initialWorkspace();

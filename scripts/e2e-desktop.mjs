@@ -1,8 +1,8 @@
 // End-to-end check of the desktop app on a real folder that looks like an Obsidian vault.
 import { _electron as electron } from 'playwright-core';
 import { existsSync } from 'node:fs';
-import { mkdtemp, mkdir, readFile, rename, writeFile, rm } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
+import { cp, mkdtemp, mkdir, readFile, rename, writeFile, rm } from 'node:fs/promises';
+import { homedir, tmpdir } from 'node:os';
 import path from 'node:path';
 
 const out = process.argv[2] ?? path.join(tmpdir(), 'cobblestone-shots');
@@ -182,6 +182,34 @@ await page.locator('.vault-name').waitFor({ timeout: 5000 });
 check('finds a vault moved while the app was closed', (await page.locator('.vault-name').innerText()) === 'Notes');
 const list = JSON.parse(await readFile(path.join(userData, 'vaults.json'), 'utf8'));
 check('keeps one entry, at the new place', list.length === 1 && list[0].id === 'v1' && list[0].location === moved);
+
+// Not found automatically (copied to another drive, say): the user points to it, and the usual slips are refused.
+await app.close();
+const copy = path.join(root, 'Elsewhere', 'Notes copy');
+await cp(moved, copy, { recursive: true });
+await rm(moved, { recursive: true });
+({ app, page } = await launch());
+await page.locator('.lost-vault h2', { hasText: 'cannot be found' }).waitFor({ timeout: 8000 });
+/** The folder dialog is native: the test answers it from the main process. */
+const answerDialog = (folder) =>
+  app.evaluate(({ dialog }, target) => {
+    dialog.showOpenDialog = async () => ({ canceled: false, filePaths: [target] });
+  }, folder);
+await answerDialog(path.dirname(moved));
+await page.getByRole('button', { name: 'Find the folder…' }).click();
+await page.locator('.lost-error').waitFor({ timeout: 5000 });
+check(
+  'refuses the folder that contained the vault',
+  (await page.locator('.lost-error').innerText()).includes('contained the vault'),
+);
+await answerDialog(homedir());
+await page.getByRole('button', { name: 'Find the folder…' }).click();
+await page.locator('.lost-error', { hasText: 'home folder' }).waitFor({ timeout: 5000 });
+check('refuses the whole home folder', true);
+await answerDialog(copy);
+await page.getByRole('button', { name: 'Find the folder…' }).click();
+await page.locator('.vault-name').waitFor({ timeout: 5000 });
+check('opens the vault the user points to', (await page.locator('.vault-name').innerText()) === 'Notes copy');
 
 await app.close();
 await rm(root, { recursive: true, force: true });

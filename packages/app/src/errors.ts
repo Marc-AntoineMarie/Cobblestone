@@ -10,6 +10,9 @@ import { t, type MessageKey } from './i18n';
 const APP_CODES = {
   'vault-missing': 'error.vaultMissing',
   'app-data-folder': 'error.appDataFolder',
+  'too-broad': 'error.tooBroad',
+  'vault-parent': 'error.vaultParent',
+  'other-vault': 'error.otherVault',
 } as const satisfies Record<string, MessageKey>;
 
 /** System error codes (Node) and DOMException names (browsers). */

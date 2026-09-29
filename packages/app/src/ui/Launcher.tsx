@@ -9,6 +9,9 @@ import { Mark } from './Mark';
 interface Props {
   platform: Platform;
   opening: VaultEntry | null;
+  /** Notes read so far while `opening` loads. */
+  progress: { done: number; total: number } | null;
+  onCancelOpening: () => void;
   error: string | null;
   /** A vault whose folder could not be found when opening it. */
   lost: VaultEntry | null;
@@ -19,7 +22,7 @@ interface Props {
 const DEMO: VaultEntry = { id: 'demo', name: 'Demo', kind: 'demo', lastOpened: 0 };
 
 /** First screen: open a folder, create a vault, or try the demo. */
-export function Launcher({ platform, opening, error, lost, onOpen, onLostClose }: Props) {
+export function Launcher({ platform, opening, progress, onCancelOpening, error, lost, onOpen, onLostClose }: Props) {
   const [recent, setRecent] = useState<VaultEntry[]>([]);
   const [creating, setCreating] = useState(false);
   const [name, setName] = useState('');
@@ -152,10 +155,27 @@ export function Launcher({ platform, opening, error, lost, onOpen, onLostClose }
           />
         )}
 
-        {(opening || error || failure) && (
-          <p className={`launcher-status${opening ? '' : ' is-error'}`} role={opening ? 'status' : 'alert'}>
-            {opening ? t('launcher.opening', { name: opening.name }) : (failure ?? t('launcher.error', { error: error! }))}
-          </p>
+        {opening ? (
+          <div className="launcher-status launcher-opening" role="status">
+            <span>
+              {progress && progress.total > 0
+                ? t('launcher.openingProgress', {
+                    name: opening.name,
+                    done: progress.done.toLocaleString(),
+                    total: progress.total.toLocaleString(),
+                  })
+                : t('launcher.opening', { name: opening.name })}
+            </span>
+            <button className="button is-ghost" onClick={onCancelOpening}>
+              {t('launcher.cancel')}
+            </button>
+          </div>
+        ) : (
+          (error || failure) && (
+            <p className="launcher-status is-error" role="alert">
+              {failure ?? t('launcher.error', { error: error! })}
+            </p>
+          )
         )}
 
         <section className="launcher-recent" aria-labelledby="recent-title">

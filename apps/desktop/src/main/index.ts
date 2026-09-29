@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { NodeFsAdapter } from '@cobblestone/node';
 import { FS_METHODS, type DesktopVaultEntry, type FsMethod } from './ipc-types';
 import { JsonFile } from './json-file';
+import { locationProblem, type LocationProblem } from './locations';
 import { findFolder, folderId, searchAreas } from './relocate';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -24,12 +25,21 @@ const storage = new JsonFile<Record<string, unknown>>(dataFile('storage.json'), 
 const recentVaults = () => vaultList.read();
 
 /** Errors the renderer turns into a sentence (see packages/app/src/errors.ts). */
-const appError = (code: 'vault-missing' | 'app-data-folder') => new Error(`cobblestone:${code}`);
+const appError = (code: 'vault-missing' | LocationProblem) => new Error(`cobblestone:${code}`);
 
-/** The app's own data folder cannot be a vault: resetting the app would delete the notes. */
-function checkVaultLocation(location: string) {
-  const inside = path.relative(app.getPath('userData'), location);
-  if (!inside.startsWith('..') && !path.isAbsolute(inside)) throw appError('app-data-folder');
+/**
+ * Refuses folders that cannot be a vault: the app's own data, the home folder or
+ * a whole drive, the folder that contained a lost vault, or another vault.
+ */
+async function checkVaultLocation(location: string, following?: DesktopVaultEntry) {
+  const others = (await recentVaults()).filter((v) => v.id !== following?.id).map((v) => v.location);
+  const problem = locationProblem(location, {
+    home: app.getPath('home'),
+    appData: app.getPath('userData'),
+    previous: following?.location,
+    others: following ? others : undefined,
+  });
+  if (problem) throw appError(problem);
 }
 
 /**
@@ -103,7 +113,7 @@ ipcMain.handle('vaults:relocate', async (event, id: string, found?: string) => {
     if (result.canceled || !result.filePaths[0]) return null;
     location = result.filePaths[0];
   }
-  checkVaultLocation(location);
+  await checkVaultLocation(location, entry);
   if (!(await folderId(location))) throw appError('vault-missing');
   foundMoves.delete(id);
   return rememberVault(location, id);
@@ -116,7 +126,7 @@ ipcMain.handle('vaults:pick', async (event) => {
     properties: ['openDirectory', 'createDirectory'],
   });
   if (result.canceled || !result.filePaths[0]) return null;
-  checkVaultLocation(result.filePaths[0]);
+  await checkVaultLocation(result.filePaths[0]);
   return rememberVault(result.filePaths[0]);
 });
 
@@ -129,7 +139,7 @@ ipcMain.handle('vaults:create', async (event, name: string) => {
   if (result.canceled || !result.filePaths[0]) return null;
   const safeName = name.replace(/[\\/:*?"<>|]/g, '').trim() || 'Vault';
   const location = path.join(result.filePaths[0], safeName);
-  checkVaultLocation(location);
+  await checkVaultLocation(location);
   await fs.mkdir(location, { recursive: true });
   return rememberVault(location);
 });
@@ -142,6 +152,8 @@ ipcMain.handle('vaults:open', async (event, id: string) => {
   const entry = (await recentVaults()).find((v) => v.id === id);
   if (!entry) throw new Error('Unknown vault');
   if (!(await fs.stat(entry.location).catch(() => null))?.isDirectory()) throw appError('vault-missing');
+  // Entries saved by older versions may point somewhere a vault cannot be.
+  await checkVaultLocation(entry.location);
   let windowVaults = openVaults.get(event.sender.id);
   if (!windowVaults) openVaults.set(event.sender.id, (windowVaults = new Map()));
   windowVaults.set(id, new NodeFsAdapter(entry.location, entry.name));

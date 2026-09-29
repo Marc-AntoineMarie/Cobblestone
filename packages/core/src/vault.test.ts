@@ -52,6 +52,20 @@ describe('LinkResolver', () => {
 });
 
 describe('Vault', () => {
+  it('reports its progress and can be stopped while loading', async () => {
+    const files = Object.fromEntries(Array.from({ length: 150 }, (_, i) => [`N${i}.md`, `note ${i}`]));
+    const progress: number[] = [];
+    await new Vault(new MemoryAdapter('Big', files)).load({ onProgress: (done, total) => progress.push(done, total) });
+    expect(progress.slice(0, 2)).toEqual([0, 150]);
+    expect(progress.slice(-2)).toEqual([150, 150]);
+
+    const controller = new AbortController();
+    const vault = new Vault(new MemoryAdapter('Big', files));
+    const loading = vault.load({ signal: controller.signal, onProgress: (done) => done >= 64 && controller.abort() });
+    await expect(loading).rejects.toThrow();
+    expect(vault.isReady).toBe(false);
+  });
+
   it('indexes notes, links, backlinks and tags on load', async () => {
     const { vault } = await vaultOf({
       'A.md': 'Links to [[B]] and [[Missing]] #tag/sub',

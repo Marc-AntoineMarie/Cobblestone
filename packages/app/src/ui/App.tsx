@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { describeError, isVaultMissing } from '../errors';
 import { detectLanguage, setLanguage } from '../i18n';
 import type { Platform, VaultEntry } from '../platform';
@@ -18,6 +18,10 @@ export function App({ platform }: { platform: Platform }) {
   const [preferences, setPreferences] = useState<Preferences>(DEFAULT_PREFERENCES);
   const [session, setSession] = useState<Session | null>(null);
   const [opening, setOpening] = useState<VaultEntry | null>(null);
+  /** Notes read so far while a vault opens. */
+  const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
+  /** The opening in progress, so it can be cancelled. */
+  const opener = useRef<AbortController | null>(null);
   const [error, setError] = useState<string | null>(null);
   /** A vault whose folder is gone: renamed, moved or deleted outside the app. */
   const [lost, setLost] = useState<VaultEntry | null>(null);
@@ -49,12 +53,21 @@ export function App({ platform }: { platform: Platform }) {
 
   const openEntry = useCallback(
     async (entry: VaultEntry) => {
+      opener.current?.abort();
+      const controller = new AbortController();
+      opener.current = controller;
       setOpening(entry);
+      setProgress(null);
       setError(null);
       setLost(null);
       try {
         const [adapter, { Session }] = await Promise.all([platform.openVault(entry), import('../session')]);
-        const next = await Session.open(platform, entry, adapter);
+        controller.signal.throwIfAborted();
+        const next = await Session.open(platform, entry, adapter, {
+          signal: controller.signal,
+          onProgress: (done, total) => setProgress({ done, total }),
+        });
+        if (controller.signal.aborted) return next.dispose();
         setSession((previous) => {
           previous?.dispose();
           return next;
@@ -63,14 +76,27 @@ export function App({ platform }: { platform: Platform }) {
         // The vault is open: failing to remember it for next launch is not an opening error.
         void platform.storage.set(LAST_VAULT, entry.id).catch((e: unknown) => console.error('Could not save the last vault', e));
       } catch (e) {
+        if (controller.signal.aborted) return; // cancelled by the user: nothing to report
         if (isVaultMissing(e)) setLost(entry);
         else setError(describeError(e));
       } finally {
-        setOpening(null);
+        if (opener.current === controller) {
+          opener.current = null;
+          setOpening(null);
+          setProgress(null);
+        }
       }
     },
     [platform],
   );
+
+  /** Stops an opening that takes too long (a huge folder, a slow drive). */
+  const cancelOpening = useCallback(() => {
+    opener.current?.abort();
+    opener.current = null;
+    setOpening(null);
+    setProgress(null);
+  }, []);
 
   const closeVault = useCallback(() => {
     setSession((current) => {
@@ -101,7 +127,12 @@ export function App({ platform }: { platform: Platform }) {
       const lastId = await platform.storage.get<string | null>(LAST_VAULT);
       const entry = lastId ? (await platform.recentVaults()).find((v) => v.id === lastId) : undefined;
       const reopenable = entry && (platform.kind === 'desktop' || entry.kind === 'browser');
-      if (!cancelled && reopenable) await openEntry(entry);
+      if (!cancelled && reopenable) {
+        // A quick reopening shows the vault directly; a slow one shows the launcher, with its progress and Cancel.
+        const reveal = setTimeout(() => !cancelled && setBooted(true), 400);
+        await openEntry(entry);
+        clearTimeout(reveal);
+      }
       if (!cancelled) setBooted(true);
     })();
     return () => {
@@ -135,6 +166,8 @@ export function App({ platform }: { platform: Platform }) {
         <Launcher
           platform={platform}
           opening={opening}
+          progress={progress}
+          onCancelOpening={cancelOpening}
           error={error}
           lost={lost}
           onOpen={(entry) => void openEntry(entry)}

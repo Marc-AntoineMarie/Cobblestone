@@ -299,3 +299,10 @@
   gap: 8px;
   margin-top: 14px;
 }
+
+.launcher-opening {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
