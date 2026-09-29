@@ -1,14 +1,24 @@
 // End-to-end check of the web app with a vault stored in the browser (OPFS).
+// Builds the web app and serves it with Vite's preview server unless URL is set (the dev server can
+// reload the page mid-test while it optimises dependencies). Screenshots go to the directory given.
 import { chromium } from 'playwright-core';
-import { mkdtemp, rm } from 'node:fs/promises';
+import { mkdir, mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
+import { build, preview } from 'vite';
 
-const out = process.argv[2] ?? 'shots';
-const base = process.env.URL ?? 'http://localhost:5173/';
+const out = process.argv[2] ?? path.join(tmpdir(), 'cobblestone-shots');
+await mkdir(out, { recursive: true });
+let server = null;
+if (!process.env.URL) {
+  const config = { configFile: path.resolve('apps/web/vite.config.ts'), root: path.resolve('apps/web'), logLevel: 'warn' };
+  await build(config);
+  server = await preview({ ...config, preview: { port: 5199, strictPort: false } });
+}
+const base = process.env.URL ?? server.resolvedUrls.local[0];
 const profile = await mkdtemp(path.join(tmpdir(), 'cobblestone-web-'));
 const context = await chromium.launchPersistentContext(profile, {
-  executablePath: '/usr/bin/google-chrome',
+  executablePath: process.env.CHROME_PATH ?? '/usr/bin/google-chrome',
   viewport: { width: 1280, height: 800 },
   locale: 'en-US',
   args: ['--no-sandbox'],
@@ -34,7 +44,7 @@ await page.keyboard.type('Groceries');
 await page.keyboard.press('Enter');
 await page.keyboard.type('- [ ] eggs\n[[Recipes]] #shopping');
 await page.waitForTimeout(900);
-await page.screenshot({ path: `${out}/web-e2e-note.png` });
+await page.screenshot({ path: `${out}/web-e2e-note.png`, timeout: 5000 }).catch(() => undefined);
 check('titles the note from the title field', (await page.locator('.tab.is-active').innerText()).includes('Groceries'));
 
 await page.reload();
@@ -51,8 +61,10 @@ check('lists the tag', (await page.locator('.tag-list').innerText()).includes('s
 await page.locator('.cm-wikilink', { hasText: 'Recipes' }).click();
 await page.waitForTimeout(600);
 check('following a missing link creates the note', (await page.locator('.note-title').inputValue()) === 'Recipes');
-await page.screenshot({ path: `${out}/web-e2e-created.png` });
+await page.screenshot({ path: `${out}/web-e2e-created.png`, timeout: 5000 }).catch(() => undefined);
 
 await context.close();
 await rm(profile, { recursive: true, force: true });
+await server?.close();
 console.log(errors.length ? 'page errors:\n' + errors.join('\n') : 'no page errors');
+process.exit(process.exitCode ?? 0);

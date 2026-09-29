@@ -4,7 +4,8 @@ import { mkdtemp, mkdir, readFile, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
-const out = process.argv[2] ?? 'shots';
+const out = process.argv[2] ?? path.join(tmpdir(), 'cobblestone-shots');
+await mkdir(out, { recursive: true });
 const root = await mkdtemp(path.join(tmpdir(), 'cobblestone-e2e-'));
 const vault = path.join(root, 'My Vault');
 const userData = path.join(root, 'userdata');
@@ -44,7 +45,7 @@ const check = (label, ok) => {
 
 await page.locator('.tree-row', { hasText: 'Home' }).click();
 await page.waitForTimeout(500);
-await page.screenshot({ path: `${out}/e2e-home.png` });
+await page.screenshot({ path: `${out}/e2e-home.png`, timeout: 5000 }).catch(() => undefined);
 check('opens the vault and shows Home', (await page.locator('.note-title').inputValue()) === 'Home');
 
 // Type in the editor and wait for the save.
@@ -69,7 +70,7 @@ await page.locator('.tree-row', { hasText: 'Projects' }).click();
 await page.locator('.tree-row', { hasText: 'Plan' }).click();
 await page.waitForTimeout(600);
 check('picks up external edits', (await page.locator('.cm-content').innerText()).includes('Edited outside.'));
-await page.screenshot({ path: `${out}/e2e-plan.png` });
+await page.screenshot({ path: `${out}/e2e-plan.png`, timeout: 5000 }).catch(() => undefined);
 
 // Obsidian settings were imported into .cobblestone and .obsidian was left alone.
 const own = JSON.parse(await readFile(path.join(vault, '.cobblestone/app.json'), 'utf8'));

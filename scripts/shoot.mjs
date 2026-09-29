@@ -3,7 +3,10 @@ import { chromium } from 'playwright-core';
 
 const out = process.argv[2] ?? 'shots';
 const base = process.env.URL ?? 'http://localhost:5173/';
-const browser = await chromium.launch({ executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });
+const browser = await chromium.launch({
+  executablePath: process.env.CHROME_PATH ?? '/usr/bin/google-chrome',
+  args: ['--no-sandbox'],
+});
 const errors = [];
 
 async function session(name, { width = 1440, height = 900, paper = 'light', lang = 'fr-FR' } = {}, steps = async () => {}) {

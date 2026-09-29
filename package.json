@@ -16,7 +16,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc -p packages/core/tsconfig.json && tsc -p packages/node/tsconfig.json && tsc -p packages/app/tsconfig.json && tsc -p apps/web/tsconfig.json && tsc -p apps/desktop/tsconfig.json",
-    "e2e": "node scripts/e2e-desktop.mjs /tmp && node scripts/e2e-web.mjs /tmp",
+    "e2e": "npm run build -w @cobblestone/desktop && node scripts/e2e-desktop.mjs && node scripts/e2e-web.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check": "npm run format:check && npm run typecheck && npm test",
