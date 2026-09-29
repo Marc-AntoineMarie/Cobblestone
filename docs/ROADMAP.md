@@ -23,7 +23,15 @@ Priority: direct sync between your own devices, with no server holding your note
 - **Version history** for every note, browsable and restorable.
 - Comments on notes.
 
-## 3. Full Obsidian parity
+## 3. Phones
+
+Sync is what makes a phone useful: mobile browsers cannot open a folder, so notes reach the phone through it.
+
+- **Installable web app (PWA)** built from the web app: offline support, home screen icon, and an interface reworked for touch (bottom bar, drawers, large targets, on-screen keyboard).
+- **Native apps** (Android, iOS) wrapping the same code with Capacitor, with real folders (shared storage on Android, the Files app on iOS).
+- Channels and costs: see [DISTRIBUTION.md](DISTRIBUTION.md).
+
+## 4. Full Obsidian parity
 
 - ~~Canvas (JSON Canvas format, compatible with Obsidian's `.canvas` files), templates, bookmarks, hover previews, unlinked mentions~~ (done in 0.2).
 - Unique note creator, properties editor with types.
@@ -31,15 +39,14 @@ Priority: direct sync between your own devices, with no server holding your note
 - Customisable hotkeys, CSS snippets and themes, multiple windows.
 - Importers from Notion, Evernote, Apple Notes, Logseq, Roam, Bear and Markdown folders.
 
-## 4. Beyond Obsidian
+## 5. Beyond Obsidian
 
 - Queries over notes and properties (Dataview-style), compatible with Obsidian Bases (`.base`) files.
 - Kanban boards, a tasks view across the vault, a calendar.
 - Publishing a folder as a website, free.
 - A plugin API, with a compatibility layer for the most popular Obsidian plugins.
-- Mobile apps (iOS and Android).
 
-## 5. Organizations (commercial)
+## 6. Organizations (commercial)
 
 - Single sign-on (SAML, OIDC) and SCIM provisioning.
 - Roles and permissions across shared spaces, admin console.
