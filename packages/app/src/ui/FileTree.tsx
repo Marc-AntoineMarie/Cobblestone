@@ -167,6 +167,8 @@ export function FileTree() {
 
   const onKeyDown = (event: KeyboardEvent) => {
     if (renaming) return;
+    // Alt+arrows and the like are app shortcuts (back, forward); only Ctrl+Enter is the tree's.
+    if (event.altKey || event.metaKey || (event.ctrlKey && event.key !== 'Enter')) return;
     const index = rows.findIndex((r) => r.path === focused);
     const row = rows[index];
     const move = (i: number) => {
