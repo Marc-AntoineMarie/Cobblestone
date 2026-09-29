@@ -1020,3 +1020,25 @@ button.crumb:hover {
 .icon-button.is-on {
   color: var(--pink-deep);
 }
+
+.margin-notes .section-toggle {
+  margin-bottom: 10px;
+}
+
+.mention-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  width: 100%;
+}
+
+.mention-row .backlink-context {
+  flex: 1;
+  min-width: 0;
+}
+
+.mention-link {
+  height: 24px;
+  padding: 0 8px;
+  flex: none;
+}

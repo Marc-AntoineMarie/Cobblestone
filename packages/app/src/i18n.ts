@@ -100,6 +100,9 @@ const en = {
 
   'margin.backlinks': 'Backlinks',
   'margin.noBacklinks': 'No note links here yet.',
+  'margin.unlinked': 'Unlinked mentions',
+  'margin.noUnlinked': 'No other note mentions it without a link.',
+  'margin.link': 'Link',
   'margin.outgoing': 'Links out',
   'margin.noOutgoing': 'This note has no links.',
   'margin.unresolved': 'not created yet',
@@ -305,6 +308,9 @@ const fr: Messages = {
 
   'margin.backlinks': 'Rétroliens',
   'margin.noBacklinks': 'Aucune note ne pointe encore ici.',
+  'margin.unlinked': 'Mentions non liées',
+  'margin.noUnlinked': 'Aucune autre note ne la mentionne sans lien.',
+  'margin.link': 'Lier',
   'margin.outgoing': 'Liens sortants',
   'margin.noOutgoing': 'Cette note ne contient aucun lien.',
   'margin.unresolved': 'pas encore créée',
