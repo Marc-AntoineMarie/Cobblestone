@@ -10,6 +10,10 @@ export function registerAppCommands(
   options: { switchVault: () => void; preferences: () => Preferences; updatePreferences: (p: Partial<Preferences>) => void },
 ): () => void {
   const hk = (...specs: string[]) => specs.map(parseHotkey);
+  // Browsers keep some shortcuts for themselves (Ctrl+N opens a window, Ctrl+W closes the tab):
+  // on the web, an Alt variant comes first and is the one shown.
+  const web = session.platform.kind === 'web';
+  const reserved = (spec: string, alternative: string) => (web ? hk(alternative, spec) : hk(spec));
   const noteOpen = () => session.activeView?.type === 'note';
   const ws = session.workspace;
 
@@ -18,7 +22,7 @@ export function registerAppCommands(
       id: 'note:new',
       name: t('cmd.newNote'),
       section: t('cmd.section.note'),
-      hotkeys: hk('Mod+N'),
+      hotkeys: reserved('Mod+N', 'Alt+N'),
       run: () => void session.createNote(),
     },
     {
@@ -72,7 +76,7 @@ export function registerAppCommands(
       id: 'tab:close',
       name: t('cmd.closeTab'),
       section: t('cmd.section.navigation'),
-      hotkeys: hk('Mod+W'),
+      hotkeys: reserved('Mod+W', 'Alt+W'),
       run: () => {
         const state = ws.getState();
         const pane = findPane(state);
