@@ -174,30 +174,30 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 
 ## 6. Barre latérale : coffre, favoris, tags, pied
 
-- **6.1** · Les deux · à automatiser · Cliquer le nom du coffre en haut → Menu : Réglages, Changer de coffre.
-- **6.2** · Les deux · à automatiser · « Changer de coffre » juste après avoir écrit → Retour à l'accueil ; ce qui a été tapé est enregistré.
-- **6.3** · Les deux · à automatiser · Bouton de masquage de la barre latérale → La barre disparaît ; un bouton pour la rouvrir apparaît au début de la barre d'onglets.
-- **6.4** · Les deux · à automatiser · Cliquer ce bouton de réouverture → La barre latérale revient.
-- **6.5** · Les deux · à automatiser · Bouton « Aujourd'hui » → La note du jour s'ouvre, créée si besoin.
-- **6.6** · Les deux · à automatiser · Bouton « Graphe » → Le graphe s'ouvre dans un nouvel onglet.
-- **6.7** · Les deux · à automatiser · Coffre sans favori → La section « Favoris » n'apparaît pas.
-- **6.8** · Les deux · à automatiser · Ajouter une note aux favoris → La section « Favoris » apparaît avec elle.
-- **6.9** · Les deux · à automatiser · Cliquer un favori, puis Ctrl+clic → La note s'ouvre, puis dans un nouvel onglet ; le favori de la note active est sur fond jaune.
-- **6.10** · Les deux · à automatiser · Cliquer un favori de titre importé d'Obsidian → La note s'ouvre à ce titre.
-- **6.11** · Les deux · à automatiser · Cliquer un favori de dossier → Le dossier est montré dans l'arborescence.
-- **6.12** · Les deux · à automatiser · Cliquer un favori de recherche → Le champ de recherche se remplit avec la requête.
-- **6.13** · Les deux · à automatiser · Cliquer un groupe de favoris → Il s'ouvre et se ferme ; son contenu est indenté.
-- **6.14** · Les deux · à automatiser · Clic droit sur un favori, puis « Retirer des favoris » → Il disparaît de la liste.
-- **6.15** · Les deux · à automatiser · Cliquer le titre « FAVORIS » → La section se replie puis se déplie.
-- **6.16** · Les deux · à automatiser · Regarder la section TAGS → Tags triés, compteurs alignés, `#` en rose.
-- **6.17** · Les deux · à automatiser · Tag imbriqué (`#projet/alpha`) → Un chevron affiche les sous-tags ; le parent compte aussi les notes des enfants.
-- **6.18** · Les deux · à automatiser · Cliquer un tag → Le champ de recherche contient `tag:#nom` et liste les notes.
-- **6.19** · Les deux · à automatiser · Cliquer le titre « TAGS » → La section se replie puis se déplie.
-- **6.20** · Les deux · à automatiser · Regarder le pied de la barre → « Sur cet appareil » avec un petit carré, et un bouton Réglages.
-- **6.21** · Les deux · à automatiser · Bouton Réglages du pied → Les réglages s'ouvrent dans un onglet.
-- **6.22** · Bureau · à automatiser · Menu du nom du coffre › « Ouvrir le dossier du coffre » → Le gestionnaire de fichiers montre le contenu du coffre.
-- **6.23** · Web · à automatiser · Menu du nom du coffre → Pas d'entrée « Ouvrir le dossier du coffre ».
-- **6.24** · Les deux · à automatiser · Menu du nom du coffre dans la démo → Pas d'entrée « Ouvrir le dossier du coffre » (rien n'est sur le disque).
+- **6.1** · Les deux · auto · Cliquer le nom du coffre en haut → Menu : Réglages, Changer de coffre.
+- **6.2** · Les deux · auto · « Changer de coffre » juste après avoir écrit → Retour à l'accueil ; ce qui a été tapé est enregistré.
+- **6.3** · Les deux · auto · Bouton de masquage de la barre latérale → La barre disparaît ; un bouton pour la rouvrir apparaît au début de la barre d'onglets.
+- **6.4** · Les deux · auto · Cliquer ce bouton de réouverture → La barre latérale revient.
+- **6.5** · Les deux · auto · Bouton « Aujourd'hui » → La note du jour s'ouvre, créée si besoin.
+- **6.6** · Les deux · auto · Bouton « Graphe » → Le graphe s'ouvre dans un nouvel onglet.
+- **6.7** · Les deux · auto · Coffre sans favori → La section « Favoris » n'apparaît pas.
+- **6.8** · Les deux · auto · Ajouter une note aux favoris → La section « Favoris » apparaît avec elle.
+- **6.9** · Les deux · auto · Cliquer un favori, puis Ctrl+clic → La note s'ouvre, puis dans un nouvel onglet ; le favori de la note active est sur fond jaune.
+- **6.10** · Les deux · auto · Cliquer un favori de titre importé d'Obsidian → La note s'ouvre à ce titre.
+- **6.11** · Les deux · auto · Cliquer un favori de dossier → Le dossier est montré dans l'arborescence.
+- **6.12** · Les deux · auto · Cliquer un favori de recherche → Le champ de recherche se remplit avec la requête.
+- **6.13** · Les deux · auto · Cliquer un groupe de favoris → Il s'ouvre et se ferme ; son contenu est indenté.
+- **6.14** · Les deux · auto · Clic droit sur un favori, puis « Retirer des favoris » → Il disparaît de la liste.
+- **6.15** · Les deux · auto · Cliquer le titre « FAVORIS » → La section se replie puis se déplie.
+- **6.16** · Les deux · auto · Regarder la section TAGS → Tags triés, compteurs alignés, `#` en rose.
+- **6.17** · Les deux · auto · Tag imbriqué (`#projet/alpha`) → Un chevron affiche les sous-tags ; le parent compte aussi les notes des enfants.
+- **6.18** · Les deux · auto · Cliquer un tag → Le champ de recherche contient `tag:#nom` et liste les notes.
+- **6.19** · Les deux · auto · Cliquer le titre « TAGS » → La section se replie puis se déplie.
+- **6.20** · Les deux · auto · Regarder le pied de la barre → « Sur cet appareil » avec un petit carré, et un bouton Réglages.
+- **6.21** · Les deux · auto · Bouton Réglages du pied → Les réglages s'ouvrent dans un onglet.
+- **6.22** · Bureau · auto · Menu du nom du coffre › « Ouvrir le dossier du coffre » → Le gestionnaire de fichiers montre le contenu du coffre.
+- **6.23** · Web · auto · Menu du nom du coffre → Pas d'entrée « Ouvrir le dossier du coffre ».
+- **6.24** · Les deux · auto · Menu du nom du coffre dans la démo → Pas d'entrée « Ouvrir le dossier du coffre » (rien n'est sur le disque).
 
 ## 7. Onglets et divisions
 
