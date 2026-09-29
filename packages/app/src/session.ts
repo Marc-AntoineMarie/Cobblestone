@@ -305,6 +305,22 @@ export class Session {
     this.ui.setState({ expanded, revealed: path, railOpen: true });
   }
 
+  /** Whether files can be shown in the system's file manager (a desktop vault on disk). */
+  get canRevealInSystem(): boolean {
+    return !!this.platform.revealInFolder && this.entry.kind === 'folder';
+  }
+
+  /** Shows a file or folder in the system's file manager; "" opens the vault folder. */
+  revealInSystem(path: string) {
+    this.platform.revealInFolder?.(this.entry.id, path).catch((e: unknown) => this.fail(e));
+  }
+
+  /** "Show in Finder", "Show in Explorer" or "Show in the file manager", by system. */
+  get revealLabel(): string {
+    const os = this.platform.os;
+    return t(os === 'mac' ? 'reveal.mac' : os === 'windows' ? 'reveal.windows' : 'reveal.linux');
+  }
+
   // --------------------------------------------------------------- files
 
   /** Folder for a new note, following the vault's setting. */

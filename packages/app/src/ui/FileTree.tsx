@@ -151,6 +151,7 @@ export function FileTree() {
     const bookmarked = session.bookmarks
       .getState()
       .some((b) => (b.type === 'file' || b.type === 'folder') && b.path === row.path && !('subpath' in b && b.subpath));
+    if (session.canRevealInSystem) items.push({ label: session.revealLabel, run: () => session.revealInSystem(row.path) });
     items.push(
       { label: bookmarked ? t('bookmark.remove') : t('bookmark.add'), run: () => session.toggleBookmark(row.path) },
       { label: t('tree.rename'), run: () => session.ui.setState({ renaming: row.path }), separatorBefore: true },

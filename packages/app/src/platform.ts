@@ -55,6 +55,10 @@ export interface Platform {
   /** Desktop: the folder of an open vault disappeared (true) or came back (false). */
   onVaultMissing?(listener: (vaultId: string, missing: boolean) => void): () => void;
   openExternal(url: string): void;
+  /** Desktop: the system this app runs on, for wording (Finder, Explorer, file manager). */
+  os?: 'mac' | 'windows' | 'linux';
+  /** Desktop: shows a vault file or folder in the system's file manager; "" is the vault folder itself. */
+  revealInFolder?(vaultId: string, path: string): Promise<void>;
   /** Small persistent key/value store for settings and workspace layout. */
   storage: {
     get<T>(key: string): Promise<T | undefined>;

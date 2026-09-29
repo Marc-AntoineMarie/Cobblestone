@@ -141,6 +141,17 @@ check(
   (await readFile(path.join(vault, '.obsidian/app.json'), 'utf8')).includes('strictLineBreaks'),
 );
 
+// Notes and folders can be shown in the system's file manager (not clicked: it would open a window).
+await page.locator('.tree-row', { hasText: 'Projects' }).click({ button: 'right' });
+check(
+  'offers to show a folder in the file manager',
+  (await page.locator('.menu').innerText()).includes('Show in the file manager'),
+);
+await page.keyboard.press('Escape');
+await page.locator('.vault-switch').click();
+check('offers to open the vault folder', (await page.locator('.menu').innerText()).includes('Open the vault folder'));
+await page.keyboard.press('Escape');
+
 // The vault's folder is renamed in another app while it is open: the app offers to follow it.
 const renamed = path.join(root, 'Renamed Vault');
 await rename(vault, renamed);

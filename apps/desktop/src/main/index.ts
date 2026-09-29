@@ -180,6 +180,19 @@ ipcMain.handle('storage:set', async (_event, key: string, value: unknown) => {
   await storage.update((store) => ({ ...store, [key]: value }));
 });
 
+// Only paths inside a vault this window opened: the renderer cannot point anywhere else.
+ipcMain.handle('shell:reveal', async (event, vaultId: string, vaultPath: string) => {
+  const adapter = adapterFor(event, vaultId);
+  const target = adapter.resolve(vaultPath);
+  if (target === adapter.root) {
+    const failure = await shell.openPath(target);
+    if (failure) throw new Error(failure);
+  } else {
+    await fs.access(target);
+    shell.showItemInFolder(target);
+  }
+});
+
 ipcMain.handle('shell:openExternal', async (_event, url: string) => {
   if (/^(https?|mailto):/i.test(url)) await shell.openExternal(url);
 });
