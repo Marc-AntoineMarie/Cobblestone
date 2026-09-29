@@ -1,0 +1,16 @@
+{
+  "name": "@cobblestone/node",
+  "version": "0.1.0",
+  "private": true,
+  "license": "AGPL-3.0-only",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@cobblestone/core": "*",
+    "chokidar": "^5.0.0"
+  }
+}
