@@ -166,28 +166,22 @@ export class Session {
         this.recent = this.recent.filter((p) => !isInside(p, path));
       }),
     );
-    let saveTimer: ReturnType<typeof setTimeout> | undefined;
+    // Layout, bookmarks and settings are saved a moment after they change, and
+    // right away when the vault closes or the window goes away.
+    const saveWorkspace = this.later(500, () => platform.storage.set(WORKSPACE_KEY(entry.id), this.workspace.getState()));
+    const saveBookmarksSoon = this.later(300, () => saveBookmarks(vault.adapter, this.bookmarks.getState()));
+    const saveSettingsSoon = this.later(300, () => saveVaultSettings(vault.adapter, this.settings.getState()));
     this.disposers.push(
-      this.workspace.subscribe((state) => {
-        clearTimeout(saveTimer);
-        saveTimer = setTimeout(() => void platform.storage.set(WORKSPACE_KEY(entry.id), state), 500);
-      }),
-    );
-    let bookmarksTimer: ReturnType<typeof setTimeout> | undefined;
-    this.disposers.push(
-      this.bookmarks.subscribe((items) => {
-        clearTimeout(bookmarksTimer);
-        bookmarksTimer = setTimeout(() => void saveBookmarks(vault.adapter, items).catch(() => undefined), 300);
-      }),
-    );
-    let settingsTimer: ReturnType<typeof setTimeout> | undefined;
-    this.disposers.push(
+      this.workspace.subscribe(saveWorkspace),
+      this.bookmarks.subscribe(saveBookmarksSoon),
       this.settings.subscribe((next) => {
         vault.setOptions({ trash: next.trash, updateLinksOnRename: next.updateLinks });
-        clearTimeout(settingsTimer);
-        settingsTimer = setTimeout(() => void saveVaultSettings(vault.adapter, next).catch(() => undefined), 300);
+        saveSettingsSoon();
       }),
     );
+    const flush = () => this.flushSaves();
+    window.addEventListener('pagehide', flush);
+    this.disposers.push(() => window.removeEventListener('pagehide', flush));
   }
 
   static async open(
@@ -217,7 +211,34 @@ export class Session {
     return session;
   }
 
+  /** Saves pending right now: writes put off by `later`. */
+  private pendingSaves = new Map<() => Promise<unknown>, ReturnType<typeof setTimeout>>();
+
+  /** A save that runs `delay` ms after the last call, or at flushSaves(). */
+  private later(delay: number, save: () => Promise<unknown>): () => void {
+    return () => {
+      clearTimeout(this.pendingSaves.get(save));
+      this.pendingSaves.set(
+        save,
+        setTimeout(() => {
+          this.pendingSaves.delete(save);
+          void save().catch(() => undefined);
+        }, delay),
+      );
+    };
+  }
+
+  /** Runs every pending save now (the window closes, the vault switches). */
+  flushSaves() {
+    for (const [save, timer] of this.pendingSaves) {
+      clearTimeout(timer);
+      void save().catch(() => undefined);
+    }
+    this.pendingSaves.clear();
+  }
+
   dispose() {
+    this.flushSaves();
     for (const dispose of this.disposers) dispose();
     for (const url of this.resourceUrls.values()) URL.revokeObjectURL(url);
     this.resourceUrls.clear();
