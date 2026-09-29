@@ -148,7 +148,8 @@ export function renderNoteInto(container: HTMLElement, text: string, ctx: Render
   const onClick = (event: MouseEvent) => {
     const target = event.target as HTMLElement;
     const link = target.closest<HTMLAnchorElement>('a.internal-link, a.tag, a.external-link');
-    if (!link || !container.contains(link)) return;
+    // Links inside an embedded note belong to that note's own renderer.
+    if (!link || link.closest('.markdown-rendered') !== container) return;
     event.preventDefault();
     const newTab = event.metaKey || event.ctrlKey || event.button === 1;
     if (link.classList.contains('internal-link'))
