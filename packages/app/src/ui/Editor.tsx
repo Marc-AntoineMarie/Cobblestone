@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { EditorSelection } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 import { basename, stem } from '@cobblestone/core';
@@ -11,6 +11,8 @@ import {
   type EditorModeName,
 } from '../editor/setup';
 import type { EditorHost } from '../editor/host';
+import { describeError } from '../errors';
+import { t } from '../i18n';
 import type { Session } from '../session';
 import { hidePreviewSoon, schedulePreview } from './preview';
 import { renderNoteInto } from './render-note';
@@ -84,6 +86,8 @@ export function Editor({ path, tabId, mode, subpath, onView }: Props) {
   const viewRef = useRef<EditorView | null>(null);
   const pathRef = useRef(path);
   const pending = useRef<{ timer: ReturnType<typeof setTimeout>; text: string } | null>(null);
+  /** The note could not be read: no editor, so nothing empty can be saved over it. */
+  const [failure, setFailure] = useState<string | null>(null);
   pathRef.current = path;
 
   const flush = () => {
@@ -99,23 +103,26 @@ export function Editor({ path, tabId, mode, subpath, onView }: Props) {
     let disposed = false;
     let view: EditorView | null = null;
     let unregister = () => {};
-    void session.vault.read(path).then((text) => {
-      if (disposed || !host.current) return;
-      const state = createEditorState(text, {
-        host: createHost(session, pathRef),
-        mode,
-        spellcheck,
-        onChange: (next) => {
-          if (pending.current) clearTimeout(pending.current.timer);
-          pending.current = { text: next, timer: setTimeout(flush, 350) };
-        },
-      });
-      view = new EditorView({ state, parent: host.current });
-      viewRef.current = view;
-      unregister = session.registerEditor(tabId, view);
-      onView?.(view);
-      if (subpath) scrollToSubpath(view, session, pathRef.current, subpath);
-    });
+    void session.vault.read(path).then(
+      (text) => {
+        if (disposed || !host.current) return;
+        const state = createEditorState(text, {
+          host: createHost(session, pathRef),
+          mode,
+          spellcheck,
+          onChange: (next) => {
+            if (pending.current) clearTimeout(pending.current.timer);
+            pending.current = { text: next, timer: setTimeout(flush, 350) };
+          },
+        });
+        view = new EditorView({ state, parent: host.current });
+        viewRef.current = view;
+        unregister = session.registerEditor(tabId, view);
+        onView?.(view);
+        if (subpath) scrollToSubpath(view, session, pathRef.current, subpath);
+      },
+      (error: unknown) => !disposed && setFailure(describeError(error)),
+    );
     const offModify = session.vault.on('modify', (file, content) => {
       if (file.path !== pathRef.current || !viewRef.current || content === null) return;
       // Ignore echoes of our own pending edit.
@@ -168,6 +175,13 @@ export function Editor({ path, tabId, mode, subpath, onView }: Props) {
     };
   });
 
+  if (failure) {
+    return (
+      <p className="editor-failure" role="alert">
+        {t('note.readError', { error: failure })}
+      </p>
+    );
+  }
   return <div className="editor-host" ref={host} data-note={stem(basename(path))} />;
 }
 
