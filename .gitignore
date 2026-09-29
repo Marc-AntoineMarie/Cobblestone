@@ -1,0 +1,14 @@
+node_modules/
+dist/
+out/
+release/
+*.tsbuildinfo
+.DS_Store
+.vite/
+coverage/
+.env
+.env.*
+
+# Local design tooling
+.impeccable/questions/
+.impeccable/mocks/
