@@ -127,50 +127,50 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 
 ## 5. Arborescence des fichiers
 
-- **5.1** · Les deux · à automatiser · Cliquer un dossier → Il s'ouvre et son chevron tourne ; recliquer le referme.
-- **5.2** · Les deux · à automatiser · Regarder le chiffre à droite d'un dossier → Nombre de notes qu'il contient, sous-dossiers compris.
-- **5.3** · Les deux · à automatiser · Regarder les fichiers qui ne sont pas des notes → Badge d'extension (PNG, PDF, SVG…) ; notes et canvas s'affichent sans extension.
-- **5.4** · Les deux · à automatiser · Regarder les icônes → Notes, images, audio, vidéo, PDF, canvas et autres fichiers ont chacun la leur.
-- **5.5** · Les deux · à automatiser · Cliquer une note → Elle s'ouvre dans l'onglet courant et sa ligne passe sur fond jaune.
-- **5.6** · Les deux · à automatiser · Ctrl+clic sur une note → Elle s'ouvre dans un nouvel onglet.
-- **5.7** · Les deux · à automatiser · Ouvrir des dossiers imbriqués → Un trait vertical fin par niveau d'imbrication.
-- **5.8** · Les deux · à automatiser · Cliquer une ligne, puis flèches haut et bas → Le focus (contour rose) passe de ligne en ligne.
-- **5.9** · Les deux · à automatiser · Flèche droite sur un dossier fermé, puis sur un dossier ouvert → Le dossier s'ouvre, puis le focus descend dans son contenu.
-- **5.10** · Les deux · à automatiser · Flèche gauche sur un dossier ouvert, puis sur un fichier → Le dossier se ferme ; depuis un fichier, le focus remonte au dossier parent.
-- **5.11** · Les deux · à automatiser · Entrée sur une ligne, puis Ctrl+Entrée → Entrée ouvre la note (ou bascule le dossier) ; Ctrl+Entrée l'ouvre dans un nouvel onglet.
-- **5.12** · Les deux · à automatiser · F2 sur une ligne → Le nom passe en modification sur place.
-- **5.13** · Les deux · à automatiser · Suppr sur une ligne → L'élément part à la corbeille.
-- **5.14** · Les deux · à automatiser · Clic droit sur un dossier → Menu : Nouvelle note ici, Nouveau dossier ici, Nouveau canvas ici, Ajouter aux favoris, Renommer, Mettre à la corbeille.
-- **5.15** · Les deux · à automatiser · Clic droit sur un fichier → Menu : Ouvrir dans un nouvel onglet, Ouvrir à droite, Dupliquer, Ajouter aux favoris, Renommer, Mettre à la corbeille (en rouge).
-- **5.16** · Les deux · à automatiser · Dans un menu contextuel : flèches haut et bas, Entrée, Échap, clic à côté → Navigation, exécution de l'entrée, fermeture dans les deux derniers cas.
-- **5.17** · Les deux · à automatiser · Clic droit tout près du bord droit ou bas de la fenêtre → Le menu reste entièrement visible.
-- **5.18** · Les deux · à automatiser · « Nouvelle note ici » → Une note « Sans titre » est créée dans le dossier et s'ouvre, titre sélectionné.
-- **5.19** · Les deux · à automatiser · « Nouvelle note ici » deux fois de plus → « Sans titre 1 » puis « Sans titre 2 ».
-- **5.20** · Les deux · à automatiser · « Nouveau dossier ici » → « Nouveau dossier » est créé, le parent s'ouvre et le nom est en modification.
-- **5.21** · Les deux · à automatiser · « Ouvrir à droite » sur une note → L'écran se divise et la note s'ouvre à droite.
-- **5.22** · Les deux · à automatiser · « Dupliquer » une note → Une copie « Nom 1 » est créée à côté et s'ouvre, avec le même contenu.
-- **5.23** · Les deux · à automatiser · « Dupliquer » une image → Une copie identique est créée.
-- **5.24** · Les deux · à automatiser · Renommer sur place, puis Entrée → Le fichier est renommé (extension conservée) et les liens sont mis à jour partout.
-- **5.25** · Les deux · à automatiser · Renommer sur place, puis Échap → Le nom ne change pas.
-- **5.26** · Les deux · à automatiser · Renommer sur place, puis cliquer ailleurs → Le renommage est validé.
-- **5.27** · Les deux · à automatiser · Renommer avec un caractère interdit (`\ / : * ? " < > | # ^ [ ]`) → Message rouge, nom inchangé.
-- **5.28** · Les deux · à automatiser · Renommer vers un nom déjà pris dans le même dossier → Message rouge « Un fichier nommé … existe déjà ici », nom inchangé.
-- **5.29** · Les deux · à automatiser · Renommer en changeant seulement la casse (« note » en « Note ») → Renommage réussi, liens mis à jour.
-- **5.30** · Les deux · à automatiser · Glisser une note sur un dossier → Le dossier est surligné en rose pendant le survol ; la note y est déplacée et ses liens restent valides.
-- **5.31** · Les deux · à automatiser · Glisser un dossier dans un autre dossier → Il est déplacé avec tout son contenu.
-- **5.32** · Les deux · à automatiser · Glisser un élément dans le vide sous l'arborescence → Il est déplacé à la racine du coffre.
-- **5.33** · Les deux · à automatiser · Glisser un dossier dans l'un de ses sous-dossiers → Rien ne se passe.
-- **5.34** · Les deux · à automatiser · Glisser une note sur un fichier de son propre dossier → Rien ne se passe (elle y est déjà).
-- **5.35** · Les deux · à automatiser · Glisser une note de l'arborescence dans le texte d'une note en écriture → Un lien `[[Nom]]` est inséré à l'endroit du dépôt.
-- **5.36** · Les deux · à automatiser · Glisser une note sur la barre d'onglets → Elle s'ouvre dans un nouvel onglet de ce panneau.
-- **5.37** · Les deux · à automatiser · Dans un coffre de plusieurs milliers de fichiers, tout déplier et faire défiler → Le défilement reste fluide.
-- **5.38** · Les deux · à automatiser · Ouvrir un coffre vide → Message « Ce coffre est vide » et bouton « Nouvelle note ».
-- **5.39** · Les deux · à automatiser · Icônes « Nouvelle note » et « Nouveau dossier » à côté de NOTES → Création à la racine, ou dans le dossier réglé pour les nouvelles notes.
-- **5.40** · Les deux · à automatiser · Commande « Montrer cette note dans la barre latérale » → Les dossiers parents s'ouvrent, la ligne est encadrée de rose un instant et défile dans la vue, sans voler le focus du texte.
-- **5.41** · Bureau · à automatiser · Clic droit sur une note › « Afficher dans le gestionnaire de fichiers » → Le gestionnaire de fichiers s'ouvre sur son dossier, la note sélectionnée.
-- **5.42** · Bureau · à automatiser · Même chose sur un dossier → Son dossier parent s'ouvre, le dossier sélectionné.
-- **5.43** · Bureau · à automatiser · Même chose sur un canvas, une image, un PDF → Le bon fichier est sélectionné.
-- **5.44** · Web · à automatiser · Clic droit sur une note ou un dossier → Aucune entrée « gestionnaire de fichiers ».
+- **5.1** · Les deux · auto · Cliquer un dossier → Il s'ouvre et son chevron tourne ; recliquer le referme.
+- **5.2** · Les deux · auto · Regarder le chiffre à droite d'un dossier → Nombre de notes qu'il contient, sous-dossiers compris.
+- **5.3** · Les deux · auto · Regarder les fichiers qui ne sont pas des notes → Badge d'extension (PNG, PDF, SVG…) ; notes et canvas s'affichent sans extension.
+- **5.4** · Les deux · auto · Regarder les icônes → Notes, images, audio, vidéo, PDF, canvas et autres fichiers ont chacun la leur.
+- **5.5** · Les deux · auto · Cliquer une note → Elle s'ouvre dans l'onglet courant et sa ligne passe sur fond jaune.
+- **5.6** · Les deux · auto · Ctrl+clic sur une note → Elle s'ouvre dans un nouvel onglet.
+- **5.7** · Les deux · auto · Ouvrir des dossiers imbriqués → Un trait vertical fin par niveau d'imbrication.
+- **5.8** · Les deux · auto · Cliquer une ligne, puis flèches haut et bas → Le focus (contour rose) passe de ligne en ligne.
+- **5.9** · Les deux · auto · Flèche droite sur un dossier fermé, puis sur un dossier ouvert → Le dossier s'ouvre, puis le focus descend dans son contenu.
+- **5.10** · Les deux · auto · Flèche gauche sur un dossier ouvert, puis sur un fichier → Le dossier se ferme ; depuis un fichier, le focus remonte au dossier parent.
+- **5.11** · Les deux · auto · Entrée sur une ligne, puis Ctrl+Entrée → Entrée ouvre la note (ou bascule le dossier) ; Ctrl+Entrée l'ouvre dans un nouvel onglet.
+- **5.12** · Les deux · auto · F2 sur une ligne → Le nom passe en modification sur place.
+- **5.13** · Les deux · auto · Suppr sur une ligne → L'élément part à la corbeille.
+- **5.14** · Les deux · auto · Clic droit sur un dossier → Menu : Nouvelle note ici, Nouveau dossier ici, Nouveau canvas ici, Ajouter aux favoris, Renommer, Mettre à la corbeille.
+- **5.15** · Les deux · auto · Clic droit sur un fichier → Menu : Ouvrir dans un nouvel onglet, Ouvrir à droite, Dupliquer, Ajouter aux favoris, Renommer, Mettre à la corbeille (en rouge).
+- **5.16** · Les deux · auto · Dans un menu contextuel : flèches haut et bas, Entrée, Échap, clic à côté → Navigation, exécution de l'entrée, fermeture dans les deux derniers cas.
+- **5.17** · Les deux · auto · Clic droit tout près du bord droit ou bas de la fenêtre → Le menu reste entièrement visible.
+- **5.18** · Les deux · auto · « Nouvelle note ici » → Une note « Sans titre » est créée dans le dossier et s'ouvre, titre sélectionné.
+- **5.19** · Les deux · auto · « Nouvelle note ici » deux fois de plus → « Sans titre 1 » puis « Sans titre 2 ».
+- **5.20** · Les deux · auto · « Nouveau dossier ici » → « Nouveau dossier » est créé, le parent s'ouvre et le nom est en modification.
+- **5.21** · Les deux · auto · « Ouvrir à droite » sur une note → L'écran se divise et la note s'ouvre à droite.
+- **5.22** · Les deux · auto · « Dupliquer » une note → Une copie « Nom 1 » est créée à côté et s'ouvre, avec le même contenu.
+- **5.23** · Les deux · auto · « Dupliquer » une image → Une copie identique est créée.
+- **5.24** · Les deux · auto · Renommer sur place, puis Entrée → Le fichier est renommé (extension conservée) et les liens sont mis à jour partout.
+- **5.25** · Les deux · auto · Renommer sur place, puis Échap → Le nom ne change pas.
+- **5.26** · Les deux · auto · Renommer sur place, puis cliquer ailleurs → Le renommage est validé.
+- **5.27** · Les deux · auto · Renommer avec un caractère interdit (`\ / : * ? " < > | # ^ [ ]`) → Message rouge, nom inchangé.
+- **5.28** · Les deux · auto · Renommer vers un nom déjà pris dans le même dossier → Message rouge « Un fichier nommé … existe déjà ici », nom inchangé.
+- **5.29** · Les deux · auto · Renommer en changeant seulement la casse (« note » en « Note ») → Renommage réussi, liens mis à jour.
+- **5.30** · Les deux · auto · Glisser une note sur un dossier → Le dossier est surligné en rose pendant le survol ; la note y est déplacée et ses liens restent valides.
+- **5.31** · Les deux · auto · Glisser un dossier dans un autre dossier → Il est déplacé avec tout son contenu.
+- **5.32** · Les deux · auto · Glisser un élément dans le vide sous l'arborescence → Il est déplacé à la racine du coffre.
+- **5.33** · Les deux · auto · Glisser un dossier dans l'un de ses sous-dossiers → Rien ne se passe.
+- **5.34** · Les deux · auto · Glisser une note sur un fichier de son propre dossier → Rien ne se passe (elle y est déjà).
+- **5.35** · Les deux · auto · Glisser une note de l'arborescence dans le texte d'une note en écriture → Un lien `[[Nom]]` est inséré à l'endroit du dépôt.
+- **5.36** · Les deux · auto · Glisser une note sur la barre d'onglets → Elle s'ouvre dans un nouvel onglet de ce panneau.
+- **5.37** · Les deux · auto · Dans un coffre de plusieurs milliers de fichiers, tout déplier et faire défiler → Le défilement reste fluide.
+- **5.38** · Les deux · auto · Ouvrir un coffre vide → Message « Ce coffre est vide » et bouton « Nouvelle note ».
+- **5.39** · Les deux · auto · Icônes « Nouvelle note » et « Nouveau dossier » à côté de NOTES → Création à la racine, ou dans le dossier réglé pour les nouvelles notes.
+- **5.40** · Les deux · auto · Commande « Montrer cette note dans la barre latérale » → Les dossiers parents s'ouvrent, la ligne est encadrée de rose un instant et défile dans la vue, sans voler le focus du texte.
+- **5.41** · Bureau · auto · Clic droit sur une note › « Afficher dans le gestionnaire de fichiers » → Le gestionnaire de fichiers s'ouvre sur son dossier, la note sélectionnée.
+- **5.42** · Bureau · auto · Même chose sur un dossier → Son dossier parent s'ouvre, le dossier sélectionné.
+- **5.43** · Bureau · auto · Même chose sur un canvas, une image, un PDF → Le bon fichier est sélectionné.
+- **5.44** · Web · auto · Clic droit sur une note ou un dossier → Aucune entrée « gestionnaire de fichiers ».
 
 ## 6. Barre latérale : coffre, favoris, tags, pied
 

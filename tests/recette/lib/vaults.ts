@@ -65,10 +65,11 @@ export function obsidianVault(extra: Files = {}): Files {
   });
 }
 
-/** A large vault: n short notes in folders of 100. */
-export function manyNotes(n: number): Files {
+/** A large vault: n short notes in folders of `perFolder`. */
+export function manyNotes(n: number, perFolder = 100): Files {
   const files: Files = {};
   for (let i = 0; i < n; i++)
-    files[`Dossier ${Math.floor(i / 100)}/Note ${i}.md`] = `# Note ${i}\n\nLien vers [[Note ${(i + 1) % n}]]. #tag${i % 7}\n`;
+    files[`Dossier ${Math.floor(i / perFolder)}/Note ${i}.md`] =
+      `# Note ${i}\n\nLien vers [[Note ${(i + 1) % n}]]. #tag${i % 7}\n`;
   return files;
 }
