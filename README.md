@@ -14,6 +14,7 @@ Early development (v0.1). What works today, on the desktop app and in the browse
 - **Links**: backlinks with context, outgoing links, pending links that create the note when followed, and link updates in every note when a file or folder is renamed or moved.
 - **Finding things**: one field that finds notes by name, searches their text with Obsidian's query syntax (`tag:`, `path:`, `file:`, `line:()`, `section:()`, `task-todo:`, `[property:value]`, `OR`, `-`, `"phrases"`, `/regex/`), or creates the note; a command palette with shortcuts.
 - **Obsidian's daily helpers**: bookmarks (imported from `.obsidian/bookmarks.json`), templates with `{{title}}`, `{{date}}` and `{{time}}`, previews of a link's target on hover, and unlinked mentions you can turn into links in one click.
+- **Canvas**: Obsidian's `.canvas` files open and edit as they are (cards, notes, images, links, groups, labelled arrows, colours, undo), and an untouched canvas is never rewritten.
 - **Views**: file tree with drag and drop, tags, outline, properties, graph (local and global, notes pin where you drop them), daily notes, tabs and split panes, settings.
 - **Obsidian migration**: attachment folder, new note location, line breaks, trash, default view and daily note settings are imported from `.obsidian/` the first time.
 - **Two paper stocks**: day and night themes, following the system by default. English and French.

@@ -1,5 +1,6 @@
 import { useRef, useState, type DragEvent, type PointerEvent as ReactPointerEvent } from 'react';
-import { FileText, Network, PanelLeftOpen, Pin, Plus, Settings2, X, File } from 'lucide-react';
+import { FileText, LayoutDashboard, Network, PanelLeftOpen, Pin, Plus, Settings2, X, File } from 'lucide-react';
+import { CanvasView } from '../canvas/CanvasView';
 import { basename, stem } from '@cobblestone/core';
 import { t } from '../i18n';
 import {
@@ -93,6 +94,8 @@ export function viewTitle(view: ViewState): string {
       return stem(view.path);
     case 'file':
       return basename(view.path);
+    case 'canvas':
+      return stem(view.path);
     case 'graph':
       return view.focus ? `${t('graph.title')} · ${stem(view.focus)}` : t('graph.title');
     case 'settings':
@@ -108,6 +111,7 @@ function TabIcon({ view }: { view: ViewState }) {
   if (view.type === 'graph') return <Network {...props} />;
   if (view.type === 'settings') return <Settings2 {...props} />;
   if (view.type === 'file') return <File {...props} />;
+  if (view.type === 'canvas') return <LayoutDashboard {...props} />;
   return null;
 }
 
@@ -267,6 +271,8 @@ function TabView({ tab, paneId, visible }: { tab: Tab; paneId: string; visible: 
       return <NoteView tab={tab} paneId={paneId} view={view} visible={visible} />;
     case 'file':
       return <FileView path={view.path} />;
+    case 'canvas':
+      return <CanvasView key={view.path} path={view.path} visible={visible} />;
     case 'graph':
       return <GraphView focus={view.focus} visible={visible} />;
     case 'settings':

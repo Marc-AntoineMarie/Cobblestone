@@ -59,6 +59,14 @@ await session('demo', {}, async (page, shot) => {
   await page.keyboard.press('Enter');
   await shot('formatting');
 });
+await session('canvas', {}, async (page, shot) => {
+  await demo(page);
+  await page.locator('.tree-row', { hasText: 'Carte des idées' }).click();
+  await page.waitForTimeout(1000);
+  await shot('view');
+  await page.locator('.canvas-node.is-text').first().click();
+  await shot('selected');
+});
 await session('demo-night', { paper: 'dark' }, async (page, shot) => {
   await demo(page);
   await shot('welcome');

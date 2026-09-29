@@ -24,6 +24,7 @@ apps/desktop      Electron host
 - `metadata-cache.ts` indexes the whole vault: resolved and unresolved links, backlinks, tags, aliases. It re-resolves only the notes a file change can affect.
 - `vault.ts` wraps an adapter: loading, create, modify, rename (with link updates), delete to `.trash`, and external changes. All mutations and external events run through one queue, so the vault never sees half-applied states.
 - `search/` parses Obsidian's query language and evaluates it over notes.
+- `canvas.ts` reads and writes JSON Canvas files exactly as Obsidian does, and keeps their file references in step with renames.
 
 ### Hosts
 

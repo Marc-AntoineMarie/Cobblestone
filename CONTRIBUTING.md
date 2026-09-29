@@ -41,7 +41,7 @@ Exemples : `feat(editor): coche les tâches d'un clic`, `fix(desktop): ne perd p
 | `revert`   | annulation d'un commit précédent                                 |
 
 Portées courantes : `core`, `node`, `app`, `editor`, `search`, `graph`, `settings`, `design`, `web`,
-`desktop`, `sync`, `e2e`, `release`.
+`desktop`, `canvas`, `sync`, `e2e`, `release`.
 
 Règles :
 

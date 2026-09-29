@@ -1,5 +1,16 @@
 import { memo, useEffect, useMemo, useRef, useState, type DragEvent, type KeyboardEvent, type MouseEvent } from 'react';
-import { ChevronRight, File, FileImage, FileText, Folder, FolderOpen, Music, Film, FileType } from 'lucide-react';
+import {
+  ChevronRight,
+  File,
+  FileImage,
+  FileText,
+  Folder,
+  FolderOpen,
+  LayoutDashboard,
+  Music,
+  Film,
+  FileType,
+} from 'lucide-react';
 import { dirname, isInside } from '@cobblestone/core';
 import { t } from '../i18n';
 import type { MenuItem } from '../session';
@@ -24,6 +35,7 @@ function fileIcon(extension: string) {
   if (['mp3', 'wav', 'm4a', 'ogg', 'flac'].includes(extension)) return Music;
   if (['mp4', 'webm', 'mov', 'ogv', 'mkv'].includes(extension)) return Film;
   if (extension === 'pdf') return FileType;
+  if (extension === 'canvas') return LayoutDashboard;
   return File;
 }
 
@@ -75,7 +87,8 @@ export function FileTree() {
       for (const file of [...entry.files].sort((a, b) => collator.compare(a.name, b.name))) {
         out.push({
           path: file.path,
-          name: file.extension === 'md' ? file.basename : file.name,
+          // Notes and canvases show their name alone; other files keep their extension.
+          name: file.extension === 'md' || file.extension === 'canvas' ? file.basename : file.name,
           depth,
           kind: 'file',
           extension: file.extension,
@@ -126,6 +139,7 @@ export function FileTree() {
       items.push(
         { label: t('tree.newNoteHere'), run: () => void session.createNote(row.path) },
         { label: t('tree.newFolderHere'), run: () => void session.createFolder(row.path) },
+        { label: t('tree.newCanvasHere'), run: () => void session.createCanvas(row.path) },
       );
     } else {
       items.push(

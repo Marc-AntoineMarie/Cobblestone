@@ -170,6 +170,12 @@ export function registerAppCommands(
       run: () => session.ui.setState({ focusTitle: session.activePath }),
     },
     {
+      id: 'canvas:new',
+      name: t('cmd.newCanvas'),
+      section: t('cmd.section.note'),
+      run: () => void session.createCanvas(),
+    },
+    {
       id: 'note:insert-template',
       name: t('cmd.insertTemplate'),
       section: t('cmd.section.note'),

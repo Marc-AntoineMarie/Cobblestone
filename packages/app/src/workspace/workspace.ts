@@ -6,6 +6,7 @@ export type ViewState =
   | { type: 'empty' }
   | { type: 'note'; path: string; mode?: EditorMode; subpath?: string }
   | { type: 'file'; path: string }
+  | { type: 'canvas'; path: string }
   | { type: 'graph'; focus?: string }
   | { type: 'settings'; section?: string };
 
@@ -39,11 +40,14 @@ let counter = 0;
 const uid = (prefix: string) => `${prefix}${Date.now().toString(36)}${(counter++).toString(36)}`;
 
 export function viewForPath(path: string): ViewState {
-  return extname(path) === 'md' ? { type: 'note', path } : { type: 'file', path };
+  const ext = extname(path);
+  if (ext === 'md') return { type: 'note', path };
+  if (ext === 'canvas') return { type: 'canvas', path };
+  return { type: 'file', path };
 }
 
 export function viewPath(view: ViewState): string | null {
-  return view.type === 'note' || view.type === 'file' ? view.path : null;
+  return view.type === 'note' || view.type === 'file' || view.type === 'canvas' ? view.path : null;
 }
 
 function newTab(view: ViewState = { type: 'empty' }): Tab {

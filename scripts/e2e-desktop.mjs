@@ -22,6 +22,18 @@ await writeFile(
 );
 await writeFile(path.join(vault, 'Home.md'), '# Home\n\nSee [[Projects/Plan]] and [[Missing]].\n');
 await writeFile(path.join(vault, 'Ideas.md'), 'The plan needs work.\n');
+const board = JSON.stringify(
+  {
+    nodes: [
+      { id: '1a2b3c4d5e6f7a8b', type: 'text', text: 'Hello', x: 0, y: 0, width: 250, height: 60, color: '4' },
+      { id: '9a8b7c6d5e4f3a2b', type: 'file', file: 'Projects/Plan.md', x: 300, y: 0, width: 400, height: 300 },
+    ],
+    edges: [{ id: 'e1', fromNode: '1a2b3c4d5e6f7a8b', fromSide: 'right', toNode: '9a8b7c6d5e4f3a2b', toSide: 'left' }],
+  },
+  null,
+  '\t',
+);
+await writeFile(path.join(vault, 'Board.canvas'), board);
 await writeFile(path.join(vault, 'Projects/Plan.md'), '---\nstatus: draft\n---\nBack to [[Home]].\n');
 await writeFile(
   path.join(userData, 'vaults.json'),
@@ -89,6 +101,14 @@ check(
   (await readFile(path.join(vault, 'Ideas.md'), 'utf8')).includes('The [[Plan|plan]] needs work.'),
 );
 await page.screenshot({ path: `${out}/e2e-plan.png`, timeout: 5000 }).catch(() => undefined);
+
+// A canvas opened and left alone is not rewritten.
+await page.locator('.tree-row', { hasText: 'Board' }).click();
+await page.waitForTimeout(800);
+check('shows an Obsidian canvas', (await page.locator('.canvas-node').count()) === 2);
+await page.locator('.tree-row', { hasText: 'Ideas' }).click();
+await page.waitForTimeout(500);
+check('leaves an untouched canvas byte for byte', (await readFile(path.join(vault, 'Board.canvas'), 'utf8')) === board);
 
 // Obsidian settings were imported into .cobblestone and .obsidian was left alone.
 const own = JSON.parse(await readFile(path.join(vault, '.cobblestone/app.json'), 'utf8'));
