@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
-import { LANGUAGES, t } from '../i18n';
-import type { VaultSettings } from '../settings';
+import { getLanguage, LANGUAGES, t } from '../i18n';
+import { DEFAULT_SETTINGS, TEXT_SIZES, type VaultSettings } from '../settings';
 import { useSession, useStore } from './hooks';
 import { usePreferences } from './preferences';
 
@@ -91,8 +91,36 @@ export function SettingsView() {
               <option value="source">{t('note.modeSource')}</option>
             </select>
           </Row>
-          <Row label={t('settings.readableLength')} htmlFor="set-readable">
-            <Toggle id="set-readable" checked={settings.readableLength} onChange={(readableLength) => set({ readableLength })} />
+          <Row label={t('settings.textSize')} htmlFor="set-text-size">
+            <select id="set-text-size" value={settings.textSize} onChange={(e) => set({ textSize: Number(e.target.value) })}>
+              {[...new Set([...TEXT_SIZES, settings.textSize])]
+                .sort((a, b) => a - b)
+                .map((size) => (
+                  <option key={size} value={size}>
+                    {size.toLocaleString(getLanguage())} px
+                    {size === DEFAULT_SETTINGS.textSize ? ` (${t('settings.default')})` : ''}
+                  </option>
+                ))}
+            </select>
+          </Row>
+          <Row label={t('settings.lineWidth')}>
+            <div className="segmented" role="radiogroup" aria-label={t('settings.lineWidth')}>
+              {(['narrow', 'normal', 'wide', 'full'] as const).map((width) => {
+                const checked =
+                  width === 'full' ? !settings.readableLength : settings.readableLength && settings.lineWidth === width;
+                return (
+                  <button
+                    key={width}
+                    role="radio"
+                    aria-checked={checked}
+                    aria-pressed={checked}
+                    onClick={() => set(width === 'full' ? { readableLength: false } : { readableLength: true, lineWidth: width })}
+                  >
+                    {t(`settings.lineWidth.${width}`)}
+                  </button>
+                );
+              })}
+            </div>
           </Row>
           <Row label={t('settings.lineBreaks')} htmlFor="set-breaks">
             <Toggle id="set-breaks" checked={settings.lineBreaks} onChange={(lineBreaks) => set({ lineBreaks })} />

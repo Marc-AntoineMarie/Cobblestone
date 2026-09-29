@@ -1,4 +1,5 @@
-import { useEffect } from 'react';
+import { useEffect, type CSSProperties } from 'react';
+import { LINE_WIDTHS } from '../settings';
 import { registerAppCommands } from './app-commands';
 import { ContextMenu } from './ContextMenu';
 import { Finder } from './Finder';
@@ -17,6 +18,8 @@ export function Workbench({ onSwitchVault }: { onSwitchVault: () => void }) {
   const { preferences, update } = usePreferences();
   const railOpen = useStore(session.ui, (s) => s.railOpen);
   const marginOpen = useStore(session.ui, (s) => s.marginOpen);
+  const textSize = useStore(session.settings, (s) => s.textSize);
+  const lineWidth = useStore(session.settings, (s) => s.lineWidth);
   const wide = useMediaQuery('(min-width: 1180px)');
   const narrow = useMediaQuery('(max-width: 760px)');
 
@@ -47,7 +50,12 @@ export function Workbench({ onSwitchVault }: { onSwitchVault: () => void }) {
   const marginMode = wide ? 'docked' : 'drawer';
 
   return (
-    <div className="workbench" data-rail={railOpen ? 'open' : 'closed'} data-margin={marginOpen ? marginMode : 'closed'}>
+    <div
+      className="workbench"
+      data-rail={railOpen ? 'open' : 'closed'}
+      data-margin={marginOpen ? marginMode : 'closed'}
+      style={{ '--body': `${textSize}px`, '--line-width': LINE_WIDTHS[lineWidth] ?? LINE_WIDTHS.normal } as CSSProperties}
+    >
       <Rail onSwitchVault={onSwitchVault} drawer={narrow} />
       <main className="sheets" id="sheets">
         <LayoutView />

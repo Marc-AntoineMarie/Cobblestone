@@ -13,7 +13,11 @@ export interface VaultSettings {
   attachmentLocation: string;
   updateLinks: boolean;
   lineBreaks: boolean;
+  /** Lines stop at `lineWidth` instead of filling the sheet. */
   readableLength: boolean;
+  lineWidth: LineWidth;
+  /** Note text size in pixels (Obsidian's "baseFontSize"). */
+  textSize: number;
   spellcheck: boolean;
   trash: 'vault' | 'permanent';
   defaultMode: EditorMode;
@@ -27,6 +31,13 @@ export interface VaultSettings {
   templateTimeFormat: string;
 }
 
+export type LineWidth = 'narrow' | 'normal' | 'wide';
+
+/** Line length in multiples of the text size: "normal" is about 80 characters. */
+export const LINE_WIDTHS: Record<LineWidth, number> = { narrow: 34, normal: 42, wide: 54 };
+
+export const TEXT_SIZES = [13, 14, 15, 16, 16.5, 17, 18, 19, 20, 22, 24];
+
 export const DEFAULT_SETTINGS: VaultSettings = {
   newNoteLocation: 'root',
   newNoteFolder: '',
@@ -34,6 +45,8 @@ export const DEFAULT_SETTINGS: VaultSettings = {
   updateLinks: true,
   lineBreaks: true,
   readableLength: true,
+  lineWidth: 'normal',
+  textSize: 16.5,
   spellcheck: true,
   trash: 'vault',
   defaultMode: 'live',
@@ -102,6 +115,9 @@ export async function importObsidianSettings(adapter: VaultAdapter): Promise<Par
     if (str('defaultViewMode') === 'preview') out.defaultMode = 'read';
     else if (bool('livePreview') === false) out.defaultMode = 'source';
   }
+  const appearance = await readJson(adapter, '.obsidian/appearance.json');
+  const fontSize = appearance?.baseFontSize;
+  if (typeof fontSize === 'number' && fontSize >= 10 && fontSize <= 30) out.textSize = fontSize;
   const daily = await readJson(adapter, '.obsidian/daily-notes.json');
   if (daily) {
     if (typeof daily.folder === 'string') out.dailyFolder = daily.folder;
