@@ -38,7 +38,7 @@ npm run dist -w @cobblestone/desktop   # desktop installers into apps/desktop/re
 
 ## Contributing
 
-How we work — commit conventions, checks, versions and releases — is in [CONTRIBUTING.md](CONTRIBUTING.md). Changes are listed in [CHANGELOG.md](CHANGELOG.md). Security issues: see [SECURITY.md](SECURITY.md).
+How we work — rules, a journal entry for every change, and the list of ideas still to do — is in [contribution/](contribution/) (in French); [CONTRIBUTING.md](CONTRIBUTING.md) sums it up. Releases are listed in [CHANGELOG.md](CHANGELOG.md). Security issues: see [SECURITY.md](SECURITY.md).
 
 ## Repository
 

@@ -4,114 +4,18 @@ Merci de ton intérêt ! Les bugs et les idées sont bienvenus dans les
 [issues](https://github.com/Marc-AntoineMarie/Cobblestone/issues). Pour une faille de sécurité, suis
 plutôt [SECURITY.md](SECURITY.md).
 
-Ce document est **la méthode du projet**. Elle s'applique à tout le monde, mainteneurs compris.
+Toute la méthode est dans le dossier [contribution/](contribution/) :
 
-## 1. Avant de coder
+- [contribution/REGLES.md](contribution/REGLES.md) : branches, commits, code, design, vérifications,
+  journal, versions ;
+- [contribution/JOURNAL.md](contribution/JOURNAL.md) : chaque changement, détaillé dans sa fiche ;
+- [contribution/IDEES.md](contribution/IDEES.md) : ce qui reste à faire ou à décider.
 
-- Un changement important commence par une issue, pour en discuter avant d'écrire le code.
-- Le produit est décrit dans [PRODUCT.md](PRODUCT.md), le design dans [DESIGN.md](DESIGN.md),
-  l'architecture dans [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) et la suite dans
-  [docs/ROADMAP.md](docs/ROADMAP.md). Un changement qui les contredit les met à jour dans le même
-  lot de commits.
-- Compatibilité : Cobblestone ouvre un coffre Obsidian tel quel et n'écrit jamais dans
-  `.obsidian/`. Tout changement du format des fichiers doit rester lisible par Obsidian.
+En bref : une branche courte par changement, des commits `type(portée): message` en français,
+`npm run check` avant chaque commit, `npm run e2e` pour les parcours de l'app, une fiche de journal
+(`npm run journal -- new`) avant de fusionner, et `npm run release X.Y.Z` pour publier.
 
-## 2. Commits
-
-Format [Conventional Commits](https://www.conventionalcommits.org/fr/), **en français** :
-
-```
-type(portée): message au présent, sans majuscule ni point final
-```
-
-Exemples : `feat(editor): coche les tâches d'un clic`, `fix(desktop): ne perd plus la dernière frappe à la fermeture`.
-
-| Type       | Quand                                                            |
-| ---------- | ---------------------------------------------------------------- |
-| `feat`     | nouvelle fonctionnalité visible                                  |
-| `fix`      | correction de bug                                                |
-| `perf`     | amélioration de performance                                      |
-| `refactor` | réorganisation du code sans changement de comportement           |
-| `test`     | ajout ou correction de tests                                     |
-| `docs`     | documentation (README, docs/, PRODUCT.md, DESIGN.md)             |
-| `style`    | mise en forme du code (Prettier), sans effet sur le comportement |
-| `build`    | dépendances, empaquetage, scripts de build                       |
-| `ci`       | intégration continue                                             |
-| `chore`    | maintenance, releases (`chore(release): v0.2.0`)                 |
-| `revert`   | annulation d'un commit précédent                                 |
-
-Portées courantes : `core`, `node`, `app`, `editor`, `search`, `graph`, `settings`, `design`, `web`,
-`desktop`, `canvas`, `sync`, `e2e`, `release`.
-
-Règles :
-
-- **Un commit = un changement qui a du sens seul.** Pas de gros commit fourre-tout, pas de
-  « wip ». Une fonctionnalité se découpe en plusieurs commits (modèle, interface, tests…).
-- Chaque commit laisse le projet dans un état qui compile et dont les tests passent.
-- Un changement cassant (format de fichier, réglage renommé, API) le signale avec `!` :
-  `feat(core)!: …`, et explique la migration dans le corps du commit.
-- Un bug corrigé arrive avec le test qui le reproduit.
-
-## 3. Vérifications
-
-Avant chaque commit :
-
-```bash
-npm run check        # formatage, types et tests unitaires
-```
-
-Avant une pull request ou une release, en plus :
-
-```bash
-npm run e2e          # scénarios de bout en bout sur l'app web et l'app de bureau
-```
-
-Avant une release, dérouler aussi la recette manuelle [docs/RECETTE.md](docs/RECETTE.md) sur une copie
-d'un coffre réel, sur le bureau et sur le web. Toute nouvelle fonctionnalité y ajoute ses lignes (même
-format, numéros suivants de sa section) ; `npm run check` vérifie ce format.
-
-La CI refait tout ça sur chaque push et chaque pull request ; une branche rouge ne se fusionne pas.
-
-## 4. Branches et pull requests
-
-- `main` est toujours publiable.
-- Le travail se fait sur une branche courte : `feat/partage-par-lien`, `fix/titre-renommage`.
-- La pull request décrit le changement et pourquoi, coche la liste du modèle, et se fusionne
-  en gardant les commits (pas de squash) quand ils respectent les règles ci-dessus.
-
-## 5. Versions
-
-[Versionnage sémantique](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORRECTIF`.
-
-- Tant que la version est `0.x` : une nouvelle fonctionnalité monte le MINEUR (`0.2.0`), une
-  correction monte le CORRECTIF (`0.2.1`).
-- À partir de `1.0.0` : un changement cassant monte le MAJEUR.
-- Préversions : `0.3.0-beta.1`, publiées comme « pre-release ».
-
-## 6. Publier une version
-
-Depuis `main`, arbre propre :
-
-```bash
-npm run release 0.2.0
-```
-
-Le script :
-
-1. vérifie que l'arbre est propre, que la branche est `main` et que le tag n'existe pas ;
-2. lance `npm run check` ;
-3. met la version à jour dans tous les `package.json` ;
-4. ajoute au [CHANGELOG.md](CHANGELOG.md) les commits depuis la version précédente, classés par type ;
-5. crée le commit `chore(release): v0.2.0` et le tag annoté `v0.2.0`, puis les pousse.
-
-Le tag déclenche [.github/workflows/release.yml](.github/workflows/release.yml) : la CI complète,
-puis une release GitHub brouillon, la construction des installeurs (Linux, Windows, macOS) et de
-l'app web, et enfin la publication.
-
-Un audit de sécurité et de performance (`docs/audit-AAAA-MM-JJ.md`) précède chaque version
-mineure : frontières de confiance, notes partagées, stockage, dépendances.
-
-## 7. Droits sur les contributions
+## Droits sur les contributions
 
 Cobblestone est publié sous [AGPL-3.0](LICENSE) et ses fonctions pour les organisations seront
 proposées sous licence commerciale. Pour que ce double modèle reste possible, en soumettant une
@@ -129,6 +33,8 @@ Coche la case correspondante dans la description de la pull request pour l'indiq
 
 ## Contributing (English)
 
+- The full method, written in French, is in [contribution/](contribution/): rules, a journal entry
+  for every change (`npm run journal -- new`) and the list of ideas still to do.
 - Commits follow Conventional Commits, written in French: `type(scope): message`. One meaningful
   change per commit; every commit builds and passes its tests.
 - Run `npm run check` before committing and `npm run e2e` before a pull request.
