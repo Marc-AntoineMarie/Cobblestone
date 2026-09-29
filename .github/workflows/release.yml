@@ -1,0 +1,123 @@
+name: Release
+
+# Déclenchée par un tag vX.Y.Z (voir `npm run release`). Étapes : CI complète, release brouillon
+# avec les notes du CHANGELOG, installeurs sur les trois systèmes et app web, puis publication.
+on:
+  push:
+    tags: ['v*']
+
+# Lecture seule par défaut ; seuls les jobs qui créent ou complètent la release écrivent.
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+    permissions:
+      contents: read
+
+  draft:
+    needs: ci
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Le tag correspond à la version de l'app
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          root=$(jq -r .version package.json)
+          desktop=$(jq -r .version apps/desktop/package.json)
+          echo "tag=$tag racine=$root bureau=$desktop"
+          [ "$tag" = "$root" ] && [ "$tag" = "$desktop" ] || { echo "::error::Versions différentes : utilise npm run release $tag"; exit 1; }
+      - name: Notes de version depuis le CHANGELOG
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          awk -v v="$version" '$0 ~ "^## \\[" v "\\]" {on=1; next} /^## \[/ {if (on) exit} on' CHANGELOG.md > notes.md
+          [ -s notes.md ] || { echo "::error::Aucune entrée $version dans CHANGELOG.md"; exit 1; }
+          printf '\n---\n\n' >> notes.md
+          sed "s/{v}/$version/g" .github/release-download.md >> notes.md
+      - name: Release brouillon
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          prerelease=""
+          case "$GITHUB_REF_NAME" in *-*) prerelease="--prerelease" ;; esac
+          gh release create "$GITHUB_REF_NAME" --draft $prerelease --title "Cobblestone $GITHUB_REF_NAME" --notes-file notes.md
+
+  desktop:
+    needs: draft
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # 22.04 : glibc plus ancienne, l'AppImage tourne sur davantage de distributions.
+          - os: ubuntu-22.04
+            args: --linux AppImage deb
+          - os: windows-latest
+            args: --win nsis
+          - os: macos-latest
+            args: --mac dmg --arm64 --x64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build -w @cobblestone/desktop
+      - name: Installeurs
+        working-directory: apps/desktop
+        env:
+          # Pas de signature de code tant que les certificats ne sont pas configurés.
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: npx electron-builder ${{ matrix.args }} --publish never
+      - name: Ajout à la release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          shopt -s nullglob
+          files=(apps/desktop/release/*.AppImage apps/desktop/release/*.deb apps/desktop/release/*.exe apps/desktop/release/*.dmg)
+          [ ${#files[@]} -gt 0 ] || { echo "::error::Aucun installeur produit"; exit 1; }
+          gh release upload "$GITHUB_REF_NAME" "${files[@]}" --clobber
+
+  web:
+    needs: draft
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run build -w @cobblestone/web
+      - name: Archive de l'app web à héberger soi-même
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          archive="Cobblestone-${GITHUB_REF_NAME#v}-web.zip"
+          (cd apps/web/dist && zip -qr "$GITHUB_WORKSPACE/$archive" .)
+          gh release upload "$GITHUB_REF_NAME" "$archive" --clobber
+
+  publish:
+    needs: [desktop, web]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Publication
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: gh release edit "$GITHUB_REF_NAME" --draft=false
