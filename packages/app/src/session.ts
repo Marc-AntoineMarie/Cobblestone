@@ -14,6 +14,14 @@ import {
   Vault,
   type VaultAdapter,
 } from '@cobblestone/core';
+import {
+  loadBookmarks,
+  removeFromBookmarks,
+  renameInBookmarks,
+  saveBookmarks,
+  toggleFileBookmark,
+  type Bookmark,
+} from './bookmarks';
 import { CommandRegistry } from './commands';
 import { getLanguage, t } from './i18n';
 import type { Platform, VaultEntry } from './platform';
@@ -77,6 +85,7 @@ export class Session {
   readonly workspace: StoreApi<WorkspaceState>;
   readonly ui: StoreApi<UIState>;
   readonly settings: StoreApi<VaultSettings>;
+  readonly bookmarks: StoreApi<Bookmark[]>;
   readonly events = new Emitter<SessionEvents>();
   /** Recently opened files, most recent first. */
   recent: string[] = [];
@@ -90,8 +99,10 @@ export class Session {
     readonly vault: Vault,
     settings: VaultSettings,
     workspace: WorkspaceState,
+    bookmarks: Bookmark[],
   ) {
     this.settings = createStore(() => settings);
+    this.bookmarks = createStore<Bookmark[]>(() => bookmarks);
     this.workspace = createStore(() => workspace);
     this.ui = createStore<UIState>(() => ({
       railOpen: true,
@@ -111,10 +122,12 @@ export class Session {
     this.disposers.push(
       vault.on('rename', (path, oldPath) => {
         this.workspace.setState((s) => renamePaths(s, oldPath, path));
+        this.bookmarks.setState((b) => renameInBookmarks(b, oldPath, path), true);
         this.dropResource(oldPath);
       }),
       vault.on('delete', (path) => {
         this.workspace.setState((s) => removePaths(s, path));
+        this.bookmarks.setState((b) => removeFromBookmarks(b, path), true);
         this.dropResource(path);
       }),
       vault.on('modify', (file) => this.dropResource(file.path)),
@@ -142,6 +155,13 @@ export class Session {
         saveTimer = setTimeout(() => void platform.storage.set(WORKSPACE_KEY(entry.id), state), 500);
       }),
     );
+    let bookmarksTimer: ReturnType<typeof setTimeout> | undefined;
+    this.disposers.push(
+      this.bookmarks.subscribe((items) => {
+        clearTimeout(bookmarksTimer);
+        bookmarksTimer = setTimeout(() => void saveBookmarks(vault.adapter, items).catch(() => undefined), 300);
+      }),
+    );
     let settingsTimer: ReturnType<typeof setTimeout> | undefined;
     this.disposers.push(
       this.settings.subscribe((next) => {
@@ -163,7 +183,9 @@ export class Session {
     for (const path of new Set(allViewPaths(workspace))) {
       if (!vault.getFile(path)) workspace = removePaths(workspace, path);
     }
-    const session = new Session(platform, entry, vault, settings, workspace);
+    const bookmarks = await loadBookmarks(adapter);
+    if (bookmarks.imported && entry.kind !== 'demo') await saveBookmarks(adapter, bookmarks.items).catch(() => undefined);
+    const session = new Session(platform, entry, vault, settings, workspace, bookmarks.items);
     session.recent = ((await platform.storage.get<string[]>(RECENT_KEY(entry.id))) ?? []).filter((p) => vault.getFile(p));
     if (entry.kind === 'demo' && (activeTab(workspace)?.view.type ?? 'empty') === 'empty') {
       const welcome = vault.getMarkdownFiles().find((f) => /^(Welcome|Bienvenue)\.md$/.test(f.path));
@@ -242,6 +264,17 @@ export class Session {
     } catch (error) {
       this.fail(error);
     }
+  }
+
+  toggleBookmark(path: string) {
+    const kind = this.vault.getFolder(path) ? 'folder' : 'file';
+    this.bookmarks.setState((b) => toggleFileBookmark(b, path, kind), true);
+  }
+
+  openBookmark(bookmark: Bookmark, target: OpenTarget = 'current') {
+    if (bookmark.type === 'file') this.openPath(bookmark.path, target, bookmark.subpath);
+    else if (bookmark.type === 'folder') this.revealInTree(bookmark.path);
+    else if (bookmark.type === 'search') this.ui.setState({ railOpen: true, railQuery: bookmark.query });
   }
 
   /** Lists the notes carrying a tag in the rail. */

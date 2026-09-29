@@ -166,6 +166,13 @@ export function registerAppCommands(
       run: () => session.ui.setState({ focusTitle: session.activePath }),
     },
     {
+      id: 'note:bookmark',
+      name: t('cmd.bookmark'),
+      section: t('cmd.section.note'),
+      when: () => session.activePath !== null,
+      run: () => session.toggleBookmark(session.activePath!),
+    },
+    {
       id: 'note:delete',
       name: t('cmd.deleteNote'),
       section: t('cmd.section.note'),

@@ -995,3 +995,28 @@ button.crumb:hover {
   align-self: center;
   margin-right: 4px;
 }
+
+/* Bookmarks share the tag rows' rhythm; the active one gets the selection ink. */
+.rail-bookmarks {
+  flex: 0 1 auto;
+  max-height: 30%;
+}
+
+.rail-bookmarks.is-collapsed {
+  flex: none;
+}
+
+.bookmark-row {
+  width: 100%;
+  text-align: left;
+}
+
+.bookmark-row.is-active {
+  background: var(--selected);
+  color: var(--selected-ink);
+  font-weight: 650;
+}
+
+.icon-button.is-on {
+  color: var(--pink-deep);
+}
