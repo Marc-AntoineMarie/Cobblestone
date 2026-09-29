@@ -1,7 +1,7 @@
 // Builds the Electron main process, the preload bridge and the renderer.
 import { build as esbuild } from 'esbuild';
 import { build as viteBuild } from 'vite';
-import { rm } from 'node:fs/promises';
+import { copyFile, mkdir, rm } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -31,9 +31,15 @@ export const preloadOptions = {
   sourcemap: true,
 };
 
+/** The window icon, for systems that take it from the window (Linux on X11, and development). */
+export async function copyWindowIcon() {
+  await mkdir(path.join(root, 'dist'), { recursive: true });
+  await copyFile(path.join(root, 'build/icons/256x256.png'), path.join(root, 'dist/icon.png'));
+}
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   await rm(path.join(root, 'dist'), { recursive: true, force: true });
-  await Promise.all([esbuild(mainOptions), esbuild(preloadOptions)]);
+  await Promise.all([esbuild(mainOptions), esbuild(preloadOptions), copyWindowIcon()]);
   await viteBuild({ configFile: path.join(root, 'vite.config.ts') });
   console.log('Built desktop app into dist/');
 }

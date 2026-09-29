@@ -225,6 +225,8 @@ function createWindow() {
     minWidth: 480,
     minHeight: 360,
     title: 'Cobblestone',
+    // Linux on X11 takes the icon from the window; elsewhere it comes from the installed app.
+    icon: process.platform === 'linux' ? path.join(here, '../icon.png') : undefined,
     backgroundColor: '#00000000',
     show: false,
     autoHideMenuBar: true,
