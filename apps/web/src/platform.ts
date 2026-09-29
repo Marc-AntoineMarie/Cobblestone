@@ -97,6 +97,26 @@ export const webPlatform: Platform = {
     return new DirectoryHandleAdapter(handle, entry.name);
   },
 
+  async relocateVault(entry) {
+    // Browsers cannot follow a renamed folder: the user points to it again, and the vault keeps its id.
+    if (entry.kind !== 'folder' || !window.showDirectoryPicker) return null;
+    let handle: FileSystemDirectoryHandle;
+    try {
+      handle = await window.showDirectoryPicker({ id: 'cobblestone-vault', mode: 'readwrite' });
+    } catch {
+      return null; // cancelled
+    }
+    // One entry per folder: an entry already made for this folder gives way.
+    for (const other of await entries()) {
+      const known = other.id !== entry.id ? await get<FileSystemDirectoryHandle>(handleKey(other.id), db) : undefined;
+      if (known && (await known.isSameEntry(handle))) await webPlatform.forgetVault(other.id);
+    }
+    const moved: VaultEntry = { ...entry, name: handle.name, lastOpened: Date.now() };
+    await set(handleKey(entry.id), handle, db);
+    await saveEntry(moved);
+    return moved;
+  },
+
   async forgetVault(id) {
     const entry = (await entries()).find((e) => e.id === id);
     await set(

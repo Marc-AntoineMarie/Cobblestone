@@ -11,13 +11,22 @@ const api = {
     create: (name: string) => ipcRenderer.invoke('vaults:create', name),
     forget: (id: string) => ipcRenderer.invoke('vaults:forget', id),
     open: (id: string) => ipcRenderer.invoke('vaults:open', id),
+    findMoved: (id: string) => ipcRenderer.invoke('vaults:findMoved', id),
+    relocate: (id: string, found?: string) => ipcRenderer.invoke('vaults:relocate', id, found),
+    onMissing: (listener: (vaultId: string, missing: boolean) => void) => {
+      const handler = (_event: IpcRendererEvent, vaultId: string, missing: boolean) => listener(vaultId, missing);
+      ipcRenderer.on('vaults:missing', handler);
+      return () => void ipcRenderer.off('vaults:missing', handler);
+    },
   },
   fs: {
     call: (vaultId: string, method: string, args: unknown[]) => ipcRenderer.invoke('fs:call', vaultId, method, args),
-    watch: (vaultId: string) => ipcRenderer.invoke('fs:watch', vaultId),
-    unwatch: (vaultId: string) => ipcRenderer.invoke('fs:unwatch', vaultId),
-    onEvent: (listener: (vaultId: string, change: unknown) => void) => {
-      const handler = (_event: IpcRendererEvent, vaultId: string, change: unknown) => listener(vaultId, change);
+    watch: (vaultId: string, token: string) => ipcRenderer.invoke('fs:watch', vaultId, token),
+    unwatch: (vaultId: string, token: string) => ipcRenderer.invoke('fs:unwatch', vaultId, token),
+    onEvent: (token: string, listener: (change: unknown) => void) => {
+      const handler = (_event: IpcRendererEvent, _vaultId: string, from: string, change: unknown) => {
+        if (from === token) listener(change);
+      };
       ipcRenderer.on('fs:event', handler);
       return () => void ipcRenderer.off('fs:event', handler);
     },

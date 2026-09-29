@@ -13,6 +13,14 @@ export interface VaultEntry {
   /** Absolute folder path on desktop; undefined on the web. */
   location?: string;
   lastOpened: number;
+  /** Desktop, in the recent list: the folder is no longer where it was. */
+  missing?: boolean;
+}
+
+/** Where a renamed or moved vault folder was found. */
+export interface MovedVault {
+  name: string;
+  location: string;
 }
 
 /**
@@ -36,6 +44,16 @@ export interface Platform {
   /** Opens storage for a known vault. May prompt for permission on the web. */
   openVault(entry: VaultEntry): Promise<VaultAdapter>;
   forgetVault(id: string): Promise<void>;
+  /** Desktop: looks for the folder of a vault that was renamed or moved; null when not found. */
+  findMovedVault?(entry: VaultEntry): Promise<MovedVault | null>;
+  /**
+   * Points a vault to its folder's new place: the one findMovedVault found,
+   * or else one the user picks. The vault keeps its tabs and settings.
+   * Null when the user cancels.
+   */
+  relocateVault(entry: VaultEntry, found?: MovedVault): Promise<VaultEntry | null>;
+  /** Desktop: the folder of an open vault disappeared (true) or came back (false). */
+  onVaultMissing?(listener: (vaultId: string, missing: boolean) => void): () => void;
   openExternal(url: string): void;
   /** Small persistent key/value store for settings and workspace layout. */
   storage: {

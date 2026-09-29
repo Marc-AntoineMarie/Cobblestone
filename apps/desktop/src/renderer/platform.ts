@@ -1,5 +1,5 @@
 import { MemoryAdapter, type AdapterChange, type FileStat, type VaultAdapter } from '@cobblestone/core';
-import { demoVaultFiles, type Platform, type VaultEntry } from '@cobblestone/app';
+import { demoVaultFiles, type MovedVault, type Platform, type VaultEntry } from '@cobblestone/app';
 import type { DesktopBridge } from '../preload/index';
 
 declare global {
@@ -32,13 +32,12 @@ class IpcAdapter implements VaultAdapter {
   rename = (from: string, to: string) => this.call<void>('rename', from, to);
 
   watch(listener: (change: AdapterChange) => void): () => void {
-    void bridge().fs.watch(this.id);
-    const off = bridge().fs.onEvent((vaultId, change) => {
-      if (vaultId === this.id) listener(change as AdapterChange);
-    });
+    const token = crypto.randomUUID();
+    const off = bridge().fs.onEvent(token, (change) => listener(change as AdapterChange));
+    void bridge().fs.watch(this.id, token);
     return () => {
       off();
-      void bridge().fs.unwatch(this.id);
+      void bridge().fs.unwatch(this.id, token);
     };
   }
 }
@@ -50,6 +49,9 @@ export const desktopPlatform: Platform = {
   pickFolder: async () => (await bridge().vaults.pick()) as VaultEntry | null,
   createVault: async (name) => (await bridge().vaults.create(name)) as VaultEntry | null,
   forgetVault: async (id) => void (await bridge().vaults.forget(id)),
+  findMovedVault: async (entry) => (await bridge().vaults.findMoved(entry.id)) as MovedVault | null,
+  relocateVault: async (entry, found) => (await bridge().vaults.relocate(entry.id, found?.location)) as VaultEntry | null,
+  onVaultMissing: (listener) => bridge().vaults.onMissing(listener),
   openVault: async (entry) => {
     if (entry.kind === 'demo') return new MemoryAdapter(entry.name, demoVaultFiles(navigator.language));
     const { name } = (await bridge().vaults.open(entry.id)) as { name: string };

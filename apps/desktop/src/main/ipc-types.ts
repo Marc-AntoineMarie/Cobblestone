@@ -8,4 +8,8 @@ export interface DesktopVaultEntry {
   kind: 'folder';
   location: string;
   lastOpened: number;
+  /** Identity of the folder on disk, to find it again after a rename or a move. */
+  folderId?: string;
+  /** Sent with the recent list: the folder is not where it was. */
+  missing?: boolean;
 }
