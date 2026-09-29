@@ -44,11 +44,15 @@ await writeFile(path.join(userData, 'storage.json'), JSON.stringify({ lastVault:
 const env = Object.fromEntries(Object.entries(process.env).filter(([k]) => k !== 'ELECTRON_RUN_AS_NODE'));
 env.COBBLESTONE_USER_DATA = userData;
 env.LANG = 'en_US.UTF-8';
-const app = await electron.launch({
-  executablePath: path.resolve('node_modules/electron/dist/electron'),
-  args: [path.resolve('apps/desktop')],
-  env,
-});
+// On CI machines Chromium's sandbox is often unavailable (no user namespaces): tests run without it there.
+const args = [path.resolve('apps/desktop'), ...(process.env.CI ? ['--no-sandbox'] : [])];
+let app;
+try {
+  app = await electron.launch({ executablePath: path.resolve('node_modules/electron/dist/electron'), args, env });
+} catch (error) {
+  console.error('Electron did not start:', error);
+  process.exit(1);
+}
 const errors = [];
 const page = await app.firstWindow();
 page.on('pageerror', (e) => errors.push(e.message));
@@ -59,6 +63,11 @@ const check = (label, ok) => {
   console.log(`${ok ? 'ok  ' : 'FAIL'} ${label}`);
   if (!ok) process.exitCode = 1;
 };
+process.on('unhandledRejection', async (error) => {
+  console.error(error);
+  await page.screenshot({ path: `${out}/e2e-desktop-failure.png` }).catch(() => {});
+  process.exit(1);
+});
 
 await page.locator('.tree-row', { hasText: 'Home' }).click();
 await page.waitForTimeout(500);
