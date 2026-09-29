@@ -11,3 +11,4 @@ export * from './links/rewrite';
 export { MemoryAdapter } from './adapters/memory';
 export * from './search/query';
 export * from './search/search';
+export * from './links/mentions';
