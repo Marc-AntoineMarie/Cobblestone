@@ -263,6 +263,7 @@ const en = {
   'error.vaultParent':
     'this is the folder that contained the vault, not the vault itself. Open the vault’s folder, then confirm.',
   'error.otherVault': 'this folder is already another vault in your list.',
+  'error.permissionDenied': 'access to this folder was not granted.',
   'launcher.createError': 'Could not create the vault: {error}',
 };
 
@@ -532,6 +533,7 @@ const fr: Messages = {
   'error.vaultParent':
     'c’est le dossier qui contenait le coffre, pas le coffre lui-même. Entre dans le dossier du coffre, puis valide.',
   'error.otherVault': 'ce dossier est déjà un autre coffre de ta liste.',
+  'error.permissionDenied': 'l’accès à ce dossier n’a pas été accordé.',
   'launcher.createError': 'Impossible de créer le coffre : {error}',
 };
 

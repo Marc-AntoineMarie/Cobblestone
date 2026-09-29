@@ -86,11 +86,11 @@ export const webPlatform: Platform = {
       handle = await (await browserVaultsRoot()).getDirectoryHandle(entry.id, { create: true });
     } else {
       handle = await get<FileSystemDirectoryHandle>(handleKey(entry.id), db);
-      if (!handle) throw new Error('This folder is no longer available. Open it again.');
+      if (!handle) throw new Error('cobblestone:vault-missing');
       // Browsers forget folder permission between sessions: ask again (needs a click).
       const mode = { mode: 'readwrite' as const };
       if ((await handle.queryPermission?.(mode)) !== 'granted' && (await handle.requestPermission?.(mode)) !== 'granted') {
-        throw new Error('Permission to open this folder was not granted.');
+        throw new Error('cobblestone:permission-denied');
       }
     }
     await saveEntry({ ...entry, lastOpened: Date.now() });
