@@ -71,6 +71,11 @@ export class Vault extends Emitter<VaultEvents> {
     return this.adapter.name;
   }
 
+  /** Changes behaviour options (trash, link updates) while the vault is open. */
+  setOptions(options: VaultOptions): void {
+    this.options = { ...this.options, ...options };
+  }
+
   async load(): Promise<void> {
     const entries = (await this.adapter.list()).filter((e) => !isHidden(e.path));
     for (const entry of entries) {

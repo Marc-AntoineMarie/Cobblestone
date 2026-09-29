@@ -145,6 +145,7 @@ export class Session {
     let settingsTimer: ReturnType<typeof setTimeout> | undefined;
     this.disposers.push(
       this.settings.subscribe((next) => {
+        vault.setOptions({ trash: next.trash, updateLinksOnRename: next.updateLinks });
         clearTimeout(settingsTimer);
         settingsTimer = setTimeout(() => void saveVaultSettings(vault.adapter, next).catch(() => undefined), 300);
       }),
