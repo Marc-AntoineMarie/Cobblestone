@@ -92,38 +92,38 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 
 ## 3. Migration d'un coffre Obsidian
 
-- **3.1** · Les deux · à automatiser · Ouvrir la copie du coffre → Notes, dossiers et pièces jointes apparaissent ; `.obsidian`, `.trash`, `.git` et les autres dossiers cachés n'apparaissent pas.
-- **3.2** · Les deux · à automatiser · Regarder le dossier du coffre sur le disque → Un dossier `.cobblestone/` contient `app.json`, et `bookmarks.json` si le coffre avait des favoris.
-- **3.3** · Les deux · à automatiser · Comparer `.obsidian/` avant et après la recette → Aucun fichier de `.obsidian/` n'a changé.
-- **3.4** · Les deux · à automatiser · Si Obsidian rangeait les pièces jointes dans un dossier, coller une image dans une note → L'image va dans ce même dossier.
-- **3.5** · Les deux · à automatiser · Si Obsidian créait les nouvelles notes dans un dossier précis, créer une note → Elle est créée dans ce dossier.
-- **3.6** · Les deux · à automatiser · Ouvrir la note du jour (Ctrl+Maj+D) → Même dossier, même format de nom et même modèle que dans Obsidian.
-- **3.7** · Les deux · à automatiser · Regarder la section « Favoris » → Les favoris d'Obsidian y sont, groupes compris.
-- **3.8** · Les deux · à automatiser · Si Obsidian ouvrait les notes en mode lecture, ouvrir une note → Elle s'ouvre en mode Lire.
-- **3.9** · Les deux · à automatiser · Si les « sauts de ligne stricts » étaient activés dans Obsidian → En mode Lire, un simple retour à la ligne ne crée pas de nouvelle ligne.
-- **3.10** · Les deux · à automatiser · Parcourir une vingtaine de notes variées (encadrés, tableaux, code, images, intégrations, formules, Mermaid, notes de bas de page) → Tout s'affiche comme dans Obsidian, en écriture comme en lecture.
-- **3.11** · Les deux · à automatiser · Comparer la section Tags avec Obsidian → Mêmes tags, mêmes compteurs, tags imbriqués compris.
-- **3.12** · Les deux · à automatiser · Comparer les rétroliens d'une note très liée avec Obsidian → Les mêmes notes.
-- **3.13** · Les deux · à automatiser · Ouvrir un canvas créé dans Obsidian → Cartes, notes, flèches et couleurs s'affichent.
-- **3.14** · Les deux · à automatiser · Ouvrir les réglages de Cobblestone → Les valeurs reprennent celles d'Obsidian ; les changer n'affecte pas Obsidian.
-- **3.15** · Les deux · à automatiser · Changer un réglage, fermer puis rouvrir le coffre → Le réglage est conservé : l'import depuis `.obsidian/` n'a lieu qu'une fois.
+- **3.1** · Les deux · auto · Ouvrir la copie du coffre → Notes, dossiers et pièces jointes apparaissent ; `.obsidian`, `.trash`, `.git` et les autres dossiers cachés n'apparaissent pas.
+- **3.2** · Les deux · auto · Regarder le dossier du coffre sur le disque → Un dossier `.cobblestone/` contient `app.json`, et `bookmarks.json` si le coffre avait des favoris.
+- **3.3** · Les deux · auto · Comparer `.obsidian/` avant et après la recette → Aucun fichier de `.obsidian/` n'a changé.
+- **3.4** · Les deux · auto · Si Obsidian rangeait les pièces jointes dans un dossier, coller une image dans une note → L'image va dans ce même dossier.
+- **3.5** · Les deux · auto · Si Obsidian créait les nouvelles notes dans un dossier précis, créer une note → Elle est créée dans ce dossier.
+- **3.6** · Les deux · auto · Ouvrir la note du jour (Ctrl+Maj+D) → Même dossier, même format de nom et même modèle que dans Obsidian.
+- **3.7** · Les deux · auto · Regarder la section « Favoris » → Les favoris d'Obsidian y sont, groupes compris.
+- **3.8** · Les deux · auto · Si Obsidian ouvrait les notes en mode lecture, ouvrir une note → Elle s'ouvre en mode Lire.
+- **3.9** · Les deux · auto · Si les « sauts de ligne stricts » étaient activés dans Obsidian → En mode Lire, un simple retour à la ligne ne crée pas de nouvelle ligne.
+- **3.10** · Les deux · manuel · Parcourir une vingtaine de notes variées (encadrés, tableaux, code, images, intégrations, formules, Mermaid, notes de bas de page) → Tout s'affiche comme dans Obsidian, en écriture comme en lecture.
+- **3.11** · Les deux · manuel · Comparer la section Tags avec Obsidian → Mêmes tags, mêmes compteurs, tags imbriqués compris.
+- **3.12** · Les deux · manuel · Comparer les rétroliens d'une note très liée avec Obsidian → Les mêmes notes.
+- **3.13** · Les deux · auto · Ouvrir un canvas créé dans Obsidian → Cartes, notes, flèches et couleurs s'affichent.
+- **3.14** · Les deux · auto · Ouvrir les réglages de Cobblestone → Les valeurs reprennent celles d'Obsidian ; les changer n'affecte pas Obsidian.
+- **3.15** · Les deux · auto · Changer un réglage, fermer puis rouvrir le coffre → Le réglage est conservé : l'import depuis `.obsidian/` n'a lieu qu'une fois.
 
 ## 4. Barre latérale : champ de recherche
 
-- **4.1** · Les deux · à automatiser · Taper un nom approximatif dans « Chercher ou créer une note » (ex. « bnvnu ») → Section « Noms » avec les notes correspondantes, lettres trouvées soulignées de rose.
-- **4.2** · Les deux · à automatiser · Taper un mot sans accent (ex. « etude ») → Les notes avec accent (« Étude ») sont trouvées.
-- **4.3** · Les deux · à automatiser · Taper un mot présent dans le texte des notes → Section « Dans le texte » avec le nombre de notes et un extrait où le mot est surligné en jaune.
-- **4.4** · Les deux · à automatiser · Taper un nom qui n'existe pas, puis Entrée sur « Créer « … » » → La note est créée et s'ouvre.
-- **4.5** · Les deux · à automatiser · Flèches haut et bas → La sélection se déplace (liseré rose) et la liste défile avec.
-- **4.6** · Les deux · à automatiser · Entrée sur un résultat → La note s'ouvre dans l'onglet courant et le champ se vide.
-- **4.7** · Les deux · à automatiser · Ctrl+Entrée sur un résultat → La note s'ouvre dans un nouvel onglet.
-- **4.8** · Les deux · à automatiser · Ctrl+clic sur un résultat → La note s'ouvre dans un nouvel onglet.
-- **4.9** · Les deux · à automatiser · Échap dans le champ → Le champ se vide et perd le focus ; l'arborescence réapparaît.
-- **4.10** · Les deux · à automatiser · Cliquer la croix à droite du champ → Le champ se vide.
-- **4.11** · Les deux · à automatiser · Taper un opérateur (`tag:#projet`, `path:Journal`) → Seule la section « Dans le texte » s'affiche, avec les notes correspondantes.
-- **4.12** · Les deux · à automatiser · Taper une expression régulière incomplète (`/abc`) → Aucune erreur ; seuls les noms correspondants s'affichent.
-- **4.13** · Les deux · à automatiser · Taper un nom contenant `/` ou `#` → Aucune ligne « Créer » (caractères interdits dans un nom).
-- **4.14** · Les deux · à automatiser · Chercher dans un gros coffre → Les résultats arrivent sans bloquer la frappe.
+- **4.1** · Les deux · auto · Taper un nom approximatif dans « Chercher ou créer une note » (ex. « bnvnu ») → Section « Noms » avec les notes correspondantes, lettres trouvées soulignées de rose.
+- **4.2** · Les deux · auto · Taper un mot sans accent (ex. « etude ») → Les notes avec accent (« Étude ») sont trouvées.
+- **4.3** · Les deux · auto · Taper un mot présent dans le texte des notes → Section « Dans le texte » avec le nombre de notes et un extrait où le mot est surligné en jaune.
+- **4.4** · Les deux · auto · Taper un nom qui n'existe pas, puis Entrée sur « Créer « … » » → La note est créée et s'ouvre.
+- **4.5** · Les deux · auto · Flèches haut et bas → La sélection se déplace (liseré rose) et la liste défile avec.
+- **4.6** · Les deux · auto · Entrée sur un résultat → La note s'ouvre dans l'onglet courant et le champ se vide.
+- **4.7** · Les deux · auto · Ctrl+Entrée sur un résultat → La note s'ouvre dans un nouvel onglet.
+- **4.8** · Les deux · auto · Ctrl+clic sur un résultat → La note s'ouvre dans un nouvel onglet.
+- **4.9** · Les deux · auto · Échap dans le champ → Le champ se vide et perd le focus ; l'arborescence réapparaît.
+- **4.10** · Les deux · auto · Cliquer la croix à droite du champ → Le champ se vide.
+- **4.11** · Les deux · auto · Taper un opérateur (`tag:#projet`, `path:Journal`) → Seule la section « Dans le texte » s'affiche, avec les notes correspondantes.
+- **4.12** · Les deux · auto · Taper une expression régulière incomplète (`/abc`) → Aucune erreur ; seuls les noms correspondants s'affichent.
+- **4.13** · Les deux · auto · Taper un nom contenant `/` ou `#` → Aucune ligne « Créer » (caractères interdits dans un nom).
+- **4.14** · Les deux · auto · Chercher dans un gros coffre → Les résultats arrivent sans bloquer la frappe.
 
 ## 5. Arborescence des fichiers
 

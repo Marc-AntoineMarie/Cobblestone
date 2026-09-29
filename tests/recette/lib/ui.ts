@@ -141,6 +141,11 @@ export class Ui {
     await this.launcher.waitFor();
   }
 
+  /** Switches the note to writing (live preview) or reading. */
+  async mode(which: 'Écrire' | 'Lire') {
+    await this.noteBar.getByRole('button', { name: which, exact: true }).click();
+  }
+
   /** Puts the cursor at the end of the note's text. */
   async editEnd() {
     await this.editor.click();
@@ -151,6 +156,45 @@ export class Ui {
   async append(text: string) {
     await this.editEnd();
     await this.page.keyboard.type(text);
+  }
+
+  /** Pastes files into the note, as from the clipboard (a screenshot…). */
+  async pasteFiles(files: { name: string; type: string; bytes: Uint8Array }[]) {
+    const payload = files.map((f) => ({ name: f.name, type: f.type, data: Buffer.from(f.bytes).toString('base64') }));
+    await this.editor.evaluate((target, files) => {
+      const transfer = new DataTransfer();
+      for (const f of files) {
+        transfer.items.add(new File([Uint8Array.from(atob(f.data), (c) => c.charCodeAt(0))], f.name, { type: f.type }));
+      }
+      target.dispatchEvent(new ClipboardEvent('paste', { clipboardData: transfer, bubbles: true, cancelable: true }));
+    }, payload);
+  }
+
+  /** Drops files from the system's file manager onto an element. */
+  async dropFiles(target: Locator, files: { name: string; type: string; bytes: Uint8Array }[]) {
+    const payload = files.map((f) => ({ name: f.name, type: f.type, data: Buffer.from(f.bytes).toString('base64') }));
+    const box = (await target.boundingBox())!;
+    await target.evaluate(
+      (element, { files, x, y }) => {
+        const transfer = new DataTransfer();
+        for (const f of files) {
+          transfer.items.add(new File([Uint8Array.from(atob(f.data), (c) => c.charCodeAt(0))], f.name, { type: f.type }));
+        }
+        for (const type of ['dragenter', 'dragover', 'drop']) {
+          element.dispatchEvent(
+            new DragEvent(type, { dataTransfer: transfer, bubbles: true, cancelable: true, clientX: x, clientY: y }),
+          );
+        }
+      },
+      { files: payload, x: box.x + box.width / 2, y: box.y + Math.min(box.height / 2, 40) },
+    );
+  }
+
+  /** Opens the settings tab. */
+  async settings() {
+    await this.page.keyboard.press('Control+,');
+    await this.page.locator('.settings-view').waitFor();
+    return this.page.locator('.settings-view');
   }
 
   // ------------------------------------------------------------- floating layers
