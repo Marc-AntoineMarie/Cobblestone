@@ -58,6 +58,8 @@ export const desktopPlatform: Platform = {
     return new IpcAdapter(entry.id, name);
   },
   openExternal: (url) => void bridge().openExternal(url),
+  os: bridge().platform === 'darwin' ? 'mac' : bridge().platform === 'win32' ? 'windows' : 'linux',
+  revealInFolder: async (vaultId, path) => void (await bridge().reveal(vaultId, path)),
   storage: {
     get: async <T>(key: string) => (await bridge().storage.get(key)) as T | undefined,
     set: async <T>(key: string, value: T) => void (await bridge().storage.set(key, value)),

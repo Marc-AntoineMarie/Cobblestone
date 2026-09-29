@@ -29,6 +29,7 @@ export function Rail({ onSwitchVault, drawer }: { onSwitchVault: () => void; dra
         y: rect.bottom + 4,
         items: [
           { label: t('rail.settings'), run: () => session.openView({ type: 'settings' }, 'tab') },
+          ...(session.canRevealInSystem ? [{ label: t('rail.openVaultFolder'), run: () => session.revealInSystem('') }] : []),
           { label: t('rail.switchVault'), run: onSwitchVault },
         ],
       },

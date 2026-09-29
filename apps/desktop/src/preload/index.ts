@@ -36,6 +36,7 @@ const api = {
     set: (key: string, value: unknown) => ipcRenderer.invoke('storage:set', key, value),
   },
   openExternal: (url: string) => ipcRenderer.invoke('shell:openExternal', url),
+  reveal: (vaultId: string, path: string) => ipcRenderer.invoke('shell:reveal', vaultId, path),
   platform: process.platform,
 };
 

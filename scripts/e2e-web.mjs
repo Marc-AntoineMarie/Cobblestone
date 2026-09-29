@@ -99,6 +99,11 @@ check(
   (await page.locator('.canvas-node.is-text').allInnerTexts()).join(' ').includes('Hello canvas'),
 );
 
+// Browsers cannot show files in the system's file manager: the menu does not offer it.
+await page.locator('.tree-row').first().click({ button: 'right' });
+check('offers no file manager on the web', !(await page.locator('.menu').innerText()).includes('file manager'));
+await page.keyboard.press('Escape');
+
 await context.close();
 await rm(profile, { recursive: true, force: true });
 await web.stop();

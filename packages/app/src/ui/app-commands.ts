@@ -205,6 +205,13 @@ export function registerAppCommands(
       run: () => session.revealInTree(session.activePath!),
     },
     {
+      id: 'note:reveal-system',
+      name: t('cmd.revealSystem'),
+      section: t('cmd.section.note'),
+      when: () => session.canRevealInSystem && session.activePath !== null,
+      run: () => session.revealInSystem(session.activePath!),
+    },
+    {
       id: 'note:copy-link',
       name: t('cmd.copyLink'),
       section: t('cmd.section.note'),

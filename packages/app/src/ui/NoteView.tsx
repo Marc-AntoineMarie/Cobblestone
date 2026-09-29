@@ -35,6 +35,7 @@ export function NoteView({ tab, paneId, view, visible }: { tab: Tab; paneId: str
           { label: t('cmd.sourceMode'), run: () => setTabMode(mode === 'source' ? 'live' : 'source') },
           { label: t('cmd.localGraph'), run: () => session.openView({ type: 'graph', focus: view.path }, 'split-right') },
           { label: t('cmd.revealFile'), run: () => session.revealInTree(view.path) },
+          ...(session.canRevealInSystem ? [{ label: session.revealLabel, run: () => session.revealInSystem(view.path) }] : []),
           { label: t('cmd.copyLink'), run: () => void session.commands.run('note:copy-link') },
           { label: t('cmd.deleteNote'), run: () => void session.delete(view.path), danger: true, separatorBefore: true },
         ],
