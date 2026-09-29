@@ -1,8 +1,9 @@
-import { useMemo } from 'react';
-import { PanelRightClose } from 'lucide-react';
-import { stem } from '@cobblestone/core';
+import { useMemo, useState } from 'react';
+import { ChevronRight, PanelRightClose } from 'lucide-react';
+import { findUnlinkedMentions, stem, type Mention } from '@cobblestone/core';
 import { t } from '../i18n';
 import { useNoteRevision, useSession, useStore } from './hooks';
+import { hidePreviewSoon, schedulePreview } from './preview';
 
 /**
  * Notes in the margin of the sheet: who links here, the outline, links out
@@ -32,6 +33,11 @@ function MarginNotes({ path }: { path: string }) {
   const session = useSession();
   const revision = useNoteRevision(path);
   const cache = session.vault.cache;
+  // Margin links preview their note on hover.
+  const hover = (target: string) => ({
+    onMouseEnter: (e: React.MouseEvent) => schedulePreview(session, target, '', e.currentTarget),
+    onMouseLeave: () => hidePreviewSoon(session),
+  });
 
   const data = useMemo(() => {
     void revision;
@@ -68,6 +74,7 @@ function MarginNotes({ path }: { path: string }) {
               <li key={b.source}>
                 <button
                   className="margin-link"
+                  {...hover(b.source)}
                   onClick={(e) => session.openPath(b.source, e.metaKey || e.ctrlKey ? 'tab' : 'current')}
                 >
                   {stem(b.source)}
@@ -92,6 +99,8 @@ function MarginNotes({ path }: { path: string }) {
           </ul>
         )}
       </section>
+
+      <UnlinkedMentions path={path} />
 
       <section aria-labelledby="m-outline">
         <h2 className="label" id="m-outline">
@@ -122,7 +131,11 @@ function MarginNotes({ path }: { path: string }) {
           <ul className="outgoing">
             {data.resolved.map((p) => (
               <li key={p}>
-                <button className="margin-link" onClick={(e) => session.openPath(p, e.metaKey || e.ctrlKey ? 'tab' : 'current')}>
+                <button
+                  className="margin-link"
+                  {...hover(p)}
+                  onClick={(e) => session.openPath(p, e.metaKey || e.ctrlKey ? 'tab' : 'current')}
+                >
                   {stem(p)}
                 </button>
               </li>
@@ -221,4 +234,81 @@ export function contextSegments(line: string, hitAt: number, radius = 70): { tex
     ];
   }
   return segments.map(({ text, hit }) => ({ text, hit }));
+}
+
+/** Notes naming this one without linking to it, with a button to turn each mention into a link. */
+function UnlinkedMentions({ path }: { path: string }) {
+  const session = useSession();
+  const revision = useNoteRevision(path);
+  const [open, setOpen] = useState(false);
+
+  const results = useMemo(() => {
+    void revision;
+    if (!open) return [];
+    const names = [stem(path), ...(session.vault.cache.getMetadata(path)?.aliases ?? [])];
+    const out: { source: string; text: string; mentions: Mention[] }[] = [];
+    for (const file of session.vault.getMarkdownFiles()) {
+      if (file.path === path) continue;
+      const text = session.vault.cachedRead(file.path);
+      if (!text) continue;
+      const mentions = findUnlinkedMentions(text, session.vault.cache.getMetadata(file.path), names);
+      if (mentions.length) out.push({ source: file.path, text, mentions });
+    }
+    return out.sort((a, b) => a.source.localeCompare(b.source));
+  }, [session, path, open, revision]);
+
+  const link = (source: string, mention: Mention) => {
+    const target = session.vault.cache.resolver.linkText(path, source);
+    const insert = mention.text === stem(path) ? `[[${target}]]` : `[[${target}|${mention.text}]]`;
+    void session.vault.process(source, (text) =>
+      text.slice(mention.from, mention.to) === mention.text
+        ? text.slice(0, mention.from) + insert + text.slice(mention.to)
+        : text,
+    );
+  };
+
+  const count = results.reduce((n, r) => n + r.mentions.length, 0);
+
+  return (
+    <section aria-labelledby="m-unlinked">
+      <button className="label section-toggle" id="m-unlinked" aria-expanded={open} onClick={() => setOpen(!open)}>
+        <ChevronRight size={12} strokeWidth={2.25} className={open ? 'is-open' : undefined} aria-hidden />
+        {t('margin.unlinked')} {open && <span className="count">{count}</span>}
+      </button>
+      {open &&
+        (results.length === 0 ? (
+          <p className="margin-empty">{t('margin.noUnlinked')}</p>
+        ) : (
+          <ul className="backlinks">
+            {results.map((r) => (
+              <li key={r.source}>
+                <button className="margin-link" onClick={() => session.openPath(r.source)}>
+                  {stem(r.source)}
+                </button>
+                {r.mentions.slice(0, 5).map((m) => {
+                  const lineStart = r.text.lastIndexOf('\n', m.from - 1) + 1;
+                  const lineEnd = r.text.indexOf('\n', m.to);
+                  const line = r.text.slice(lineStart, lineEnd === -1 ? undefined : lineEnd);
+                  return (
+                    <div key={m.from} className="mention-row">
+                      <span className="backlink-context">
+                        {contextSegments(
+                          line.slice(0, m.from - lineStart) + '[[' + m.text + ']]' + line.slice(m.to - lineStart),
+                          m.from - lineStart,
+                        ).map((segment, k) =>
+                          segment.hit ? <mark key={k}>{segment.text}</mark> : <span key={k}>{segment.text}</span>,
+                        )}
+                      </span>
+                      <button className="button is-ghost mention-link" onClick={() => link(r.source, m)}>
+                        {t('margin.link')}
+                      </button>
+                    </div>
+                  );
+                })}
+              </li>
+            ))}
+          </ul>
+        ))}
+    </section>
+  );
 }

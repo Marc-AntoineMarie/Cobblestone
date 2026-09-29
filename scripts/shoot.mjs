@@ -48,6 +48,11 @@ await session('demo', {}, async (page, shot) => {
   await shot('editing');
   await page.getByRole('button', { name: 'Lire' }).first().click();
   await shot('reading');
+  await page.locator('.reading-view a.internal-link').first().hover();
+  await page.waitForTimeout(700);
+  await shot('preview');
+  await page.mouse.move(10, 10);
+  await page.waitForTimeout(500);
   await page.keyboard.press('Control+k');
   await page.keyboard.type('mise');
   await shot('finder');

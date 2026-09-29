@@ -12,11 +12,14 @@ import {
 } from '../editor/setup';
 import type { EditorHost } from '../editor/host';
 import type { Session } from '../session';
+import { hidePreviewSoon, schedulePreview } from './preview';
 import { renderNoteInto } from './render-note';
 import { useSession, useStore } from './hooks';
 
 interface Props {
   path: string;
+  /** Tab showing the editor, so commands can reach the active one. */
+  tabId: string;
   mode: EditorModeName;
   /** Heading/block to scroll to when opened. */
   subpath?: string;
@@ -31,6 +34,8 @@ function createHost(session: Session, pathRef: { current: string }): EditorHost 
     resolve: (target) => cache.resolve(target, pathRef.current),
     openLink: (target, { newTab }) => void session.openLink(target, pathRef.current, newTab ? 'tab' : 'current'),
     openTag: (tag) => session.findTag(tag),
+    previewLink: (target, anchor) => schedulePreview(session, target, pathRef.current, anchor, 150),
+    endPreview: () => hidePreviewSoon(session),
     openExternal: (url) => session.platform.openExternal(url),
     resourceUrl: (path) => session.resourceUrl(path),
     renderEmbed: (container, target, _display) => {
@@ -72,7 +77,7 @@ function applyExternal(view: EditorView, text: string) {
   view.dispatch({ changes: { from: start, to: endA, insert: text.slice(start, endB) }, userEvent: 'external' });
 }
 
-export function Editor({ path, mode, subpath, onView }: Props) {
+export function Editor({ path, tabId, mode, subpath, onView }: Props) {
   const session = useSession();
   const spellcheck = useStore(session.settings, (s) => s.spellcheck);
   const host = useRef<HTMLDivElement>(null);
@@ -93,6 +98,7 @@ export function Editor({ path, mode, subpath, onView }: Props) {
   useEffect(() => {
     let disposed = false;
     let view: EditorView | null = null;
+    let unregister = () => {};
     void session.vault.read(path).then((text) => {
       if (disposed || !host.current) return;
       const state = createEditorState(text, {
@@ -106,6 +112,7 @@ export function Editor({ path, mode, subpath, onView }: Props) {
       });
       view = new EditorView({ state, parent: host.current });
       viewRef.current = view;
+      unregister = session.registerEditor(tabId, view);
       onView?.(view);
       if (subpath) scrollToSubpath(view, session, pathRef.current, subpath);
     });
@@ -127,6 +134,7 @@ export function Editor({ path, mode, subpath, onView }: Props) {
     });
     return () => {
       disposed = true;
+      unregister();
       flush();
       offModify();
       offJump();

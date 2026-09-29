@@ -56,6 +56,31 @@ await page.waitForTimeout(600);
 check('following a missing link creates the note', (await page.locator('.note-title').inputValue()) === 'Recipes');
 await page.screenshot({ path: `${out}/web-e2e-created.png`, timeout: 5000 }).catch(() => undefined);
 
+// Templates: a note in Templates/ is inserted with its variables filled.
+await page.keyboard.press('Control+k');
+await page.keyboard.type('Templates/Meeting');
+await page.keyboard.press('Shift+Enter');
+await page.waitForTimeout(500);
+await page.locator('.note-title').press('Enter');
+await page.keyboard.type('## {{title}} on {{date:YYYY}}');
+await page.waitForTimeout(700);
+// Ctrl+N belongs to the browser: the web app uses Alt+N.
+await page.keyboard.press('Alt+n');
+await page.waitForTimeout(400);
+await page.keyboard.type('Standup');
+await page.keyboard.press('Enter');
+// No pause: the template must reach the note even while its rename is still in flight.
+await page.keyboard.press('Alt+t');
+await page.waitForTimeout(300);
+await page.keyboard.type('Meet');
+await page.keyboard.press('Enter');
+await page.waitForTimeout(700);
+check('a new note starts with its title selected', (await page.locator('.note-title').inputValue()) === 'Standup');
+check(
+  'inserts a template with its variables',
+  (await page.locator('.cm-content').innerText()).includes(`Standup on ${new Date().getFullYear()}`),
+);
+
 await context.close();
 await rm(profile, { recursive: true, force: true });
 await web.stop();

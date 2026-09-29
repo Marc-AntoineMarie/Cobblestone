@@ -2,6 +2,7 @@ import { useDeferredValue, useEffect, useMemo, useRef, useState, type KeyboardEv
 import { CalendarDays, ChevronsUpDown, FilePlus2, FolderPlus, Network, PanelLeftClose, Search, Settings, X } from 'lucide-react';
 import { searchDocuments, stem } from '@cobblestone/core';
 import { t } from '../i18n';
+import { BookmarkList } from './BookmarkList';
 import { FileTree } from './FileTree';
 import { fuzzyMatch, highlightSegments } from './fuzzy';
 import { useSession, useStore, useVaultRevision } from './hooks';
@@ -91,6 +92,8 @@ export function Rail({ onSwitchVault, drawer }: { onSwitchVault: () => void; dra
                 {t('rail.graph')}
               </button>
             </nav>
+
+            <BookmarkList />
 
             <section className="rail-section rail-notes" aria-labelledby="rail-notes-label">
               <header className="rail-section-head">

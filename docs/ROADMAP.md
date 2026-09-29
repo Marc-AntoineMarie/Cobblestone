@@ -26,7 +26,8 @@ Priority: direct sync between your own devices, with no server holding your note
 ## 3. Full Obsidian parity
 
 - Canvas (JSON Canvas format, compatible with Obsidian's `.canvas` files).
-- Templates, unique note creator, bookmarks, hover previews, unlinked mentions, properties editor with types.
+- ~~Templates, bookmarks, hover previews, unlinked mentions~~ (done in 0.2).
+- Unique note creator, properties editor with types.
 - Table editing, PDF viewer with annotations, audio recorder, slides, file recovery, workspaces.
 - Customisable hotkeys, CSS snippets and themes, multiple windows.
 - Importers from Notion, Evernote, Apple Notes, Logseq, Roam, Bear and Markdown folders.

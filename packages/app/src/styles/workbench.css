@@ -995,3 +995,50 @@ button.crumb:hover {
   align-self: center;
   margin-right: 4px;
 }
+
+/* Bookmarks share the tag rows' rhythm; the active one gets the selection ink. */
+.rail-bookmarks {
+  flex: 0 1 auto;
+  max-height: 30%;
+}
+
+.rail-bookmarks.is-collapsed {
+  flex: none;
+}
+
+.bookmark-row {
+  width: 100%;
+  text-align: left;
+}
+
+.bookmark-row.is-active {
+  background: var(--selected);
+  color: var(--selected-ink);
+  font-weight: 650;
+}
+
+.icon-button.is-on {
+  color: var(--pink-deep);
+}
+
+.margin-notes .section-toggle {
+  margin-bottom: 10px;
+}
+
+.mention-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  width: 100%;
+}
+
+.mention-row .backlink-context {
+  flex: 1;
+  min-width: 0;
+}
+
+.mention-link {
+  height: 24px;
+  padding: 0 8px;
+  flex: none;
+}

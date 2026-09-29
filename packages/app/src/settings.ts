@@ -21,7 +21,10 @@ export interface VaultSettings {
   /** Date format with YYYY, MM, DD, ddd, dddd, MMM, MMMM tokens. */
   dailyFormat: string;
   dailyTemplate: string;
+  /** Templates folder; empty means a folder named "Templates" or "Modèles". */
   templatesFolder: string;
+  templateDateFormat: string;
+  templateTimeFormat: string;
 }
 
 export const DEFAULT_SETTINGS: VaultSettings = {
@@ -38,6 +41,8 @@ export const DEFAULT_SETTINGS: VaultSettings = {
   dailyFormat: 'YYYY-MM-DD',
   dailyTemplate: '',
   templatesFolder: '',
+  templateDateFormat: 'YYYY-MM-DD',
+  templateTimeFormat: 'HH:mm',
 };
 
 /** App-wide preferences, stored by the platform (not in the vault). */
@@ -104,7 +109,11 @@ export async function importObsidianSettings(adapter: VaultAdapter): Promise<Par
     if (typeof daily.template === 'string') out.dailyTemplate = daily.template;
   }
   const templates = await readJson(adapter, '.obsidian/templates.json');
-  if (templates && typeof templates.folder === 'string') out.templatesFolder = templates.folder;
+  if (templates) {
+    if (typeof templates.folder === 'string') out.templatesFolder = templates.folder;
+    if (typeof templates.dateFormat === 'string' && templates.dateFormat) out.templateDateFormat = templates.dateFormat;
+    if (typeof templates.timeFormat === 'string' && templates.timeFormat) out.templateTimeFormat = templates.timeFormat;
+  }
   return out;
 }
 

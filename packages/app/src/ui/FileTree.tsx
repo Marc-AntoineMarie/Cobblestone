@@ -134,7 +134,11 @@ export function FileTree() {
         { label: t('tree.duplicate'), run: () => void session.duplicate(row.path) },
       );
     }
+    const bookmarked = session.bookmarks
+      .getState()
+      .some((b) => (b.type === 'file' || b.type === 'folder') && b.path === row.path && !('subpath' in b && b.subpath));
     items.push(
+      { label: bookmarked ? t('bookmark.remove') : t('bookmark.add'), run: () => session.toggleBookmark(row.path) },
       { label: t('tree.rename'), run: () => session.ui.setState({ renaming: row.path }), separatorBefore: true },
       { label: t('tree.delete'), run: () => void session.delete(row.path), danger: true },
     );
@@ -198,6 +202,8 @@ export function FileTree() {
     const top = index * ROW_HEIGHT;
     if (top < el.scrollTop) el.scrollTop = top;
     else if (top + ROW_HEIGHT > el.scrollTop + el.clientHeight) el.scrollTop = top + ROW_HEIGHT - el.clientHeight;
+    // Move keyboard focus only while the tree has it: revealing a file must not steal it from the editor.
+    if (!el.contains(document.activeElement)) return;
     requestAnimationFrame(() => el.querySelector<HTMLElement>(`[data-path="${CSS.escape(focused)}"]`)?.focus());
   }, [focused, rows]);
 

@@ -3,12 +3,13 @@ import { FilePlus2, FileText, CornerDownLeft, Terminal } from 'lucide-react';
 import { dirname } from '@cobblestone/core';
 import { hotkeyLabel } from '../commands';
 import { t } from '../i18n';
+import type { PickRequest } from '../session';
 import { fuzzyMatch, highlightSegments } from './fuzzy';
 import { useSession, useStore } from './hooks';
 
 interface Item {
   key: string;
-  kind: 'note' | 'alias' | 'create' | 'command';
+  kind: 'note' | 'alias' | 'create' | 'command' | 'pick';
   label: string;
   detail?: string;
   indices: number[];
@@ -23,17 +24,18 @@ export function Finder() {
   const session = useSession();
   const finder = useStore(session.ui, (s) => s.finder);
   if (!finder) return null;
+  if (finder.mode === 'pick') return <FinderBox initialMode="notes" pick={finder} />;
   return <FinderBox initialMode={finder.mode} />;
 }
 
-function FinderBox({ initialMode }: { initialMode: 'notes' | 'commands' }) {
+function FinderBox({ initialMode, pick }: { initialMode: 'notes' | 'commands'; pick?: PickRequest }) {
   const session = useSession();
   const [query, setQuery] = useState(initialMode === 'commands' ? '> ' : '');
   const [selected, setSelected] = useState(0);
   const input = useRef<HTMLInputElement>(null);
   const list = useRef<HTMLDivElement>(null);
   const close = () => session.ui.setState({ finder: null });
-  const commandMode = query.startsWith('>');
+  const commandMode = !pick && query.startsWith('>');
   const text = commandMode ? query.slice(1).trim() : query.trim();
 
   useEffect(() => {
@@ -42,6 +44,24 @@ function FinderBox({ initialMode }: { initialMode: 'notes' | 'commands' }) {
   }, [initialMode]);
 
   const items = useMemo<Item[]>(() => {
+    if (pick) {
+      return pick.items
+        .map((item) => {
+          const match = fuzzyMatch(text, item.label);
+          return match
+            ? {
+                key: item.id,
+                kind: 'pick' as const,
+                label: item.label,
+                detail: item.detail,
+                indices: match.indices,
+                score: match.score,
+              }
+            : null;
+        })
+        .filter((x): x is NonNullable<typeof x> => x !== null)
+        .sort((a, b) => b.score - a.score);
+    }
     if (commandMode) {
       return session.commands
         .list()
@@ -123,7 +143,7 @@ function FinderBox({ initialMode }: { initialMode: 'notes' | 'commands' }) {
       top.push({ key: 'create', kind: 'create', label: t('palette.create', { name: text }), indices: [], score: -Infinity });
     }
     return top;
-  }, [session, commandMode, text]);
+  }, [session, commandMode, text, pick]);
 
   useEffect(() => setSelected(0), [query]);
   useEffect(() => {
@@ -133,7 +153,8 @@ function FinderBox({ initialMode }: { initialMode: 'notes' | 'commands' }) {
   const run = (item: Item | undefined, newTab: boolean) => {
     if (!item) return;
     close();
-    if (item.kind === 'command') void session.commands.run(item.commandId!);
+    if (item.kind === 'pick') pick?.onPick(item.key);
+    else if (item.kind === 'command') void session.commands.run(item.commandId!);
     else if (item.kind === 'create') {
       const parts = text.split('/');
       const folder = parts.length > 1 ? parts.slice(0, -1).join('/') : session.newNoteFolder();
@@ -158,7 +179,7 @@ function FinderBox({ initialMode }: { initialMode: 'notes' | 'commands' }) {
           <input
             ref={input}
             value={query}
-            placeholder={commandMode ? t('palette.placeholderCommands') : t('palette.placeholderNotes')}
+            placeholder={pick ? pick.placeholder : commandMode ? t('palette.placeholderCommands') : t('palette.placeholderNotes')}
             role="combobox"
             aria-expanded="true"
             aria-controls="finder-list"
@@ -168,7 +189,7 @@ function FinderBox({ initialMode }: { initialMode: 'notes' | 'commands' }) {
               if (e.key === 'Escape') close();
               else if (e.key === 'ArrowDown') setSelected((i) => Math.min(items.length - 1, i + 1));
               else if (e.key === 'ArrowUp') setSelected((i) => Math.max(0, i - 1));
-              else if (e.key === 'Enter' && e.shiftKey && !commandMode && text)
+              else if (e.key === 'Enter' && e.shiftKey && !commandMode && !pick && text)
                 run(
                   items.find((i) => i.kind === 'create'),
                   false,

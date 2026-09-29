@@ -155,4 +155,13 @@ describe('Vault', () => {
     expect(events).toEqual(['modify A.md', 'create B.md', 'rename B.md -> C.md', 'delete C.md']);
     expect(vault.cache.getUnresolvedLinks('A.md').has('B')).toBe(true);
   });
+
+  it('applies option changes while open', async () => {
+    const { vault, adapter } = await vaultOf({ 'Old.md': '', 'A.md': '[[Old]]' });
+    vault.setOptions({ updateLinksOnRename: false, trash: 'permanent' });
+    await vault.rename('Old.md', 'New.md');
+    expect(await vault.read('A.md')).toBe('[[Old]]');
+    await vault.delete('New.md');
+    expect(await adapter.stat('.trash/New.md')).toBeNull();
+  });
 });

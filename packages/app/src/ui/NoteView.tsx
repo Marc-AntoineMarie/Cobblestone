@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { EditorView } from '@codemirror/view';
-import { ArrowLeft, ArrowRight, MoreHorizontal, PanelRight, Share2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Bookmark as BookmarkIcon, BookmarkCheck, MoreHorizontal, PanelRight, Share2 } from 'lucide-react';
 import { dirname, stem } from '@cobblestone/core';
+import { isBookmarked } from '../bookmarks';
 import { t } from '../i18n';
 import { navigate, setMode, split, type EditorMode, type Tab, type ViewState } from '../workspace/workspace';
 import { Editor } from './Editor';
@@ -15,6 +16,7 @@ export function NoteView({ tab, paneId, view, visible }: { tab: Tab; paneId: str
   const defaultMode = useStore(session.settings, (s) => s.defaultMode);
   const readable = useStore(session.settings, (s) => s.readableLength);
   const marginOpen = useStore(session.ui, (s) => s.marginOpen);
+  const bookmarked = useStore(session.bookmarks, (b) => isBookmarked(b, view.path));
   const mode: EditorMode = view.mode ?? defaultMode;
   const editorView = useRef<EditorView | null>(null);
   const exists = !!session.vault.getFile(view.path);
@@ -95,6 +97,15 @@ export function NoteView({ tab, paneId, view, visible }: { tab: Tab; paneId: str
             <Share2 size={15} strokeWidth={1.9} aria-hidden />
             {t('note.share')}
           </button>
+          <button
+            className={`icon-button${bookmarked ? ' is-on' : ''}`}
+            onClick={() => session.toggleBookmark(view.path)}
+            aria-pressed={bookmarked}
+            aria-label={bookmarked ? t('bookmark.remove') : t('bookmark.add')}
+            title={bookmarked ? t('bookmark.remove') : t('bookmark.add')}
+          >
+            {bookmarked ? <BookmarkCheck size={16} strokeWidth={1.75} /> : <BookmarkIcon size={16} strokeWidth={1.75} />}
+          </button>
           <button className="icon-button" onClick={more} aria-label={t('note.more')} title={t('note.more')}>
             <MoreHorizontal size={16} strokeWidth={1.75} />
           </button>
@@ -113,13 +124,15 @@ export function NoteView({ tab, paneId, view, visible }: { tab: Tab; paneId: str
 
       <div className="note-scroll">
         <div className={`page${readable ? ' is-readable' : ''}`}>
-          <NoteTitle path={view.path} onEnter={() => editorView.current?.focus()} />
+          {/* Keyed by path: a fresh field per note, so a new note's title is selected, not the previous one's. */}
+          <NoteTitle key={view.path} path={view.path} onEnter={() => editorView.current?.focus()} />
           {mode === 'read' ? (
             <ReadingView path={view.path} subpath={view.subpath} />
           ) : (
             <Editor
               key={`${tab.id}:${tab.nav ?? 0}`}
               path={view.path}
+              tabId={tab.id}
               mode={mode === 'source' ? 'source' : 'live'}
               subpath={view.subpath}
               onView={(v) => (editorView.current = v)}
