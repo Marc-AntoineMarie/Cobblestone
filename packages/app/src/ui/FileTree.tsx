@@ -202,6 +202,8 @@ export function FileTree() {
     const top = index * ROW_HEIGHT;
     if (top < el.scrollTop) el.scrollTop = top;
     else if (top + ROW_HEIGHT > el.scrollTop + el.clientHeight) el.scrollTop = top + ROW_HEIGHT - el.clientHeight;
+    // Move keyboard focus only while the tree has it: revealing a file must not steal it from the editor.
+    if (!el.contains(document.activeElement)) return;
     requestAnimationFrame(() => el.querySelector<HTMLElement>(`[data-path="${CSS.escape(focused)}"]`)?.focus());
   }, [focused, rows]);
 
