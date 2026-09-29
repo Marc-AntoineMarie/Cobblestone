@@ -12,3 +12,4 @@ export { MemoryAdapter } from './adapters/memory';
 export * from './search/query';
 export * from './search/search';
 export * from './links/mentions';
+export * from './canvas';

@@ -1,4 +1,5 @@
 import type { AdapterChange, FileStat, VaultAdapter } from './adapter';
+import { parseCanvas, renameCanvasReferences, serializeCanvas } from './canvas';
 import { Emitter } from './events';
 import { applyEdits, retargetLink, type TextEdit } from './links/rewrite';
 import type { LinkRef } from './markdown/types';
@@ -288,9 +289,24 @@ export class Vault extends Emitter<VaultEvents> {
     this.emit('rename', to, from, kind);
 
     if (edits) await this.applyLinkEdits(edits, mapping);
+    if (this.options.updateLinksOnRename) await this.updateCanvasReferences(new Map([[from, to]]));
   }
 
   // ------------------------------------------------------------- internals
+
+  /** Canvases showing moved files point at their new paths. Unreadable canvases are left alone. */
+  private async updateCanvasReferences(mapping: Map<string, string>) {
+    for (const file of this.getFiles().filter((f) => f.extension === 'canvas')) {
+      let text: string;
+      try {
+        text = await this.read(file.path);
+      } catch {
+        continue;
+      }
+      const next = renameCanvasReferences(parseCanvas(text), mapping);
+      if (next) await this.doModify(file.path, serializeCanvas(next));
+    }
+  }
 
   /**
    * Serializes a mutation after the previous ones. Code running inside an
