@@ -54,12 +54,24 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 - **2.17** · Web · Cliquer la croix d'un coffre stocké dans le navigateur → La ligne propose « Supprimer ce coffre » et « Annuler ».
 - **2.18** · Web · Confirmer « Supprimer ce coffre » → Le coffre disparaît définitivement.
 - **2.19** · Web · Cliquer « Annuler » à la place → La ligne redevient normale, le coffre est intact.
-- **2.20** · Bureau · Renommer sur le disque le dossier d'un coffre récent, puis cliquer sa ligne → Message « Impossible d'ouvrir ce coffre », sans plantage.
+- **2.20** · Bureau · Renommer sur le disque le dossier d'un coffre récent, puis cliquer sa ligne → Encadré « « Ancien nom » s'appelle maintenant « Nouveau nom » » avec les chemins Avant et Maintenant ; aucun message technique.
 - **2.21** · Bureau · Fermer l'app avec un coffre ouvert, puis la relancer → Le coffre se rouvre directement, avec ses onglets.
 - **2.22** · Web · Recharger la page avec un coffre du navigateur ouvert → Le coffre se rouvre directement.
 - **2.23** · Web · Recharger la page avec un dossier (Chrome) ouvert → Retour à l'accueil, car le navigateur exige un clic ; cliquer la ligne du récent le rouvre après accord.
 - **2.24** · Les deux · Ouvrir un gros coffre → Le message « Ouverture de … » s'affiche et les boutons sont désactivés pendant le chargement.
 - **2.25** · Les deux · Réduire la fenêtre à la largeur d'un téléphone → L'accueil reste lisible, sans défilement horizontal.
+- **2.26** · Bureau · App fermée, renommer le dossier d'un coffre, relancer l'app → L'encadré « … s'appelle maintenant … » s'affiche sur l'accueil ; « Suivre et ouvrir » ouvre le coffre avec ses onglets.
+- **2.27** · Bureau · Déplacer le dossier d'un coffre dans un dossier voisin (ex. Documents vers Documents/Archives), puis cliquer sa ligne → Le nouveau chemin est retrouvé ; « Suivre et ouvrir » ouvre le coffre.
+- **2.28** · Bureau · Mettre à la corbeille le dossier d'un coffre récent, revenir à l'accueil → Sa ligne affiche « Introuvable » avec un rond vide à la place de la date.
+- **2.29** · Bureau · Cliquer la ligne d'un coffre introuvable → « Le dossier de « … » est introuvable », avec « Retrouver le dossier… », « Retirer de la liste » et « Pas maintenant ».
+- **2.30** · Bureau · « Retrouver le dossier… » puis choisir le bon dossier → Le coffre s'ouvre avec ses onglets ; la liste n'a qu'une ligne pour lui, avec le nouveau nom.
+- **2.31** · Bureau · « C'est un autre dossier… » puis Annuler dans la fenêtre de choix → Rien ne change ; l'encadré reste.
+- **2.32** · Bureau · « Pas maintenant » puis « Retirer de la liste » sur un autre coffre introuvable → L'encadré se ferme ; le coffre retiré disparaît de la liste, son dossier n'est pas touché.
+- **2.33** · Web · Renommer sur le disque un dossier ouvert dans Chrome, puis cliquer sa ligne → Encadré « introuvable » ; « Retrouver le dossier… » ouvre le sélecteur et le coffre rouvre avec ses onglets.
+- **2.34** · Bureau · « Ouvrir un dossier » ou « Nouveau coffre » dans ~/.config/Cobblestone → Refus : « ce dossier contient les réglages de Cobblestone lui-même. Choisis-en un autre. »
+- **2.35** · Bureau · Lire le chemin des coffres récents → Il commence par « / » et ne finit pas par une barre oblique ; un chemin trop long est coupé par la gauche.
+- **2.36** · Bureau · App ouverte, supprimer ~/.config/Cobblestone, essayer la démo, revenir à l'accueil et créer un coffre → Aucune erreur « storage.json.tmp » ; le coffre s'ouvre.
+- **2.37** · Bureau · Ouvrir un coffre, la démo, puis un autre coffre, très vite l'un après l'autre → Aucune erreur ; la liste des récents est juste.
 
 ## 3. Migration d'un coffre Obsidian
 
@@ -138,6 +150,10 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 - **5.38** · Les deux · Ouvrir un coffre vide → Message « Ce coffre est vide » et bouton « Nouvelle note ».
 - **5.39** · Les deux · Icônes « Nouvelle note » et « Nouveau dossier » à côté de NOTES → Création à la racine, ou dans le dossier réglé pour les nouvelles notes.
 - **5.40** · Les deux · Commande « Montrer cette note dans la barre latérale » → Les dossiers parents s'ouvrent, la ligne est encadrée de rose un instant et défile dans la vue, sans voler le focus du texte.
+- **5.41** · Bureau · Clic droit sur une note › « Afficher dans le gestionnaire de fichiers » → Le gestionnaire de fichiers s'ouvre sur son dossier, la note sélectionnée.
+- **5.42** · Bureau · Même chose sur un dossier → Son dossier parent s'ouvre, le dossier sélectionné.
+- **5.43** · Bureau · Même chose sur un canvas, une image, un PDF → Le bon fichier est sélectionné.
+- **5.44** · Web · Clic droit sur une note ou un dossier → Aucune entrée « gestionnaire de fichiers ».
 
 ## 6. Barre latérale : coffre, favoris, tags, pied
 
@@ -162,6 +178,9 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 - **6.19** · Les deux · Cliquer le titre « TAGS » → La section se replie puis se déplie.
 - **6.20** · Les deux · Regarder le pied de la barre → « Sur cet appareil » avec un petit carré, et un bouton Réglages.
 - **6.21** · Les deux · Bouton Réglages du pied → Les réglages s'ouvrent dans un onglet.
+- **6.22** · Bureau · Menu du nom du coffre › « Ouvrir le dossier du coffre » → Le gestionnaire de fichiers montre le contenu du coffre.
+- **6.23** · Web · Menu du nom du coffre → Pas d'entrée « Ouvrir le dossier du coffre ».
+- **6.24** · Les deux · Menu du nom du coffre dans la démo → Pas d'entrée « Ouvrir le dossier du coffre » (rien n'est sur le disque).
 
 ## 7. Onglets et divisions
 
@@ -220,6 +239,8 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 - **8.22** · Les deux · Écrire en regardant la barre d'état en bas → Mots, caractères et rétroliens se mettent à jour, chiffres alignés.
 - **8.23** · Les deux · Cliquer « N rétroliens » dans la barre d'état → La marge s'ouvre.
 - **8.24** · Les deux · Supprimer avec un autre programme une note ouverte → Son onglet se ferme.
+- **8.25** · Bureau · Menu « ⋯ » d'une note › « Afficher dans le gestionnaire de fichiers » → Son dossier s'ouvre, la note sélectionnée.
+- **8.26** · Les deux · Ouvrir une note que le système refuse de lire (droits retirés : chmod 000) → « Impossible de lire cette note : le système refuse l'accès à cet emplacement. » au lieu d'une page vide.
 
 ## 9. Éditeur : écriture et mise en forme
 
@@ -319,7 +340,7 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 - **12.9** · Les deux · HTML simple dans une note (`<details>`, `<b>`) → Rendu ; les scripts sont supprimés (voir Sécurité).
 - **12.10** · Les deux · Modifier la note dans un autre panneau pendant qu'elle est en lecture → La lecture se met à jour sans perdre la position de défilement.
 - **12.11** · Les deux · Changer le réglage des retours à la ligne simples → Le rendu des retours simples change en lecture.
-- **12.12** · Les deux · Désactiver « Garder des lignes de longueur lisible » → Le texte occupe toute la largeur.
+- **12.12** · Les deux · Réglages › Largeur des lignes « Toute la largeur » → Le texte occupe toute la largeur, en écriture comme en lecture.
 
 ## 13. Aperçu au survol
 
@@ -396,6 +417,8 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 - **16.25** · Les deux · Alt+T « Insérer un modèle » → La liste des modèles s'ouvre.
 - **16.26** · Les deux · Palette : « Créer un canvas » → Un canvas « Sans titre » est créé et ouvert.
 - **16.27** · Les deux · Sur Mac (si disponible) → Les raccourcis utilisent Cmd et s'affichent ⌘ ⇧ ⌥.
+- **16.28** · Bureau · Palette, taper « gestionnaire » → « Montrer cette note dans le gestionnaire de fichiers » ; l'exécuter sélectionne la note dans son dossier.
+- **16.29** · Web · Palette, taper « gestionnaire » → La commande n'existe pas.
 
 ## 17. Note du jour et modèles
 
@@ -537,6 +560,12 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 - **23.5** · Les deux · `git pull` qui modifie plusieurs notes → Tout est pris en compte.
 - **23.6** · Les deux · Écrire dans une note pendant qu'un autre programme la modifie → Rien de ce qui est tapé n'est perdu.
 - **23.7** · Les deux · Créer un dossier caché (`.git`, `.stfolder`) dans le coffre → Il est ignoré.
+- **23.8** · Bureau · Renommer le dossier du coffre ouvert dans le gestionnaire de fichiers, revenir dans l'app → En 3 s au plus, encadré « « … » s'appelle maintenant « … » » ; les onglets restent derrière.
+- **23.9** · Bureau · « Suivre ce changement » → Le coffre se rouvre à sa nouvelle place, mêmes onglets, nouveau nom en haut de la barre latérale ; écrire enregistre dans le nouveau dossier.
+- **23.10** · Bureau · Pendant l'encadré, redonner au dossier son ancien nom → L'encadré disparaît et le coffre continue normalement.
+- **23.11** · Bureau · Renommer le dossier du coffre pendant qu'on écrit → L'ancien dossier n'est jamais recréé ; aucune note n'est perdue.
+- **23.12** · Bureau · Mettre le dossier du coffre ouvert à la corbeille → Encadré « introuvable » ; « Fermer le coffre » ramène à l'accueil.
+- **23.13** · Bureau · Déplacer le dossier du coffre ouvert sur une clé USB → Encadré « introuvable » (autre disque) ; « Retrouver le dossier… » permet de l'indiquer.
 
 ## 24. Réglages
 
@@ -544,7 +573,7 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 - **24.2** · Les deux · Papier : Suivre le système, Papier de jour, Papier de nuit → Le thème change aussitôt ; « Suivre le système » suit le système en direct.
 - **24.3** · Les deux · Langue : Auto, English, Français → Toute l'interface change, commandes et palette comprises ; Auto suit la langue du système ou du navigateur.
 - **24.4** · Les deux · « Les nouveaux onglets s'ouvrent en » : Écrire, Lire, Source → Appliqué aux notes ouvertes ensuite.
-- **24.5** · Les deux · Interrupteur « Garder des lignes de longueur lisible » → Largeur limitée ou pleine largeur.
+- **24.5** · Les deux · Largeur des lignes : Étroite, Normale, Large, Toute la largeur → La colonne de texte change aussitôt ; le bouton choisi est marqué.
 - **24.6** · Les deux · Interrupteur des retours à la ligne simples → Le rendu en lecture change.
 - **24.7** · Les deux · Interrupteur « Vérifier l'orthographe » → Le soulignement des fautes s'active et se désactive.
 - **24.8** · Les deux · « Les nouvelles notes vont dans » : racine, dossier de la note active, dossier précis → Respecté par Ctrl+N, la palette et les liens en attente.
@@ -556,6 +585,11 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 - **24.14** · Les deux · À propos → Version et licence AGPL-3.0.
 - **24.15** · Les deux · Fermer puis rouvrir le coffre, puis l'app → Réglages du coffre conservés (`.cobblestone/app.json`) ; thème et langue aussi (réglages de l'appareil).
 - **24.16** · Les deux · Tab jusqu'à un interrupteur, puis Espace → Il bascule ; contour rose au focus.
+- **24.17** · Les deux · Taille du texte : 20 px → Le texte et les titres des notes grossissent en écriture et en lecture ; l'interface garde sa taille.
+- **24.18** · Les deux · Écran de 1920 px, largeur « Normale », taille par défaut → Colonne d'environ 700 px, environ 80 caractères par ligne.
+- **24.19** · Les deux · Fermer puis rouvrir le coffre → Taille du texte et largeur des lignes conservées.
+- **24.20** · Les deux · Ouvrir pour la première fois un coffre Obsidian dont la taille de police est 18 → Cobblestone reprend 18 px.
+- **24.21** · Les deux · Grande taille et largeur « Large » dans un canvas, un aperçu au survol, une intégration → Tout reste lisible, rien ne déborde.
 
 ## 25. Apparence et tailles d'écran
 
@@ -591,6 +625,8 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 - **27.6** · Bureau · Regarder `~/.config/Cobblestone/` → `vaults.json` et `storage.json` y sont.
 - **27.7** · Bureau · Version installée (AppImage ou .deb) → Icône et nom « Cobblestone » dans le menu et la barre des tâches.
 - **27.8** · Bureau · Fermer la fenêtre → L'app se quitte.
+- **27.9** · Bureau · Installer le .deb produit par `npm run dist -w @cobblestone/desktop` → L'icône Cobblestone (les pavés) apparaît dans le menu des applications et le dock, pas un engrenage.
+- **27.10** · Bureau · `npm run dev:desktop` sous X11 → La fenêtre porte l'icône Cobblestone.
 
 ## 28. Sécurité
 
@@ -611,6 +647,7 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 - **29.5** · Les deux · Couper le réseau → Tout fonctionne : les notes sont locales.
 - **29.6** · Les deux · Une heure d'utilisation avec beaucoup d'onglets → Pas de ralentissement notable.
 - **29.7** · Les deux · Quitter l'app pendant le déplacement d'un gros dossier → Aucun fichier perdu.
+- **29.8** · Les deux · Provoquer des erreurs (dossier supprimé, disque plein, droits retirés) → Toujours une phrase en français ; jamais « Error invoking remote method » ni un code brut comme ENOENT.
 
 ## 30. Retour dans Obsidian
 
