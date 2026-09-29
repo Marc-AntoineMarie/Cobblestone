@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { FolderOpen, Plus, Sparkles, X } from 'lucide-react';
+import { describeError } from '../errors';
 import { t } from '../i18n';
 import type { Platform, VaultEntry } from '../platform';
 import { Mark } from './Mark';
@@ -20,20 +21,37 @@ export function Launcher({ platform, opening, error, onOpen }: Props) {
   const [name, setName] = useState('');
   /** Browser vaults exist only here: removing one asks first. */
   const [confirming, setConfirming] = useState<string | null>(null);
+  /** Errors from picking or creating a folder; opening errors come from the app. */
+  const [failure, setFailure] = useState<string | null>(null);
 
   const refresh = () =>
     void platform.recentVaults().then((list) => setRecent([...list].sort((a, b) => b.lastOpened - a.lastOpened)));
   useEffect(refresh, [platform]);
 
+  const open = (entry: VaultEntry) => {
+    setFailure(null);
+    onOpen(entry);
+  };
+
   const pick = async () => {
-    const entry = await platform.pickFolder();
-    if (entry) onOpen(entry);
+    setFailure(null);
+    try {
+      const entry = await platform.pickFolder();
+      if (entry) onOpen(entry);
+    } catch (e) {
+      setFailure(t('launcher.error', { error: describeError(e) }));
+    }
   };
 
   const create = async (event: FormEvent) => {
     event.preventDefault();
-    const entry = await platform.createVault(name.trim() || t('launcher.namePlaceholder'));
-    if (entry) onOpen(entry);
+    setFailure(null);
+    try {
+      const entry = await platform.createVault(name.trim() || t('launcher.namePlaceholder'));
+      if (entry) onOpen(entry);
+    } catch (e) {
+      setFailure(t('launcher.createError', { error: describeError(e) }));
+    }
   };
 
   const forget = async (entry: VaultEntry) => {
@@ -107,7 +125,7 @@ export function Launcher({ platform, opening, error, onOpen }: Props) {
               </button>
             ))}
 
-          <button className="launch-action" onClick={() => onOpen(DEMO)} disabled={busy}>
+          <button className="launch-action" onClick={() => open(DEMO)} disabled={busy}>
             <Sparkles size={20} strokeWidth={1.75} aria-hidden />
             <span className="launch-action-text">
               <strong>{t('launcher.demo')}</strong>
@@ -116,9 +134,9 @@ export function Launcher({ platform, opening, error, onOpen }: Props) {
           </button>
         </div>
 
-        {(opening || error) && (
-          <p className={`launcher-status${error ? ' is-error' : ''}`} role={error ? 'alert' : 'status'}>
-            {error ? t('launcher.error', { error }) : t('launcher.opening', { name: opening!.name })}
+        {(opening || error || failure) && (
+          <p className={`launcher-status${opening ? '' : ' is-error'}`} role={opening ? 'status' : 'alert'}>
+            {opening ? t('launcher.opening', { name: opening.name }) : (failure ?? t('launcher.error', { error: error! }))}
           </p>
         )}
 
@@ -132,9 +150,12 @@ export function Launcher({ platform, opening, error, onOpen }: Props) {
             <ul>
               {recent.map((entry) => (
                 <li key={entry.id} className="recent-row">
-                  <button className="recent-open" onClick={() => onOpen(entry)} disabled={busy}>
+                  <button className="recent-open" onClick={() => open(entry)} disabled={busy}>
                     <span className="recent-name">{entry.name}</span>
-                    <span className="recent-where">{entry.location ?? t(`launcher.kind.${entry.kind}`)}</span>
+                    <span className="recent-where">
+                      {/* Cut from the left, so the end of the path stays visible; the marks keep slashes in place. */}
+                      {entry.location ? `\u200e${entry.location}\u200e` : t(`launcher.kind.${entry.kind}`)}
+                    </span>
                     <time className="recent-date" dateTime={new Date(entry.lastOpened).toISOString()}>
                       {new Date(entry.lastOpened).toLocaleDateString(undefined, {
                         day: '2-digit',

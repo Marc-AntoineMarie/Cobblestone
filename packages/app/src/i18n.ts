@@ -222,6 +222,15 @@ const en = {
   'error.generic': 'Something went wrong: {error}',
   'error.exists': 'A file named “{name}” already exists here.',
   'error.invalidName': 'Names cannot contain \\ / : * ? " < > | # ^ [ ]',
+  'error.notFound': 'the file or folder cannot be found.',
+  'error.permission': 'the system denies access to this place.',
+  'error.diskFull': 'there is not enough space left to save.',
+  'error.readOnly': 'this place is read-only.',
+  'error.busy': 'another program is using this file.',
+  'error.nameTooLong': 'the name is too long for the system.',
+  'error.vaultMissing': 'its folder is no longer there. It may have been renamed, moved or deleted.',
+  'error.appDataFolder': 'this folder holds Cobblestone’s own settings. Choose another one.',
+  'launcher.createError': 'Could not create the vault: {error}',
 };
 
 export type MessageKey = keyof typeof en;
@@ -448,6 +457,15 @@ const fr: Messages = {
   'error.generic': 'Une erreur est survenue : {error}',
   'error.exists': 'Un fichier nommé « {name} » existe déjà ici.',
   'error.invalidName': 'Les noms ne peuvent pas contenir \\ / : * ? " < > | # ^ [ ]',
+  'error.notFound': 'le fichier ou le dossier est introuvable.',
+  'error.permission': 'le système refuse l’accès à cet emplacement.',
+  'error.diskFull': 'il n’y a plus assez de place pour enregistrer.',
+  'error.readOnly': 'cet emplacement est en lecture seule.',
+  'error.busy': 'un autre programme utilise ce fichier.',
+  'error.nameTooLong': 'le nom est trop long pour le système.',
+  'error.vaultMissing': 'son dossier n’est plus là. Il a peut-être été renommé, déplacé ou supprimé.',
+  'error.appDataFolder': 'ce dossier contient les réglages de Cobblestone lui-même. Choisis-en un autre.',
+  'launcher.createError': 'Impossible de créer le coffre : {error}',
 };
 
 export const LANGUAGES = { en: 'English', fr: 'Français' } as const;

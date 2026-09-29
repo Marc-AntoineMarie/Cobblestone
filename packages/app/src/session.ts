@@ -25,6 +25,7 @@ import {
 } from './bookmarks';
 import type { EditorView } from '@codemirror/view';
 import { CommandRegistry } from './commands';
+import { describeError } from './errors';
 import { getLanguage, t } from './i18n';
 import type { Platform, VaultEntry } from './platform';
 import { DEFAULT_SETTINGS, formatDate, loadVaultSettings, saveVaultSettings, type VaultSettings } from './settings';
@@ -227,8 +228,7 @@ export class Session {
   }
 
   private fail(error: unknown) {
-    const message = error instanceof Error ? error.message : String(error);
-    this.notify(t('error.generic', { error: message }), 'error');
+    this.notify(t('error.generic', { error: describeError(error) }), 'error');
   }
 
   // --------------------------------------------------------------- navigation
