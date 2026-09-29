@@ -16,6 +16,10 @@ await writeFile(
   path.join(vault, '.obsidian/app.json'),
   JSON.stringify({ attachmentFolderPath: 'assets', strictLineBreaks: true }),
 );
+await writeFile(
+  path.join(vault, '.obsidian/bookmarks.json'),
+  JSON.stringify({ items: [{ type: 'file', ctime: 1, path: 'Home.md' }] }),
+);
 await writeFile(path.join(vault, 'Home.md'), '# Home\n\nSee [[Projects/Plan]] and [[Missing]].\n');
 await writeFile(path.join(vault, 'Projects/Plan.md'), '---\nstatus: draft\n---\nBack to [[Home]].\n');
 await writeFile(
@@ -62,6 +66,10 @@ await page.keyboard.press('Enter');
 await page.waitForTimeout(900);
 const plan = await readFile(path.join(vault, 'Projects/Plan.md'), 'utf8');
 check('renaming updates links on disk', plan.includes('[[Start]]'));
+check(
+  'bookmarks imported from Obsidian follow the rename',
+  (await page.locator('.rail-bookmarks').innerText()).includes('Start'),
+);
 
 // External change: another program edits a file.
 await writeFile(path.join(vault, 'Projects/Plan.md'), plan + '\nEdited outside.\n');
