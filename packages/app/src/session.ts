@@ -11,6 +11,7 @@ import {
   splitSubpath,
   stem,
   Emitter,
+  serializeCanvas,
   Vault,
   type VaultAdapter,
 } from '@cobblestone/core';
@@ -334,6 +335,19 @@ export class Session {
     } catch (error) {
       this.fail(error);
       return null;
+    }
+  }
+
+  async createCanvas(folder = this.newNoteFolder()) {
+    try {
+      const file = await this.vault.create(
+        this.availablePath(folder, t('tree.untitled'), 'canvas'),
+        serializeCanvas({ nodes: [], edges: [] }),
+      );
+      this.openPath(file.path);
+      if (folder) this.revealInTree(file.path);
+    } catch (error) {
+      this.fail(error);
     }
   }
 
