@@ -2,7 +2,7 @@
 
 Comment une version arrive sur chaque plateforme : ce qui marche déjà, ce qui reste à faire, et les
 décisions à prendre (surtout celles qui coûtent de l'argent). La publication elle-même est décrite
-dans [CONTRIBUTING.md](../CONTRIBUTING.md#6-publier-une-version).
+dans [contribution/REGLES.md](../contribution/REGLES.md#10-versions-et-publication).
 
 ## Publier une version (déjà en place)
 

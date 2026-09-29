@@ -72,6 +72,11 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 - **2.35** · Bureau · Lire le chemin des coffres récents → Il commence par « / » et ne finit pas par une barre oblique ; un chemin trop long est coupé par la gauche.
 - **2.36** · Bureau · App ouverte, supprimer ~/.config/Cobblestone, essayer la démo, revenir à l'accueil et créer un coffre → Aucune erreur « storage.json.tmp » ; le coffre s'ouvre.
 - **2.37** · Bureau · Ouvrir un coffre, la démo, puis un autre coffre, très vite l'un après l'autre → Aucune erreur ; la liste des récents est juste.
+- **2.38** · Bureau · Retrouver un coffre introuvable et, dans la fenêtre de choix, valider sans entrer dans le dossier du coffre → Refus : « c'est le dossier qui contenait le coffre, pas le coffre lui-même… » ; l'app reste utilisable.
+- **2.39** · Bureau · « Ouvrir un dossier » sur son dossier personnel ou sur « / » → Refus : « c'est ton dossier personnel entier ou tout un disque… ».
+- **2.40** · Les deux · Ouvrir un gros coffre → « Ouverture de … : N notes lues sur M » et un bouton Annuler ; Annuler rend l'accueil utilisable aussitôt.
+- **2.41** · Bureau · Retrouver un coffre en choisissant le dossier d'un autre coffre de la liste → Refus : « ce dossier est déjà un autre coffre de ta liste ».
+- **2.42** · Bureau · Cliquer un ancien coffre situé dans ~/.config/Cobblestone → Refus expliqué ; la croix le retire de la liste.
 
 ## 3. Migration d'un coffre Obsidian
 
