@@ -302,3 +302,23 @@
 .hover-preview-body img {
   max-width: 100%;
 }
+
+/* The open vault's folder is gone: nothing else can be saved until the user decides. */
+.lost-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 16vh 16px 16px;
+  background: color-mix(in srgb, var(--paper) 55%, transparent);
+}
+
+.lost-vault.is-sheet {
+  width: min(540px, 100%);
+  margin-top: 0;
+  background: var(--paper);
+  box-shadow: var(--shadow-sheet);
+  animation: sheet-drop 180ms var(--ease);
+}

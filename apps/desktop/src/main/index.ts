@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, ipcMain, shell, type IpcMainInvokeEvent } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, shell, webContents, type IpcMainInvokeEvent } from 'electron';
 import { randomUUID } from 'node:crypto';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { NodeFsAdapter } from '@cobblestone/node';
 import { FS_METHODS, type DesktopVaultEntry, type FsMethod } from './ipc-types';
 import { JsonFile } from './json-file';
+import { findFolder, folderId, searchAreas } from './relocate';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const devServer = process.env.COBBLESTONE_DEV_SERVER;
@@ -31,17 +32,31 @@ function checkVaultLocation(location: string) {
   if (!inside.startsWith('..') && !path.isAbsolute(inside)) throw appError('app-data-folder');
 }
 
-async function rememberVault(location: string): Promise<DesktopVaultEntry> {
+/**
+ * Records a vault folder as opened now. With `id`, that entry moves to
+ * `location` (its folder was renamed or moved) and keeps its tabs and settings.
+ */
+async function rememberVault(location: string, id?: string): Promise<DesktopVaultEntry> {
+  const identity = await folderId(location);
   let entry: DesktopVaultEntry | undefined;
   await vaultList.update((vaults) => {
-    const known = vaults.find((v) => v.location === location);
-    entry = known
-      ? { ...known, lastOpened: Date.now() }
-      : { id: randomUUID(), name: path.basename(location), kind: 'folder', location, lastOpened: Date.now() };
-    return [...vaults.filter((v) => v.id !== entry!.id), entry];
+    const known = vaults.find((v) => (id ? v.id === id : v.location === location));
+    entry = {
+      id: known?.id ?? randomUUID(),
+      name: known?.location === location ? known.name : path.basename(location),
+      kind: 'folder',
+      location,
+      lastOpened: Date.now(),
+      folderId: identity,
+    };
+    // One entry per folder: following a move replaces an entry already made for the new place.
+    return [...vaults.filter((v) => v.id !== entry!.id && v.location !== location), entry];
   });
   return entry!;
 }
+
+/** New places found for moved vaults: the renderer may only follow these, or a folder the user picks. */
+const foundMoves = new Map<string, string>();
 
 // ------------------------------------------------------------- vault access
 
@@ -55,7 +70,44 @@ function adapterFor(event: IpcMainInvokeEvent, vaultId: string): NodeFsAdapter {
   return adapter;
 }
 
-ipcMain.handle('vaults:recent', () => recentVaults());
+ipcMain.handle('vaults:recent', async () => {
+  const vaults = await recentVaults();
+  const ids = new Map(await Promise.all(vaults.map(async (v) => [v.id, await folderId(v.location)] as const)));
+  // Entries saved before folder identities existed learn theirs while their folder is in place.
+  if (vaults.some((v) => !v.folderId && ids.get(v.id))) {
+    await vaultList.update((list) => list.map((v) => (!v.folderId && ids.get(v.id) ? { ...v, folderId: ids.get(v.id) } : v)));
+  }
+  return vaults.map((v) => ({ ...v, missing: !ids.get(v.id) }));
+});
+
+ipcMain.handle('vaults:findMoved', async (_event, id: string) => {
+  const entry = (await recentVaults()).find((v) => v.id === id);
+  if (!entry?.folderId || (await folderId(entry.location))) return null;
+  const location = await findFolder(entry.folderId, searchAreas(entry.location, app.getPath('home')));
+  if (!location) return null;
+  foundMoves.set(id, location);
+  return { name: path.basename(location), location };
+});
+
+ipcMain.handle('vaults:relocate', async (event, id: string, found?: string) => {
+  const entry = (await recentVaults()).find((v) => v.id === id);
+  if (!entry) throw new Error('Unknown vault');
+  let location = found && foundMoves.get(id) === found ? found : undefined;
+  if (!location) {
+    const window = BrowserWindow.fromWebContents(event.sender)!;
+    const result = await dialog.showOpenDialog(window, {
+      title: `Where is “${entry.name}” now?`,
+      defaultPath: path.dirname(entry.location),
+      properties: ['openDirectory'],
+    });
+    if (result.canceled || !result.filePaths[0]) return null;
+    location = result.filePaths[0];
+  }
+  checkVaultLocation(location);
+  if (!(await folderId(location))) throw appError('vault-missing');
+  foundMoves.delete(id);
+  return rememberVault(location, id);
+});
 
 ipcMain.handle('vaults:pick', async (event) => {
   const window = BrowserWindow.fromWebContents(event.sender)!;
@@ -93,6 +145,7 @@ ipcMain.handle('vaults:open', async (event, id: string) => {
   let windowVaults = openVaults.get(event.sender.id);
   if (!windowVaults) openVaults.set(event.sender.id, (windowVaults = new Map()));
   windowVaults.set(id, new NodeFsAdapter(entry.location, entry.name));
+  lostVaults.delete(`${event.sender.id}:${id}`);
   await rememberVault(entry.location);
   return { name: entry.name };
 });
@@ -103,18 +156,20 @@ ipcMain.handle('fs:call', async (event, vaultId: string, method: FsMethod, args:
   return (adapter[method] as (...a: unknown[]) => Promise<unknown>)(...args);
 });
 
-ipcMain.handle('fs:watch', (event, vaultId: string) => {
-  const key = `${event.sender.id}:${vaultId}`;
+// Each watch has its own token: when a vault reopens, the new session's watch
+// starts before the old one stops, and neither may cancel or hear the other.
+ipcMain.handle('fs:watch', (event, vaultId: string, token: string) => {
+  const key = `${event.sender.id}:${vaultId}:${token}`;
   if (watchers.has(key)) return;
   const sender = event.sender;
   const stop = adapterFor(event, vaultId).watch((change) => {
-    if (!sender.isDestroyed()) sender.send('fs:event', vaultId, change);
+    if (!sender.isDestroyed()) sender.send('fs:event', vaultId, token, change);
   });
   watchers.set(key, stop);
 });
 
-ipcMain.handle('fs:unwatch', (event, vaultId: string) => {
-  const key = `${event.sender.id}:${vaultId}`;
+ipcMain.handle('fs:unwatch', (event, vaultId: string, token: string) => {
+  const key = `${event.sender.id}:${vaultId}:${token}`;
   watchers.get(key)?.();
   watchers.delete(key);
 });
@@ -128,6 +183,25 @@ ipcMain.handle('storage:set', async (_event, key: string, value: unknown) => {
 ipcMain.handle('shell:openExternal', async (_event, url: string) => {
   if (/^(https?|mailto):/i.test(url)) await shell.openExternal(url);
 });
+
+/** Open vaults whose folder has disappeared, so each window hears it once. */
+const lostVaults = new Set<string>();
+
+/** Tells windows when the folder of an open vault is renamed, moved or deleted, and when it comes back. */
+async function checkOpenVaults() {
+  for (const [senderId, vaults] of openVaults) {
+    const contents = webContents.fromId(senderId);
+    if (!contents || contents.isDestroyed()) continue;
+    for (const [vaultId, adapter] of vaults) {
+      const key = `${senderId}:${vaultId}`;
+      const missing = !(await folderId(adapter.root));
+      if (missing === lostVaults.has(key)) continue;
+      if (missing) lostVaults.add(key);
+      else lostVaults.delete(key);
+      contents.send('vaults:missing', vaultId, missing);
+    }
+  }
+}
 
 // ------------------------------------------------------------- windows
 
@@ -157,6 +231,7 @@ function createWindow() {
       watchers.delete(key);
     }
     openVaults.delete(id);
+    for (const key of [...lostVaults].filter((k) => k.startsWith(`${id}:`))) lostVaults.delete(key);
   });
   // Links never navigate the app window: external ones open in the browser.
   window.webContents.setWindowOpenHandler(({ url }) => {
@@ -173,6 +248,9 @@ function createWindow() {
 
 app.whenReady().then(() => {
   createWindow();
+  // Renaming a vault happens in another app: check on the way back, and now and then.
+  app.on('browser-window-focus', () => void checkOpenVaults());
+  setInterval(() => void checkOpenVaults(), 3000);
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });

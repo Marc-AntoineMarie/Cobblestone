@@ -238,3 +238,64 @@
   display: inline-flex;
   gap: 4px;
 }
+
+.recent-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink-2);
+  font-weight: 550;
+}
+
+/* A vault whose folder moved: a slip laid on the launcher, or over the open vault. */
+.lost-vault {
+  margin-top: 20px;
+  padding: 16px 18px 18px;
+  background: var(--paper-2);
+  border: 1px solid var(--rule-strong);
+  border-radius: 4px;
+}
+
+.lost-vault h2 {
+  font-size: 1.05rem;
+  font-stretch: 108%;
+  font-weight: 750;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.lost-vault p {
+  margin-top: 6px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+
+.lost-paths {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 4px 12px;
+  margin-top: 12px;
+}
+
+.lost-paths dt {
+  color: var(--ink-3);
+  font-weight: 600;
+}
+
+.lost-paths dd {
+  font-family: var(--mono);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.lost-vault .lost-error {
+  color: var(--red-deep);
+  font-weight: 600;
+}
+
+.lost-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}

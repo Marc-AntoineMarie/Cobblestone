@@ -1,5 +1,5 @@
 import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
-import { describeError } from '../errors';
+import { describeError, isVaultMissing } from '../errors';
 import { detectLanguage, setLanguage } from '../i18n';
 import type { Platform, VaultEntry } from '../platform';
 import type { Session } from '../session';
@@ -7,6 +7,7 @@ import { DEFAULT_PREFERENCES, type Preferences } from '../settings';
 import { PreferencesContext } from './preferences';
 import { SessionContext, useMediaQuery } from './hooks';
 import { Launcher } from './Launcher';
+import { LostVault } from './LostVault';
 
 // The workspace (editor, index, renderers) loads only once a vault opens: the first screen stays light.
 const Workbench = lazy(() => import('./Workbench').then((m) => ({ default: m.Workbench })));
@@ -18,6 +19,10 @@ export function App({ platform }: { platform: Platform }) {
   const [session, setSession] = useState<Session | null>(null);
   const [opening, setOpening] = useState<VaultEntry | null>(null);
   const [error, setError] = useState<string | null>(null);
+  /** A vault whose folder is gone: renamed, moved or deleted outside the app. */
+  const [lost, setLost] = useState<VaultEntry | null>(null);
+  /** Each opening gets a fresh workbench, even when the same vault reopens. */
+  const [generation, setGeneration] = useState(0);
   const [booted, setBooted] = useState(false);
   const systemNight = useMediaQuery('(prefers-color-scheme: dark)');
 
@@ -46,6 +51,7 @@ export function App({ platform }: { platform: Platform }) {
     async (entry: VaultEntry) => {
       setOpening(entry);
       setError(null);
+      setLost(null);
       try {
         const [adapter, { Session }] = await Promise.all([platform.openVault(entry), import('../session')]);
         const next = await Session.open(platform, entry, adapter);
@@ -53,10 +59,12 @@ export function App({ platform }: { platform: Platform }) {
           previous?.dispose();
           return next;
         });
+        setGeneration((g) => g + 1);
         // The vault is open: failing to remember it for next launch is not an opening error.
         void platform.storage.set(LAST_VAULT, entry.id).catch((e: unknown) => console.error('Could not save the last vault', e));
       } catch (e) {
-        setError(describeError(e));
+        if (isVaultMissing(e)) setLost(entry);
+        else setError(describeError(e));
       } finally {
         setOpening(null);
       }
@@ -71,6 +79,18 @@ export function App({ platform }: { platform: Platform }) {
     });
     void platform.storage.set(LAST_VAULT, null);
   }, [platform]);
+
+  // The folder of the open vault was renamed, moved or deleted in another app.
+  useEffect(() => {
+    if (!session || !platform.onVaultMissing) return;
+    return platform.onVaultMissing((vaultId, missing) => {
+      if (vaultId !== session.entry.id) return;
+      if (missing) return setLost(session.entry);
+      // Back in place: reopen it so its changes are watched again.
+      setLost(null);
+      void openEntry(session.entry);
+    });
+  }, [platform, session, openEntry]);
 
   // Restore preferences and reopen the last vault when that needs no permission prompt.
   useEffect(() => {
@@ -94,11 +114,32 @@ export function App({ platform }: { platform: Platform }) {
       {session ? (
         <SessionContext.Provider value={session}>
           <Suspense fallback={null}>
-            <Workbench key={session.entry.id} onSwitchVault={closeVault} />
+            <Workbench key={generation} onSwitchVault={closeVault} />
           </Suspense>
+          {lost && (
+            <div className="lost-layer">
+              <LostVault
+                platform={platform}
+                entry={lost}
+                inWorkspace
+                onFollow={(entry) => void openEntry(entry)}
+                onClose={() => {
+                  setLost(null);
+                  closeVault();
+                }}
+              />
+            </div>
+          )}
         </SessionContext.Provider>
       ) : booted ? (
-        <Launcher platform={platform} opening={opening} error={error} onOpen={(entry) => void openEntry(entry)} />
+        <Launcher
+          platform={platform}
+          opening={opening}
+          error={error}
+          lost={lost}
+          onOpen={(entry) => void openEntry(entry)}
+          onLostClose={() => setLost(null)}
+        />
       ) : null}
     </PreferencesContext.Provider>
   );

@@ -3,19 +3,23 @@ import { FolderOpen, Plus, Sparkles, X } from 'lucide-react';
 import { describeError } from '../errors';
 import { t } from '../i18n';
 import type { Platform, VaultEntry } from '../platform';
+import { LostVault } from './LostVault';
 import { Mark } from './Mark';
 
 interface Props {
   platform: Platform;
   opening: VaultEntry | null;
   error: string | null;
+  /** A vault whose folder could not be found when opening it. */
+  lost: VaultEntry | null;
   onOpen: (entry: VaultEntry) => void;
+  onLostClose: () => void;
 }
 
 const DEMO: VaultEntry = { id: 'demo', name: 'Demo', kind: 'demo', lastOpened: 0 };
 
 /** First screen: open a folder, create a vault, or try the demo. */
-export function Launcher({ platform, opening, error, onOpen }: Props) {
+export function Launcher({ platform, opening, error, lost, onOpen, onLostClose }: Props) {
   const [recent, setRecent] = useState<VaultEntry[]>([]);
   const [creating, setCreating] = useState(false);
   const [name, setName] = useState('');
@@ -134,6 +138,20 @@ export function Launcher({ platform, opening, error, onOpen }: Props) {
           </button>
         </div>
 
+        {lost && !opening && (
+          <LostVault
+            key={lost.id}
+            platform={platform}
+            entry={lost}
+            onFollow={open}
+            onForget={() => {
+              onLostClose();
+              void platform.forgetVault(lost.id).then(refresh);
+            }}
+            onClose={onLostClose}
+          />
+        )}
+
         {(opening || error || failure) && (
           <p className={`launcher-status${opening ? '' : ' is-error'}`} role={opening ? 'status' : 'alert'}>
             {opening ? t('launcher.opening', { name: opening.name }) : (failure ?? t('launcher.error', { error: error! }))}
@@ -156,13 +174,22 @@ export function Launcher({ platform, opening, error, onOpen }: Props) {
                       {/* Cut from the left, so the end of the path stays visible; the marks keep slashes in place. */}
                       {entry.location ? `\u200e${entry.location}\u200e` : t(`launcher.kind.${entry.kind}`)}
                     </span>
-                    <time className="recent-date" dateTime={new Date(entry.lastOpened).toISOString()}>
-                      {new Date(entry.lastOpened).toLocaleDateString(undefined, {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                      })}
-                    </time>
+                    {entry.missing ? (
+                      <span className="recent-state">
+                        <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden>
+                          <circle cx="6" cy="6" r="4" className="shape-ring" />
+                        </svg>
+                        {t('launcher.missing')}
+                      </span>
+                    ) : (
+                      <time className="recent-date" dateTime={new Date(entry.lastOpened).toISOString()}>
+                        {new Date(entry.lastOpened).toLocaleDateString(undefined, {
+                          day: '2-digit',
+                          month: '2-digit',
+                          year: 'numeric',
+                        })}
+                      </time>
+                    )}
                   </button>
                   {confirming === entry.id ? (
                     <span className="recent-confirm" role="group" aria-label={t('launcher.forgetBrowser')}>
