@@ -20,6 +20,11 @@ describe('describeError', () => {
     expect(describeError(error)).toMatch(/renommé, déplacé ou supprimé/);
   });
 
+  it('explains a folder that cannot be a vault', () => {
+    expect(describeError(ipc('vaults:relocate', 'cobblestone:too-broad'))).toMatch(/dossier personnel entier/);
+    expect(describeError(ipc('vaults:relocate', 'cobblestone:vault-parent'))).toMatch(/qui contenait le coffre/);
+  });
+
   it('reads browser errors', () => {
     const error = new DOMException('A requested file or directory could not be found', 'NotFoundError');
     expect(isVaultMissing(error)).toBe(true);
