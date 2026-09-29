@@ -1,0 +1,40 @@
+# Installeurs de l'app de bureau. Tout le code est déjà empaqueté dans dist/ par scripts/build.mjs :
+# l'app n'embarque aucun node_modules.
+appId: app.cobblestone.desktop
+productName: Cobblestone
+copyright: Copyright © 2026 Marc-Antoine Marie
+electronVersion: 44.4.5
+directories:
+  output: release
+  buildResources: build
+files:
+  - dist/**/*
+  - '!dist/**/*.map'
+  - package.json
+asar: true
+npmRebuild: false
+nodeGypRebuild: false
+linux:
+  executableName: cobblestone
+  syncDesktopName: true
+  target: [AppImage, deb]
+  category: Office
+  icon: build/icon.png
+  synopsis: Local-first knowledge base
+  artifactName: Cobblestone-${version}-${arch}.${ext}
+deb:
+  packageName: cobblestone
+win:
+  executableName: Cobblestone
+  target: nsis
+  icon: build/icon.png
+  artifactName: Cobblestone-${version}-setup.${ext}
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+mac:
+  target: dmg
+  category: public.app-category.productivity
+  icon: build/icon.png
+  artifactName: Cobblestone-${version}-${arch}.${ext}
+publish: null

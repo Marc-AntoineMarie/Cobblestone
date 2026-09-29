@@ -12,3 +12,4 @@ coverage/
 # Local design tooling
 .impeccable/questions/
 .impeccable/mocks/
+release/
