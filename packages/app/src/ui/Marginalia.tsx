@@ -23,7 +23,11 @@ export function Marginalia({ drawer }: { drawer: boolean }) {
             <PanelRightClose size={16} strokeWidth={1.75} />
           </button>
         </header>
-        {path ? <MarginNotes path={path} /> : <p className="margin-empty">{t('empty.title')}</p>}
+        {path ? (
+          <MarginNotes path={path} />
+        ) : (
+          <p className="margin-empty">{session.activePath ? t('margin.notNote') : t('empty.title')}</p>
+        )}
       </aside>
     </>
   );
