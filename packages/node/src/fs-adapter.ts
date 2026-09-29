@@ -31,6 +31,23 @@ export class NodeFsAdapter implements VaultAdapter {
     return path.relative(this.root, absolute).split(path.sep).join('/');
   }
 
+  /**
+   * Creates the folders above a vault path, never the vault root itself: when
+   * the vault's folder was renamed or moved away, a late save must not recreate
+   * an empty copy at the old place.
+   */
+  private async makeParents(target: string) {
+    await fs.access(this.root);
+    await fs.mkdir(path.dirname(target), { recursive: true });
+  }
+
+  private rootExists(): Promise<boolean> {
+    return fs.stat(this.root).then(
+      (stat) => stat.isDirectory(),
+      () => false,
+    );
+  }
+
   async list(): Promise<FileStat[]> {
     const entries = await fs.readdir(this.root, { recursive: true, withFileTypes: true });
     const out: FileStat[] = [];
@@ -64,17 +81,18 @@ export class NodeFsAdapter implements VaultAdapter {
 
   async write(vaultPath: string, data: string): Promise<void> {
     const target = this.resolve(vaultPath);
-    await fs.mkdir(path.dirname(target), { recursive: true });
+    await this.makeParents(target);
     await fs.writeFile(target, data, 'utf8');
   }
 
   async writeBinary(vaultPath: string, data: Uint8Array): Promise<void> {
     const target = this.resolve(vaultPath);
-    await fs.mkdir(path.dirname(target), { recursive: true });
+    await this.makeParents(target);
     await fs.writeFile(target, data);
   }
 
   async mkdir(vaultPath: string): Promise<void> {
+    await fs.access(this.root);
     await fs.mkdir(this.resolve(vaultPath), { recursive: true });
   }
 
@@ -87,7 +105,7 @@ export class NodeFsAdapter implements VaultAdapter {
   async rename(from: string, to: string): Promise<void> {
     const source = this.resolve(from);
     const target = this.resolve(to);
-    await fs.mkdir(path.dirname(target), { recursive: true });
+    await this.makeParents(target);
     await fs.rename(source, target);
   }
 
@@ -100,8 +118,17 @@ export class NodeFsAdapter implements VaultAdapter {
       },
       awaitWriteFinish: { stabilityThreshold: 150, pollInterval: 50 },
     });
-    const emit = (type: 'created' | 'modified' | 'deleted', kind: 'file' | 'folder') => (absolute: string) =>
-      listener({ type, kind, path: this.toVaultPath(absolute) });
+    // When the vault's own folder is renamed or moved, the watcher reports every
+    // file as deleted: those events are dropped, the notes are not gone.
+    // Changes stay in order while a deletion is being checked.
+    let queue = Promise.resolve();
+    const emit = (type: 'created' | 'modified' | 'deleted', kind: 'file' | 'folder') => (absolute: string) => {
+      const change: AdapterChange = { type, kind, path: this.toVaultPath(absolute) };
+      queue = queue.then(async () => {
+        if (type === 'deleted' && (change.path === '' || !(await this.rootExists()))) return;
+        listener(change);
+      });
+    };
     watcher
       .on('add', emit('created', 'file'))
       .on('addDir', emit('created', 'folder'))

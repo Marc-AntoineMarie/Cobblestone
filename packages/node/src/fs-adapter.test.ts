@@ -1,4 +1,4 @@
-import { mkdtemp, readFile, rm, writeFile, mkdir } from 'node:fs/promises';
+import { access, mkdtemp, readFile, rename, rm, writeFile, mkdir } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -69,5 +69,30 @@ describe('NodeFsAdapter', () => {
     stop();
     expect(changes).toContainEqual({ type: 'created', kind: 'file', path: 'External.md' });
     expect(changes.some((c) => c.path.startsWith('.'))).toBe(false);
+  });
+
+  it('does not recreate a vault folder that was moved away', async () => {
+    const vaultRoot = path.join(root, 'Vault');
+    await mkdir(vaultRoot);
+    const adapter = new NodeFsAdapter(vaultRoot);
+    await rename(vaultRoot, path.join(root, 'Renamed'));
+    await expect(adapter.write('Sub/Late.md', 'late save')).rejects.toThrow(/ENOENT/);
+    await expect(adapter.mkdir('Folder')).rejects.toThrow(/ENOENT/);
+    await expect(access(vaultRoot)).rejects.toThrow();
+  });
+
+  it('keeps quiet when the vault folder itself is renamed', async () => {
+    const vaultRoot = path.join(root, 'Vault');
+    await mkdir(path.join(vaultRoot, 'Sub'), { recursive: true });
+    await writeFile(path.join(vaultRoot, 'A.md'), 'a');
+    await writeFile(path.join(vaultRoot, 'Sub', 'B.md'), 'b');
+    const adapter = new NodeFsAdapter(vaultRoot);
+    const changes: AdapterChange[] = [];
+    const stop = adapter.watch((c) => changes.push(c));
+    await new Promise((r) => setTimeout(r, 300));
+    await rename(vaultRoot, path.join(root, 'Renamed'));
+    await new Promise((r) => setTimeout(r, 800));
+    stop();
+    expect(changes).toEqual([]);
   });
 });
