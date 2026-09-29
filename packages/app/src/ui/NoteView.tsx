@@ -124,7 +124,8 @@ export function NoteView({ tab, paneId, view, visible }: { tab: Tab; paneId: str
 
       <div className="note-scroll">
         <div className={`page${readable ? ' is-readable' : ''}`}>
-          <NoteTitle path={view.path} onEnter={() => editorView.current?.focus()} />
+          {/* Keyed by path: a fresh field per note, so a new note's title is selected, not the previous one's. */}
+          <NoteTitle key={view.path} path={view.path} onEnter={() => editorView.current?.focus()} />
           {mode === 'read' ? (
             <ReadingView path={view.path} subpath={view.subpath} />
           ) : (
