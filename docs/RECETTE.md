@@ -201,34 +201,34 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 
 ## 7. Onglets et divisions
 
-- **7.1** · Les deux · à automatiser · Ouvrir une note depuis l'arborescence, puis une autre → La deuxième remplace la première dans l'onglet ; le bouton précédent revient à la première.
-- **7.2** · Les deux · à automatiser · Bouton « + » de la barre d'onglets → Un onglet vide propose Créer une note, Chercher une note et Ouvrir la note du jour, avec leurs raccourcis.
-- **7.3** · Les deux · à automatiser · Cliquer chacune des trois actions de l'onglet vide → Chacune fait ce qu'elle annonce.
-- **7.4** · Les deux · à automatiser · Cliquer un onglet → Il devient actif, avec un trait bleu en haut.
-- **7.5** · Les deux · à automatiser · Croix d'un onglet → Il se ferme et l'onglet voisin devient actif.
-- **7.6** · Les deux · à automatiser · Clic molette sur un onglet → Il se ferme.
-- **7.7** · Bureau · à automatiser · Ctrl+W → L'onglet actif se ferme.
-- **7.8** · Web · à automatiser · Alt+W → L'onglet actif se ferme (Ctrl+W fermerait l'onglet du navigateur).
-- **7.9** · Les deux · à automatiser · Fermer le dernier onglet → Un onglet vide le remplace.
-- **7.10** · Les deux · à automatiser · Clic droit sur un onglet → Menu : Épingler, Fermer.
-- **7.11** · Les deux · à automatiser · Épingler un onglet, puis ouvrir une autre note → L'épingle remplace la croix ; la note s'ouvre dans un nouvel onglet au lieu de remplacer l'onglet épinglé.
-- **7.12** · Les deux · à automatiser · Désépingler → La croix revient.
-- **7.13** · Les deux · à automatiser · Glisser un onglet parmi les autres → Un trait rose indique la position ; l'onglet est déplacé.
-- **7.14** · Les deux · à automatiser · Ctrl+clic sur une note déjà ouverte dans un autre onglet du panneau → L'onglet existant est activé, sans doublon.
-- **7.15** · Les deux · à automatiser · Ctrl+\ → Deux panneaux côte à côte ; la note active est aussi ouverte à droite.
-- **7.16** · Les deux · à automatiser · « Diviser en bas » (menu … ou palette) → Deux panneaux l'un au-dessus de l'autre.
-- **7.17** · Les deux · à automatiser · Glisser la séparation entre deux panneaux → Les tailles changent ; la poignée devient rose au survol.
-- **7.18** · Les deux · à automatiser · Cliquer dans un panneau puis dans l'autre → L'onglet actif du panneau actif a un trait bleu foncé ; celui de l'autre est grisé.
-- **7.19** · Les deux · à automatiser · Fermer le dernier onglet d'un des deux panneaux → Ce panneau disparaît, l'autre prend toute la place.
-- **7.20** · Les deux · à automatiser · Diviser à droite, puis en bas dans le panneau de droite → Les divisions s'imbriquent correctement.
-- **7.21** · Les deux · à automatiser · Même note dans deux panneaux, écrire dans l'un → Le texte apparaît dans l'autre.
-- **7.22** · Les deux · à automatiser · Boutons précédent et suivant de la barre de note → Navigation dans l'historique de l'onglet ; grisés quand il n'y a rien.
-- **7.23** · Les deux · à automatiser · Ctrl+Alt+Gauche et Ctrl+Alt+Droite, curseur dans le texte → Précédent et suivant.
-- **7.24** · Les deux · à automatiser · Alt+Gauche et Alt+Droite hors de l'éditeur → Précédent et suivant (dans l'éditeur, ces touches déplacent le curseur).
-- **7.25** · Les deux · à automatiser · Relancer l'app ou recharger la page → Onglets, divisions et tailles sont restaurés.
-- **7.26** · Les deux · à automatiser · Mettre à la corbeille une note ouverte dans un onglet → L'onglet se ferme.
-- **7.27** · Les deux · à automatiser · Renommer une note ouverte → L'onglet affiche le nouveau nom, sans recharger l'éditeur : le curseur reste en place.
-- **7.28** · Les deux · à automatiser · Ouvrir une vingtaine d'onglets → La barre défile horizontalement ; les titres longs sont tronqués.
+- **7.1** · Les deux · auto · Ouvrir une note depuis l'arborescence, puis une autre → La deuxième remplace la première dans l'onglet ; le bouton précédent revient à la première.
+- **7.2** · Les deux · auto · Bouton « + » de la barre d'onglets → Un onglet vide propose Créer une note, Chercher une note et Ouvrir la note du jour, avec leurs raccourcis.
+- **7.3** · Les deux · auto · Cliquer chacune des trois actions de l'onglet vide → Chacune fait ce qu'elle annonce.
+- **7.4** · Les deux · auto · Cliquer un onglet → Il devient actif, avec un trait bleu en haut.
+- **7.5** · Les deux · auto · Croix d'un onglet → Il se ferme et l'onglet voisin devient actif.
+- **7.6** · Les deux · auto · Clic molette sur un onglet → Il se ferme.
+- **7.7** · Bureau · auto · Ctrl+W → L'onglet actif se ferme.
+- **7.8** · Web · auto · Alt+W → L'onglet actif se ferme (Ctrl+W fermerait l'onglet du navigateur).
+- **7.9** · Les deux · auto · Fermer le dernier onglet → Un onglet vide le remplace.
+- **7.10** · Les deux · auto · Clic droit sur un onglet → Menu : Épingler, Fermer.
+- **7.11** · Les deux · auto · Épingler un onglet, puis ouvrir une autre note → L'épingle remplace la croix ; la note s'ouvre dans un nouvel onglet au lieu de remplacer l'onglet épinglé.
+- **7.12** · Les deux · auto · Désépingler → La croix revient.
+- **7.13** · Les deux · auto · Glisser un onglet parmi les autres → Un trait rose indique la position ; l'onglet est déplacé.
+- **7.14** · Les deux · auto · Ctrl+clic sur une note déjà ouverte dans un autre onglet du panneau → L'onglet existant est activé, sans doublon.
+- **7.15** · Les deux · auto · Ctrl+\ → Deux panneaux côte à côte ; la note active est aussi ouverte à droite.
+- **7.16** · Les deux · auto · « Diviser en bas » (menu … ou palette) → Deux panneaux l'un au-dessus de l'autre.
+- **7.17** · Les deux · auto · Glisser la séparation entre deux panneaux → Les tailles changent ; la poignée devient rose au survol.
+- **7.18** · Les deux · auto · Cliquer dans un panneau puis dans l'autre → L'onglet actif du panneau actif a un trait bleu foncé ; celui de l'autre est grisé.
+- **7.19** · Les deux · auto · Fermer le dernier onglet d'un des deux panneaux → Ce panneau disparaît, l'autre prend toute la place.
+- **7.20** · Les deux · auto · Diviser à droite, puis en bas dans le panneau de droite → Les divisions s'imbriquent correctement.
+- **7.21** · Les deux · auto · Même note dans deux panneaux, écrire dans l'un → Le texte apparaît dans l'autre.
+- **7.22** · Les deux · auto · Boutons précédent et suivant de la barre de note → Navigation dans l'historique de l'onglet ; grisés quand il n'y a rien.
+- **7.23** · Les deux · auto · Ctrl+Alt+Gauche et Ctrl+Alt+Droite, curseur dans le texte → Précédent et suivant.
+- **7.24** · Les deux · auto · Alt+Gauche et Alt+Droite hors de l'éditeur → Précédent et suivant (dans l'éditeur, ces touches déplacent le curseur).
+- **7.25** · Les deux · auto · Relancer l'app ou recharger la page → Onglets, divisions et tailles sont restaurés.
+- **7.26** · Les deux · auto · Mettre à la corbeille une note ouverte dans un onglet → L'onglet se ferme.
+- **7.27** · Les deux · auto · Renommer une note ouverte → L'onglet affiche le nouveau nom, sans recharger l'éditeur : le curseur reste en place.
+- **7.28** · Les deux · auto · Ouvrir une vingtaine d'onglets → La barre défile horizontalement ; les titres longs sont tronqués.
 
 ## 8. Barre d'une note et titre
 
