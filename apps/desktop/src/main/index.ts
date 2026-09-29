@@ -22,6 +22,15 @@ const storage = new JsonFile<Record<string, unknown>>(dataFile('storage.json'), 
 
 const recentVaults = () => vaultList.read();
 
+/** Errors the renderer turns into a sentence (see packages/app/src/errors.ts). */
+const appError = (code: 'vault-missing' | 'app-data-folder') => new Error(`cobblestone:${code}`);
+
+/** The app's own data folder cannot be a vault: resetting the app would delete the notes. */
+function checkVaultLocation(location: string) {
+  const inside = path.relative(app.getPath('userData'), location);
+  if (!inside.startsWith('..') && !path.isAbsolute(inside)) throw appError('app-data-folder');
+}
+
 async function rememberVault(location: string): Promise<DesktopVaultEntry> {
   let entry: DesktopVaultEntry | undefined;
   await vaultList.update((vaults) => {
@@ -55,6 +64,7 @@ ipcMain.handle('vaults:pick', async (event) => {
     properties: ['openDirectory', 'createDirectory'],
   });
   if (result.canceled || !result.filePaths[0]) return null;
+  checkVaultLocation(result.filePaths[0]);
   return rememberVault(result.filePaths[0]);
 });
 
@@ -67,6 +77,7 @@ ipcMain.handle('vaults:create', async (event, name: string) => {
   if (result.canceled || !result.filePaths[0]) return null;
   const safeName = name.replace(/[\\/:*?"<>|]/g, '').trim() || 'Vault';
   const location = path.join(result.filePaths[0], safeName);
+  checkVaultLocation(location);
   await fs.mkdir(location, { recursive: true });
   return rememberVault(location);
 });
@@ -78,7 +89,7 @@ ipcMain.handle('vaults:forget', async (_event, id: string) => {
 ipcMain.handle('vaults:open', async (event, id: string) => {
   const entry = (await recentVaults()).find((v) => v.id === id);
   if (!entry) throw new Error('Unknown vault');
-  await fs.access(entry.location);
+  if (!(await fs.stat(entry.location).catch(() => null))?.isDirectory()) throw appError('vault-missing');
   let windowVaults = openVaults.get(event.sender.id);
   if (!windowVaults) openVaults.set(event.sender.id, (windowVaults = new Map()));
   windowVaults.set(id, new NodeFsAdapter(entry.location, entry.name));
