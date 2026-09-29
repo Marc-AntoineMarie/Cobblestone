@@ -1,0 +1,240 @@
+/* The first screen: a printed program — the name, three ways in, recent vaults. */
+
+.launcher {
+  height: 100%;
+  overflow: auto;
+  display: grid;
+  place-items: start center;
+  padding: clamp(24px, 9vh, 96px) 20px 48px;
+}
+
+.launcher-sheet {
+  width: min(680px, 100%);
+}
+
+.launcher-head {
+  display: grid;
+  gap: 18px;
+  margin-bottom: 40px;
+}
+
+.launcher-title {
+  position: relative;
+  font-size: clamp(3rem, 9vw, 5.6rem);
+  font-stretch: 125%;
+  font-weight: 850;
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  margin: 0;
+}
+
+.launcher-title-ink {
+  position: relative;
+  z-index: 1;
+  color: var(--ink);
+  mix-blend-mode: var(--overprint);
+}
+
+/* The pink drum, printed a hair out of register. */
+.launcher-title-pink {
+  position: absolute;
+  inset: 0;
+  color: var(--pink);
+  transform: translate(0.045em, 0.03em);
+  user-select: none;
+}
+
+.launcher-tagline {
+  max-width: 44ch;
+  font-size: 1.15rem;
+  font-stretch: 100%;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+.launcher-actions {
+  display: grid;
+  border-top: 1px solid var(--ink);
+}
+
+.launch-action {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  align-items: start;
+  gap: 14px;
+  padding: 18px 16px 18px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--rule-strong);
+  transition: background-color 140ms var(--ease);
+}
+
+.launch-action svg {
+  margin-top: 2px;
+  color: var(--ink);
+}
+
+.launch-action:hover:not(:disabled) {
+  background: var(--hover);
+}
+
+.launch-action.is-primary {
+  background: var(--pink);
+  color: var(--on-pink);
+  border-bottom-color: transparent;
+}
+
+.launch-action.is-primary svg {
+  color: var(--on-pink);
+}
+
+.launch-action.is-primary:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--pink) 86%, var(--ink));
+}
+
+.launch-action.is-primary .launch-action-text span {
+  color: color-mix(in srgb, var(--on-pink) 82%, var(--pink));
+}
+
+.launch-action-text {
+  display: grid;
+  gap: 3px;
+}
+
+.launch-action-text strong {
+  font-size: 1.05rem;
+  font-stretch: 108%;
+  font-weight: 750;
+}
+
+.launch-action-text span {
+  color: var(--ink-2);
+  font-stretch: 96%;
+}
+
+.launch-create {
+  display: grid;
+  gap: 8px;
+  padding: 16px 14px;
+  border-bottom: 1px solid var(--rule-strong);
+}
+
+.launch-create label {
+  font-weight: 650;
+}
+
+.launch-create-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.launch-create-row input {
+  flex: 1 1 220px;
+  height: 34px;
+  font-size: var(--body);
+}
+
+.launch-create-row .button {
+  height: 34px;
+}
+
+.launcher-note {
+  padding: 16px 14px;
+  border-bottom: 1px solid var(--rule-strong);
+  color: var(--ink-2);
+}
+
+.launcher-status {
+  margin-top: 16px;
+  color: var(--ink-2);
+}
+
+.launcher-status.is-error {
+  color: var(--red-deep);
+  font-weight: 600;
+}
+
+.launcher-recent {
+  margin-top: 44px;
+}
+
+.launcher-recent h2 {
+  margin-bottom: 8px;
+}
+
+.launcher-empty {
+  color: var(--ink-3);
+}
+
+.recent-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.recent-open {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr) auto;
+  gap: 16px;
+  align-items: baseline;
+  padding: 10px 6px;
+  text-align: left;
+  border-radius: var(--radius);
+}
+
+.recent-open:hover {
+  background: var(--hover);
+}
+
+.recent-name {
+  font-weight: 650;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recent-where {
+  color: var(--ink-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  direction: rtl;
+  text-align: left;
+}
+
+.recent-date {
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 560px) {
+  .recent-open {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .recent-where {
+    display: none;
+  }
+}
+
+/* The mark: navy setts with the pink drum out of register. */
+.mark {
+  flex: none;
+  overflow: visible;
+}
+
+.mark-ink {
+  fill: var(--ink);
+  mix-blend-mode: var(--overprint);
+}
+
+.mark-pink {
+  fill: var(--pink);
+}
+
+.recent-confirm {
+  display: inline-flex;
+  gap: 4px;
+}

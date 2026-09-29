@@ -1,0 +1,262 @@
+/* Sheets laid on top: finder, menus, share, notices. */
+
+.finder-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 12vh 16px 16px;
+  background: color-mix(in srgb, var(--paper) 40%, transparent);
+}
+
+.finder {
+  width: min(640px, 100%);
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  border: 1px solid var(--rule-strong);
+  border-radius: 4px;
+  box-shadow: var(--shadow-sheet);
+  animation: sheet-drop 180ms var(--ease);
+  overflow: hidden;
+}
+
+@keyframes sheet-drop {
+  from {
+    transform: translateY(-6px);
+    opacity: 0.7;
+  }
+}
+
+.finder-input {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--ink);
+  color: var(--ink-2);
+}
+
+.finder-input input {
+  flex: 1;
+  height: 52px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  font-size: var(--body);
+  font-stretch: 100%;
+}
+
+.finder-input input:focus-visible {
+  outline: none;
+}
+
+.finder-list {
+  overflow-y: auto;
+  padding: 6px;
+}
+
+.finder-item {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.finder-item[aria-selected='true'] {
+  background: var(--selected);
+  color: var(--selected-ink);
+}
+
+.finder-item[aria-selected='true'] .finder-detail {
+  color: color-mix(in srgb, var(--selected-ink) 70%, transparent);
+}
+
+.finder-item svg {
+  align-self: center;
+  flex: none;
+}
+
+.finder-label {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.finder-label mark {
+  background: none;
+  color: inherit;
+  box-shadow: inset 0 -2px 0 var(--pink);
+  border-radius: 0;
+}
+
+.finder-item.is-create {
+  color: var(--pink-deep);
+}
+
+.finder-item.is-create[aria-selected='true'] {
+  color: var(--selected-ink);
+}
+
+.finder-detail {
+  flex: 1;
+  min-width: 0;
+  color: var(--ink-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.finder-item kbd {
+  margin-left: auto;
+}
+
+.finder-empty {
+  padding: 14px 10px;
+  color: var(--ink-3);
+}
+
+.finder-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 8px 14px;
+  border-top: 1px solid var(--rule);
+  color: var(--ink-3);
+}
+
+.finder-foot span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Context menu */
+.menu {
+  position: fixed;
+  z-index: 90;
+  min-width: 200px;
+  max-width: 300px;
+  padding: 4px;
+  background: var(--paper);
+  border: 1px solid var(--rule-strong);
+  border-radius: 4px;
+  box-shadow: var(--shadow-sheet);
+  animation: sheet-drop 140ms var(--ease);
+}
+
+.menu hr {
+  border: 0;
+  border-top: 1px solid var(--rule);
+  margin: 4px 2px;
+}
+
+.menu-item {
+  display: block;
+  width: 100%;
+  padding: 6px 10px;
+  border-radius: var(--radius);
+  text-align: left;
+  color: var(--ink);
+}
+
+.menu-item:hover,
+.menu-item:focus-visible {
+  background: var(--selected);
+  color: var(--selected-ink);
+  outline: none;
+}
+
+.menu-item.is-danger {
+  color: var(--red-deep);
+}
+
+.menu-item.is-danger:hover,
+.menu-item.is-danger:focus-visible {
+  background: var(--red);
+  color: var(--on-danger);
+}
+
+/* Share */
+.share-sheet {
+  position: fixed;
+  z-index: 70;
+  top: calc(var(--bar) + 44px);
+  right: 16px;
+  width: min(360px, calc(100vw - 32px));
+  padding: 16px 18px 18px;
+  background: var(--paper);
+  border: 1px solid var(--rule-strong);
+  border-radius: 4px;
+  box-shadow: var(--shadow-sheet);
+  animation: sheet-drop 180ms var(--ease);
+}
+
+.share-sheet header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.share-sheet h2 {
+  font-size: 1.05rem;
+  font-stretch: 108%;
+  font-weight: 750;
+  line-height: 1.3;
+}
+
+.share-sheet p {
+  color: var(--ink-2);
+  font-stretch: 100%;
+  line-height: 1.5;
+}
+
+.share-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+/* Notices: a reversed plate at the foot of the screen. */
+.toasts {
+  position: fixed;
+  z-index: 100;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  display: grid;
+  gap: 8px;
+  width: max-content;
+  max-width: calc(100vw - 32px);
+}
+
+.toast {
+  padding: 10px 16px;
+  border-radius: var(--radius);
+  background: var(--plate);
+  color: var(--on-plate);
+  font-weight: 550;
+  box-shadow: var(--shadow-sheet);
+  animation: sheet-rise 220ms var(--ease);
+}
+
+.toast.is-error {
+  background: var(--danger-plate);
+  color: var(--on-danger);
+}
+
+@keyframes sheet-rise {
+  from {
+    transform: translateY(8px);
+    opacity: 0.6;
+  }
+}

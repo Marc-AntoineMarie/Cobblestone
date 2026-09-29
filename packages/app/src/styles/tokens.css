@@ -1,0 +1,109 @@
+/*
+ * THESIS: Each note is a sheet you own, printed in a few spot inks; sharing is
+ * distribution, collaboration is overprint. Refuses the charcoal IDE shell with
+ * a purple accent and the grey-sidebar white page.
+ * OWN-WORLD: Bright uncoated day stock or navy night stock; navy ink for words,
+ * fluorescent pink for acting, yellow overprint for marking; flat print, 1px ink
+ * rules, halftone dots, faint grain; Archivo from condensed labels to expanded
+ * poster titles.
+ * STORY: A newcomer sees one sheet to write on; an Obsidian user finds links,
+ * backlinks, search and commands where hands expect them; anyone can hand out a
+ * copy from the pink Share stamp.
+ * FIRST VIEWPORT: Stack rail at 264px (vault, find field, tree, tags, press
+ * status), the sheet at a 72ch measure under an expanded 800-weight title,
+ * marginalia at 288px with backlinks and outline, Share top right of the sheet.
+ * FORM: Community risograph print shop, 6th of 7, staging "the sheet on the
+ * press", seed 073faebc.
+ */
+
+:root {
+  --paper: #f4f4f0;
+  --paper-2: #ebebe4;
+  --paper-3: #e1e1d8;
+  --ink: #1e2a4f;
+  --ink-2: #4b5575;
+  --ink-3: #6e7797;
+  --rule: rgb(30 42 79 / 0.14);
+  --rule-strong: rgb(30 42 79 / 0.28);
+
+  --pink: #ff48b0;
+  --pink-deep: #c0277e;
+  --on-pink: #1e2a4f;
+  --yellow: #ffe800;
+  --green: #00a95c;
+  --green-deep: #0e7a4a;
+  --red: #f15060;
+  --red-deep: #c8283c;
+  --blue: #0078bf;
+  --teal: #00838a;
+  --orange: #ff6c2f;
+  --purple: #765ba7;
+
+  /* Overprint: inks multiply on day stock, screen on night stock. */
+  --overprint: multiply;
+  --pink-overprint: rgb(255 72 176 / 0.34);
+  --mark: #ffe800;
+  --mark-ink: #1e2a4f;
+  --selected: #ffe800;
+  --selected-ink: #1e2a4f;
+  --hover: #e1e1d8;
+  --plate: #1e2a4f;
+  --on-plate: #f4f4f0;
+  --danger-plate: #c8283c;
+  --on-danger: #ffffff;
+
+  --shadow-sheet: 0 14px 34px -10px rgb(20 25 50 / 0.3), 0 2px 6px -2px rgb(20 25 50 / 0.12);
+  --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.12 0 0 0 0 0.16 0 0 0 0 0.31 0 0 0 0.055 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+
+  --font: 'Archivo Variable', Archivo, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'Commit Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --chrome: 13px;
+  --body: 16.5px;
+  --radius: 3px;
+  --rail-width: 264px;
+  --margin-width: 288px;
+  --bar: 44px;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  color-scheme: light;
+}
+
+:root[data-paper='night'] {
+  --paper: #15192a;
+  --paper-2: #1b2034;
+  --paper-3: #252b45;
+  --ink: #ecebe4;
+  --ink-2: #a3a9c0;
+  --ink-3: #7d849e;
+  --rule: rgb(236 235 228 / 0.11);
+  --rule-strong: rgb(236 235 228 / 0.24);
+
+  --pink: #ff5cba;
+  --pink-deep: #ff85cb;
+  --on-pink: #15192a;
+  --yellow: #ffe14d;
+  --green: #2fd18a;
+  --green-deep: #5fe0a6;
+  --red: #ff6b79;
+  --red-deep: #ff8f99;
+  --blue: #4fb0f0;
+  --teal: #3cc2c9;
+  --orange: #ff8a57;
+  --purple: #b39ae6;
+
+  --overprint: screen;
+  --pink-overprint: rgb(255 92 186 / 0.3);
+  --mark: rgb(255 225 77 / 0.26);
+  --mark-ink: #fff6c4;
+  --selected: rgb(255 225 77 / 0.2);
+  --selected-ink: #fff6c4;
+  --hover: #252b45;
+  --plate: #ecebe4;
+  --on-plate: #15192a;
+  --danger-plate: #a51f31;
+
+  --shadow-sheet: 0 16px 40px -10px rgb(0 0 0 / 0.6), 0 2px 8px -2px rgb(0 0 0 / 0.4);
+  --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.93 0 0 0 0 0.92 0 0 0 0 0.89 0 0 0 0.035 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+
+  color-scheme: dark;
+}
