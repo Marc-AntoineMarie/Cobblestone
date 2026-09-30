@@ -1,6 +1,6 @@
 import { _electron as electron, type Browser, type BrowserContext, type ElectronApplication, type Page } from '@playwright/test';
 import { existsSync } from 'node:fs';
-import { mkdir, mkdtemp, readFile, readdir, rename, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, readdir, rename, rm, stat, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
@@ -270,6 +270,21 @@ export class Cobble {
         } catch {
           return false;
         }
+      },
+      { root: this.webRoot, p },
+    );
+  }
+
+  /** When a file was last written, in milliseconds. */
+  async mtime(p: string): Promise<number> {
+    if (this.desktop) return (await stat(path.join(this.root, p))).mtimeMs;
+    return this.page.evaluate(
+      async ({ root, p }) => {
+        let dir = await navigator.storage.getDirectory();
+        for (const part of root) dir = await dir.getDirectoryHandle(part);
+        const parts = p.split('/');
+        for (const part of parts.slice(0, -1)) dir = await dir.getDirectoryHandle(part);
+        return (await (await dir.getFileHandle(parts[parts.length - 1]!)).getFile()).lastModified;
       },
       { root: this.webRoot, p },
     );

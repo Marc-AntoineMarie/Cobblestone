@@ -497,51 +497,51 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 
 ## 20. Canvas
 
-- **20.1** · Les deux · à automatiser · Ouvrir « Carte des idées » (démo) ou un canvas Obsidian → Trame de points, groupe, cartes teintées, note intégrée, flèche étiquetée ; la vue se cadre sur l'ensemble.
-- **20.2** · Les deux · à automatiser · Palette, « Créer un canvas » → « Sans titre.canvas » est créé et s'ouvre avec un message d'aide.
-- **20.3** · Les deux · à automatiser · Clic droit sur un dossier, « Nouveau canvas ici » → Le canvas est créé dans ce dossier.
-- **20.4** · Les deux · à automatiser · Glisser le fond → La vue se déplace.
-- **20.5** · Les deux · à automatiser · Molette, puis Maj+molette ou pavé tactile → La vue défile verticalement, puis horizontalement.
-- **20.6** · Les deux · à automatiser · Ctrl+molette ou pincement → Zoom autour du pointeur ; le pourcentage se met à jour.
-- **20.7** · Les deux · à automatiser · Boutons moins, plus et « Tout afficher » → Dézoom, zoom, cadrage sur l'ensemble.
-- **20.8** · Les deux · à automatiser · Double-clic sur le fond → Nouvelle carte à cet endroit, en modification.
-- **20.9** · Les deux · à automatiser · Écrire du Markdown dans une carte, puis Échap ou clic dehors → La carte affiche le rendu : titres, gras, liens cliquables, tags.
-- **20.10** · Les deux · à automatiser · Double-clic sur une carte de texte → Retour en modification.
-- **20.11** · Les deux · à automatiser · Entrée avec une seule carte sélectionnée → Elle passe en modification.
-- **20.12** · Les deux · à automatiser · Cliquer une carte → Contour rose, poignées sur les quatre côtés, coin rose de redimensionnement ; barre de couleurs en bas.
-- **20.13** · Les deux · à automatiser · Maj+clic sur d'autres cartes → Elles s'ajoutent à la sélection ou la quittent.
-- **20.14** · Les deux · à automatiser · Maj+glisser sur le fond → Un lasso rose sélectionne les cartes qu'il touche.
-- **20.15** · Les deux · à automatiser · Ctrl+A, puis Échap → Tout est sélectionné, puis plus rien.
-- **20.16** · Les deux · à automatiser · Glisser une carte, puis avec Alt maintenu → Déplacement par pas de grille de 20 px, puis librement.
-- **20.17** · Les deux · à automatiser · Glisser une sélection de plusieurs cartes → Elles bougent ensemble.
-- **20.18** · Les deux · à automatiser · Glisser un groupe → Les cartes qu'il contient suivent.
-- **20.19** · Les deux · à automatiser · Flèches du clavier, puis Maj+flèches → La sélection bouge de 20 px, puis de 1 px.
-- **20.20** · Les deux · à automatiser · Tirer le coin rose → La carte est redimensionnée, avec une taille minimale.
-- **20.21** · Les deux · à automatiser · Tirer depuis une poignée de côté jusqu'à une autre carte → Une flèche relie les deux côtés les plus logiques ; pointillés roses pendant le tirage.
-- **20.22** · Les deux · à automatiser · Relâcher une flèche dans le vide ou sur la même carte → Rien n'est créé.
-- **20.23** · Les deux · à automatiser · Cliquer une flèche → Elle est sélectionnée, en rose.
-- **20.24** · Les deux · à automatiser · Double-cliquer une flèche, taper une étiquette, Entrée → L'étiquette s'affiche au milieu ; la vider la retire.
-- **20.25** · Les deux · à automatiser · Double-cliquer une étiquette existante → Elle passe en modification.
-- **20.26** · Les deux · à automatiser · Suppr ou Retour arrière → Supprime la sélection : cartes avec leurs flèches, ou flèches.
-- **20.27** · Les deux · à automatiser · Pastilles de couleur (six couleurs et « Sans couleur ») → Les cartes et flèches sélectionnées changent de teinte ; la pastille courante est cerclée.
-- **20.28** · Les deux · à automatiser · Bouton « Grouper la sélection » ou Ctrl+G → Un groupe entoure les cartes, son nom en modification.
-- **20.29** · Les deux · à automatiser · Double-cliquer le nom d'un groupe, puis Entrée ou Échap → Renommage, validé dans les deux cas.
-- **20.30** · Les deux · à automatiser · Bouton « Dupliquer » ou Ctrl+D → Une copie décalée, flèches internes comprises.
-- **20.31** · Les deux · à automatiser · Ctrl+Z, Ctrl+Maj+Z, Ctrl+Y après chaque type d'action (déplacer, redimensionner, supprimer, colorer, texte, flèche) → Annuler et rétablir fonctionnent pour toutes.
-- **20.32** · Les deux · à automatiser · Bouton « Ajouter une note ou une image » → Liste des notes et images ; le choix ajoute une carte au centre.
-- **20.33** · Les deux · à automatiser · Glisser une note ou une image de l'arborescence sur le canvas → Une carte apparaît à l'endroit du dépôt.
-- **20.34** · Les deux · à automatiser · Glisser une image depuis le gestionnaire de fichiers → Elle est copiée en pièce jointe et ajoutée en carte.
-- **20.35** · Les deux · à automatiser · En-tête d'une carte de note, puis Ctrl+clic, puis double-clic sur la carte → La note s'ouvre, puis dans un nouvel onglet, puis de nouveau.
-- **20.36** · Les deux · à automatiser · Modifier dans un autre onglet une note affichée dans le canvas → La carte se met à jour.
-- **20.37** · Les deux · à automatiser · Molette sur une carte de note longue → Le contenu de la carte défile, la vue ne bouge pas.
-- **20.38** · Les deux · à automatiser · Carte de lien web → Nom du site, adresse et bouton « Ouvrir » qui ouvre le navigateur.
-- **20.39** · Les deux · à automatiser · Groupe avec image de fond (canvas Obsidian) → L'image s'affiche atténuée en fond.
-- **20.40** · Les deux · à automatiser · Modifier, fermer puis rouvrir le canvas → Tout est conservé.
-- **20.41** · Les deux · à automatiser · Ouvrir un canvas Obsidian sans rien changer, puis vérifier le fichier (git diff ou date) → Le fichier n'a pas été réécrit.
-- **20.42** · Les deux · à automatiser · Renommer une note affichée dans un canvas → La carte suit ; le fichier .canvas est mis à jour.
-- **20.43** · Les deux · à automatiser · Modifier le .canvas avec un autre programme ou Obsidian pendant qu'il est ouvert → Cobblestone affiche la nouvelle version.
-- **20.44** · Les deux · à automatiser · Rouvrir dans Obsidian un canvas modifié par Cobblestone → Obsidian l'affiche correctement.
-- **20.45** · Les deux · à automatiser · Canvas en papier de nuit → Cartes, couleurs et flèches restent lisibles.
+- **20.1** · Les deux · auto · Ouvrir « Carte des idées » (démo) ou un canvas Obsidian → Trame de points, groupe, cartes teintées, note intégrée, flèche étiquetée ; la vue se cadre sur l'ensemble.
+- **20.2** · Les deux · auto · Palette, « Créer un canvas » → « Sans titre.canvas » est créé et s'ouvre avec un message d'aide.
+- **20.3** · Les deux · auto · Clic droit sur un dossier, « Nouveau canvas ici » → Le canvas est créé dans ce dossier.
+- **20.4** · Les deux · auto · Glisser le fond → La vue se déplace.
+- **20.5** · Les deux · auto · Molette, puis Maj+molette ou pavé tactile → La vue défile verticalement, puis horizontalement.
+- **20.6** · Les deux · auto · Ctrl+molette ou pincement → Zoom autour du pointeur ; le pourcentage se met à jour.
+- **20.7** · Les deux · auto · Boutons moins, plus et « Tout afficher » → Dézoom, zoom, cadrage sur l'ensemble.
+- **20.8** · Les deux · auto · Double-clic sur le fond → Nouvelle carte à cet endroit, en modification.
+- **20.9** · Les deux · auto · Écrire du Markdown dans une carte, puis Échap ou clic dehors → La carte affiche le rendu : titres, gras, liens cliquables, tags.
+- **20.10** · Les deux · auto · Double-clic sur une carte de texte → Retour en modification.
+- **20.11** · Les deux · auto · Entrée avec une seule carte sélectionnée → Elle passe en modification.
+- **20.12** · Les deux · auto · Cliquer une carte → Contour rose, poignées sur les quatre côtés, coin rose de redimensionnement ; barre de couleurs en bas.
+- **20.13** · Les deux · auto · Maj+clic sur d'autres cartes → Elles s'ajoutent à la sélection ou la quittent.
+- **20.14** · Les deux · auto · Maj+glisser sur le fond → Un lasso rose sélectionne les cartes qu'il touche.
+- **20.15** · Les deux · auto · Ctrl+A, puis Échap → Tout est sélectionné, puis plus rien.
+- **20.16** · Les deux · auto · Glisser une carte, puis avec Alt maintenu → Déplacement par pas de grille de 20 px, puis librement.
+- **20.17** · Les deux · auto · Glisser une sélection de plusieurs cartes → Elles bougent ensemble.
+- **20.18** · Les deux · auto · Glisser un groupe → Les cartes qu'il contient suivent.
+- **20.19** · Les deux · auto · Flèches du clavier, puis Maj+flèches → La sélection bouge de 20 px, puis de 1 px.
+- **20.20** · Les deux · auto · Tirer le coin rose → La carte est redimensionnée, avec une taille minimale.
+- **20.21** · Les deux · auto · Tirer depuis une poignée de côté jusqu'à une autre carte → Une flèche relie les deux côtés les plus logiques ; pointillés roses pendant le tirage.
+- **20.22** · Les deux · auto · Relâcher une flèche dans le vide ou sur la même carte → Rien n'est créé.
+- **20.23** · Les deux · auto · Cliquer une flèche → Elle est sélectionnée, en rose.
+- **20.24** · Les deux · auto · Double-cliquer une flèche, taper une étiquette, Entrée → L'étiquette s'affiche au milieu ; la vider la retire.
+- **20.25** · Les deux · auto · Double-cliquer une étiquette existante → Elle passe en modification.
+- **20.26** · Les deux · auto · Suppr ou Retour arrière → Supprime la sélection : cartes avec leurs flèches, ou flèches.
+- **20.27** · Les deux · auto · Pastilles de couleur (six couleurs et « Sans couleur ») → Les cartes et flèches sélectionnées changent de teinte ; la pastille courante est cerclée.
+- **20.28** · Les deux · auto · Bouton « Grouper la sélection » ou Ctrl+G → Un groupe entoure les cartes, son nom en modification.
+- **20.29** · Les deux · auto · Double-cliquer le nom d'un groupe, puis Entrée ou Échap → Renommage, validé dans les deux cas.
+- **20.30** · Les deux · auto · Bouton « Dupliquer » ou Ctrl+D → Une copie décalée, flèches internes comprises.
+- **20.31** · Les deux · auto · Ctrl+Z, Ctrl+Maj+Z, Ctrl+Y après chaque type d'action (déplacer, redimensionner, supprimer, colorer, texte, flèche) → Annuler et rétablir fonctionnent pour toutes.
+- **20.32** · Les deux · auto · Bouton « Ajouter une note ou une image » → Liste des notes et images ; le choix ajoute une carte au centre.
+- **20.33** · Les deux · auto · Glisser une note ou une image de l'arborescence sur le canvas → Une carte apparaît à l'endroit du dépôt.
+- **20.34** · Les deux · auto · Glisser une image depuis le gestionnaire de fichiers → Elle est copiée en pièce jointe et ajoutée en carte.
+- **20.35** · Les deux · auto · En-tête d'une carte de note, puis Ctrl+clic, puis double-clic sur la carte → La note s'ouvre, puis dans un nouvel onglet, puis de nouveau.
+- **20.36** · Les deux · auto · Modifier dans un autre onglet une note affichée dans le canvas → La carte se met à jour.
+- **20.37** · Les deux · auto · Molette sur une carte de note longue → Le contenu de la carte défile, la vue ne bouge pas.
+- **20.38** · Les deux · auto · Carte de lien web → Nom du site, adresse et bouton « Ouvrir » qui ouvre le navigateur.
+- **20.39** · Les deux · auto · Groupe avec image de fond (canvas Obsidian) → L'image s'affiche atténuée en fond.
+- **20.40** · Les deux · auto · Modifier, fermer puis rouvrir le canvas → Tout est conservé.
+- **20.41** · Les deux · auto · Ouvrir un canvas Obsidian sans rien changer, puis vérifier le fichier (git diff ou date) → Le fichier n'a pas été réécrit.
+- **20.42** · Les deux · auto · Renommer une note affichée dans un canvas → La carte suit ; le fichier .canvas est mis à jour.
+- **20.43** · Les deux · auto · Modifier le .canvas avec un autre programme ou Obsidian pendant qu'il est ouvert → Cobblestone affiche la nouvelle version.
+- **20.44** · Les deux · manuel · Rouvrir dans Obsidian un canvas modifié par Cobblestone → Obsidian l'affiche correctement.
+- **20.45** · Les deux · auto · Canvas en papier de nuit → Cartes, couleurs et flèches restent lisibles.
 
 ## 21. Fichiers joints
 
