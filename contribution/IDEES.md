@@ -75,6 +75,7 @@ Détails et coûts dans [docs/DISTRIBUTION.md](../docs/DISTRIBUTION.md).
 - Tableaux kanban, vue des tâches de tout le coffre, calendrier.
 - Publier un dossier comme site web, gratuitement.
 - API de plugins, avec une couche de compatibilité pour les plugins Obsidian les plus utilisés.
+- Rendre Cobblestone compatible a tous les logiciels Md, il faut que l'ont puisse importer tout a partir de n'importe quoi
 
 ## Organisations — plus tard
 
