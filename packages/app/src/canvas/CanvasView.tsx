@@ -261,8 +261,15 @@ export function CanvasView({ path, visible }: { path: string; visible: boolean }
     // Let scrollable card contents scroll; everything else pans, and Ctrl/pinch zooms.
     const body = (event.target as HTMLElement).closest('.canvas-body');
     if (body && !event.ctrlKey && body.scrollHeight > body.clientHeight) return;
-    if (event.ctrlKey || event.metaKey) setView((v) => zoomAt(v, screenPoint(event), Math.exp(-event.deltaY * 0.01)));
-    else setView((v) => ({ ...v, x: v.x - event.deltaX, y: v.y - event.deltaY }));
+    if (event.ctrlKey || event.metaKey) {
+      setView((v) => zoomAt(v, screenPoint(event), Math.exp(-event.deltaY * 0.01)));
+      return;
+    }
+    // Shift scrolls sideways; some systems already turn the wheel for us, others leave it to the page.
+    const sideways = event.shiftKey && event.deltaX === 0;
+    const dx = sideways ? event.deltaY : event.deltaX;
+    const dy = sideways ? 0 : event.deltaY;
+    setView((v) => ({ ...v, x: v.x - dx, y: v.y - dy }));
   };
 
   // Wheel events must be cancelable (React's are passive).
