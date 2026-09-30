@@ -21,25 +21,28 @@ interface Fixtures {
 }
 interface WorkerFixtures {
   platform: Platform;
-  chrome: Browser | null;
+  chrome: { get(): Promise<Browser> } | null;
 }
+
+/** --disable-dev-shm-usage: the small shared memory of CI machines makes Chrome crash. */
+const CHROME_ARGS = ['--no-sandbox', '--disable-dev-shm-usage'];
 
 export const test = base.extend<Fixtures, WorkerFixtures>({
   platform: ['web', { option: true, scope: 'worker' }],
   chrome: [
     async ({ platform }, use) => {
       if (platform !== 'web') return use(null);
-      const browser = await chromium.launch({
-        executablePath: process.env.CHROME_PATH ?? '/usr/bin/google-chrome',
-        args: ['--no-sandbox'],
-      });
-      await use(browser);
-      await browser.close();
+      const launch = () =>
+        chromium.launch({ executablePath: process.env.CHROME_PATH ?? '/usr/bin/google-chrome', args: CHROME_ARGS });
+      let browser = await launch();
+      // A Chrome that crashed is started again for the next test, instead of failing every test after it.
+      await use({ get: async () => (browser.isConnected() ? browser : (browser = await launch())) });
+      await browser.close().catch(() => undefined);
     },
     { scope: 'worker' },
   ],
   app: async ({ platform, chrome }, use, testInfo) => {
-    const app = new Cobble(platform, chrome);
+    const app = new Cobble(platform, chrome ? await chrome.get() : null);
     await use(app);
     if (testInfo.status !== testInfo.expectedStatus && app.page) {
       await testInfo
