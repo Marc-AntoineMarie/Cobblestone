@@ -6,6 +6,7 @@ ajouté, modifié et supprimé, les tests, les fichiers et les commits. Ce somma
 
 | Date       | Changement                                                                                                               | Type          | Branche                      |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------ | ------------- | ---------------------------- |
+| 2026-09-30 | [Refonte, deuxième partie : la disposition, entièrement réglable](journal/2026-09-30-feat-disposition.md)                | nouveauté     | `feat/disposition`           |
 | 2026-09-30 | [La recette se lance là où le changement a un effet](journal/2026-09-30-docs-recette-ciblee.md)                          | documentation | `docs/recette-ciblee`        |
 | 2026-09-30 | [Palette : Entrée ouvre le premier résultat, même tapée aussitôt](journal/2026-09-30-fix-palette-entree.md)              | correction    | `fix/palette-entree`         |
 | 2026-09-30 | [Refonte, première partie : thèmes et apparence réglable, avec aperçu](journal/2026-09-30-feat-themes.md)                | nouveauté     | `feat/themes`                |
