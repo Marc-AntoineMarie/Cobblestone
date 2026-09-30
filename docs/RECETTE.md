@@ -631,6 +631,9 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 - **25.18** · Les deux · auto · Coins : Droits, puis Ronds → Boutons, champs et cartes perdent leur arrondi, puis l'accentuent.
 - **25.19** · Les deux · auto · Fermer puis rouvrir l'app → Thèmes, couleurs, polices, densité et coins conservés (réglages de l'appareil).
 - **25.20** · Les deux · auto · Réglages dans une fenêtre étroite → Les sections passent au-dessus de la page, sans aperçu ; rien ne déborde.
+- **25.21** · Les deux · auto · « Nouveau thème à partir de … », le renommer, changer une couleur → Une copie du thème en cours apparaît, choisie ; son nom et ses couleurs se changent directement.
+- **25.22** · Les deux · auto · « Exporter », puis « Importer… » ce fichier (sur un autre appareil) ; puis importer un fichier qui n'est pas un thème → Le fichier `.cobblestone-theme.json` garde nom, papier, couleurs et police ; importé, le thème apparaît et s'applique ; le mauvais fichier est refusé avec un message clair.
+- **25.23** · Les deux · auto · « Supprimer ce thème » sur un thème à soi → Il disparaît ; l'app revient au thème par défaut de ce papier.
 
 ## 26. Spécifique à l'app web
 

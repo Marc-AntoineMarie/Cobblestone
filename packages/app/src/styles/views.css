@@ -325,6 +325,25 @@
   min-height: 28px;
 }
 
+.setting-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.theme-name-field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+}
+
+.theme-name-field input {
+  flex: 1;
+  max-width: 320px;
+}
+
 .theme-group {
   display: grid;
   gap: 8px;

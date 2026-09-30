@@ -1,13 +1,25 @@
-import { useMemo, type CSSProperties } from 'react';
-import { Check, RotateCcw } from 'lucide-react';
+import { useMemo, useRef, type CSSProperties } from 'react';
+import { Check, Download, Plus, RotateCcw, Trash2, Upload } from 'lucide-react';
 import { appearanceTokens } from '../appearance';
 import { getLanguage, t, type MessageKey } from '../i18n';
-import { DEFAULT_SETTINGS, TEXT_SIZES, type CodeFont, type Corners, type Density, type UiFont } from '../settings';
+import {
+  DEFAULT_SETTINGS,
+  TEXT_SIZES,
+  type CodeFont,
+  type Corners,
+  type Density,
+  type Preferences,
+  type UiFont,
+} from '../settings';
 import {
   BUILT_IN_THEMES,
   checkContrast,
   COLOR_ROLES,
   completeColors,
+  DEFAULT_DAY_THEME,
+  DEFAULT_NIGHT_THEME,
+  readThemeFile,
+  themeFile,
   type ColorRole,
   type NoteFont,
   type Theme,
@@ -23,7 +35,19 @@ export function themeName(theme: Theme): string {
 }
 
 function themeNote(theme: Theme): string {
-  return theme.name ? '' : t(`theme.${theme.id}.note` as MessageKey);
+  return theme.name ? t('settings.theme.custom') : t(`theme.${theme.id}.note` as MessageKey);
+}
+
+const newThemeId = () => `custom-${Date.now().toString(36)}`;
+
+/** Offers a text as a file to save. */
+function download(text: string, filename: string) {
+  const url = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 /** A theme with the colours changed in the settings. */
@@ -94,18 +118,60 @@ export function AppearanceSettings({ onPreview }: { onPreview: (theme: Theme | n
   const current = withOverrides(theme, overrides);
   const colors = completeColors(current);
   const failing = checkContrast(current).filter((check) => !check.ok);
+  const custom = preferences.customThemes.some((c) => c.id === theme.id);
+  const fileInput = useRef<HTMLInputElement>(null);
 
-  const pick = (picked: Theme) => {
+  /** Chooses a theme for its paper; `extra` goes in the same change (a theme just made, say). */
+  const pick = (picked: Theme, extra: Partial<Preferences> = {}) => {
     const night = picked.scheme === 'dark';
     update({
+      ...extra,
       ...(night ? { nightTheme: picked.id } : { dayTheme: picked.id }),
       // A paper chosen by hand switches to the one the theme is printed on, so the choice shows.
       ...(preferences.theme !== 'system' ? { theme: night ? 'night' : 'day' } : {}),
     });
   };
 
+  const changeCustom = (patch: (c: Theme) => Theme) =>
+    update({ customThemes: preferences.customThemes.map((c) => (c.id === theme.id ? patch(c) : c)) });
+
   const setColor = (role: ColorRole, value: string) =>
-    update({ colorOverrides: { ...preferences.colorOverrides, [theme.id]: { ...overrides, [role]: value } } });
+    custom
+      ? changeCustom((c) => ({ ...c, colors: { ...c.colors, [role]: value } }))
+      : update({ colorOverrides: { ...preferences.colorOverrides, [theme.id]: { ...overrides, [role]: value } } });
+
+  const createTheme = () => {
+    const made: Theme = {
+      id: newThemeId(),
+      name: t('settings.theme.copyName', { name: themeName(theme) }),
+      scheme: theme.scheme,
+      colors: completeColors(current),
+      ...(theme.noteFont ? { noteFont: theme.noteFont } : {}),
+    };
+    pick(made, { customThemes: [...preferences.customThemes, made] });
+  };
+
+  const deleteTheme = () => {
+    const { [theme.id]: _removed, ...colorOverrides } = preferences.colorOverrides;
+    update({
+      customThemes: preferences.customThemes.filter((c) => c.id !== theme.id),
+      colorOverrides,
+      ...(preferences.dayTheme === theme.id ? { dayTheme: DEFAULT_DAY_THEME } : {}),
+      ...(preferences.nightTheme === theme.id ? { nightTheme: DEFAULT_NIGHT_THEME } : {}),
+    });
+  };
+
+  const exportTheme = () => {
+    const name = themeName(theme);
+    download(themeFile(current, name), `${name.replace(/[\\/:*?"<>|]+/g, '-')}.cobblestone-theme.json`);
+  };
+
+  const importTheme = async (file: File) => {
+    const imported = readThemeFile(await file.text(), newThemeId());
+    if (!imported) return session.notify(t('settings.theme.importFailed'), 'error');
+    pick(imported, { customThemes: [...preferences.customThemes, imported] });
+    session.notify(t('settings.theme.imported', { name: imported.name! }));
+  };
 
   const resetColors = () => {
     const { [theme.id]: _removed, ...rest } = preferences.colorOverrides;
@@ -145,7 +211,33 @@ export function AppearanceSettings({ onPreview }: { onPreview: (theme: Theme | n
         />
       </Row>
 
-      <Block title={t('settings.appearance.themes')} keywords={themes.map(themeName).join(' ')}>
+      <Block
+        title={t('settings.appearance.themes')}
+        keywords={themes.map(themeName).join(' ')}
+        actions={
+          <div className="setting-actions">
+            <button className="button is-ghost" onClick={createTheme}>
+              <Plus size={14} strokeWidth={1.75} aria-hidden />
+              {t('settings.theme.create', { name: themeName(theme) })}
+            </button>
+            <button className="button is-ghost" onClick={() => fileInput.current?.click()}>
+              <Upload size={14} strokeWidth={1.75} aria-hidden />
+              {t('settings.theme.import')}
+            </button>
+            <input
+              ref={fileInput}
+              type="file"
+              accept=".json,application/json"
+              hidden
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                e.target.value = '';
+                if (file) void importTheme(file);
+              }}
+            />
+          </div>
+        }
+      >
         {group('light', t('settings.dayTheme'), preferences.dayTheme)}
         {group('dark', t('settings.nightTheme'), preferences.nightTheme)}
       </Block>
@@ -154,14 +246,36 @@ export function AppearanceSettings({ onPreview }: { onPreview: (theme: Theme | n
         title={t('settings.colors', { theme: themeName(theme) })}
         keywords={COLOR_ROLES.map((role) => t(`color.${role}`)).join(' ')}
         actions={
-          overrides && (
-            <button className="button is-ghost" onClick={resetColors}>
-              <RotateCcw size={14} strokeWidth={1.75} aria-hidden />
-              {t('settings.colors.reset')}
+          <div className="setting-actions">
+            {overrides && (
+              <button className="button is-ghost" onClick={resetColors}>
+                <RotateCcw size={14} strokeWidth={1.75} aria-hidden />
+                {t('settings.colors.reset')}
+              </button>
+            )}
+            <button className="button is-ghost" onClick={exportTheme}>
+              <Download size={14} strokeWidth={1.75} aria-hidden />
+              {t('settings.theme.export')}
             </button>
-          )
+            {custom && (
+              <button className="button is-ghost is-danger" onClick={deleteTheme}>
+                <Trash2 size={14} strokeWidth={1.75} aria-hidden />
+                {t('settings.theme.delete')}
+              </button>
+            )}
+          </div>
         }
       >
+        {custom && (
+          <label className="theme-name-field">
+            <span>{t('settings.theme.name')}</span>
+            <input
+              value={theme.name ?? ''}
+              maxLength={60}
+              onChange={(e) => changeCustom((c) => ({ ...c, name: e.target.value }))}
+            />
+          </label>
+        )}
         <div className="color-roles">
           {COLOR_ROLES.map((role) => (
             <label key={role} className="color-role">

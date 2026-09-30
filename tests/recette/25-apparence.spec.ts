@@ -326,3 +326,79 @@ recette('25.20', async ({ app, ui }) => {
   expect(await ui.overflowsSideways()).toBe(false);
   expect(await settings.evaluate((el) => el.scrollWidth <= el.clientWidth + 1)).toBe(true);
 });
+
+recette('25.21', async ({ app, ui }) => {
+  await app.start({ vault: baseVault(), preferences: { theme: 'day', language: 'auto' } });
+  const settings = await ui.settings();
+  const day = settings.getByRole('radiogroup', { name: 'Thème de jour' });
+  await settings.getByRole('button', { name: 'Nouveau thème à partir de Atelier' }).click();
+  await expect(day.getByRole('radio')).toHaveCount(6);
+  await expect(card(day, 'Atelier \\(copie\\)')).toHaveAttribute('aria-checked', 'true');
+  const name = settings.getByLabel('Nom du thème');
+  await expect(name).toHaveValue('Atelier (copie)');
+  await name.fill('Mon atelier');
+  await expect(card(day, 'Mon atelier')).toBeVisible();
+  await expect(settings.locator('.setting-block .label', { hasText: 'Couleurs de Mon atelier' })).toBeVisible();
+  await settings.locator('.color-role', { hasText: 'Fond' }).locator('input[type="color"]').fill('#fafaf5');
+  await expect.poll(() => css(ui.page, 'body', 'background-color')).toBe('rgb(250, 250, 245)');
+  // Its colours are its own: nothing to go back to.
+  await expect(settings.getByRole('button', { name: 'Revenir aux couleurs du thème' })).toHaveCount(0);
+});
+
+recette('25.22', async ({ app, ui }) => {
+  await app.start({ vault: baseVault(), preferences: { theme: 'day', language: 'auto' } });
+  const settings = await ui.settings();
+  const day = settings.getByRole('radiogroup', { name: 'Thème de jour' });
+  await card(day, 'Kraft').click();
+  // What the page offers to save.
+  await ui.page.evaluate(() => {
+    const w = window as unknown as { __saved: { name: string; text?: string }[] };
+    w.__saved = [];
+    const blobs = new Map<string, Blob>();
+    URL.createObjectURL = (blob: Blob | MediaSource) => {
+      const url = `blob:saved-${blobs.size}`;
+      blobs.set(url, blob as Blob);
+      return url;
+    };
+    HTMLAnchorElement.prototype.click = function (this: HTMLAnchorElement) {
+      const entry = { name: this.download } as { name: string; text?: string };
+      w.__saved.push(entry);
+      void blobs
+        .get(this.href)
+        ?.text()
+        .then((text) => (entry.text = text));
+    };
+  });
+  await settings.getByRole('button', { name: 'Exporter' }).click();
+  const saved = await expect
+    .poll(() => ui.page.evaluate(() => (window as unknown as { __saved: { name: string; text?: string }[] }).__saved))
+    .toEqual([expect.objectContaining({ name: 'Kraft.cobblestone-theme.json', text: expect.any(String) })])
+    .then(() => ui.page.evaluate(() => (window as unknown as { __saved: { text: string }[] }).__saved[0]!.text));
+  const file = JSON.parse(saved) as { name: string; scheme: string; colors: Record<string, string>; noteFont: string };
+  expect(file).toMatchObject({ name: 'Kraft', scheme: 'light', noteFont: 'literata' });
+  expect(file.colors.paper).toBe('#efe4d0');
+  // On another device: the same file, renamed and repainted.
+  file.name = 'Importé';
+  file.colors.paper = '#fafafa';
+  const input = settings.locator('input[type="file"]');
+  await input.setInputFiles({ name: 'theme.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(file)) });
+  await expect(card(day, 'Importé')).toHaveAttribute('aria-checked', 'true');
+  await expect.poll(() => css(ui.page, 'body', 'background-color')).toBe('rgb(250, 250, 250)');
+  await expect(ui.toasts.last()).toContainText('Thème « Importé » importé.');
+  await input.setInputFiles({ name: 'notes.json', mimeType: 'application/json', buffer: Buffer.from('{"notes": []}') });
+  await expect(ui.toasts.last()).toContainText('Ce fichier n’est pas un thème Cobblestone.');
+  await expect(day.getByRole('radio')).toHaveCount(6);
+});
+
+recette('25.23', async ({ app, ui }) => {
+  await app.start({ vault: baseVault(), preferences: { theme: 'day', language: 'auto' } });
+  const settings = await ui.settings();
+  const day = settings.getByRole('radiogroup', { name: 'Thème de jour' });
+  await card(day, 'Forêt').click();
+  await settings.getByRole('button', { name: 'Nouveau thème à partir de Forêt' }).click();
+  await expect(day.getByRole('radio')).toHaveCount(6);
+  await settings.getByRole('button', { name: 'Supprimer ce thème' }).click();
+  await expect(day.getByRole('radio')).toHaveCount(5);
+  await expect(card(day, 'Atelier')).toHaveAttribute('aria-checked', 'true');
+  expect(await css(ui.page, 'body', 'background-color')).toBe('rgb(244, 244, 240)');
+});

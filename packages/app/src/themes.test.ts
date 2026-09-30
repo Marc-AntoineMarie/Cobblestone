@@ -7,6 +7,8 @@ import {
   findTheme,
   mix,
   parseHex,
+  readThemeFile,
+  themeFile,
   themeTokens,
   type Theme,
 } from './themes';
@@ -72,5 +74,35 @@ describe('themes', () => {
     expect(findTheme('custom-1', [mine], 'dark')).toBe(mine);
     expect(findTheme('gone', [], 'dark').id).toBe('atelier-night');
     expect(findTheme('gone', [], 'light').id).toBe('atelier');
+  });
+});
+
+describe('theme files', () => {
+  it('writes a theme and reads it back', () => {
+    const kraft = BUILT_IN_THEMES.find((t) => t.id === 'kraft')!;
+    const text = themeFile(kraft, 'Mon kraft');
+    const back = readThemeFile(text, 'custom-1')!;
+    expect(back).toMatchObject({ id: 'custom-1', name: 'Mon kraft', scheme: 'light', noteFont: 'literata' });
+    expect(back.colors.paper).toBe('#efe4d0');
+    expect(back.colors.paper3).toMatch(/^#[0-9a-f]{6}$/);
+  });
+
+  it('refuses what is not a theme, or lacks a colour', () => {
+    expect(readThemeFile('not json', 'x')).toBeNull();
+    expect(readThemeFile('{"format":"other","scheme":"light","colors":{}}', 'x')).toBeNull();
+    const missing = JSON.parse(themeFile(midnight, 'Nuit'));
+    delete missing.colors.accent;
+    expect(readThemeFile(JSON.stringify(missing), 'x')).toBeNull();
+    const bad = JSON.parse(themeFile(midnight, 'Nuit'));
+    bad.colors.ink = 'url(javascript:alert(1))';
+    expect(readThemeFile(JSON.stringify(bad), 'x')).toBeNull();
+  });
+
+  it('keeps a long name short and drops an unknown font', () => {
+    const data = JSON.parse(themeFile(midnight, 'x'.repeat(200)));
+    data.noteFont = 'comic';
+    const back = readThemeFile(JSON.stringify(data), 'x')!;
+    expect(back.name).toHaveLength(60);
+    expect(back.noteFont).toBeUndefined();
   });
 });

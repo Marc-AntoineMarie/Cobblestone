@@ -332,3 +332,52 @@ export function findTheme(id: string, custom: Theme[], scheme: ThemeScheme): The
     BUILT_IN_THEMES.find((t) => t.id === (scheme === 'dark' ? DEFAULT_NIGHT_THEME : DEFAULT_DAY_THEME))!
   );
 }
+
+// ------------------------------------------------------------ theme files
+
+/** Marks a file as a Cobblestone theme, with the version of its format. */
+const FILE_FORMAT = 'cobblestone-theme';
+
+/** A theme as a file to share or keep: its name, paper, colours and note font. */
+export function themeFile(theme: Theme, name: string): string {
+  const { paper3, ink3, ...required } = completeColors(theme);
+  return JSON.stringify(
+    {
+      format: FILE_FORMAT,
+      version: 1,
+      name,
+      scheme: theme.scheme,
+      colors: { ...required, paper3, ink3 },
+      ...(theme.noteFont ? { noteFont: theme.noteFont } : {}),
+    },
+    null,
+    2,
+  );
+}
+
+const NOTE_FONT_IDS: NoteFont[] = ['archivo', 'literata', 'atkinson', 'system-sans', 'system-serif'];
+const REQUIRED_ROLES: ColorRole[] = ['paper', 'paper2', 'ink', 'ink2', 'accent', 'onAccent', 'mark', 'markInk'];
+
+/** Reads a theme file; null when the text is not one. The theme gets the id given. */
+export function readThemeFile(text: string, id: string): Theme | null {
+  let data: unknown;
+  try {
+    data = JSON.parse(text);
+  } catch {
+    return null;
+  }
+  if (!data || typeof data !== 'object') return null;
+  const file = data as Record<string, unknown>;
+  if (file.format !== FILE_FORMAT || (file.scheme !== 'light' && file.scheme !== 'dark')) return null;
+  const given = file.colors;
+  if (!given || typeof given !== 'object') return null;
+  const colors: Partial<ThemeColors> = {};
+  for (const role of COLOR_ROLES) {
+    const value = (given as Record<string, unknown>)[role];
+    if (typeof value === 'string' && parseHex(value)) colors[role] = toHex(parseHex(value)!);
+    else if (REQUIRED_ROLES.includes(role)) return null;
+  }
+  const name = typeof file.name === 'string' && file.name.trim() ? file.name.trim().slice(0, 60) : 'Theme';
+  const noteFont = NOTE_FONT_IDS.find((font) => font === file.noteFont);
+  return { id, name, scheme: file.scheme, colors: colors as ThemeColors, ...(noteFont ? { noteFont } : {}) };
+}
