@@ -10,6 +10,7 @@ import {
   Plus,
   Search,
   Settings,
+  type LucideIcon,
 } from 'lucide-react';
 import { hotkeyLabel, parseHotkey } from '../commands';
 import { t } from '../i18n';
@@ -90,54 +91,39 @@ export function TopBar({ onSwitchVault }: { onSwitchVault: () => void }) {
   );
 }
 
-/** Along the left edge: every shown panel, today's note, the graph, and the settings. */
+/** One button of the activity bar: an icon, and its name under it unless the reader hid the names. */
+function ActivityButton({ icon: Icon, label, onClick }: { icon: LucideIcon; label: string; onClick: () => void }) {
+  return (
+    <button className="activity-button" aria-label={label} title={label} onClick={onClick}>
+      <Icon size={19} strokeWidth={1.75} aria-hidden />
+      <span className="activity-label" aria-hidden>
+        {label}
+      </span>
+    </button>
+  );
+}
+
+/**
+ * Along the left edge: the panels of the left side (a click shows one, its
+ * side opened), then today's note and the graph, and the settings at the bottom.
+ */
 export function ActivityBar() {
   const session = useSession();
   const { preferences } = usePreferences();
   const layout = preferences.layout;
-  const shown = [...panelsIn(layout, 'left'), ...panelsIn(layout, 'right')];
+  // A panel with nothing to show (no bookmarks yet) gets no button.
+  const hasBookmarks = useStore(session.bookmarks, (b) => b.length > 0);
+  const shown = panelsIn(layout, 'left').filter((id) => id !== 'bookmarks' || hasBookmarks);
   return (
-    <nav className="activity-bar" aria-label={t('activity.label')}>
-      {shown.map((id) => {
-        const Icon = PANEL_INFO[id].icon;
-        return (
-          <button
-            key={id}
-            className="icon-button activity-button"
-            aria-label={panelLabel(id)}
-            title={panelLabel(id)}
-            onClick={() => session.revealPanel(id)}
-          >
-            <Icon size={19} strokeWidth={1.75} />
-          </button>
-        );
-      })}
+    <nav className={`activity-bar${layout.activityLabels ? ' has-labels' : ''}`} aria-label={t('activity.label')}>
+      {shown.map((id) => (
+        <ActivityButton key={id} icon={PANEL_INFO[id].icon} label={panelLabel(id)} onClick={() => session.revealPanel(id)} />
+      ))}
       <span className="activity-rule" aria-hidden />
-      <button
-        className="icon-button activity-button"
-        aria-label={t('rail.today')}
-        title={t('rail.today')}
-        onClick={() => void session.openDailyNote()}
-      >
-        <CalendarDays size={19} strokeWidth={1.75} />
-      </button>
-      <button
-        className="icon-button activity-button"
-        aria-label={t('rail.graph')}
-        title={t('rail.graph')}
-        onClick={() => session.openView({ type: 'graph' }, 'tab')}
-      >
-        <Network size={19} strokeWidth={1.75} />
-      </button>
+      <ActivityButton icon={CalendarDays} label={t('rail.today')} onClick={() => void session.openDailyNote()} />
+      <ActivityButton icon={Network} label={t('rail.graph')} onClick={() => session.openView({ type: 'graph' }, 'tab')} />
       <span className="activity-space" />
-      <button
-        className="icon-button activity-button"
-        aria-label={t('rail.settings')}
-        title={t('rail.settings')}
-        onClick={() => session.openView({ type: 'settings' }, 'tab')}
-      >
-        <Settings size={19} strokeWidth={1.75} />
-      </button>
+      <ActivityButton icon={Settings} label={t('rail.settings')} onClick={() => session.openView({ type: 'settings' }, 'tab')} />
     </nav>
   );
 }

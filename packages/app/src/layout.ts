@@ -23,6 +23,8 @@ export interface LayoutPreferences {
   tabs: boolean;
   statusBar: boolean;
   activityBar: boolean;
+  /** Names under the activity bar's buttons. */
+  activityLabels: boolean;
   width: PanelWidth;
 }
 
@@ -41,7 +43,7 @@ const zones = (left: PanelId[], right: PanelId[]): Record<PanelId, Zone> =>
     Zone
   >;
 
-export const PRESETS: Record<PresetId, Omit<LayoutPreferences, 'preset' | 'width'>> = {
+export const PRESETS: Record<PresetId, Omit<LayoutPreferences, 'preset' | 'width' | 'activityLabels'>> = {
   classic: {
     zones: zones(['search', 'bookmarks', 'files', 'tags'], ['backlinks', 'outline', 'outgoing', 'properties']),
     order: PANELS,
@@ -72,7 +74,7 @@ export const PRESETS: Record<PresetId, Omit<LayoutPreferences, 'preset' | 'width
   },
 };
 
-export const DEFAULT_LAYOUT: LayoutPreferences = { preset: 'classic', ...PRESETS.classic, width: 'normal' };
+export const DEFAULT_LAYOUT: LayoutPreferences = { preset: 'classic', ...PRESETS.classic, width: 'normal', activityLabels: true };
 
 /** The layout of a preset, keeping the chosen width. */
 export function applyPreset(layout: LayoutPreferences, preset: PresetId): LayoutPreferences {
@@ -115,14 +117,15 @@ export function shiftPanel(layout: LayoutPreferences, id: PanelId, step: -1 | 1)
 }
 
 /** Changes one of the other layout settings; a preset stays a preset only for its own values. */
-export function setLayoutOption<K extends 'tabs' | 'statusBar' | 'activityBar' | 'width'>(
+export function setLayoutOption<K extends 'tabs' | 'statusBar' | 'activityBar' | 'activityLabels' | 'width'>(
   layout: LayoutPreferences,
   key: K,
   value: LayoutPreferences[K],
 ): LayoutPreferences {
   const next = { ...layout, [key]: value };
-  // The width is a matter of taste on top of any layout; the rest makes it custom.
-  if (key !== 'width' && layout.preset !== 'custom' && PRESETS[layout.preset][key as 'tabs'] !== value) next.preset = 'custom';
+  // The width and the names are matters of taste on top of any layout; the rest makes it custom.
+  const taste = key === 'width' || key === 'activityLabels';
+  if (!taste && layout.preset !== 'custom' && PRESETS[layout.preset][key as 'tabs'] !== value) next.preset = 'custom';
   return next;
 }
 

@@ -335,3 +335,15 @@ recette('6.32', async ({ app, ui }) => {
   await ui.command('Disposition : Miroir');
   await expect(ui.margin.locator('[data-panel="files"]')).toBeVisible();
 });
+
+recette('6.33', async ({ app, ui }) => {
+  await app.start({ vault: baseVault() });
+  const labels = ui.activityBar.locator('.activity-label');
+  await expect(labels).toHaveText(['Recherche', 'Notes', 'Tags', 'Aujourd’hui', 'Graphe', 'Réglages']);
+  const wide = (await ui.activityBar.boundingBox())!.width;
+  const settings = await ui.settings();
+  await settings.locator('#set-activity-labels').click();
+  await expect(labels.first()).toBeHidden();
+  await expect.poll(async () => (await ui.activityBar.boundingBox())!.width).toBeLessThan(wide - 20);
+  await expect(ui.activityBar.getByRole('button', { name: 'Tags' })).toBeVisible();
+});

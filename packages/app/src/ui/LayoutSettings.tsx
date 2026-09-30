@@ -119,6 +119,13 @@ export function LayoutSettings() {
           onChange={(on) => set(setLayoutOption(layout, 'activityBar', on))}
         />
       </Row>
+      <Row label={t('settings.layout.activityLabels')} htmlFor="set-activity-labels">
+        <Toggle
+          id="set-activity-labels"
+          checked={layout.activityLabels}
+          onChange={(on) => set(setLayoutOption(layout, 'activityLabels', on))}
+        />
+      </Row>
       <Row label={t('settings.layout.width')}>
         <Segmented
           label={t('settings.layout.width')}

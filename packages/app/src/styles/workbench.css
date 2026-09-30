@@ -129,8 +129,44 @@
 }
 
 .activity-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
   width: 38px;
-  height: 38px;
+  min-height: 38px;
+  border-radius: var(--radius);
+  color: var(--ink-2);
+}
+
+.activity-button:hover {
+  background: var(--hover);
+  color: var(--ink);
+}
+
+.activity-label {
+  display: none;
+}
+
+/* With names: a wider bar, each name under its icon, on two lines at most. */
+.activity-bar.has-labels {
+  width: 76px;
+}
+
+.activity-bar.has-labels .activity-button {
+  width: 68px;
+  padding: 6px 2px 5px;
+}
+
+.activity-bar.has-labels .activity-label {
+  display: block;
+  max-width: 100%;
+  font-stretch: 80%;
+  font-weight: 600;
+  line-height: 1.1;
+  text-align: center;
+  overflow-wrap: anywhere;
 }
 
 .activity-rule {
