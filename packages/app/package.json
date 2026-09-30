@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@cobblestone/core": "*",
+    "@cobblestone/sync": "*",
     "@codemirror/autocomplete": "^6.20.3",
     "@codemirror/commands": "^6.11.1",
     "@codemirror/lang-markdown": "^6.5.2",

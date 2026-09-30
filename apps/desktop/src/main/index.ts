@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { NodeFsAdapter } from '@cobblestone/node';
 import { FS_METHODS, type DesktopVaultEntry, type FsMethod } from './ipc-types';
 import { JsonFile } from './json-file';
+import { forgetLanWindow, registerLan } from './lan-ipc';
 import { locationProblem, type LocationProblem } from './locations';
 import { findFolder, folderId, searchAreas } from './relocate';
 
@@ -231,6 +232,8 @@ ipcMain.handle('shell:openExternal', async (_event, url: string) => {
   if (/^(https?|mailto):/i.test(url)) await shell.openExternal(url);
 });
 
+registerLan();
+
 /** Open vaults whose folder has disappeared, so each window hears it once. */
 const lostVaults = new Set<string>();
 
@@ -281,6 +284,7 @@ function createWindow() {
     }
     openVaults.delete(id);
     for (const key of [...lostVaults].filter((k) => k.startsWith(`${id}:`))) lostVaults.delete(key);
+    forgetLanWindow(id);
   });
   // Links never navigate the app window: external ones open in the browser.
   window.webContents.setWindowOpenHandler(({ url }) => {

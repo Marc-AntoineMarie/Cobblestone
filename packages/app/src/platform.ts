@@ -1,4 +1,5 @@
 import type { VaultAdapter } from '@cobblestone/core';
+import type { Network } from '@cobblestone/sync';
 
 /**
  * A vault the user has opened before.
@@ -54,6 +55,8 @@ export interface Platform {
   relocateVault(entry: VaultEntry, found?: MovedVault): Promise<VaultEntry | null>;
   /** Desktop: the folder of an open vault disappeared (true) or came back (false). */
   onVaultMissing?(listener: (vaultId: string, missing: boolean) => void): () => void;
+  /** Desktop: the local network, to sync a vault with its other devices; `device` is this device's id. */
+  syncNetwork?(device: string): Network;
   openExternal(url: string): void;
   /** Desktop: the system this app runs on, for wording (Finder, Explorer, file manager). */
   os?: 'mac' | 'windows' | 'linux';
