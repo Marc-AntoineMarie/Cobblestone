@@ -27,6 +27,8 @@ export interface StartOptions {
   withoutFolderAccess?: boolean;
   /** Desktop: more entries in the recent list, pointing wherever they like. */
   recents?: { id: string; name: string; location: string }[];
+  /** Desktop: more environment for the app (a network port of the test's own, say). */
+  env?: Record<string, string>;
 }
 
 const WEB_URL = process.env.RECETTE_URL ?? 'http://localhost:5199';
@@ -110,6 +112,7 @@ export class Cobble {
     env.COBBLESTONE_USER_DATA = this.userData;
     env.LANG = this.options.lang === 'en' ? 'en_US.UTF-8' : 'fr_FR.UTF-8';
     env.LANGUAGE = this.options.lang ?? 'fr';
+    Object.assign(env, this.options.env);
     const args = [DESKTOP_APP, ...(process.env.CI ? ['--no-sandbox'] : [])];
     this.electronApp = await electron.launch({ executablePath: ELECTRON, args, env });
     this.page = await this.electronApp.firstWindow();
@@ -479,6 +482,30 @@ export class Cobble {
         return getFile.call(this);
       };
     }, p.split('/').pop()!);
+  }
+
+  /** Desktop: a value of the app's own storage (storage.json). */
+  async storage(key: string): Promise<unknown> {
+    return (JSON.parse(await readFile(path.join(this.userData, 'storage.json'), 'utf8')) as Record<string, unknown>)[key];
+  }
+
+  /** Desktop: names of the files and folders at the vault's root. */
+  async folderEntries(): Promise<string[]> {
+    return readdir(this.root);
+  }
+
+  /** Desktop: every file of the vault, hidden ones included, as one text (to look for what must not be there). */
+  async readAll(): Promise<string> {
+    const parts: string[] = [];
+    const walk = async (dir: string) => {
+      for (const entry of await readdir(dir, { withFileTypes: true })) {
+        const full = path.join(dir, entry.name);
+        if (entry.isDirectory()) await walk(full);
+        else parts.push((await readFile(full)).toString('latin1'));
+      }
+    };
+    await walk(this.root);
+    return parts.join('\n');
   }
 
   /** A scratch folder outside the vault, removed after the test. */
