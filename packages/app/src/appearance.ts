@@ -52,10 +52,10 @@ export function noteFontOf(preferences: Preferences, theme: Theme): string {
   return theme.noteFont ? NOTE_FONTS[theme.noteFont] : UI_FONTS[preferences.uiFont];
 }
 
-/** Every custom property the appearance sets, for a theme and the preferences. */
-export function appearanceTokens(preferences: Preferences, theme: Theme): Record<string, string> {
+/** Every custom property the appearance sets, for a theme and the preferences (`full`: see themeTokens). */
+export function appearanceTokens(preferences: Preferences, theme: Theme, full = false): Record<string, string> {
   return {
-    ...themeTokens(theme, preferences.colorOverrides[theme.id]),
+    ...themeTokens(theme, preferences.colorOverrides[theme.id], { full }),
     '--font': UI_FONTS[preferences.uiFont],
     '--font-note': noteFontOf(preferences, theme),
     '--mono': CODE_FONTS[preferences.codeFont],

@@ -1,3 +1,4 @@
+import type { Locator, Page } from '@playwright/test';
 import { expect, recette } from './lib/recette';
 import { baseVault } from './lib/vaults';
 
@@ -131,3 +132,197 @@ recette(
   { seulement: ['bureau'] },
 );
 recette.manuel('25.9', 'le zoom du navigateur (Ctrl+plus) ne se commande pas depuis un test', { seulement: ['web'] });
+
+/** A theme's card in the settings, by the start of its name. */
+const card = (settings: Locator, name: string) => settings.getByRole('radio', { name: new RegExp(`^${name}`) });
+const css = (page: Page, selector: string, property: string) =>
+  page
+    .locator(selector)
+    .first()
+    .evaluate((el, p) => getComputedStyle(el).getPropertyValue(p), property);
+const token = (page: Page, name: string) =>
+  page.evaluate((n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim(), name);
+
+recette('25.10', async ({ app, ui }) => {
+  await app.start({ vault: baseVault(), preferences: { theme: 'day', language: 'auto' } });
+  const settings = await ui.settings();
+  const day = settings.getByRole('radiogroup', { name: 'Thème de jour' });
+  const night = settings.getByRole('radiogroup', { name: 'Thème de nuit' });
+  await expect(day.getByRole('radio')).toHaveCount(5);
+  await expect(night.getByRole('radio')).toHaveCount(3);
+  await card(day, 'Kraft').click();
+  await expect(card(day, 'Kraft')).toHaveAttribute('aria-checked', 'true');
+  await expect(day.locator('[aria-checked="true"]')).toHaveCount(1);
+  expect(await css(ui.page, 'body', 'background-color')).toBe('rgb(239, 228, 208)');
+  expect(await css(ui.page, 'body', 'color')).toBe('rgb(59, 42, 26)');
+  expect(await css(ui.page, '.rail', 'background-color')).not.toBe('rgb(235, 235, 228)');
+});
+
+recette('25.11', async ({ app, ui }) => {
+  await app.start({
+    vault: baseVault(),
+    preferences: { theme: 'day', language: 'auto' },
+    viewport: { width: 1440, height: 900 },
+  });
+  const settings = await ui.settings();
+  const preview = settings.locator('.preview-app');
+  await expect(preview).toBeVisible();
+  await card(settings, 'Minuit').hover();
+  await expect.poll(() => preview.evaluate((el) => getComputedStyle(el).backgroundColor)).toBe('rgb(11, 11, 14)');
+  expect(await css(ui.page, 'body', 'background-color')).toBe('rgb(244, 244, 240)');
+  await ui.page.mouse.move(5, 5);
+  await expect.poll(() => preview.evaluate((el) => getComputedStyle(el).backgroundColor)).toBe('rgb(244, 244, 240)');
+});
+
+recette('25.12', async ({ app, ui }) => {
+  await app.start({ vault: baseVault(), preferences: { theme: 'day', language: 'auto' } });
+  const settings = await ui.settings();
+  await card(settings, 'Minuit').click();
+  await expect(ui.page.locator('html')).toHaveAttribute('data-paper', 'night');
+  expect(await css(ui.page, 'body', 'background-color')).toBe('rgb(11, 11, 14)');
+  await expect(settings.getByRole('radio', { name: 'Papier de nuit', exact: true })).toHaveAttribute('aria-checked', 'true');
+});
+
+recette('25.13', async ({ app, ui }) => {
+  await app.start({ vault: baseVault(), preferences: { theme: 'day', language: 'auto' } });
+  const settings = await ui.settings();
+  await settings.locator('.color-role', { hasText: 'Accent (actions)' }).locator('input[type="color"]').fill('#0078bf');
+  await expect.poll(() => token(ui.page, '--accent')).toBe('#0078bf');
+  // The search field's focus ring takes it.
+  await settings.getByRole('searchbox', { name: 'Chercher un réglage' }).focus();
+  expect(await css(ui.page, '.settings-search', 'outline-color')).toBe('rgb(0, 120, 191)');
+  await settings.getByRole('button', { name: 'Revenir aux couleurs du thème' }).click();
+  await expect.poll(() => token(ui.page, '--accent')).toBe('#ff48b0');
+  await expect(settings.getByRole('button', { name: 'Revenir aux couleurs du thème' })).toHaveCount(0);
+});
+
+recette('25.14', async ({ app, ui }) => {
+  await app.start({ vault: baseVault(), preferences: { theme: 'day', language: 'auto' } });
+  const settings = await ui.settings();
+  await expect(settings.locator('.contrast-note.is-ok')).toBeVisible();
+  await settings
+    .locator('.color-role', { hasText: /^Texte#/ })
+    .locator('input[type="color"]')
+    .fill('#e8e8e2');
+  const warning = settings.locator('.contrast-note.is-low');
+  await expect(warning).toBeVisible();
+  await expect(warning).toContainText('le texte sur le fond');
+});
+
+recette('25.15', async ({ app, ui }) => {
+  await app.start({ vault: baseVault({ 'Lecture.md': '# Lecture\n\nDu texte à lire.\n' }) });
+  await ui.open('Lecture');
+  const settings = await ui.settings();
+  await settings.locator('#set-note-font').selectOption('literata');
+  await ui.tab('Lecture').click();
+  const font = (locator: Locator) => locator.first().evaluate((el) => getComputedStyle(el).fontFamily);
+  expect(await font(ui.editor)).toContain('Literata');
+  expect(await font(ui.title)).toContain('Archivo');
+  await ui.mode('Lire');
+  expect(await font(ui.reading)).toContain('Literata');
+  // The theme's own font: Papier prints its notes in Literata, Atelier in the interface's font.
+  await ui.tab('Réglages').click();
+  await settings.locator('#set-note-font').selectOption('theme');
+  const day = settings.getByRole('radiogroup', { name: 'Thème de jour' });
+  await card(day, 'Papier').click();
+  await ui.tab('Lecture').click();
+  expect(await font(ui.reading)).toContain('Literata');
+  await ui.tab('Réglages').click();
+  await card(day, 'Atelier').click();
+  await ui.tab('Lecture').click();
+  expect(await font(ui.reading)).toContain('Archivo');
+});
+
+recette('25.16', async ({ app, ui }) => {
+  await app.start({ vault: baseVault({ 'Code.md': 'Du `code` ici.\n' }) });
+  await ui.open('Code');
+  const settings = await ui.settings();
+  await settings.locator('#set-ui-font').selectOption('atkinson');
+  expect(await css(ui.page, 'body', 'font-family')).toContain('Atkinson Hyperlegible');
+  await settings.locator('#set-code-font').selectOption('system');
+  await ui.tab('Code').click();
+  await ui.mode('Lire');
+  const code = await ui.reading
+    .locator('code')
+    .first()
+    .evaluate((el) => getComputedStyle(el).fontFamily);
+  expect(code).toContain('ui-monospace');
+  expect(code).not.toContain('Commit Mono');
+});
+
+recette('25.17', async ({ app, ui }) => {
+  const files = Object.fromEntries(Array.from({ length: 60 }, (_, i) => [`Liste/Note ${String(i).padStart(2, '0')}.md`, 'x']));
+  await app.start({ vault: baseVault(files) });
+  await ui.row('Liste').click();
+  const settings = await ui.settings();
+  const tops = () =>
+    ui.page
+      .locator('.tree-row')
+      .evaluateAll((rows) => rows.slice(0, 4).map((r) => [r.getBoundingClientRect().height, r.getBoundingClientRect().top]));
+  for (const [label, height] of [
+    ['Compacte', 24],
+    ['Aérée', 34],
+  ] as const) {
+    await settings.getByRole('radio', { name: label, exact: true }).click();
+    const rows = await tops();
+    expect(
+      rows.every(([h]) => Math.round(h!) === height),
+      label,
+    ).toBe(true);
+    expect(Math.round(rows[1]![1]! - rows[0]![1]!), label).toBe(height);
+    expect(
+      Math.round(
+        await ui.tags
+          .locator('.tag-row')
+          .first()
+          .evaluate((el) => el.getBoundingClientRect().height),
+      ),
+    ).toBe(height);
+  }
+  // The last note of the long folder can still be reached.
+  await ui.page.locator('.tree').evaluate((el) => el.scrollTo({ top: el.scrollHeight }));
+  await expect(ui.row('Liste/Note 59.md')).toBeInViewport();
+});
+
+recette('25.18', async ({ app, ui }) => {
+  await app.start({ vault: baseVault() });
+  const settings = await ui.settings();
+  const radius = () => css(ui.page, '.settings-search', 'border-radius');
+  await settings.getByRole('radio', { name: 'Droits', exact: true }).click();
+  expect(await radius()).toBe('0px');
+  await settings.getByRole('radio', { name: 'Ronds', exact: true }).click();
+  expect(await radius()).toBe('8px');
+  expect(await css(ui.page, '.theme-swatch', 'border-radius')).toBe('11px');
+});
+
+recette('25.19', async ({ app, ui }) => {
+  await app.start({ vault: baseVault(), preferences: { theme: 'day', language: 'auto' } });
+  let settings = await ui.settings();
+  await card(settings, 'Kraft').click();
+  await settings.locator('.color-role', { hasText: 'Surlignage' }).locator('input[type="color"]').fill('#ffcc00');
+  await settings.locator('#set-note-font').selectOption('atkinson');
+  await settings.getByRole('radio', { name: 'Aérée', exact: true }).click();
+  await settings.getByRole('radio', { name: 'Ronds', exact: true }).click();
+  await ui.page.waitForTimeout(600);
+  await app.restart();
+  await expect.poll(() => css(ui.page, 'body', 'background-color')).toBe('rgb(239, 228, 208)');
+  expect(await token(ui.page, '--mark')).toBe('#ffcc00');
+  expect(await token(ui.page, '--font-note')).toContain('Atkinson');
+  expect(await token(ui.page, '--row')).toBe('34px');
+  expect(await token(ui.page, '--radius')).toBe('8px');
+  settings = await ui.settings();
+  await expect(card(settings, 'Kraft')).toHaveAttribute('aria-checked', 'true');
+});
+
+recette('25.20', async ({ app, ui }) => {
+  await app.start({ vault: baseVault(), viewport: { width: 700, height: 800 } });
+  const settings = await ui.settings();
+  const nav = settings.getByRole('navigation', { name: 'Sections des réglages' });
+  const page = settings.locator('.settings-page');
+  const navBox = (await nav.boundingBox())!;
+  const pageBox = (await page.boundingBox())!;
+  expect(navBox.y + navBox.height).toBeLessThanOrEqual(pageBox.y + 1);
+  await expect(settings.locator('.settings-preview')).toBeHidden();
+  expect(await ui.overflowsSideways()).toBe(false);
+  expect(await settings.evaluate((el) => el.scrollWidth <= el.clientWidth + 1)).toBe(true);
+});

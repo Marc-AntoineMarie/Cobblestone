@@ -288,11 +288,16 @@ function grain(ink: string, dark: boolean): string {
 /**
  * The CSS custom properties a theme sets on the page, with `overrides` (the
  * colours changed in the settings) applied. A native theme without overrides
- * sets none: tokens.css already holds its values.
+ * sets none: tokens.css already holds its values. `full` sets them anyway, for
+ * a preview painted inside a page printed with another theme.
  */
-export function themeTokens(theme: Theme, overrides: Partial<ThemeColors> = {}): Record<string, string> {
+export function themeTokens(
+  theme: Theme,
+  overrides: Partial<ThemeColors> = {},
+  { full = false }: { full?: boolean } = {},
+): Record<string, string> {
   const changed = Object.keys(overrides).length > 0;
-  if (theme.native && !changed) return {};
+  if (theme.native && !changed && !full) return {};
   const t: Theme = { ...theme, colors: { ...theme.colors, ...overrides } };
   const c = completeColors(t);
   const dark = t.scheme === 'dark';
