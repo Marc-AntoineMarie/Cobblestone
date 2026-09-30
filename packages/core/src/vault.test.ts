@@ -52,6 +52,18 @@ describe('LinkResolver', () => {
 });
 
 describe('Vault', () => {
+  it('does not take a note it cannot read for an empty one', async () => {
+    const adapter = new MemoryAdapter('Test', { 'Locked.md': 'précieux', 'Open.md': 'ok' });
+    const read = adapter.read.bind(adapter);
+    adapter.read = (path: string) => (path === 'Locked.md' ? Promise.reject(new Error('EACCES')) : read(path));
+    const vault = new Vault(adapter);
+    await vault.load();
+    expect(vault.getFile('Locked.md')).toBeDefined();
+    expect(vault.cachedRead('Locked.md')).toBeUndefined();
+    await expect(vault.read('Locked.md')).rejects.toThrow('EACCES');
+    expect(vault.cachedRead('Open.md')).toBe('ok');
+  });
+
   it('gives links the new case of a note renamed from "note" to "Note"', async () => {
     const { vault } = await vaultOf({ 'idea.md': 'x', 'A.md': 'See [[idea]] and [[idea|alias]].' });
     await vault.rename('idea.md', 'Idea.md');

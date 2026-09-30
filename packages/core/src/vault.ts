@@ -95,11 +95,22 @@ export class Vault extends Emitter<VaultEvents> {
     onProgress?.(0, notes.length);
     for (let i = 0; i < notes.length; i += 64) {
       const batch = notes.slice(i, i + 64);
-      const texts = await Promise.all(batch.map((f) => this.adapter.read(f.path).catch(() => '')));
+      // A note that cannot be read now (permissions, locked by another program) is not taken for
+      // an empty one: it stays unread, so opening it reports why and nothing is saved over it.
+      const texts = await Promise.all(
+        batch.map((f) =>
+          this.adapter.read(f.path).then(
+            (text) => text,
+            () => null,
+          ),
+        ),
+      );
       signal?.throwIfAborted();
       batch.forEach((file, k) => {
-        this.remember(file.path, texts[k]!);
-        this.cache.setContent(file.path, texts[k]!);
+        const text = texts[k];
+        if (text === null || text === undefined) return;
+        this.remember(file.path, text);
+        this.cache.setContent(file.path, text);
       });
       onProgress?.(i + batch.length, notes.length);
     }
