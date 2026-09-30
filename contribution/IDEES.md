@@ -39,16 +39,6 @@ Demande du 30 septembre : une interface ergonomique, intuitive, optimisée pour 
 - Aperçu en direct de chaque réglage, et retour aux valeurs par défaut en un clic.
 - Import et export de thèmes, compatibilité avec les extraits CSS d'Obsidian.
 
-### Recette automatisée — à décider
-
-Question du 30 septembre : automatiser les 551 vérifications de [docs/RECETTE.md](../docs/RECETTE.md).
-
-- Proposition : un scénario de bout en bout par vérification automatisable (environ 8 sur 10), qui
-  cite son numéro de recette et met à jour un rapport généré à chaque `npm run e2e`.
-- Restent manuelles : l'installation des paquets, l'icône dans le dock, Firefox, l'aspect visuel, le
-  retour dans Obsidian. Elles tiennent dans une courte liste Markdown.
-- La page « Recette Cobblestone » (artifact) serait alors abandonnée : elle coûte cher à régénérer.
-
 ## Téléphone — plus tard (après la synchronisation)
 
 1. Application web installable (PWA) à partir de l'app web, avec une interface repensée pour le
