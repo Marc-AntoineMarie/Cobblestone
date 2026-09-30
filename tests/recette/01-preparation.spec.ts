@@ -33,7 +33,7 @@ recette.manuel('1.7', 'construire les installeurs prend plusieurs minutes ; la C
 recette.manuel('1.8', "lancer l'AppImage dans le bureau de l'utilisateur");
 recette.manuel('1.9', 'installer le .deb demande les droits administrateur');
 recette.ci('1.10', 'npm run check à chaque push');
-recette.ci('1.11', 'npm run e2e (cette recette automatique) à chaque push');
+recette.manuel('1.11', 'c’est cette recette elle-même : npm run release la lance avant chaque version');
 
 recette('1.12', async ({ app, ui }) => {
   // A fresh app data folder: the tests start from one each time.

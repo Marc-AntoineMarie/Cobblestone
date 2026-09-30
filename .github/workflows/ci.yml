@@ -30,42 +30,6 @@ jobs:
       - run: npm run build -w @cobblestone/web
       - run: npm run build -w @cobblestone/desktop
 
-  # La recette automatique sur les vraies apps, une machine par plateforme : l'app de bureau
-  # (Electron sous écran virtuel) et l'app web (Chrome). Un test à la fois sur le web : Chrome
-  # plantait quand plusieurs tournaient ensemble sur la machine de la CI.
-  e2e:
-    needs: check
-    runs-on: ubuntu-24.04
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - project: bureau
-            workers: 2
-          - project: web
-            workers: 1
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
-        with:
-          node-version: 24
-          cache: npm
-      - run: npm ci
-      # L'app web sert aux deux : le serveur de la recette démarre avant les tests.
-      - run: npm run build -w @cobblestone/web
-      - run: npm run build -w @cobblestone/desktop
-        if: matrix.project == 'bureau'
-      - run: xvfb-run -a npx playwright test --project=${{ matrix.project }}
-        env:
-          RECETTE_WORKERS: ${{ matrix.workers }}
-      - name: État de la recette et traces des échecs
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: recette-${{ matrix.project }}
-          path: test-results
-          if-no-files-found: ignore
-
   # Vulnérabilités connues dans les dépendances livrées.
   audit:
     runs-on: ubuntu-24.04
