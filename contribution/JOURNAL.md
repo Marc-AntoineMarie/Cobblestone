@@ -6,6 +6,7 @@ ajouté, modifié et supprimé, les tests, les fichiers et les commits. Ce somma
 
 | Date       | Changement                                                                                                               | Type          | Branche                      |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------ | ------------- | ---------------------------- |
+| 2026-09-30 | [Recette automatique : les 556 vérifications passent par des tests](journal/2026-09-30-test-recette-automatique.md)      | amélioration  | `test/recette-automatique`   |
 | 2026-09-30 | [Premières maquettes de la refonte personnalisable](journal/2026-09-30-docs-maquettes-refonte.md)                        | documentation | `docs/maquettes-refonte`     |
 | 2026-09-30 | [Le dossier contribution : règles, journal et idées](journal/2026-09-30-docs-dossier-contribution.md)                    | documentation | `docs/dossier-contribution`  |
 | 2026-09-30 | [Ouverture bloquée : dossiers refusés, progression et Annuler](journal/2026-09-30-fix-ouverture-bloquee.md)              | correction    | `fix/ouverture-bloquee`      |
