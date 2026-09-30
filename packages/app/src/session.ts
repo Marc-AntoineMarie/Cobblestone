@@ -271,23 +271,35 @@ export class Session {
 
   /**
    * Saves a note's text. When the page is going away (`leaving`), the write may not
-   * finish before it does (browser storage writes are asynchronous): the text is
-   * also kept, synchronously, in local storage until the write is done, and
-   * written again when the vault next opens.
+   * finish before it does (browser storage writes are asynchronous); when a write
+   * fails, the text would be lost. In both cases it is kept, synchronously, in local
+   * storage until a write succeeds, and written again when the vault next opens.
    */
   saveText(path: string, text: string, leaving = false) {
     if (!this.vault.getFile(path)) return;
-    if (leaving) this.writeUnsaved({ ...this.readUnsaved(), [path]: { text, at: Date.now() } });
+    const keep = () => {
+      this.keptUnsaved = true;
+      this.writeUnsaved({ ...this.readUnsaved(), [path]: { text, at: Date.now() } });
+    };
+    if (leaving) keep();
     this.vault.modify(path, text).then(
       () => {
-        if (!leaving) return;
+        if (!this.keptUnsaved) return;
         const entries = this.readUnsaved();
         if (entries[path]?.text === text) delete entries[path];
         this.writeUnsaved(entries);
       },
-      (error: unknown) => this.fail(error),
+      (error: unknown) => {
+        // The write failed (the vault's folder vanished, the disk refused): the text is kept, and
+        // written again when the vault next opens, here or at its new place.
+        keep();
+        this.fail(error);
+      },
     );
   }
+
+  /** Some text is kept in local storage, waiting to be written. */
+  private keptUnsaved = false;
 
   /** Writes the text kept by saveText when the page closed before the write finished. */
   private async restoreUnsaved() {
