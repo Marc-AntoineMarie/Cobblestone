@@ -265,6 +265,8 @@ function decorateWikiLink(node: SyntaxNodeRef, state: EditorState, active: boole
 function decorateLink(node: SyntaxNodeRef, state: EditorState, active: boolean, out: Range<Decoration>[]) {
   const marks = node.node.getChildren('LinkMark');
   const url = node.node.getChild('URL');
+  // "[text]" alone is plain text (a reference link needs a definition, and vaults have none).
+  if (!url && !node.node.getChild('LinkLabel')) return;
   const href = url ? state.doc.sliceString(url.from, url.to).replace(/^<|>$/g, '') : '';
   const external = /^[a-z][a-z0-9+.-]*:/i.test(href) || href.startsWith('//');
   let target = href;
