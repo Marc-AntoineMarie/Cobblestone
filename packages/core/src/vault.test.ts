@@ -188,6 +188,17 @@ describe('Vault', () => {
     expect(vault.cache.getUnresolvedLinks('A.md').has('B')).toBe(true);
   });
 
+  it('announces a canvas changed by another program and reads it afresh', async () => {
+    const { vault, adapter } = await vaultOf({ 'Board.canvas': '{"nodes":[],"edges":[]}' });
+    expect(await vault.read('Board.canvas')).toBe('{"nodes":[],"edges":[]}');
+    const events: (string | null)[] = [];
+    vault.on('modify', (f, content) => events.push(`${f.path} ${content}`));
+    await adapter.write('Board.canvas', '{"nodes":[{"id":"a"}],"edges":[]}');
+    await vault.settled();
+    expect(events).toEqual(['Board.canvas null']);
+    expect(await vault.read('Board.canvas')).toBe('{"nodes":[{"id":"a"}],"edges":[]}');
+  });
+
   it('applies option changes while open', async () => {
     const { vault, adapter } = await vaultOf({ 'Old.md': '', 'A.md': '[[Old]]' });
     vault.setOptions({ updateLinksOnRename: false, trash: 'permanent' });

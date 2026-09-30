@@ -87,7 +87,9 @@ export function CanvasView({ path, visible }: { path: string; visible: boolean }
     void session.vault.read(path).then((text) => !cancelled && load(text));
     // Another app or device changed the file: take its version unless we are in the middle of a gesture.
     const off = session.vault.on('modify', (file, content) => {
-      if (file.path === path && content !== null && !gesture.current) load(content);
+      if (file.path !== path || gesture.current) return;
+      if (content !== null) load(content);
+      else void session.vault.read(path).then((text) => !cancelled && load(text));
     });
     return () => {
       cancelled = true;

@@ -462,6 +462,7 @@ export class Vault extends Emitter<VaultEvents> {
           else if (known.stat.mtime !== stat.mtime || known.stat.size !== stat.size) {
             // Attachments and canvases changed by another program: views showing them reload.
             known.stat = stat;
+            this.contents.delete(change.path);
             this.emit('modify', known, null);
           }
           return;
