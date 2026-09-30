@@ -31,8 +31,10 @@ Ces règles s'appliquent strictement à chaque session. La méthode complète es
 ## Vérifier avant de dire « c'est fait »
 
 - `npm run check` : formatage (Prettier), types, tests unitaires, recette à jour, journal.
-- `npm run e2e` : la recette automatique (Playwright, `tests/recette/`), sur le bureau et le web,
-  avant chaque fusion qui touche l'app. Résultat par ligne dans `test-results/recette.md`.
+- Recette automatique (Playwright, `tests/recette/`), bureau et web, **là où le changement a un
+  effet** : `npm run e2e -- tests/recette/24 tests/recette/25` pour les sections touchées ; toute la
+  recette (`npm run e2e`, 20 min) seulement si une base commune change (disposition, styles
+  partagés, `packages/core`, stockage) et avant une version. Résultat dans `test-results/recette.md`.
 - **La recette suit chaque changement** : toute ligne de [docs/RECETTE.md](docs/RECETTE.md) ajoutée
   (en fin de section) ou modifiée a son test dans le même changement, automatique, ou
   `recette.manuel` avec la raison ; puis `npm run recette -- sync`. Un bug trouvé par la recette a

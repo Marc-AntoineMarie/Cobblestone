@@ -76,11 +76,19 @@ Portées courantes : `core`, `node`, `app`, `editor`, `search`, `graph`, `settin
 ## 6. Vérifications
 
 ```bash
-npm run check   # formatage, types, tests unitaires, recette à jour, journal
-npm run e2e     # la recette automatique, sur l'app de bureau et l'app web
+npm run check                                     # formatage, types, tests unitaires, recette à jour, journal
+npm run e2e -- tests/recette/24 tests/recette/25  # les sections touchées de la recette automatique
+npm run e2e                                       # toute la recette, bureau et web (une vingtaine de minutes)
 ```
 
-- `npm run check` passe avant chaque commit ; `npm run e2e` avant chaque fusion qui touche l'app.
+- `npm run check` passe avant chaque commit.
+- **La recette automatique se lance là où le changement a un effet**, pas entière à chaque fois :
+  - pendant le travail et avant de fusionner : les sections touchées, et leurs voisines quand elles
+    partagent le code changé (l'éditeur : 9 à 13 ; les fichiers : 5, 21 à 23) ;
+  - entière avant de fusionner un changement qui touche une base commune : la disposition de
+    l'interface, les couleurs et les styles partagés, le moteur des notes (`packages/core`), le
+    stockage ;
+  - entière avant chaque version : `npm run release` la lance de lui-même.
 - **La recette suit chaque changement.** Chaque ligne de [docs/RECETTE.md](../docs/RECETTE.md) a son
   test dans `tests/recette/` : un fichier par section, un test par ligne, qui porte son numéro.
   - Une fonctionnalité ajoute ses lignes en fin de section (pour ne pas décaler les numéros déjà
@@ -124,7 +132,8 @@ décisions à prendre. Chaque idée a un statut (**à faire**, **à décider**, 
 ## 9. Avant de fusionner
 
 - [ ] Les commits suivent la section 3.
-- [ ] `npm run check` et, si un parcours est touché, `npm run e2e` passent.
+- [ ] `npm run check` passe, et la recette des sections touchées aussi (toute la recette si une base
+      commune a changé, voir section 6).
 - [ ] Les lignes de recette sont ajoutées.
 - [ ] Les documents concernés sont à jour (README, docs/, PRODUCT.md, DESIGN.md, IDEES.md).
 - [ ] La fiche du journal est écrite et le sommaire régénéré.
