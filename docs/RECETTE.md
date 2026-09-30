@@ -439,20 +439,20 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 
 ## 17. Note du jour et modèles
 
-- **17.1** · Les deux · à automatiser · Note du jour pour la première fois → Une note nommée selon le format (par défaut AAAA-MM-JJ) est créée dans le dossier réglé et s'ouvre.
-- **17.2** · Les deux · à automatiser · Rouvrir la note du jour le même jour → La même note s'ouvre, sans copie.
-- **17.3** · Les deux · à automatiser · Format `dddd D MMMM YYYY` dans les réglages, puis note du jour → Nom du type « mardi 29 septembre 2026 », en français si l'interface l'est.
-- **17.4** · Les deux · à automatiser · Modèle de note du jour importé d'Obsidian → La note reprend le modèle, variables remplies.
-- **17.5** · Les deux · à automatiser · Créer un dossier « Modèles » (ou « Templates ») avec une note contenant `# {{title}}` et `{{date}} {{time}}` → Le dossier est reconnu sans réglage.
-- **17.6** · Les deux · à automatiser · Dans une note, Alt+T, filtrer, Entrée → Le modèle est inséré au curseur, variables remplies (titre de la note, date, heure).
-- **17.7** · Les deux · à automatiser · Sélectionner du texte, puis insérer un modèle → Le modèle remplace la sélection.
-- **17.8** · Les deux · à automatiser · Modèle avec `{{date:DD/MM/YYYY}}`, `{{time:HH[h]mm}}` et `{{TITLE}}` → Formats personnalisés respectés, casse des variables ignorée.
-- **17.9** · Les deux · à automatiser · Alt+T en mode lecture → Le modèle est ajouté à la fin de la note.
-- **17.10** · Les deux · à automatiser · Alt+T dans un coffre sans dossier de modèles → Message rouge : créer un dossier « Modèles » ou en choisir un dans les réglages.
-- **17.11** · Les deux · à automatiser · Alt+T avec un dossier de modèles vide → Message rouge : le dossier ne contient aucune note.
-- **17.12** · Les deux · à automatiser · Choisir un autre dossier dans Réglages, Modèles → C'est lui qui est proposé.
-- **17.13** · Les deux · à automatiser · Changer les formats de date et d'heure dans Réglages, Modèles → `{{date}}` et `{{time}}` les utilisent.
-- **17.14** · Les deux · à automatiser · Créer une note, taper son titre, Entrée puis Alt+T aussitôt → Le modèle arrive bien dans la note renommée.
+- **17.1** · Les deux · auto · Note du jour pour la première fois → Une note nommée selon le format (par défaut AAAA-MM-JJ) est créée dans le dossier réglé et s'ouvre.
+- **17.2** · Les deux · auto · Rouvrir la note du jour le même jour → La même note s'ouvre, sans copie.
+- **17.3** · Les deux · auto · Format `dddd D MMMM YYYY` dans les réglages, puis note du jour → Nom du type « mardi 29 septembre 2026 », en français si l'interface l'est.
+- **17.4** · Les deux · auto · Modèle de note du jour importé d'Obsidian → La note reprend le modèle, variables remplies.
+- **17.5** · Les deux · auto · Créer un dossier « Modèles » (ou « Templates ») avec une note contenant `# {{title}}` et `{{date}} {{time}}` → Le dossier est reconnu sans réglage.
+- **17.6** · Les deux · auto · Dans une note, Alt+T, filtrer, Entrée → Le modèle est inséré au curseur, variables remplies (titre de la note, date, heure).
+- **17.7** · Les deux · auto · Sélectionner du texte, puis insérer un modèle → Le modèle remplace la sélection.
+- **17.8** · Les deux · auto · Modèle avec `{{date:DD/MM/YYYY}}`, `{{time:HH[h]mm}}` et `{{TITLE}}` → Formats personnalisés respectés, casse des variables ignorée.
+- **17.9** · Les deux · auto · Alt+T en mode lecture → Le modèle est ajouté à la fin de la note.
+- **17.10** · Les deux · auto · Alt+T dans un coffre sans dossier de modèles → Message rouge : créer un dossier « Modèles » ou en choisir un dans les réglages.
+- **17.11** · Les deux · auto · Alt+T avec un dossier de modèles vide → Message rouge : le dossier ne contient aucune note.
+- **17.12** · Les deux · auto · Choisir un autre dossier dans Réglages, Modèles → C'est lui qui est proposé.
+- **17.13** · Les deux · auto · Changer les formats de date et d'heure dans Réglages, Modèles → `{{date}}` et `{{time}}` les utilisent.
+- **17.14** · Les deux · auto · Créer une note, taper son titre, Entrée puis Alt+T aussitôt → Le modèle arrive bien dans la note renommée.
 
 ## 18. Recherche avancée
 
