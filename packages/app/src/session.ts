@@ -30,6 +30,7 @@ import { getLanguage, t } from './i18n';
 import type { Platform, VaultEntry } from './platform';
 import type { PanelId } from './layout';
 import { DEFAULT_SETTINGS, formatDate, loadVaultSettings, saveVaultSettings, type VaultSettings } from './settings';
+import { SyncController } from './sync';
 import { applyTemplate, findTemplatesFolder, listTemplates } from './templates';
 import {
   activeTab,
@@ -110,6 +111,8 @@ export class Session {
   readonly settings: StoreApi<VaultSettings>;
   readonly bookmarks: StoreApi<Bookmark[]>;
   readonly events = new Emitter<SessionEvents>();
+  /** Sync of this vault with the user's other devices. */
+  readonly sync: SyncController;
   /** Recently opened files, most recent first. */
   recent: string[] = [];
   private resourceUrls = new Map<string, string>();
@@ -126,6 +129,7 @@ export class Session {
     workspace: WorkspaceState,
     bookmarks: Bookmark[],
   ) {
+    this.sync = new SyncController(platform, entry, vault);
     this.settings = createStore(() => settings);
     this.bookmarks = createStore<Bookmark[]>(() => bookmarks);
     this.workspace = createStore(() => workspace);
@@ -216,6 +220,7 @@ export class Session {
     const session = new Session(platform, entry, vault, settings, workspace, bookmarks.items);
     await session.restoreUnsaved();
     session.recent = ((await platform.storage.get<string[]>(RECENT_KEY(entry.id))) ?? []).filter((p) => vault.getFile(p));
+    await session.sync.attach().catch((e: unknown) => console.error('Sync could not start', e));
     if (entry.kind === 'demo' && (activeTab(workspace)?.view.type ?? 'empty') === 'empty') {
       const welcome = vault.getMarkdownFiles().find((f) => /^(Welcome|Bienvenue)\.md$/.test(f.path));
       if (welcome) session.openPath(welcome.path);
@@ -242,6 +247,7 @@ export class Session {
 
   /** Runs every pending save now (the window closes, the vault switches). */
   flushSaves() {
+    this.sync.flush();
     for (const [save, timer] of this.pendingSaves) {
       clearTimeout(timer);
       void save().catch(() => undefined);
@@ -251,6 +257,7 @@ export class Session {
 
   dispose() {
     this.flushSaves();
+    this.sync.dispose();
     for (const dispose of this.disposers) dispose();
     for (const url of this.resourceUrls.values()) URL.revokeObjectURL(url);
     this.resourceUrls.clear();
