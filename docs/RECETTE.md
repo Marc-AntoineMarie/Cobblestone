@@ -476,24 +476,24 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 
 ## 19. Graphe
 
-- **19.1** · Les deux · à automatiser · Ctrl+G → Les notes en points d'encre, les liens en traits ; la vue se cadre sur l'ensemble.
-- **19.2** · Les deux · à automatiser · Comparer les points → Leur taille grandit avec le nombre de liens.
-- **19.3** · Les deux · à automatiser · Survoler un point → Lui et ses voisins restent nets, le reste s'estompe ; ses liens passent en rose, son nom s'affiche.
-- **19.4** · Les deux · à automatiser · Cliquer un point, puis Ctrl+clic → La note s'ouvre, puis dans un nouvel onglet.
-- **19.5** · Les deux · à automatiser · Glisser un point, fermer puis rouvrir le graphe → Il reste épinglé où il a été lâché (cercle autour), même après réouverture.
-- **19.6** · Les deux · à automatiser · Double-cliquer un point épinglé → Il est libéré.
-- **19.7** · Les deux · à automatiser · Bouton « Réinitialiser » → Tous les points sont libérés.
-- **19.8** · Les deux · à automatiser · Molette → Zoom autour du pointeur ; les noms apparaissent en zoomant.
-- **19.9** · Les deux · à automatiser · Glisser le fond → La vue se déplace.
-- **19.10** · Les deux · à automatiser · Champ « Filtrer les notes » → Seules les notes correspondantes restent.
-- **19.11** · Les deux · à automatiser · Décocher « Notes isolées » → Les notes sans lien disparaissent.
-- **19.12** · Les deux · à automatiser · Cocher « Pièces jointes » → Images, PDF et autres apparaissent en points gris.
-- **19.13** · Les deux · à automatiser · Cocher « Notes manquantes », puis cliquer l'une d'elles → Points tramés ; le clic crée la note.
-- **19.14** · Les deux · à automatiser · Menu … d'une note, « Graphe autour de cette note », puis le curseur « Autour de cette note » → Graphe à droite centré sur la note (en rose) ; 1 à 3 niveaux de voisins.
-- **19.15** · Les deux · à automatiser · Fermer puis rouvrir le graphe sans rien épingler → Même disposition.
-- **19.16** · Les deux · à automatiser · Graphe en papier de nuit → Couleurs claires, lisibles.
-- **19.17** · Les deux · à automatiser · Graphe d'un coffre de plusieurs milliers de notes → Il reste manipulable.
-- **19.18** · Les deux · à automatiser · Créer, renommer ou supprimer une note avec le graphe ouvert → Le graphe se met à jour.
+- **19.1** · Les deux · auto · Ctrl+G → Les notes en points d'encre, les liens en traits ; la vue se cadre sur l'ensemble.
+- **19.2** · Les deux · auto · Comparer les points → Leur taille grandit avec le nombre de liens.
+- **19.3** · Les deux · auto · Survoler un point → Lui et ses voisins restent nets, le reste s'estompe ; ses liens passent en rose, son nom s'affiche.
+- **19.4** · Les deux · auto · Cliquer un point, puis Ctrl+clic → La note s'ouvre, puis dans un nouvel onglet.
+- **19.5** · Les deux · auto · Glisser un point, fermer puis rouvrir le graphe → Il reste épinglé où il a été lâché (cercle autour), même après réouverture.
+- **19.6** · Les deux · auto · Double-cliquer un point épinglé → Il est libéré.
+- **19.7** · Les deux · auto · Bouton « Réinitialiser » → Tous les points sont libérés.
+- **19.8** · Les deux · auto · Molette → Zoom autour du pointeur ; les noms apparaissent en zoomant.
+- **19.9** · Les deux · auto · Glisser le fond → La vue se déplace.
+- **19.10** · Les deux · auto · Champ « Filtrer les notes » → Seules les notes correspondantes restent.
+- **19.11** · Les deux · auto · Décocher « Notes isolées » → Les notes sans lien disparaissent.
+- **19.12** · Les deux · auto · Cocher « Pièces jointes » → Images, PDF et autres apparaissent en points gris.
+- **19.13** · Les deux · auto · Cocher « Notes manquantes », puis cliquer l'une d'elles → Points tramés ; le clic crée la note.
+- **19.14** · Les deux · auto · Menu … d'une note, « Graphe autour de cette note », puis le curseur « Autour de cette note » → Graphe à droite centré sur la note (en rose) ; 1 à 3 niveaux de voisins.
+- **19.15** · Les deux · auto · Fermer puis rouvrir le graphe sans rien épingler → Même disposition.
+- **19.16** · Les deux · auto · Graphe en papier de nuit → Couleurs claires, lisibles.
+- **19.17** · Les deux · auto · Graphe d'un coffre de plusieurs milliers de notes → Il reste manipulable.
+- **19.18** · Les deux · auto · Créer, renommer ou supprimer une note avec le graphe ouvert → Le graphe se met à jour.
 
 ## 20. Canvas
 
