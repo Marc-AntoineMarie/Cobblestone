@@ -182,8 +182,9 @@ function unitsOf(scope: Extract<QueryNode, { type: 'scoped' }>['scope'], doc: Do
       if (meta) return meta.sections.map((s) => lineRange(doc, s.startLine, s.endLine));
       return splitParagraphs(doc);
     case 'section': {
+      // From each heading to the next; a note that starts with a heading has no section before it.
       const headings = meta?.headings ?? [];
-      const starts = [0, ...headings.map((h) => h.line)];
+      const starts = [...new Set([0, ...headings.map((h) => h.line)])];
       return starts.map((start, i) => lineRange(doc, start, (starts[i + 1] ?? doc.lines!.length) - 1));
     }
     case 'task':

@@ -80,4 +80,10 @@ describe('search', () => {
     expect(result!.matches.map((m) => content.slice(m.from, m.to))).toEqual(['Meeting']);
     expect(result!.matches[0]!.line).toBe(content.split('\n').findIndex((l) => l.includes('Meeting')));
   });
+  it('searches sections of a note that starts with a heading', () => {
+    const content = '# Matin\n\nCafé et croissant\n\n# Soir\n\nThé\n';
+    const docs = [{ path: 'Lundi.md', content, metadata: parseMarkdown(content) }];
+    expect(searchDocuments(docs, 'section:(café croissant)').map((r) => r.path)).toEqual(['Lundi.md']);
+    expect(searchDocuments(docs, 'section:(croissant thé)')).toEqual([]);
+  });
 });
