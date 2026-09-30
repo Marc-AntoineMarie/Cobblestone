@@ -71,6 +71,9 @@ function seeded(seed: number) {
   };
 }
 
+/** How long a click on a pinned note waits for a second one. */
+const DOUBLE_CLICK_MS = 300;
+
 function hash(text: string): number {
   let h = 2166136261;
   for (let i = 0; i < text.length; i++) h = Math.imul(h ^ text.charCodeAt(i), 16777619);
@@ -210,6 +213,7 @@ export function GraphView({ focus, visible }: { focus?: string; visible: boolean
     let dragging: GraphNode | null = null;
     let panning: { x: number; y: number; vx: number; vy: number } | null = null;
     let moved = false;
+    let opening: ReturnType<typeof setTimeout> | undefined;
     let width = 0;
     let height = 0;
     const dpr = window.devicePixelRatio || 1;
@@ -411,17 +415,24 @@ export function GraphView({ focus, visible }: { focus?: string; visible: boolean
       if (dragging) {
         simulation.alphaTarget(0);
         if (!moved) {
-          // A click opens the note; dragging pins it where it was dropped.
-          dragging.fx = pins[dragging.id]?.[0];
-          dragging.fy = pins[dragging.id]?.[1];
-          if (dragging.kind !== 'unresolved') session.openPath(dragging.id, e.metaKey || e.ctrlKey ? 'tab' : 'current');
-          else void session.openLink(dragging.id, '');
+          // A click opens the note; dragging pins it where it was dropped. A pinned
+          // note waits for a possible second click, which frees it instead.
+          const node = dragging;
+          const target = e.metaKey || e.ctrlKey ? 'tab' : 'current';
+          const open = () => {
+            if (node.kind !== 'unresolved') session.openPath(node.id, target);
+            else void session.openLink(node.id, '');
+          };
+          clearTimeout(opening);
+          if (node.fx != null) opening = setTimeout(open, DOUBLE_CLICK_MS);
+          else open();
         } else savePins();
       }
       dragging = null;
       panning = null;
     };
     const onDoubleClick = (e: MouseEvent) => {
+      clearTimeout(opening);
       const rect = canvas.getBoundingClientRect();
       const node = nodeAt(e.clientX - rect.left, e.clientY - rect.top);
       if (!node) return;
@@ -476,6 +487,7 @@ export function GraphView({ focus, visible }: { focus?: string; visible: boolean
     resize();
 
     return () => {
+      clearTimeout(opening);
       simulation.stop();
       observer.disconnect();
       canvas.removeEventListener('pointerdown', onPointerDown);
