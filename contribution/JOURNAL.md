@@ -6,6 +6,7 @@ ajouté, modifié et supprimé, les tests, les fichiers et les commits. Ce somma
 
 | Date       | Changement                                                                                                               | Type          | Branche                      |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------ | ------------- | ---------------------------- |
+| 2026-09-30 | [Les apps de bureau se trouvent et se relient sur le réseau local](journal/2026-09-30-feat-synchro-reseau-local.md)      | nouveauté     | `feat/synchro-reseau-local`  |
 | 2026-09-30 | [Le chiffrement de bout en bout et l'appairage par code](journal/2026-09-30-feat-synchro-chiffrement.md)                 | nouveauté     | `feat/synchro-chiffrement`   |
 | 2026-09-30 | [Le moteur de synchronisation entre appareils](journal/2026-09-30-feat-synchro-moteur.md)                                | nouveauté     | `feat/synchro-moteur`        |
 | 2026-09-30 | [La barre d'activité nomme ses boutons](journal/2026-09-30-feat-barre-activite-noms.md)                                  | amélioration  | `feat/barre-activite-noms`   |
