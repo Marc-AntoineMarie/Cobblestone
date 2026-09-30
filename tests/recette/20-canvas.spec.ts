@@ -176,7 +176,7 @@ recette('20.11', async ({ app, ui }) => {
 
 recette('20.12', async ({ app, ui }) => {
   const sheet = await cards(app, ui);
-  const pink = await ink(ui, 'pink');
+  const pink = await ink(ui, 'accent');
   const card = sheet.node('a');
   await card.click();
   // The pointer leaves: what shows comes from the selection, not the hover.
@@ -207,7 +207,7 @@ recette('20.13', async ({ app, ui }) => {
 
 recette('20.14', async ({ app, ui }) => {
   const sheet = await cards(app, ui);
-  const pink = await ink(ui, 'pink');
+  const pink = await ink(ui, 'accent');
   const from = await sheet.at(-30, 50);
   await sheet.expectBackground(from);
   const band = sheet.view.locator('.canvas-band');
@@ -306,7 +306,7 @@ recette('20.20', async ({ app, ui }) => {
 
 recette('20.21', async ({ app, ui }) => {
   const sheet = await cards(app, ui);
-  const pink = await ink(ui, 'pink');
+  const pink = await ink(ui, 'accent');
   const wire = sheet.view.locator('.canvas-edge-line.is-wire');
   // From the right side of C (bottom left) to the middle of B (top right).
   await sheet.drag(
@@ -345,7 +345,7 @@ recette('20.23', async ({ app, ui }) => {
     .first()
     .locator('.canvas-edge-line')
     .evaluate((el) => getComputedStyle(el).stroke);
-  expect(stroke).toBe(await ink(ui, 'pink'));
+  expect(stroke).toBe(await ink(ui, 'accent'));
 });
 
 recette('20.24', async ({ app, ui }) => {

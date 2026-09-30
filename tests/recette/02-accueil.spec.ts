@@ -383,7 +383,8 @@ recette('2.35', async ({ app, ui }) => {
 
 recette('2.36', async ({ app, ui }) => {
   await app.start();
-  await rm(app.userData, { recursive: true, force: true });
+  // Chromium may still be writing its cache there: retry, as a user deleting the folder would.
+  await rm(app.userData, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
   await ui.launchAction(/Essayer la démo/).click();
   await ui.switchVault();
   await app.answerFolderDialog(await app.folder('Parent'));

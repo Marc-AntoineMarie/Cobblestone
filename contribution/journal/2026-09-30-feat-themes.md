@@ -38,6 +38,7 @@ Rien.
 
 - Unitaires : `themes.test.ts` (thèmes, contraste, jetons, fichiers de thème), `appearance.test.ts`, `snippets.test.ts`, import des extraits d'Obsidian dans `settings.test.ts`.
 - Recette : 24.1 mise à jour ; 24.22 et 25.10 à 25.27 ajoutées, toutes automatisées sur le bureau et le web (25.26 : bureau seul).
+- Tests de la recette rendus robustes sous la charge : l'aperçu au survol est redemandé si le lien a été redessiné sous la souris ; le dossier de l'app est supprimé en réessayant pendant qu'Electron écrit son cache. L'outil du canvas lit l'encre `--accent`.
 
 ## Fichiers
 

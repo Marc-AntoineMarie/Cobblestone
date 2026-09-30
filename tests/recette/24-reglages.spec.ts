@@ -329,8 +329,7 @@ recette('24.21', async ({ app, ui }) => {
   const embed = ui.editor.locator('.cm-embed-note');
   expect(await embed.evaluate((el) => el.scrollWidth <= el.clientWidth + 1)).toBe(true);
   await ui.mode('Lire');
-  await ui.reading.locator('a.internal-link', { hasText: 'Réunion' }).hover();
-  await expect(ui.preview).toBeVisible();
+  await ui.hoverForPreview(ui.reading.locator('a.internal-link', { hasText: 'Réunion' }));
   const body = ui.preview.locator('.hover-preview-body');
   expect(await body.evaluate((el) => el.scrollWidth <= el.clientWidth + 1)).toBe(true);
   await ui.page.mouse.move(5, 5);

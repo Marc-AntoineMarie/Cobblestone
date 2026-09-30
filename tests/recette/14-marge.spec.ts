@@ -99,8 +99,7 @@ recette('14.10', async ({ app, ui }) => {
   const out = ui.margin.locator('ul.outgoing');
   await expect(out.locator('.margin-link:not(.is-unresolved)')).toHaveText(['Idées']);
   await expect(out.locator('li', { hasText: 'Pas encore' })).toContainText('pas encore créée');
-  await out.locator('.margin-link', { hasText: 'Idées' }).hover();
-  await expect(ui.preview).toBeVisible();
+  await ui.hoverForPreview(out.locator('.margin-link', { hasText: 'Idées' }));
   await ui.page.mouse.move(5, 5);
   await out.locator('.margin-link.is-unresolved').click();
   await expect.poll(() => app.exists('Pas encore.md')).toBe(true);
