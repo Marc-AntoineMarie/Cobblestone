@@ -13,3 +13,8 @@ coverage/
 .impeccable/questions/
 .impeccable/mocks/
 release/
+
+# Recette automatique
+test-results/
+playwright-report/
+.vitest/

@@ -76,14 +76,25 @@ Portées courantes : `core`, `node`, `app`, `editor`, `search`, `graph`, `settin
 ## 6. Vérifications
 
 ```bash
-npm run check   # formatage, types, tests unitaires, format de la recette, journal
-npm run e2e     # parcours complets sur l'app de bureau et l'app web
+npm run check   # formatage, types, tests unitaires, recette à jour, journal
+npm run e2e     # la recette automatique, sur l'app de bureau et l'app web
 ```
 
-- `npm run check` passe avant chaque commit ; `npm run e2e` avant chaque fusion qui touche un
-  parcours de l'app, avec un scénario ajouté dans `scripts/e2e-*.mjs` pour chaque nouveau parcours.
-- Chaque fonctionnalité ajoute ses lignes à [docs/RECETTE.md](../docs/RECETTE.md), en fin de section
-  pour ne pas décaler les numéros déjà testés.
+- `npm run check` passe avant chaque commit ; `npm run e2e` avant chaque fusion qui touche l'app.
+- **La recette suit chaque changement.** Chaque ligne de [docs/RECETTE.md](../docs/RECETTE.md) a son
+  test dans `tests/recette/` : un fichier par section, un test par ligne, qui porte son numéro.
+  - Une fonctionnalité ajoute ses lignes en fin de section (pour ne pas décaler les numéros déjà
+    testés), et leurs tests dans la même branche.
+  - Un comportement qui change met à jour sa ligne et son test.
+  - Ce qu'une machine ne peut pas vérifier s'écrit `recette.manuel('N.M', 'raison')` ; ce que seule
+    la CI vérifie, `recette.ci('N.M', 'ce qu’elle fait')`.
+  - `npm run recette -- sync` recopie ensuite le statut de chaque ligne dans RECETTE.md.
+    `npm run check` refuse une ligne sans test et un statut pas à jour.
+- Un bug trouvé par la recette se corrige dans son propre commit `fix`, qui cite le numéro de la
+  ligne ; le test de la ligne est son test.
+- Après `npm run e2e`, l'état de chaque ligne est dans `test-results/recette.md`, et chaque test en
+  échec garde sa trace (`npx playwright show-trace …`). Avant une version, il ne reste à faire à la
+  main que les lignes `manuel`.
 - La CI refait tout sur chaque push ; une branche rouge ne se fusionne pas.
 
 ## 7. Journal

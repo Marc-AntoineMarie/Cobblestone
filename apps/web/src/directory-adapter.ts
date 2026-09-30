@@ -55,7 +55,8 @@ export class DirectoryHandleAdapter implements VaultAdapter {
           children.push(
             (handle as FileSystemFileHandle).getFile().then(
               (file) => void out.push({ path, type: 'file', size: file.size, ctime: 0, mtime: file.lastModified }),
-              () => undefined,
+              // Unreadable for now (permissions, locked): still listed, opening it says why.
+              () => void out.push({ path, type: 'file', size: 0, ctime: 0, mtime: 0 }),
             ),
           );
         }

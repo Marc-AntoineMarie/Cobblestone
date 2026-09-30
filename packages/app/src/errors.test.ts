@@ -25,6 +25,11 @@ describe('describeError', () => {
     expect(describeError(ipc('vaults:relocate', 'cobblestone:vault-parent'))).toMatch(/qui contenait le coffre/);
   });
 
+  it('reads the codes of the web app', () => {
+    expect(describeError(new Error('cobblestone:permission-denied'))).toBe('l’accès à ce dossier n’a pas été accordé.');
+    expect(isVaultMissing(new Error('cobblestone:vault-missing'))).toBe(true);
+  });
+
   it('reads browser errors', () => {
     const error = new DOMException('A requested file or directory could not be found', 'NotFoundError');
     expect(isVaultMissing(error)).toBe(true);

@@ -55,6 +55,17 @@ export function facingSide(node: Rect, toward: Point): CanvasSide {
   return dy > 0 ? 'bottom' : 'top';
 }
 
+/**
+ * The side an arrow dropped at `point` enters: the side it was dropped near, or,
+ * dropped in the middle of the card, the side facing the card it comes from.
+ */
+export function dropSide(node: Rect, point: Point, from: Rect): CanvasSide {
+  const dx = (point.x - (node.x + node.width / 2)) / Math.max(node.width, 1);
+  const dy = (point.y - (node.y + node.height / 2)) / Math.max(node.height, 1);
+  if (Math.abs(dx) < 0.25 && Math.abs(dy) < 0.25) return facingSide(node, center(from));
+  return facingSide(node, point);
+}
+
 export function center(node: Rect): Point {
   return { x: node.x + node.width / 2, y: node.y + node.height / 2 };
 }

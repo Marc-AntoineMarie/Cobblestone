@@ -294,7 +294,8 @@ function fences(md: Md) {
   md.renderer.rules.fence = (tokens, idx, options, env, self) => {
     const token = tokens[idx]!;
     const lang = token.info.trim().split(/\s+/)[0]?.toLowerCase();
-    if (lang === 'mermaid') return `<div class="mermaid-diagram" data-source="${md.utils.escapeHtml(token.content)}"></div>`;
+    // Encoded: the sanitizer drops attributes holding "-->", and nearly every diagram has arrows.
+    if (lang === 'mermaid') return `<div class="mermaid-diagram" data-source="${encodeURIComponent(token.content)}"></div>`;
     return base(tokens, idx, options, env, self);
   };
 }

@@ -166,28 +166,22 @@ export class Session {
         this.recent = this.recent.filter((p) => !isInside(p, path));
       }),
     );
-    let saveTimer: ReturnType<typeof setTimeout> | undefined;
+    // Layout, bookmarks and settings are saved a moment after they change, and
+    // right away when the vault closes or the window goes away.
+    const saveWorkspace = this.later(500, () => platform.storage.set(WORKSPACE_KEY(entry.id), this.workspace.getState()));
+    const saveBookmarksSoon = this.later(300, () => saveBookmarks(vault.adapter, this.bookmarks.getState()));
+    const saveSettingsSoon = this.later(300, () => saveVaultSettings(vault.adapter, this.settings.getState()));
     this.disposers.push(
-      this.workspace.subscribe((state) => {
-        clearTimeout(saveTimer);
-        saveTimer = setTimeout(() => void platform.storage.set(WORKSPACE_KEY(entry.id), state), 500);
-      }),
-    );
-    let bookmarksTimer: ReturnType<typeof setTimeout> | undefined;
-    this.disposers.push(
-      this.bookmarks.subscribe((items) => {
-        clearTimeout(bookmarksTimer);
-        bookmarksTimer = setTimeout(() => void saveBookmarks(vault.adapter, items).catch(() => undefined), 300);
-      }),
-    );
-    let settingsTimer: ReturnType<typeof setTimeout> | undefined;
-    this.disposers.push(
+      this.workspace.subscribe(saveWorkspace),
+      this.bookmarks.subscribe(saveBookmarksSoon),
       this.settings.subscribe((next) => {
         vault.setOptions({ trash: next.trash, updateLinksOnRename: next.updateLinks });
-        clearTimeout(settingsTimer);
-        settingsTimer = setTimeout(() => void saveVaultSettings(vault.adapter, next).catch(() => undefined), 300);
+        saveSettingsSoon();
       }),
     );
+    const flush = () => this.flushSaves();
+    window.addEventListener('pagehide', flush);
+    this.disposers.push(() => window.removeEventListener('pagehide', flush));
   }
 
   static async open(
@@ -209,6 +203,7 @@ export class Session {
     const bookmarks = await loadBookmarks(adapter);
     if (bookmarks.imported && entry.kind !== 'demo') await saveBookmarks(adapter, bookmarks.items).catch(() => undefined);
     const session = new Session(platform, entry, vault, settings, workspace, bookmarks.items);
+    await session.restoreUnsaved();
     session.recent = ((await platform.storage.get<string[]>(RECENT_KEY(entry.id))) ?? []).filter((p) => vault.getFile(p));
     if (entry.kind === 'demo' && (activeTab(workspace)?.view.type ?? 'empty') === 'empty') {
       const welcome = vault.getMarkdownFiles().find((f) => /^(Welcome|Bienvenue)\.md$/.test(f.path));
@@ -217,11 +212,105 @@ export class Session {
     return session;
   }
 
+  /** Saves pending right now: writes put off by `later`. */
+  private pendingSaves = new Map<() => Promise<unknown>, ReturnType<typeof setTimeout>>();
+
+  /** A save that runs `delay` ms after the last call, or at flushSaves(). */
+  private later(delay: number, save: () => Promise<unknown>): () => void {
+    return () => {
+      clearTimeout(this.pendingSaves.get(save));
+      this.pendingSaves.set(
+        save,
+        setTimeout(() => {
+          this.pendingSaves.delete(save);
+          void save().catch(() => undefined);
+        }, delay),
+      );
+    };
+  }
+
+  /** Runs every pending save now (the window closes, the vault switches). */
+  flushSaves() {
+    for (const [save, timer] of this.pendingSaves) {
+      clearTimeout(timer);
+      void save().catch(() => undefined);
+    }
+    this.pendingSaves.clear();
+  }
+
   dispose() {
+    this.flushSaves();
     for (const dispose of this.disposers) dispose();
     for (const url of this.resourceUrls.values()) URL.revokeObjectURL(url);
     this.resourceUrls.clear();
     this.vault.close();
+  }
+
+  // --------------------------------------------------------------- saving notes
+
+  private get unsavedKey() {
+    return `cobblestone:unsaved:${this.entry.id}`;
+  }
+
+  private readUnsaved(): Record<string, { text: string; at: number }> {
+    try {
+      return JSON.parse(localStorage.getItem(this.unsavedKey) ?? '{}') as Record<string, { text: string; at: number }>;
+    } catch {
+      return {};
+    }
+  }
+
+  private writeUnsaved(entries: Record<string, { text: string; at: number }>) {
+    try {
+      if (Object.keys(entries).length) localStorage.setItem(this.unsavedKey, JSON.stringify(entries));
+      else localStorage.removeItem(this.unsavedKey);
+    } catch {
+      // Full or blocked storage: the regular save still runs.
+    }
+  }
+
+  /**
+   * Saves a note's text. When the page is going away (`leaving`), the write may not
+   * finish before it does (browser storage writes are asynchronous); when a write
+   * fails, the text would be lost. In both cases it is kept, synchronously, in local
+   * storage until a write succeeds, and written again when the vault next opens.
+   */
+  saveText(path: string, text: string, leaving = false) {
+    if (!this.vault.getFile(path)) return;
+    const keep = () => {
+      this.keptUnsaved = true;
+      this.writeUnsaved({ ...this.readUnsaved(), [path]: { text, at: Date.now() } });
+    };
+    if (leaving) keep();
+    this.vault.modify(path, text).then(
+      () => {
+        if (!this.keptUnsaved) return;
+        const entries = this.readUnsaved();
+        if (entries[path]?.text === text) delete entries[path];
+        this.writeUnsaved(entries);
+      },
+      (error: unknown) => {
+        // The write failed (the vault's folder vanished, the disk refused): the text is kept, and
+        // written again when the vault next opens, here or at its new place.
+        keep();
+        this.fail(error);
+      },
+    );
+  }
+
+  /** Some text is kept in local storage, waiting to be written. */
+  private keptUnsaved = false;
+
+  /** Writes the text kept by saveText when the page closed before the write finished. */
+  private async restoreUnsaved() {
+    const entries = this.readUnsaved();
+    for (const [path, { text, at }] of Object.entries(entries)) {
+      const file = this.vault.getFile(path);
+      // Skip notes changed since by someone else (another program, another device).
+      if (!file || file.stat.mtime > at + 3000) continue;
+      if ((await this.vault.read(path).catch(() => text)) !== text) await this.vault.modify(path, text).catch(() => undefined);
+    }
+    this.writeUnsaved({});
   }
 
   // --------------------------------------------------------------- feedback
@@ -295,8 +384,11 @@ export class Session {
 
   openBookmark(bookmark: Bookmark, target: OpenTarget = 'current') {
     if (bookmark.type === 'file') this.openPath(bookmark.path, target, bookmark.subpath);
-    else if (bookmark.type === 'folder') this.revealInTree(bookmark.path);
-    else if (bookmark.type === 'search') this.ui.setState({ railOpen: true, railQuery: bookmark.query });
+    else if (bookmark.type === 'folder') {
+      // A bookmarked folder is shown open, its notes in view.
+      this.revealInTree(bookmark.path);
+      this.ui.setState((s) => ({ expanded: { ...s.expanded, [bookmark.path]: true } }));
+    } else if (bookmark.type === 'search') this.ui.setState({ railOpen: true, railQuery: bookmark.query });
   }
 
   /** Lists the notes carrying a tag in the rail. */

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { CanvasNode } from '@cobblestone/core';
-import { anchor, bounds, edgeEnds, facingSide, fitViewport, nodesInside, snap, toWorld, zoomAt } from './geometry';
+import { anchor, bounds, dropSide, edgeEnds, facingSide, fitViewport, nodesInside, snap, toWorld, zoomAt } from './geometry';
 
 const box = { x: 0, y: 0, width: 200, height: 100 };
 
@@ -17,6 +17,14 @@ describe('canvas geometry', () => {
     expect(facingSide(box, { x: 100, y: -300 })).toBe('top');
     const ends = edgeEnds({ id: 'e', fromNode: 'a', toNode: 'b' }, box, { x: 400, y: 0, width: 100, height: 100 });
     expect([ends.fromSide, ends.toSide]).toEqual(['right', 'left']);
+  });
+
+  it('enters an arrow by the side it was dropped near, or facing its start when dropped in the middle', () => {
+    const below = { x: -400, y: 300, width: 200, height: 100 };
+    expect(dropSide(box, { x: 10, y: 50 }, below)).toBe('left');
+    expect(dropSide(box, { x: 100, y: 95 }, below)).toBe('bottom');
+    expect(dropSide(box, { x: 100, y: 50 }, below)).toBe('bottom');
+    expect(dropSide(box, { x: 110, y: 45 }, { x: 600, y: 0, width: 200, height: 100 })).toBe('right');
   });
 
   it('fits content in the screen and zooms around the pointer', () => {

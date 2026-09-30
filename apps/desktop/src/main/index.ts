@@ -68,6 +68,28 @@ async function rememberVault(location: string, id?: string): Promise<DesktopVaul
 /** New places found for moved vaults: the renderer may only follow these, or a folder the user picks. */
 const foundMoves = new Map<string, string>();
 
+/**
+ * Work that must end before the app quits: the last save of a note or of the
+ * layout often arrives while the window is closing.
+ */
+const unfinished = new Set<Promise<unknown>>();
+
+function finishBeforeQuit<T>(work: Promise<T>): Promise<T> {
+  unfinished.add(work);
+  const done = () => unfinished.delete(work);
+  work.then(done, done);
+  return work;
+}
+
+let waitedForWork = false;
+app.on('will-quit', (event) => {
+  if (waitedForWork || unfinished.size === 0) return;
+  waitedForWork = true;
+  event.preventDefault();
+  const deadline = new Promise((resolve) => setTimeout(resolve, 5000));
+  void Promise.race([Promise.allSettled([...unfinished]), deadline]).then(() => app.quit());
+});
+
 // ------------------------------------------------------------- vault access
 
 /** Vaults opened by each window: the renderer can only reach these folders. */
@@ -165,7 +187,7 @@ ipcMain.handle('vaults:open', async (event, id: string) => {
 ipcMain.handle('fs:call', async (event, vaultId: string, method: FsMethod, args: unknown[]) => {
   if (!FS_METHODS.includes(method)) throw new Error(`Unsupported method ${method}`);
   const adapter = adapterFor(event, vaultId);
-  return (adapter[method] as (...a: unknown[]) => Promise<unknown>)(...args);
+  return finishBeforeQuit((adapter[method] as (...a: unknown[]) => Promise<unknown>)(...args));
 });
 
 // Each watch has its own token: when a vault reopens, the new session's watch
@@ -189,7 +211,7 @@ ipcMain.handle('fs:unwatch', (event, vaultId: string, token: string) => {
 ipcMain.handle('storage:get', async (_event, key: string) => (await storage.read())[key]);
 
 ipcMain.handle('storage:set', async (_event, key: string, value: unknown) => {
-  await storage.update((store) => ({ ...store, [key]: value }));
+  await finishBeforeQuit(storage.update((store) => ({ ...store, [key]: value })));
 });
 
 // Only paths inside a vault this window opened: the renderer cannot point anywhere else.

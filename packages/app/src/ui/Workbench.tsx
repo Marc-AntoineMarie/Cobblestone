@@ -33,10 +33,11 @@ export function Workbench({ onSwitchVault }: { onSwitchVault: () => void }) {
     [session, onSwitchVault, preferences, update],
   );
 
-  // Narrow windows start with the drawers closed.
+  // Narrow windows start with the drawers closed; below 1180 px the margin is a drawer, closed until asked for.
   useEffect(() => {
     if (narrow) session.ui.setState({ railOpen: false, marginOpen: false });
-  }, [narrow, session]);
+    else if (!wide) session.ui.setState({ marginOpen: false });
+  }, [narrow, wide, session]);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {

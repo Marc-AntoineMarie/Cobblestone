@@ -235,21 +235,15 @@ function renderEmbeddedNote(embed: HTMLElement, path: string, subpath: string, c
 let mermaidLoader: Promise<typeof import('mermaid').default> | null = null;
 
 async function renderDiagrams(elements: HTMLElement[]) {
-  mermaidLoader ??= import('mermaid').then((m) => {
-    const night = document.documentElement.dataset.paper === 'night';
-    m.default.initialize({
-      startOnLoad: false,
-      securityLevel: 'strict',
-      theme: night ? 'dark' : 'neutral',
-      fontFamily: 'inherit',
-    });
-    return m.default;
-  });
+  mermaidLoader ??= import('mermaid').then((m) => m.default);
   const mermaid = await mermaidLoader;
+  // Set on every drawing: the diagrams follow the paper, day or night.
+  const night = document.documentElement.dataset.paper === 'night';
+  mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', theme: night ? 'dark' : 'neutral', fontFamily: 'inherit' });
   for (const el of elements) {
     try {
       const id = `mermaid-${Math.random().toString(36).slice(2)}`;
-      const { svg } = await mermaid.render(id, el.dataset.source ?? '');
+      const { svg } = await mermaid.render(id, decodeURIComponent(el.dataset.source ?? ''));
       el.innerHTML = DOMPurify.sanitize(svg, { USE_PROFILES: { svg: true, svgFilters: true } });
     } catch (error) {
       el.textContent = error instanceof Error ? error.message : String(error);

@@ -7,10 +7,10 @@ import { CanvasCard } from './CanvasCard';
 import {
   arrowHead,
   bounds,
+  dropSide,
   edgeEnds,
   edgeMidpoint,
   edgePath,
-  facingSide,
   fitViewport,
   GRID,
   intersects,
@@ -87,7 +87,9 @@ export function CanvasView({ path, visible }: { path: string; visible: boolean }
     void session.vault.read(path).then((text) => !cancelled && load(text));
     // Another app or device changed the file: take its version unless we are in the middle of a gesture.
     const off = session.vault.on('modify', (file, content) => {
-      if (file.path === path && content !== null && !gesture.current) load(content);
+      if (file.path !== path || gesture.current) return;
+      if (content !== null) load(content);
+      else void session.vault.read(path).then((text) => !cancelled && load(text));
     });
     return () => {
       cancelled = true;
@@ -144,9 +146,16 @@ export function CanvasView({ path, visible }: { path: string; visible: boolean }
 
   // ------------------------------------------------------------ gestures
 
-  const startGesture = (event: ReactPointerEvent, next: Gesture) => {
+  const startGesture = (next: Gesture) => {
     gesture.current = next;
-    root.current?.setPointerCapture(event.pointerId);
+  };
+
+  /**
+   * Keeps the pointer once a drag is under way. Not before: a captured pointer
+   * sends clicks and double-clicks to the sheet instead of the card or link under it.
+   */
+  const capture = (event: ReactPointerEvent) => {
+    if (!root.current?.hasPointerCapture(event.pointerId)) root.current?.setPointerCapture(event.pointerId);
   };
 
   const onBackgroundDown = (event: ReactPointerEvent) => {
@@ -154,10 +163,10 @@ export function CanvasView({ path, visible }: { path: string; visible: boolean }
     root.current?.focus();
     setEditingEdge(null);
     if (event.shiftKey && event.button === 0) {
-      startGesture(event, { kind: 'band', start: worldPoint(event), additive: true });
+      startGesture({ kind: 'band', start: worldPoint(event), additive: true });
       return;
     }
-    startGesture(event, { kind: 'pan', start: screenPoint(event), view: viewRef.current, moved: false });
+    startGesture({ kind: 'pan', start: screenPoint(event), view: viewRef.current, moved: false });
   };
 
   const onNodeDown = (event: ReactPointerEvent, node: CanvasNode) => {
@@ -175,15 +184,15 @@ export function CanvasView({ path, visible }: { path: string; visible: boolean }
       ids = new Set([node.id]);
       setSelection({ nodes: ids, edges: new Set() });
     }
-    if (data && ids.has(node.id)) startGesture(event, { kind: 'move', start: worldPoint(event), data, ids, moved: false });
+    if (data && ids.has(node.id)) startGesture({ kind: 'move', start: worldPoint(event), data, ids, moved: false });
   };
 
   const onResizeStart = (event: ReactPointerEvent, node: CanvasNode) => {
-    if (data) startGesture(event, { kind: 'resize', start: worldPoint(event), data, node });
+    if (data) startGesture({ kind: 'resize', start: worldPoint(event), data, node });
   };
 
   const onConnectStart = (event: ReactPointerEvent, node: CanvasNode, side: CanvasSide) => {
-    startGesture(event, { kind: 'connect', from: node, side });
+    startGesture({ kind: 'connect', from: node, side });
     const start = { x: node.x, y: node.y, width: node.width, height: node.height };
     const from = edgeEnds({ id: '', fromNode: '', toNode: '', fromSide: side, toSide: side }, start, start).start;
     setWire({ from, side, to: worldPoint(event) });
@@ -197,6 +206,7 @@ export function CanvasView({ path, visible }: { path: string; visible: boolean }
       const dx = p.x - g.start.x;
       const dy = p.y - g.start.y;
       if (Math.abs(dx) + Math.abs(dy) > 2) g.moved = true;
+      if (g.moved) capture(event);
       setView({ ...g.view, x: g.view.x + dx, y: g.view.y + dy });
     } else if (g.kind === 'move') {
       const p = worldPoint(event);
@@ -204,11 +214,14 @@ export function CanvasView({ path, visible }: { path: string; visible: boolean }
       const dy = p.y - g.start.y;
       if (!g.moved && Math.abs(dx) + Math.abs(dy) < 3 / viewRef.current.zoom) return;
       g.moved = true;
+      capture(event);
       commit(moveNodes(g.data, g.ids, dx, dy, !event.altKey), false);
     } else if (g.kind === 'resize') {
+      capture(event);
       const p = worldPoint(event);
       commit(resizeNode(g.data, g.node.id, g.node.width + p.x - g.start.x, g.node.height + p.y - g.start.y), false);
     } else if (g.kind === 'band') {
+      capture(event);
       const p = worldPoint(event);
       setBand({
         x: Math.min(p.x, g.start.x),
@@ -217,6 +230,7 @@ export function CanvasView({ path, visible }: { path: string; visible: boolean }
         height: Math.abs(p.y - g.start.y),
       });
     } else if (g.kind === 'connect') {
+      capture(event);
       setWire((w) => (w ? { ...w, to: worldPoint(event) } : w));
     }
   };
@@ -238,7 +252,8 @@ export function CanvasView({ path, visible }: { path: string; visible: boolean }
       setWire(null);
       const target = document.elementFromPoint(event.clientX, event.clientY)?.closest<HTMLElement>('[data-node-id]');
       const to = target ? nodeById.get(target.dataset.nodeId!) : undefined;
-      if (to && data && to.id !== g.from.id) commit(addEdge(data, g.from.id, g.side, to.id, facingSide(to, worldPoint(event))));
+      if (to && data && to.id !== g.from.id)
+        commit(addEdge(data, g.from.id, g.side, to.id, dropSide(to, worldPoint(event), g.from)));
     }
   };
 
@@ -246,8 +261,15 @@ export function CanvasView({ path, visible }: { path: string; visible: boolean }
     // Let scrollable card contents scroll; everything else pans, and Ctrl/pinch zooms.
     const body = (event.target as HTMLElement).closest('.canvas-body');
     if (body && !event.ctrlKey && body.scrollHeight > body.clientHeight) return;
-    if (event.ctrlKey || event.metaKey) setView((v) => zoomAt(v, screenPoint(event), Math.exp(-event.deltaY * 0.01)));
-    else setView((v) => ({ ...v, x: v.x - event.deltaX, y: v.y - event.deltaY }));
+    if (event.ctrlKey || event.metaKey) {
+      setView((v) => zoomAt(v, screenPoint(event), Math.exp(-event.deltaY * 0.01)));
+      return;
+    }
+    // Shift scrolls sideways; some systems already turn the wheel for us, others leave it to the page.
+    const sideways = event.shiftKey && event.deltaX === 0;
+    const dx = sideways ? event.deltaY : event.deltaX;
+    const dy = sideways ? 0 : event.deltaY;
+    setView((v) => ({ ...v, x: v.x - dx, y: v.y - dy }));
   };
 
   // Wheel events must be cancelable (React's are passive).

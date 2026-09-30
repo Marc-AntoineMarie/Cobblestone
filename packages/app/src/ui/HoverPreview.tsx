@@ -61,14 +61,22 @@ export function HoverPreview() {
     };
   }, [session, preview, path, subpath, target]);
 
-  // Below the link when there is room, otherwise above; always inside the window.
+  // Below the link when there is room, otherwise above; always inside the window. Placed again
+  // whenever its size changes: the note arrives after the preview opens.
   useLayoutEffect(() => {
-    if (!preview || !sheet.current) return;
-    const height = Math.min(sheet.current.offsetHeight || MAX_HEIGHT, MAX_HEIGHT + 44);
-    const below = preview.rect.bottom + 8;
-    const top = below + height < window.innerHeight - 8 ? below : Math.max(8, preview.rect.top - height - 8);
-    const left = Math.max(8, Math.min(preview.rect.left, window.innerWidth - WIDTH - 8));
-    setPosition({ left, top });
+    const el = sheet.current;
+    if (!preview || !el) return;
+    const place = () => {
+      const height = Math.min(el.offsetHeight || MAX_HEIGHT, MAX_HEIGHT + 44);
+      const below = preview.rect.bottom + 8;
+      const top = below + height <= window.innerHeight - 8 ? below : Math.max(8, preview.rect.top - height - 8);
+      const left = Math.max(8, Math.min(preview.rect.left, window.innerWidth - WIDTH - 8));
+      setPosition((current) => (current.left === left && current.top === top ? current : { left, top }));
+    };
+    place();
+    const observer = new ResizeObserver(place);
+    observer.observe(el);
+    return () => observer.disconnect();
   }, [preview]);
 
   useEffect(() => {

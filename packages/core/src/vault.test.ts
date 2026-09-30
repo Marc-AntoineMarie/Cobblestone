@@ -52,6 +52,24 @@ describe('LinkResolver', () => {
 });
 
 describe('Vault', () => {
+  it('does not take a note it cannot read for an empty one', async () => {
+    const adapter = new MemoryAdapter('Test', { 'Locked.md': 'précieux', 'Open.md': 'ok' });
+    const read = adapter.read.bind(adapter);
+    adapter.read = (path: string) => (path === 'Locked.md' ? Promise.reject(new Error('EACCES')) : read(path));
+    const vault = new Vault(adapter);
+    await vault.load();
+    expect(vault.getFile('Locked.md')).toBeDefined();
+    expect(vault.cachedRead('Locked.md')).toBeUndefined();
+    await expect(vault.read('Locked.md')).rejects.toThrow('EACCES');
+    expect(vault.cachedRead('Open.md')).toBe('ok');
+  });
+
+  it('gives links the new case of a note renamed from "note" to "Note"', async () => {
+    const { vault } = await vaultOf({ 'idea.md': 'x', 'A.md': 'See [[idea]] and [[idea|alias]].' });
+    await vault.rename('idea.md', 'Idea.md');
+    expect(await vault.read('A.md')).toBe('See [[Idea]] and [[Idea|alias]].');
+  });
+
   it('reports its progress and can be stopped while loading', async () => {
     const files = Object.fromEntries(Array.from({ length: 150 }, (_, i) => [`N${i}.md`, `note ${i}`]));
     const progress: number[] = [];
@@ -168,6 +186,17 @@ describe('Vault', () => {
 
     expect(events).toEqual(['modify A.md', 'create B.md', 'rename B.md -> C.md', 'delete C.md']);
     expect(vault.cache.getUnresolvedLinks('A.md').has('B')).toBe(true);
+  });
+
+  it('announces a canvas changed by another program and reads it afresh', async () => {
+    const { vault, adapter } = await vaultOf({ 'Board.canvas': '{"nodes":[],"edges":[]}' });
+    expect(await vault.read('Board.canvas')).toBe('{"nodes":[],"edges":[]}');
+    const events: (string | null)[] = [];
+    vault.on('modify', (f, content) => events.push(`${f.path} ${content}`));
+    await adapter.write('Board.canvas', '{"nodes":[{"id":"a"}],"edges":[]}');
+    await vault.settled();
+    expect(events).toEqual(['Board.canvas null']);
+    expect(await vault.read('Board.canvas')).toBe('{"nodes":[{"id":"a"}],"edges":[]}');
   });
 
   it('applies option changes while open', async () => {

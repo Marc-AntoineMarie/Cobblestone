@@ -120,11 +120,13 @@ function buildInline(view: EditorView): DecorationSet {
             decorations.push(mark('cm-block-id').range(node.from, node.to));
             return;
           case 'InlineMath': {
-            if (isActive(node.from)) {
+            if (activeRange(node.from, node.to)) {
               decorations.push(mark('cm-math-source').range(node.from, node.to));
               return false;
             }
             const raw = state.doc.sliceString(node.from, node.to);
+            // "$$ … $$" over several lines of a paragraph: drawn by the block field, which alone may replace line breaks.
+            if (raw.includes('\n')) return false;
             const display = raw.startsWith('$$');
             const tex = display ? raw.slice(2, -2) : raw.slice(1, -1);
             decorations.push(Decoration.replace({ widget: new MathWidget(tex, false) }).range(node.from, node.to));
@@ -263,6 +265,8 @@ function decorateWikiLink(node: SyntaxNodeRef, state: EditorState, active: boole
 function decorateLink(node: SyntaxNodeRef, state: EditorState, active: boolean, out: Range<Decoration>[]) {
   const marks = node.node.getChildren('LinkMark');
   const url = node.node.getChild('URL');
+  // "[text]" alone is plain text (a reference link needs a definition, and vaults have none).
+  if (!url && !node.node.getChild('LinkLabel')) return;
   const href = url ? state.doc.sliceString(url.from, url.to).replace(/^<|>$/g, '') : '';
   const external = /^[a-z][a-z0-9+.-]*:/i.test(href) || href.startsWith('//');
   let target = href;
@@ -358,6 +362,15 @@ function buildBlocks(state: EditorState): DecorationSet {
         decorations.push(Decoration.replace({ widget: new PropertiesWidget(yaml), block: true }).range(node.from, node.to));
         return false;
       }
+      if (node.name === 'InlineMath' && state.doc.sliceString(node.from, node.to).includes('\n')) {
+        if (touched(node.from, node.to)) return false;
+        const tex = state.doc
+          .sliceString(node.from, node.to)
+          .replace(/^\$\$?/, '')
+          .replace(/\$?\$$/, '');
+        decorations.push(Decoration.replace({ widget: new MathWidget(tex, true) }).range(node.from, node.to));
+        return false;
+      }
       if (node.name === 'MathBlock') {
         if (touched(node.from, node.to)) return false;
         const raw = state.doc.sliceString(node.from, node.to).trim();
@@ -446,12 +459,13 @@ export function livePreview(): Extension {
     inlinePreview,
     blockPreview,
     linkClicks,
+    linkHovers,
     clickBelow,
     EditorView.editorAttributes.of({ class: 'cm-live-preview' }),
   ];
 }
 
-/** Source mode still sizes headings and follows links with Ctrl/Cmd-click. */
+/** Source mode still sizes headings, follows links with Ctrl/Cmd-click and previews them with Ctrl/Cmd held. */
 export function sourceDecorations(): Extension {
-  return [linkClicks];
+  return [linkClicks, linkHovers];
 }

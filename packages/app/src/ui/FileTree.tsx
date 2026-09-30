@@ -167,6 +167,8 @@ export function FileTree() {
 
   const onKeyDown = (event: KeyboardEvent) => {
     if (renaming) return;
+    // Alt+arrows and the like are app shortcuts (back, forward); only Ctrl+Enter is the tree's.
+    if (event.altKey || event.metaKey || (event.ctrlKey && event.key !== 'Enter')) return;
     const index = rows.findIndex((r) => r.path === focused);
     const row = rows[index];
     const move = (i: number) => {
@@ -217,9 +219,13 @@ export function FileTree() {
     const top = index * ROW_HEIGHT;
     if (top < el.scrollTop) el.scrollTop = top;
     else if (top + ROW_HEIGHT > el.scrollTop + el.clientHeight) el.scrollTop = top + ROW_HEIGHT - el.clientHeight;
-    // Move keyboard focus only while the tree has it: revealing a file must not steal it from the editor.
-    if (!el.contains(document.activeElement)) return;
-    requestAnimationFrame(() => el.querySelector<HTMLElement>(`[data-path="${CSS.escape(focused)}"]`)?.focus());
+    // Move keyboard focus only while a row of the tree has it: revealing a file must not take it from
+    // the editor, nor from the rename field or a context menu opened meanwhile.
+    const rowHasFocus = () => document.activeElement?.matches('.tree-row') === true && el.contains(document.activeElement);
+    if (!rowHasFocus()) return;
+    requestAnimationFrame(() => {
+      if (rowHasFocus()) el.querySelector<HTMLElement>(`[data-path="${CSS.escape(focused)}"]`)?.focus();
+    });
   }, [focused, rows]);
 
   const onDragStart = (event: DragEvent, row: Row) => {

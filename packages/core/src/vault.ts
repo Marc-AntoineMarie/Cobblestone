@@ -95,11 +95,22 @@ export class Vault extends Emitter<VaultEvents> {
     onProgress?.(0, notes.length);
     for (let i = 0; i < notes.length; i += 64) {
       const batch = notes.slice(i, i + 64);
-      const texts = await Promise.all(batch.map((f) => this.adapter.read(f.path).catch(() => '')));
+      // A note that cannot be read now (permissions, locked by another program) is not taken for
+      // an empty one: it stays unread, so opening it reports why and nothing is saved over it.
+      const texts = await Promise.all(
+        batch.map((f) =>
+          this.adapter.read(f.path).then(
+            (text) => text,
+            () => null,
+          ),
+        ),
+      );
       signal?.throwIfAborted();
       batch.forEach((file, k) => {
-        this.remember(file.path, texts[k]!);
-        this.cache.setContent(file.path, texts[k]!);
+        const text = texts[k];
+        if (text === null || text === undefined) return;
+        this.remember(file.path, text);
+        this.cache.setContent(file.path, text);
       });
       onProgress?.(i + batch.length, notes.length);
     }
@@ -361,8 +372,10 @@ export class Vault extends Emitter<VaultEvents> {
       const changes: TextEdit[] = [];
       for (const { link, target } of links) {
         const newTarget = mapping.get(target) ?? target;
-        // Leave links that still resolve correctly untouched.
-        if (this.cache.resolve(link.target, source) === newTarget) continue;
+        // Leave links that still resolve correctly untouched, unless the name itself changed
+        // ("note" to "Note": links are case-insensitive but should read like the new name).
+        const renamed = basename(target) !== basename(newTarget);
+        if (!renamed && this.cache.resolve(link.target, source) === newTarget) continue;
         const replacement = retargetLink(link, newTarget, source, this.cache.resolver);
         if (replacement !== null && text.slice(link.from, link.to) === link.raw) {
           changes.push({ from: link.from, to: link.to, insert: replacement });
@@ -446,7 +459,12 @@ export class Vault extends Emitter<VaultEvents> {
         const known = this.files.get(change.path);
         if (!isMarkdown(change.path)) {
           if (!known) this.registerFile(change.path, null, stat.size);
-          else known.stat = stat;
+          else if (known.stat.mtime !== stat.mtime || known.stat.size !== stat.size) {
+            // Attachments and canvases changed by another program: views showing them reload.
+            known.stat = stat;
+            this.contents.delete(change.path);
+            this.emit('modify', known, null);
+          }
           return;
         }
         const text = await this.adapter.read(change.path);

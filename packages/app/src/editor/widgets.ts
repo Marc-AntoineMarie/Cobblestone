@@ -159,8 +159,10 @@ export class EmbedWidget extends WidgetType {
   override get estimatedHeight() {
     return this.block ? 120 : -1;
   }
-  override ignoreEvent() {
-    return false;
+  /** Clicks on the embed's header, links and players are theirs; elsewhere they reveal the source to edit it. */
+  override ignoreEvent(event: Event) {
+    const target = event.target as HTMLElement | null;
+    return !!target?.closest?.('.embed-header, a, button, audio, video, iframe, input');
   }
 }
 

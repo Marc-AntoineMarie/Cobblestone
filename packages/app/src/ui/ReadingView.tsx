@@ -1,11 +1,15 @@
 import { useEffect, useRef } from 'react';
-import { useSession } from './hooks';
+import { useSession, useStore } from './hooks';
+import { usePreferences } from './preferences';
 import { renderNoteInto } from './render-note';
 
 /** The note rendered as a page: links follow, tasks toggle in the file, callouts fold. */
 export function ReadingView({ path, subpath }: { path: string; subpath?: string }) {
   const session = useSession();
   const ref = useRef<HTMLDivElement>(null);
+  // Drawn again when the line break setting or the paper changes (diagrams follow the paper).
+  const lineBreaks = useStore(session.settings, (s) => s.lineBreaks);
+  const { paper } = usePreferences();
 
   useEffect(() => {
     const container = ref.current;
@@ -55,7 +59,7 @@ export function ReadingView({ path, subpath }: { path: string; subpath?: string 
       offResolved();
       offJump();
     };
-  }, [session, path]);
+  }, [session, path, lineBreaks, paper]);
 
   useEffect(() => {
     if (!subpath || !ref.current) return;

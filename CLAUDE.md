@@ -30,16 +30,15 @@ Ces règles s'appliquent strictement à chaque session. La méthode complète es
 
 ## Vérifier avant de dire « c'est fait »
 
-- `npm run check` : formatage (Prettier), types, tests unitaires, format de la recette, journal.
-- `npm run e2e` pour tout ce qui touche un parcours de l'app (ouverture de coffre, édition,
-  renommage, stockage). Les scénarios sont dans `scripts/e2e-*.mjs` : en ajouter pour chaque
-  nouveau parcours.
+- `npm run check` : formatage (Prettier), types, tests unitaires, recette à jour, journal.
+- `npm run e2e` : la recette automatique (Playwright, `tests/recette/`), sur le bureau et le web,
+  avant chaque fusion qui touche l'app. Résultat par ligne dans `test-results/recette.md`.
+- **La recette suit chaque changement** : toute ligne de [docs/RECETTE.md](docs/RECETTE.md) ajoutée
+  (en fin de section) ou modifiée a son test dans le même changement, automatique, ou
+  `recette.manuel` avec la raison ; puis `npm run recette -- sync`. Un bug trouvé par la recette a
+  son commit `fix` qui cite la ligne.
 - Pour l'interface : captures avec `node scripts/shoot.mjs <dossier>` et relecture visuelle.
-- Chaque fonctionnalité ajoute ses cas à [docs/RECETTE.md](docs/RECETTE.md), en fin de section. Les
-  résultats déjà saisis par l'utilisateur sont dans la page « Recette Cobblestone »
-  (https://claude.ai/artifact/FoWbZmBNQuuuJ3ksmWVj1c, collection `results`) : les relire avant de
-  corriger, mais ne plus republier cette page (coûteux) ; l'automatisation de la recette est à décider
-  (voir contribution/IDEES.md).
+- La page « Recette Cobblestone » (artifact) ne sert plus : ne pas la republier.
 
 ## Versions
 

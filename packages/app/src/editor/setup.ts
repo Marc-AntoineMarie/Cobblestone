@@ -1,4 +1,4 @@
-import { autocompletion, closeBrackets, closeBracketsKeymap, completionKeymap } from '@codemirror/autocomplete';
+import { acceptCompletion, autocompletion, closeBrackets, closeBracketsKeymap, completionKeymap } from '@codemirror/autocomplete';
 import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands';
 import { markdown, markdownKeymap, markdownLanguage } from '@codemirror/lang-markdown';
 import { bracketMatching, HighlightStyle, indentOnInput, syntaxHighlighting } from '@codemirror/language';
@@ -128,10 +128,14 @@ export function createEditorState(doc: string, options: EditorOptions): EditorSt
         ...formattingKeys,
         ...closeBracketsKeymap,
         ...completionKeymap,
+        // Tab takes the suggestion too, as in Obsidian (without a list open, it indents).
+        { key: 'Tab', run: acceptCompletion },
         ...markdownKeymap,
-        ...searchKeymap,
+        // Ctrl+G opens the graph, as in Obsidian; F3 and Enter still go to the next match.
+        ...searchKeymap.filter((binding) => binding.key !== 'Mod-g' && binding.key !== 'Shift-Mod-g'),
         ...historyKeymap,
-        ...defaultKeymap,
+        // Ctrl+[ and Ctrl+] are the app's (sidebar, margin); lists indent with Tab.
+        ...defaultKeymap.filter((binding) => binding.key !== 'Mod-[' && binding.key !== 'Mod-]'),
         indentWithTab,
       ]),
       EditorView.updateListener.of((update) => {
