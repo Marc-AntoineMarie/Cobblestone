@@ -1,5 +1,6 @@
 import diff from 'fast-diff';
 import * as Y from 'yjs';
+import type { DeviceInfo, DeviceKind } from './identity';
 
 /*
  * The vault as a CRDT (Yjs): one map of files by a stable id. A text file keeps
@@ -29,6 +30,15 @@ export interface Entry {
   size?: number;
 }
 
+/** A device of the vault, as every device knows it. */
+export interface DeviceRecord {
+  name: string;
+  kind: DeviceKind;
+  publicKey: string;
+  /** Removed devices stay listed, so that none of them is let in again. */
+  removed?: boolean;
+}
+
 export function newId(): string {
   const bytes = crypto.getRandomValues(new Uint8Array(8));
   return [...bytes].map((b) => b.toString(16).padStart(2, '0')).join('');
@@ -36,9 +46,53 @@ export function newId(): string {
 
 export class VaultDoc {
   readonly files: Y.Map<Y.Map<unknown>>;
+  readonly devices: Y.Map<DeviceRecord>;
+  private readonly meta: Y.Map<string>;
 
   constructor(readonly doc: Y.Doc = new Y.Doc()) {
     this.files = doc.getMap('files');
+    this.devices = doc.getMap('devices');
+    this.meta = doc.getMap('meta');
+  }
+
+  /** The vault's sync id, the same on every device; set once, when sync is turned on. */
+  get syncId(): string | undefined {
+    return this.meta.get('id');
+  }
+
+  setSyncId(id: string) {
+    if (!this.meta.has('id')) this.meta.set('id', id);
+  }
+
+  deviceList(): (DeviceInfo & { removed: boolean })[] {
+    return [...this.devices.entries()].map(([id, d]) => ({
+      id,
+      name: d.name,
+      kind: d.kind,
+      publicKey: d.publicKey,
+      removed: d.removed === true,
+    }));
+  }
+
+  /** Lets a device in, again if it had been removed. */
+  addDevice(device: DeviceInfo) {
+    this.devices.set(device.id, { name: device.name, kind: device.kind, publicKey: device.publicKey });
+  }
+
+  renameDevice(id: string, name: string) {
+    const device = this.devices.get(id);
+    if (device && device.name !== name) this.devices.set(id, { ...device, name });
+  }
+
+  removeDevice(id: string) {
+    const device = this.devices.get(id);
+    if (device && !device.removed) this.devices.set(id, { ...device, removed: true });
+  }
+
+  /** Whether this key belongs to a device of the vault that was not removed. */
+  trusts(id: string, publicKey: string): boolean {
+    const device = this.devices.get(id);
+    return device !== undefined && !device.removed && device.publicKey === publicKey;
   }
 
   entry(id: string): Entry | null {
