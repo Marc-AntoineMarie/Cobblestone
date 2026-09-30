@@ -1,6 +1,7 @@
 import type { Completion, CompletionContext, CompletionResult } from '@codemirror/autocomplete';
 import type { EditorView } from '@codemirror/view';
 import { dirname } from '@cobblestone/core';
+import { fuzzyMatch } from '../ui/fuzzy';
 import { editorHost } from './host';
 
 /** Inserts `text` and steps over a "]]" that closeBrackets may already have added. */
@@ -14,6 +15,16 @@ function applyLink(text: string) {
       selection: { anchor: from + insert.length + (closing ? 0 : 2) },
     });
   };
+}
+
+/** Options matching `query`, best first; all of them, in their own order, when it is empty. */
+function inOrder<T extends Completion>(options: T[], query: string, text: (option: T) => string): T[] {
+  if (!query.trim()) return options;
+  return options
+    .map((option) => ({ option, match: fuzzyMatch(query, text(option)) }))
+    .filter((x) => x.match)
+    .sort((a, b) => b.match!.score - a.match!.score)
+    .map((x) => x.option);
 }
 
 export function linkCompletion(context: CompletionContext): CompletionResult | null {
@@ -34,39 +45,30 @@ export function linkCompletion(context: CompletionContext): CompletionResult | n
       const rest = query.slice(hash + 1);
       const from = start + hash + 1;
       if (rest.startsWith('^')) {
-        return {
-          from: from + 1,
-          options: host.blockIds(path).map((b) => ({ label: b.id, detail: b.text.slice(0, 60), apply: applyLink(b.id) })),
-          validFor: /^[A-Za-z0-9-]*$/,
-        };
+        const blocks = host.blockIds(path).map((b) => ({ label: b.id, detail: b.text.slice(0, 60), apply: applyLink(b.id) }));
+        return { from: from + 1, options: inOrder(blocks, rest.slice(1), (b) => `${b.label} ${b.detail}`), filter: false };
       }
-      return {
-        from,
-        options: host.headings(path).map((h) => ({
-          label: h.text,
-          detail: '#'.repeat(h.level),
-          apply: applyLink(h.text),
-        })),
-        validFor: /^[^[\]\n#|]*$/,
-      };
+      // Headings keep the note's order while nothing is typed.
+      const headings = host.headings(path).map((h) => ({ label: h.text, detail: '#'.repeat(h.level), apply: applyLink(h.text) }));
+      return { from, options: inOrder(headings, rest, (h) => h.label), filter: false };
     }
 
-    const options: Completion[] = [];
+    // Our own matching, like the sidebar's: approximate, and blind to case and accents ("reun" finds "Réunion").
+    const scored: { option: Completion; score: number }[] = [];
+    const consider = (label: string, option: Completion, penalty = 0) => {
+      const match = fuzzyMatch(query, label);
+      if (match) scored.push({ option: { ...option, label }, score: match.score - penalty });
+    };
     for (const candidate of host.linkCandidates()) {
       const text = host.linkText(candidate.path);
       const folder = dirname(candidate.path);
-      options.push({ label: candidate.name, detail: folder || undefined, apply: applyLink(text), type: 'note' });
+      consider(candidate.name, { label: '', detail: folder || undefined, apply: applyLink(text), type: 'note' });
       for (const alias of candidate.aliases) {
-        options.push({
-          label: alias,
-          detail: `→ ${candidate.name}`,
-          apply: applyLink(`${text}|${alias}`),
-          type: 'alias',
-          boost: -1,
-        });
+        consider(alias, { label: '', detail: `→ ${candidate.name}`, apply: applyLink(`${text}|${alias}`), type: 'alias' }, 1);
       }
     }
-    return { from: start, options, validFor: /^[^[\]\n#|]*$/ };
+    scored.sort((a, b) => b.score - a.score || a.option.label.localeCompare(b.option.label));
+    return { from: start, options: scored.slice(0, 200).map((s) => s.option), filter: false };
   }
 
   const tag = context.matchBefore(/(?:^|[\s(])#[\p{L}\p{N}_\-/]*$/u);
