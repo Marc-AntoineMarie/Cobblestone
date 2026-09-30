@@ -16,7 +16,8 @@ changement et la liste des idées à faire.
 1. **Idée** : elle est notée dans [IDEES.md](IDEES.md).
 2. **Branche** : `git switch -c feat/mon-sujet` depuis `main`.
 3. **Code** : petits commits `type(portée): message` en français, chacun avec ses tests.
-4. **Vérifications** : `npm run check`, et `npm run e2e` si un parcours de l'app change.
+4. **Vérifications** : `npm run check`, et la recette des sections touchées
+   (`npm run e2e -- tests/recette/…`) ; toute la recette si une base commune change.
 5. **Recette** : les nouvelles vérifications vont à la fin de leur section de
    [docs/RECETTE.md](../docs/RECETTE.md), chacune avec son test dans `tests/recette/`, puis
    `npm run recette -- sync`.

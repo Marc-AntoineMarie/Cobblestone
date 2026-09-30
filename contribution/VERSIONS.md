@@ -55,13 +55,13 @@ Les téléphones, les importeurs et le reste de la parité avec Obsidian viennen
 
 ## Ce que fait chaque étape
 
-| Quand                         | Où                                                      | Quoi                                                                             |
-| ----------------------------- | ------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| Chaque commit                 | ta machine                                              | `npm run check` : formatage, types, tests unitaires, recette à jour, journal     |
-| Avant chaque fusion dans main | ta machine                                              | `npm run e2e` si l'app change : la recette automatique, une vingtaine de minutes |
-| Chaque push                   | GitHub, [ci.yml](../.github/workflows/ci.yml)           | Formatage, types, tests unitaires, construction, audit des dépendances           |
-| À la demande                  | GitHub, [recette.yml](../.github/workflows/recette.yml) | La recette automatique complète (Actions → Recette → Run workflow)               |
-| `npm run release X.Y.Z`       | ta machine, puis GitHub                                 | Tout ce qui suit                                                                 |
+| Quand                         | Où                                                      | Quoi                                                                                                              |
+| ----------------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Chaque commit                 | ta machine                                              | `npm run check` : formatage, types, tests unitaires, recette à jour, journal                                      |
+| Avant chaque fusion dans main | ta machine                                              | La recette des sections touchées (`npm run e2e -- tests/recette/…`) ; toute la recette si une base commune change |
+| Chaque push                   | GitHub, [ci.yml](../.github/workflows/ci.yml)           | Formatage, types, tests unitaires, construction, audit des dépendances                                            |
+| À la demande                  | GitHub, [recette.yml](../.github/workflows/recette.yml) | La recette automatique complète (Actions → Recette → Run workflow)                                                |
+| `npm run release X.Y.Z`       | ta machine, puis GitHub                                 | Tout ce qui suit                                                                                                  |
 
 ## Publier une version, pas à pas
 
