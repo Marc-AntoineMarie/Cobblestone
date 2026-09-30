@@ -160,16 +160,43 @@ describe('SyncNode', () => {
       expect(online(a)).toEqual(['B', 'C']);
     });
 
+    // C writes at once, before it hears of its removal: A and B do not take it.
     a.node.removeDevice(c.identity.id);
+    await c.vault.modify('Note.md', 'début, écrit par C après son retrait');
     await settle(a, b, c);
     await new Promise((resolve) => setTimeout(resolve, 400));
     await settle(a, b, c);
     expect(online(a)).toEqual(['B']);
     expect(online(b)).toEqual(['A']);
     expect(c.node.removed).toBe(true);
-    await c.vault.modify('Note.md', 'début, écrit par C après son retrait');
-    await settle(a, b, c);
     expect(await a.vault.read('Note.md')).toBe('début');
+    expect(await b.vault.read('Note.md')).toBe('début');
+  });
+
+  it('finds the devices it knew again after losing its sync state, keeping both versions of what differs', async () => {
+    hub = new MemoryNetworkHub();
+    const a = await device('A', { 'Note.md': 'un' });
+    await a.node.start();
+    const b = await join(a, 'B');
+    await settle(a, b);
+    const known = b.node.devices().filter((d) => !d.self);
+    await b.node.stop();
+    await a.vault.modify('Note.md', 'un deux');
+    // B's .cobblestone/sync is gone: a fresh store, but it remembers A.
+    const again = new SyncNode({
+      vault: b.vault,
+      store: new MemoryStore(),
+      identity: b.identity,
+      network: b.network,
+      syncId: b.node.syncId,
+      known,
+      saveDelay: 0,
+    });
+    await again.start();
+    await settle(a, { ...b, node: again });
+    const texts = await Promise.all(b.vault.getFiles().map((f) => b.vault.read(f.path)));
+    expect(texts.sort()).toEqual(['un', 'un deux']);
+    expect(online(a)).toEqual(['B']);
   });
 
   it('ends a pairing after three wrong codes, or when the user declines', async () => {

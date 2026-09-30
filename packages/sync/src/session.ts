@@ -23,6 +23,8 @@ export interface SessionOptions {
   vault: string;
   /** Whether a device may join this vault's sessions: paired, and not removed. */
   trusts(deviceId: string, publicKey: string): boolean;
+  /** Whether a device was removed from the vault: it is told so, to stop trying. */
+  removed?(deviceId: string): boolean;
   timeout?: number;
 }
 
@@ -56,7 +58,7 @@ interface Refused {
 
 const LABELS = ['initiator to responder', 'responder to initiator', 'initiator proof', 'responder proof'];
 const CONTEXT = 'cobblestone session 1';
-const REFUSALS: RefusalCode[] = ['wrong-vault', 'unknown-device'];
+const REFUSALS: RefusalCode[] = ['wrong-vault', 'unknown-device', 'removed'];
 
 function sessionKeys(shared: Uint8Array[], th: Uint8Array) {
   const [toResponder, toInitiator, initiatorProof, responderProof] = deriveKeys(concatBytes(...shared), th, LABELS);
@@ -119,6 +121,7 @@ export async function acceptSession(raw: ByteChannel, options: SessionOptions): 
     const peerKey = readBytes(hello.key, 32);
     const peerFresh = readBytes(hello.e, 32);
     const peer = deviceIdOf(peerKey);
+    if (options.removed?.(peer)) throw refuse('removed');
     if (!options.trusts(peer, hello.key)) throw refuse('unknown-device');
 
     const own = fromBase64(options.identity.publicKey);
