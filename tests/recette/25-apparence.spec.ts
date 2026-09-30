@@ -1,6 +1,6 @@
 import type { Locator, Page } from '@playwright/test';
 import { expect, recette } from './lib/recette';
-import { baseVault } from './lib/vaults';
+import { baseVault, obsidianVault } from './lib/vaults';
 
 // 25. Apparence et tailles d'écran.
 
@@ -402,3 +402,60 @@ recette('25.23', async ({ app, ui }) => {
   await expect(card(day, 'Atelier')).toHaveAttribute('aria-checked', 'true');
   expect(await css(ui.page, 'body', 'background-color')).toBe('rgb(244, 244, 240)');
 });
+
+recette('25.24', async ({ app, ui }) => {
+  const red = 'body { background-color: rgb(1, 2, 3) !important; }';
+  await app.start({ vault: baseVault({ '.cobblestone/snippets/fond.css': red }) });
+  const settings = await ui.settings();
+  const snippet = settings.getByRole('switch', { name: 'fond' });
+  await expect(snippet).toHaveAttribute('aria-checked', 'false');
+  await snippet.click();
+  await expect.poll(() => css(ui.page, 'body', 'background-color')).toBe('rgb(1, 2, 3)');
+  // Changed in another editor: Reload takes the new version.
+  await app.write('.cobblestone/snippets/fond.css', red.replace('1, 2, 3', '4, 5, 6'));
+  await settings.getByRole('button', { name: 'Recharger' }).click();
+  await expect.poll(() => css(ui.page, 'body', 'background-color')).toBe('rgb(4, 5, 6)');
+  await ui.page.waitForTimeout(600);
+  await app.restart();
+  await expect.poll(() => css(ui.page, 'body', 'background-color')).toBe('rgb(4, 5, 6)');
+});
+
+recette('25.25', async ({ app, ui }) => {
+  const appearance = JSON.stringify({ baseFontSize: 18, enabledCssSnippets: ['Vert'] });
+  await app.start({
+    vault: obsidianVault({
+      '.obsidian/appearance.json': appearance,
+      '.obsidian/snippets/Vert.css': 'body { color: rgb(0, 128, 0) !important; }',
+    }),
+  });
+  await expect.poll(() => css(ui.page, 'body', 'color')).toBe('rgb(0, 128, 0)');
+  const settings = await ui.settings();
+  const row = settings.locator('.snippet-row', { hasText: 'Vert' });
+  await expect(row.locator('.badge')).toHaveText('Obsidian');
+  await expect(row.getByRole('switch')).toHaveAttribute('aria-checked', 'true');
+  await ui.page.waitForTimeout(600);
+  expect(await app.read('.obsidian/appearance.json')).toBe(appearance);
+});
+
+recette(
+  '25.26',
+  async ({ app, ui }) => {
+    await app.start({ vault: baseVault() });
+    await app.electron.evaluate(({ shell }) => {
+      const calls: string[] = [];
+      (globalThis as { __reveals?: string[] }).__reveals = calls;
+      shell.showItemInFolder = (path: string) => void calls.push(path);
+      shell.openPath = async (path: string) => {
+        calls.push(path);
+        return '';
+      };
+    });
+    const settings = await ui.settings();
+    await settings.getByRole('button', { name: 'Ouvrir le dossier' }).click();
+    await expect
+      .poll(() => app.electron.evaluate(() => (globalThis as { __reveals?: string[] }).__reveals ?? []))
+      .toEqual([`${app.root}/.cobblestone/snippets`]);
+    expect(await app.exists('.cobblestone/snippets')).toBe(true);
+  },
+  { seulement: ['bureau'] },
+);

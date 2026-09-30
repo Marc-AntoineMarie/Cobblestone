@@ -634,6 +634,9 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 - **25.21** · Les deux · auto · « Nouveau thème à partir de … », le renommer, changer une couleur → Une copie du thème en cours apparaît, choisie ; son nom et ses couleurs se changent directement.
 - **25.22** · Les deux · auto · « Exporter », puis « Importer… » ce fichier (sur un autre appareil) ; puis importer un fichier qui n'est pas un thème → Le fichier `.cobblestone-theme.json` garde nom, papier, couleurs et police ; importé, le thème apparaît et s'applique ; le mauvais fichier est refusé avec un message clair.
 - **25.23** · Les deux · auto · « Supprimer ce thème » sur un thème à soi → Il disparaît ; l'app revient au thème par défaut de ce papier.
+- **25.24** · Les deux · auto · Un fichier .css dans `.cobblestone/snippets` : l'activer dans « Extraits CSS » ; le modifier ailleurs puis « Recharger » ; redémarrer → Il s'applique aussitôt, puis dans sa nouvelle version, et reste actif au prochain lancement.
+- **25.25** · Les deux · auto · Ouvrir un coffre Obsidian dont un extrait CSS est activé dans Obsidian → L'extrait est listé avec l'étiquette « Obsidian » et déjà actif ; `.obsidian/` n'est pas modifié.
+- **25.26** · Bureau · auto · « Ouvrir le dossier » des extraits CSS → Le dossier `.cobblestone/snippets` est créé s'il manque et s'affiche dans le gestionnaire de fichiers.
 
 ## 26. Spécifique à l'app web
 

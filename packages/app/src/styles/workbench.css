@@ -318,7 +318,9 @@
   white-space: nowrap;
 }
 
-.tree-ext {
+/* A small printed tag: a file's type, where a snippet comes from. */
+.tree-ext,
+.badge {
   flex: none;
   padding: 0 5px;
   border: 1px solid var(--rule-strong);

@@ -332,6 +332,34 @@
   gap: 4px;
 }
 
+.setting-hint {
+  color: var(--ink-3);
+}
+
+.snippet-list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.snippet-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.snippet-row:last-child {
+  border-bottom: 0;
+}
+
+.snippet-name {
+  flex: 1;
+  font-weight: 600;
+}
+
 .theme-name-field {
   display: flex;
   align-items: center;

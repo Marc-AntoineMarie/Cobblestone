@@ -1,5 +1,5 @@
-import { useMemo, useRef, type CSSProperties } from 'react';
-import { Check, Download, Plus, RotateCcw, Trash2, Upload } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
+import { Check, Download, FolderOpen, Plus, RefreshCw, RotateCcw, Trash2, Upload } from 'lucide-react';
 import { appearanceTokens } from '../appearance';
 import { getLanguage, t, type MessageKey } from '../i18n';
 import {
@@ -25,9 +25,10 @@ import {
   type Theme,
   type ThemeColors,
 } from '../themes';
+import { findSnippets, SNIPPETS_FOLDER, type Snippet } from '../snippets';
 import { useSession, useStore } from './hooks';
 import { usePreferences } from './preferences';
-import { Block, Row, Segmented } from './settings-parts';
+import { Block, Row, Segmented, Toggle } from './settings-parts';
 
 /** A theme's name: its own for a custom theme, the translated one for a built-in theme. */
 export function themeName(theme: Theme): string {
@@ -377,7 +378,72 @@ export function AppearanceSettings({ onPreview }: { onPreview: (theme: Theme | n
           options={(['square', 'soft', 'round'] as const).map((value) => ({ value, label: t(`corners.${value}`) }))}
         />
       </Row>
+      <SnippetSettings />
     </>
+  );
+}
+
+/** The vault's CSS snippets: turned on one by one, reloaded after editing them elsewhere. */
+function SnippetSettings() {
+  const session = useSession();
+  const enabled = useStore(session.settings, (s) => s.snippets);
+  const [found, setFound] = useState<Snippet[]>([]);
+  const load = () => void findSnippets(session.vault.adapter).then(setFound);
+  useEffect(load, [session]);
+
+  const toggle = (path: string, on: boolean) =>
+    session.settings.setState({ snippets: on ? [...enabled, path] : enabled.filter((p) => p !== path) });
+
+  const reload = () => {
+    load();
+    // A new list makes the page read the files again.
+    session.settings.setState({ snippets: [...enabled] });
+  };
+
+  const openFolder = async () => {
+    await session.vault.adapter.mkdir(SNIPPETS_FOLDER);
+    session.revealInSystem(SNIPPETS_FOLDER);
+  };
+
+  return (
+    <Block
+      title={t('settings.snippets')}
+      keywords="css snippets"
+      actions={
+        <div className="setting-actions">
+          {session.canRevealInSystem && (
+            <button className="button is-ghost" onClick={() => void openFolder()}>
+              <FolderOpen size={14} strokeWidth={1.75} aria-hidden />
+              {t('settings.snippets.open')}
+            </button>
+          )}
+          <button className="button is-ghost" onClick={reload}>
+            <RefreshCw size={14} strokeWidth={1.75} aria-hidden />
+            {t('settings.snippets.reload')}
+          </button>
+        </div>
+      }
+    >
+      <p className="setting-hint">{t('settings.snippets.hint', { folder: SNIPPETS_FOLDER })}</p>
+      {found.length === 0 ? (
+        <p className="setting-hint">{t('settings.snippets.none')}</p>
+      ) : (
+        <ul className="snippet-list">
+          {found.map((snippet) => (
+            <li key={snippet.path} className="snippet-row">
+              <span className="snippet-name">{snippet.name}</span>
+              {snippet.source === 'obsidian' && <span className="badge">Obsidian</span>}
+              <Toggle
+                id={`snippet-${snippet.path}`}
+                label={snippet.name}
+                checked={enabled.includes(snippet.path)}
+                onChange={(on) => toggle(snippet.path, on)}
+              />
+            </li>
+          ))}
+        </ul>
+      )}
+    </Block>
   );
 }
 

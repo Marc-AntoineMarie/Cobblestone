@@ -63,9 +63,20 @@ export function Block({
   );
 }
 
-export function Toggle({ id, checked, onChange }: { id: string; checked: boolean; onChange: (value: boolean) => void }) {
+export function Toggle({
+  id,
+  checked,
+  onChange,
+  label,
+}: {
+  id: string;
+  checked: boolean;
+  onChange: (value: boolean) => void;
+  /** Name for a switch with no label element of its own. */
+  label?: string;
+}) {
   return (
-    <button id={id} role="switch" aria-checked={checked} className="switch" onClick={() => onChange(!checked)}>
+    <button id={id} role="switch" aria-checked={checked} aria-label={label} className="switch" onClick={() => onChange(!checked)}>
       <span className="switch-knob" />
     </button>
   );

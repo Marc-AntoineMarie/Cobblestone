@@ -1,5 +1,6 @@
 import type { VaultAdapter } from '@cobblestone/core';
 import type { EditorMode } from './workspace/workspace';
+import { obsidianEnabledSnippets } from './snippets';
 import { DEFAULT_DAY_THEME, DEFAULT_NIGHT_THEME, type NoteFont, type Theme, type ThemeColors } from './themes';
 
 /** Per-vault settings, stored in ".cobblestone/app.json" inside the vault. */
@@ -30,6 +31,8 @@ export interface VaultSettings {
   templatesFolder: string;
   templateDateFormat: string;
   templateTimeFormat: string;
+  /** CSS snippets turned on, as vault paths (".cobblestone/snippets/…", ".obsidian/snippets/…"). */
+  snippets: string[];
 }
 
 export type LineWidth = 'narrow' | 'normal' | 'wide';
@@ -57,6 +60,7 @@ export const DEFAULT_SETTINGS: VaultSettings = {
   templatesFolder: '',
   templateDateFormat: 'YYYY-MM-DD',
   templateTimeFormat: 'HH:mm',
+  snippets: [],
 };
 
 /** App-wide preferences, stored by the platform (not in the vault). */
@@ -150,6 +154,8 @@ export async function importObsidianSettings(adapter: VaultAdapter): Promise<Par
   const appearance = await readJson(adapter, '.obsidian/appearance.json');
   const fontSize = appearance?.baseFontSize;
   if (typeof fontSize === 'number' && fontSize >= 10 && fontSize <= 30) out.textSize = fontSize;
+  const snippets = obsidianEnabledSnippets(appearance);
+  if (snippets.length) out.snippets = snippets;
   const daily = await readJson(adapter, '.obsidian/daily-notes.json');
   if (daily) {
     if (typeof daily.folder === 'string') out.dailyFolder = daily.folder;
