@@ -10,7 +10,7 @@ export interface ByteChannel {
 }
 
 export type RefusalCode =
-  'closed' | 'timeout' | 'protocol' | 'wrong-vault' | 'unknown-device' | 'bad-proof' | 'wrong-code' | 'declined';
+  'closed' | 'timeout' | 'protocol' | 'wrong-vault' | 'unknown-device' | 'removed' | 'bad-proof' | 'wrong-code' | 'declined';
 
 /** Why a link to another device could not be made; the app turns the code into a sentence. */
 export class SyncRefusal extends Error {
@@ -28,7 +28,7 @@ export function bytePair(): [ByteChannel, ByteChannel] {
     send(frame) {
       if (self.closed) return;
       const copy = frame.slice();
-      queueMicrotask(() => !other.closed && other.listeners.forEach((l) => l(copy)));
+      queueMicrotask(() => !other.closed && [...other.listeners].forEach((l) => l(copy)));
     },
     onMessage(listener) {
       self.listeners.add(listener);

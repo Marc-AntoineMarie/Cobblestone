@@ -706,3 +706,23 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 - **30.4** · Les deux · auto · Regarder les réglages d'Obsidian → Inchangés.
 - **30.5** · Les deux · auto · Chercher dans Obsidian les favoris ajoutés dans Cobblestone → Absents, c'est normal : ils sont dans `.cobblestone/`.
 - **30.6** · Les deux · manuel · Regarder `.cobblestone/` et `.trash/` dans Obsidian → Obsidian les ignore (dossiers cachés).
+
+## 31. Synchronisation entre appareils
+
+Deux apps de bureau sur le même réseau (la recette automatique lance deux apps sur la même machine).
+
+- **31.1** · Bureau · auto · Réglages › Synchronisation d'un coffre jamais synchronisé → Explication, bouton « Ajouter un appareil », les trois étapes, et le nom de cet appareil, modifiable.
+- **31.2** · Bureau · auto · « Ajouter un appareil » sur un premier ordinateur, puis à l'accueil d'un second : « Recevoir un coffre », saisir le code et un nom → Le premier demande d'accepter l'appareil, sous le nom saisi sur le second.
+- **31.3** · Bureau · auto · Accepter, puis « Dans un nouveau dossier… » sur le second → Le coffre s'ouvre sur le second avec toutes ses notes et ses pièces jointes, octet pour octet.
+- **31.4** · Bureau · auto · Écrire dans une note sur l'un des deux → Le texte arrive sur l'autre en quelques secondes, dans le fichier et dans la note ouverte.
+- **31.5** · Bureau · auto · Créer, renommer puis supprimer une note sur l'un → L'autre suit : même nom, liens compris ; la note supprimée part dans sa corbeille.
+- **31.6** · Bureau · auto · Saisir un code faux, puis un code mal formé → « Aucun appareil autour n'affiche ce code », puis « Un code a neuf lettres et chiffres » ; rien n'est reçu.
+- **31.7** · Bureau · auto · Refuser l'appareil sur le premier → Le second affiche « L'autre appareil a refusé celui-ci » ; le premier propose un nouveau code.
+- **31.8** · Bureau · auto · Barre d'état des deux côtés → « À jour · 2 appareils » ; un clic montre l'autre appareil en ligne, « Mettre en pause » et les réglages.
+- **31.9** · Bureau · auto · Mettre en pause sur l'un, écrire, reprendre → Rien ne passe pendant la pause ; tout arrive à la reprise.
+- **31.10** · Bureau · auto · Retirer le second depuis les réglages du premier → Il quitte la liste ; ce qu'il écrit ensuite n'arrive plus ; sa barre d'état dit « Retiré de ce coffre ».
+- **31.11** · Bureau · auto · Fermer le second, écrire sur le premier, rouvrir le second → Il se reconnecte seul et reçoit le texte.
+- **31.12** · Bureau · auto · Pendant une pause, créer une note du même nom sur les deux, puis reprendre → Les deux versions sont gardées, l'une nommée « (conflit xxxx) » ; « 1 à vérifier » dans la barre d'état, et la copie est proposée dans les réglages.
+- **31.13** · Bureau · auto · Regarder le coffre après la synchronisation → `.cobblestone/sync/vault.bin` y est ; aucune clé secrète dans le coffre ; rien dans `.obsidian/`.
+- **31.14** · Web · auto · Réglages › Synchronisation, puis l'accueil, sur le web → Un message dit que la synchronisation arrive dans l'app web ; pas de « Recevoir un coffre » à l'accueil.
+- **31.15** · Bureau · manuel · Deux ordinateurs différents sur le même réseau Wi-Fi → Ils se trouvent et se synchronisent comme ci-dessus (le pare-feu peut demander d'autoriser Cobblestone la première fois).

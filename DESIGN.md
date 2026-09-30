@@ -222,3 +222,7 @@ Paper is cut, not moulded: `--radius` corners on controls (3px by default; the r
 - **Don't** use colour alone for state; always add a word or a shape.
 - **Don't** use misregistration or grain anywhere text must be read; the mark and illustrations only.
 - **Don't** copy Obsidian's layout, iconography or purple accent.
+
+## Sync
+
+Settings › Sync follows the validated mockup (https://claude.ai/artifact/4nuqZmfo9fgo7kyDCY2Mde). The first time: a sheet with two devices and a padlock (house inks: the dashed link in the accent, the padlock in the mark), the action « Add a device », three numbered steps in ink discs. Once synced: a state band (the state in bold, then why and what comes next), the devices as a bordered list (icon tile, name, a green dot when online), conflict copies on the mark. The add-device dialog shows the code large and wide (Archivo 118 %, 0.1 em tracking) in a box ruled in ink, with steps underlined in ink (current) or green (done). In the status bar, one button tells the state; conflicts turn it to the mark.

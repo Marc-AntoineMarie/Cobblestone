@@ -21,7 +21,7 @@ class BridgeLink implements ByteChannel {
   ) {}
 
   receive(frame: Uint8Array) {
-    if (this.listeners.size) this.listeners.forEach((l) => l(frame));
+    if (this.listeners.size) [...this.listeners].forEach((l) => l(frame));
     else this.waiting.push(frame);
   }
 

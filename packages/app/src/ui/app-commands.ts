@@ -237,6 +237,16 @@ export function registerAppCommands(
         void navigator.clipboard?.writeText(text);
       },
     },
+    ...(session.sync.state.getState().available
+      ? [
+          {
+            id: 'sync:add-device',
+            name: t('cmd.sync.addDevice'),
+            section: t('cmd.section.vault'),
+            run: () => void session.sync.addDevice(),
+          },
+        ]
+      : []),
   ];
 
   const disposers = commands.map((command) => session.commands.register(command));

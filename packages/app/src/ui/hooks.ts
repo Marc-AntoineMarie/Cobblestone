@@ -19,13 +19,35 @@ export function useStore<S, T>(store: StoreApi<S>, selector: (state: S) => T): T
   );
 }
 
+/** Changes of each session's vault, counted from the first component that reads it. */
+const vaultChanges = new WeakMap<Session, { count: number }>();
+
+function changesOf(session: Session) {
+  let changes = vaultChanges.get(session);
+  if (!changes) {
+    const counter = { count: 0 };
+    const count = () => void counter.count++;
+    session.vault.on('create', count);
+    session.vault.on('delete', count);
+    session.vault.on('rename', count);
+    session.vault.cache.on('resolved', count);
+    session.vault.cache.on('changed', count);
+    vaultChanges.set(session, (changes = counter));
+  }
+  return changes;
+}
+
 /**
  * A counter that increases whenever files or the link index change, so
  * components reading the vault re-render. Updates are batched per frame.
+ * Changes between the first render and the subscription (a vault filling
+ * up from another device as the workbench appears) are not missed.
  */
 export function useVaultRevision(): number {
   const session = useSession();
   const [revision, setRevision] = useState(0);
+  const changes = changesOf(session);
+  const seen = changes.count;
   useEffect(() => {
     let frame = 0;
     const bump = () => {
@@ -42,11 +64,13 @@ export function useVaultRevision(): number {
       session.vault.cache.on('resolved', bump),
       session.vault.cache.on('changed', bump),
     ];
+    if (changes.count !== seen) bump();
     return () => {
       cancelAnimationFrame(frame);
       offs.forEach((off) => off());
     };
-  }, [session]);
+    // `seen` is the count at the render that subscribes.
+  }, [session, changes]);
   return revision;
 }
 

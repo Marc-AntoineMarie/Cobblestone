@@ -53,6 +53,18 @@ describe('LanNetwork', () => {
     await vi.waitFor(() => expect(closed).toBe(true));
   });
 
+  it('keeps the tag to itself: whoever takes the link gets the frames after it', async () => {
+    const a = await lan('a');
+    const b = await lan('b');
+    b.listen('vault-1');
+    const heard: number[][] = [];
+    // The new owner listens right away, while the tag is being handed out.
+    b.onIncoming((link) => link.onFrame((f) => heard.push([...f])));
+    const mine = await a.connect(`127.0.0.1:${b.port}`, 'vault-1');
+    mine.send(new Uint8Array([1]));
+    await vi.waitFor(() => expect(heard).toEqual([[1]]));
+  });
+
   it('refuses a link for a tag nobody listens for, and a frame too large', async () => {
     const a = await lan('a');
     const b = await lan('b', { maxFrame: 1024 });

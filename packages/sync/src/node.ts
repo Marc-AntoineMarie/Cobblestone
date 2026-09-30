@@ -21,6 +21,12 @@ export interface SyncNodeOptions {
   network: Network;
   /** The vault's sync id, when this device received it from another. */
   syncId?: string;
+  /**
+   * Devices this device knew, kept outside the vault: trusted while the CRDT
+   * knows nothing of them (its saved state was lost), so that the devices
+   * still find each other and merge again.
+   */
+  known?: Pick<DeviceInfo, 'id' | 'publicKey'>[];
   saveDelay?: number;
 }
 
@@ -40,6 +46,7 @@ export interface Pairing {
 
 export const PAIRING_LIFETIME = 5 * 60_000;
 const REMOVAL_DELAY = 300;
+const WRONG_CODE_GRACE = 3_000;
 const PAIRING_ATTEMPTS = 3;
 
 interface Live {
@@ -140,18 +147,12 @@ export class SyncNode {
     return this.model.deviceList().map((d) => ({ ...d, self: d.id === me, online: d.id !== me && this.sessions.has(d.id) }));
   }
 
-  /**
-   * Whether another device removed this one from the vault: the vault says
-   * so, or every other device refuses it.
-   */
+  /** Whether another device removed this one: the vault says so, or a device refused it for that. */
   get removed(): boolean {
-    const me = this.options.identity.id;
-    if (this.model.devices.get(me)?.removed) return true;
-    const others = this.model.deviceList().filter((d) => d.id !== me && !d.removed);
-    return others.length > 0 && others.every((d) => this.refusedBy.has(d.id));
+    return this.toldRemoved || this.model.devices.get(this.options.identity.id)?.removed === true;
   }
 
-  private readonly refusedBy = new Set<string>();
+  private toldRemoved = false;
 
   renameDevice(id: string, name: string) {
     this.sync.change(() => this.model.renameDevice(id, name.trim() || name));
@@ -173,20 +174,30 @@ export class SyncNode {
 
   // ------------------------------------------------------------ sessions
 
-  private readonly trusts = (id: string, publicKey: string) =>
-    id !== this.options.identity.id && this.model.trusts(id, publicKey);
+  private readonly trusts = (id: string, publicKey: string) => {
+    if (id === this.options.identity.id) return false;
+    if (this.model.devices.has(id)) return this.model.trusts(id, publicKey);
+    return this.options.known?.some((d) => d.id === id && d.publicKey === publicKey) ?? false;
+  };
+
+  private readonly isRemoved = (id: string) => this.model.devices.get(id)?.removed === true;
 
   private async dial(address: string, device: string) {
     if (!this.running || device === this.options.identity.id || this.sessions.has(device) || this.dialing.has(address)) return;
     this.dialing.add(address);
     try {
       const link = await this.options.network.connect(address, vaultTag(this.syncId));
-      const session = await openSession(link, { identity: this.options.identity, vault: this.syncId, trusts: this.trusts });
+      const session = await openSession(link, {
+        identity: this.options.identity,
+        vault: this.syncId,
+        trusts: this.trusts,
+        removed: this.isRemoved,
+      });
       this.adopt(session.channel, session.peer, this.options.identity.id);
     } catch (error) {
       // Unreachable or refused: tried again at its next announcement.
-      if (error instanceof SyncRefusal && error.code === 'unknown-device' && !this.refusedBy.has(device)) {
-        this.refusedBy.add(device);
+      if (error instanceof SyncRefusal && error.code === 'removed' && !this.toldRemoved) {
+        this.toldRemoved = true;
         this.emit();
       }
     } finally {
@@ -196,7 +207,12 @@ export class SyncNode {
 
   private async accept(link: ByteChannel) {
     try {
-      const session = await acceptSession(link, { identity: this.options.identity, vault: this.syncId, trusts: this.trusts });
+      const session = await acceptSession(link, {
+        identity: this.options.identity,
+        vault: this.syncId,
+        trusts: this.trusts,
+        removed: this.isRemoved,
+      });
       this.adopt(session.channel, session.peer, session.peer);
     } catch {
       // Refused: the other device learns why.
@@ -212,18 +228,17 @@ export class SyncNode {
       existing.channel.close();
     }
     this.sessions.set(peer, { channel, initiator });
-    this.refusedBy.delete(peer);
     channel.onClose(() => {
       if (this.sessions.get(peer)?.channel !== channel) return;
       this.sessions.delete(peer);
       this.emit();
     });
-    this.sync.connect(this.watched(channel));
+    this.sync.connect(this.watched(channel, peer));
     this.emit();
   }
 
-  /** The channel, noting when something passes. */
-  private watched(channel: SyncChannel): SyncChannel {
+  /** The channel, noting when something passes; a removed device is not heard any more. */
+  private watched(channel: SyncChannel, peer: string): SyncChannel {
     const seen = () => {
       this.lastExchange = Date.now();
     };
@@ -234,6 +249,7 @@ export class SyncNode {
       },
       onMessage: (listener) =>
         channel.onMessage((message) => {
+          if (this.model.devices.get(peer)?.removed) return;
           seen();
           listener(message);
         }),
@@ -338,6 +354,11 @@ export function receiveVault(
       } catch (error) {
         lastError = error instanceof SyncRefusal && error.code !== 'closed' ? error : lastError;
         if (error instanceof SyncRefusal && error.code === 'declined') finish(error);
+        // A device showed another code: others may still answer, but not for long.
+        if (error instanceof SyncRefusal && error.code === 'wrong-code') {
+          clearTimeout(timer);
+          timer = setTimeout(() => finish(lastError), Math.min(WRONG_CODE_GRACE, options.timeout ?? WRONG_CODE_GRACE));
+        }
       }
     });
     network.search();

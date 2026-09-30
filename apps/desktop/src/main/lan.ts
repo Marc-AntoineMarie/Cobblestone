@@ -71,7 +71,8 @@ class FramedSocket implements LanLink {
       if (this.size < this.need) return;
       const frame = Uint8Array.prototype.slice.call(this.take(this.need));
       this.need = -1;
-      if (this.listeners.size) this.listeners.forEach((l) => l(frame));
+      // A listener added while this frame is handed out (the link's new owner) starts with the next one.
+      if (this.listeners.size) [...this.listeners].forEach((l) => l(frame));
       else this.waiting.push(frame);
     }
   }

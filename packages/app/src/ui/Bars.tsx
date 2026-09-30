@@ -24,6 +24,7 @@ import { PANEL_INFO, panelLabel } from './Panel';
 import { usePreferences } from './preferences';
 import { PressStatus } from './PressStatus';
 import { Segmented } from './settings-parts';
+import { SyncStatus } from './SyncStatus';
 
 /** The shortcut of the finder (see app-commands), shown in the command field. */
 const FINDER_KEY = hotkeyLabel(parseHotkey('Mod+K'));
@@ -171,6 +172,7 @@ export function StatusBar() {
       <PressStatus />
       <span className="status-space" />
       {notePath && <NoteStatus path={notePath} />}
+      <SyncStatus />
       <div className="status-appearance">
         <button
           className={`status-button${quick ? ' is-on' : ''}`}

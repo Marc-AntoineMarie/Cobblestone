@@ -11,6 +11,8 @@ export interface SyncStore {
 
 /** The CRDT in the vault's own settings folder, so it moves with the vault. */
 export class AdapterSyncStore implements SyncStore {
+  private folderMade = false;
+
   constructor(
     private readonly adapter: VaultAdapter,
     private readonly path = '.cobblestone/sync/vault.bin',
@@ -19,8 +21,10 @@ export class AdapterSyncStore implements SyncStore {
     if ((await this.adapter.stat(this.path))?.type !== 'file') return null;
     return this.adapter.readBinary(this.path);
   }
+  /** One write once the folder exists: a save as the window closes has time for one call. */
   async save(state: Uint8Array) {
-    await this.adapter.mkdir(dirname(this.path));
+    if (!this.folderMade) await this.adapter.mkdir(dirname(this.path));
+    this.folderMade = true;
     await this.adapter.writeBinary(this.path, state);
   }
 }
@@ -118,6 +122,13 @@ export class VaultSync {
     this.started = true;
   }
 
+  /** Saves the CRDT now instead of in a moment (the window is closing). */
+  flush(): Promise<void> {
+    if (!this.started) return Promise.resolve();
+    clearTimeout(this.saveTimer);
+    return this.store.save(Y.encodeStateAsUpdate(this.doc));
+  }
+
   /** Stops following the vault and the other devices, after saving. */
   async stop(): Promise<void> {
     for (const peer of [...this.peers]) peer.channel.close();
@@ -137,6 +148,11 @@ export class VaultSync {
       await last;
       await this.vault.settled();
     } while (last !== this.queue);
+  }
+
+  /** Attachments this device still waits for from the others. */
+  get pendingAttachments(): number {
+    return this.wanted.size;
   }
 
   /** Changes the CRDT as this device (devices, settings of the sync), not as a file. */
