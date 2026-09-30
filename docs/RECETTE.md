@@ -328,21 +328,21 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 
 ## 11. Autocomplétion et pièces jointes
 
-- **11.1** · Les deux · à automatiser · Taper `[[` → `]]` est ajouté automatiquement et la liste des notes s'ouvre.
-- **11.2** · Les deux · à automatiser · Continuer à taper un nom approximatif → Liste filtrée, dossier affiché à droite.
-- **11.3** · Les deux · à automatiser · Entrée ou Tab sur une suggestion → Lien complété, curseur après `]]`.
-- **11.4** · Les deux · à automatiser · Choisir une suggestion d'alias (l'alias suivi du nom de sa note) → `[[Note|alias]]` est inséré.
-- **11.5** · Les deux · à automatiser · Choisir une note dont le nom existe dans deux dossiers → Le lien inséré contient le chemin.
-- **11.6** · Les deux · à automatiser · Taper `[[Note#` → Liste des titres de la note.
-- **11.7** · Les deux · à automatiser · Taper `[[Note#^` → Liste des identifiants de blocs avec leur texte.
-- **11.8** · Les deux · à automatiser · Taper `[[#` → Titres de la note courante.
-- **11.9** · Les deux · à automatiser · Taper `#ta`, puis `# ` (dièse et espace) → Tags existants proposés ; rien pour `# `, qui est un titre.
-- **11.10** · Les deux · à automatiser · Échap pendant les suggestions → La liste se ferme.
-- **11.11** · Les deux · à automatiser · Coller une capture d'écran (Ctrl+V) → Image enregistrée sous « Pasted image AAAAMMJJHHmmss.png » dans le dossier des pièces jointes ; `![[…]]` est inséré.
-- **11.12** · Les deux · à automatiser · Glisser une image depuis le gestionnaire de fichiers dans une note → Elle est copiée dans le coffre et intégrée à l'endroit du dépôt.
-- **11.13** · Les deux · à automatiser · Glisser plusieurs fichiers d'un coup → Tous sont copiés, une intégration par ligne.
-- **11.14** · Les deux · à automatiser · Réglage des pièces jointes sur « ./ », puis coller une image → Elle va dans le dossier de la note.
-- **11.15** · Les deux · à automatiser · Coller deux fois la même image → Deux fichiers distincts ; rien n'est écrasé.
+- **11.1** · Les deux · auto · Taper `[[` → `]]` est ajouté automatiquement et la liste des notes s'ouvre.
+- **11.2** · Les deux · auto · Continuer à taper un nom approximatif → Liste filtrée, dossier affiché à droite.
+- **11.3** · Les deux · auto · Entrée ou Tab sur une suggestion → Lien complété, curseur après `]]`.
+- **11.4** · Les deux · auto · Choisir une suggestion d'alias (l'alias suivi du nom de sa note) → `[[Note|alias]]` est inséré.
+- **11.5** · Les deux · auto · Choisir une note dont le nom existe dans deux dossiers → Le lien inséré contient le chemin.
+- **11.6** · Les deux · auto · Taper `[[Note#` → Liste des titres de la note.
+- **11.7** · Les deux · auto · Taper `[[Note#^` → Liste des identifiants de blocs avec leur texte.
+- **11.8** · Les deux · auto · Taper `[[#` → Titres de la note courante.
+- **11.9** · Les deux · auto · Taper `#ta`, puis `# ` (dièse et espace) → Tags existants proposés ; rien pour `# `, qui est un titre.
+- **11.10** · Les deux · auto · Échap pendant les suggestions → La liste se ferme.
+- **11.11** · Les deux · auto · Coller une capture d'écran (Ctrl+V) → Image enregistrée sous « Pasted image AAAAMMJJHHmmss.png » dans le dossier des pièces jointes ; `![[…]]` est inséré.
+- **11.12** · Les deux · auto · Glisser une image depuis le gestionnaire de fichiers dans une note → Elle est copiée dans le coffre et intégrée à l'endroit du dépôt.
+- **11.13** · Les deux · auto · Glisser plusieurs fichiers d'un coup → Tous sont copiés, une intégration par ligne.
+- **11.14** · Les deux · auto · Réglage des pièces jointes sur « ./ », puis coller une image → Elle va dans le dossier de la note.
+- **11.15** · Les deux · auto · Coller deux fois la même image → Deux fichiers distincts ; rien n'est écrasé.
 
 ## 12. Mode lecture
 
