@@ -545,12 +545,12 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 
 ## 21. Fichiers joints
 
-- **21.1** · Les deux · à automatiser · Ouvrir une image depuis l'arborescence → Affichée en entier dans l'onglet.
-- **21.2** · Les deux · à automatiser · Ouvrir un PDF → Lecteur PDF.
-- **21.3** · Les deux · à automatiser · Ouvrir un audio, puis une vidéo → Lecteurs avec contrôles.
-- **21.4** · Les deux · à automatiser · Ouvrir un .txt, .json, .csv ou .css → Texte brut.
-- **21.5** · Les deux · à automatiser · Ouvrir un format inconnu (.zip) → « Cobblestone ne sait pas encore afficher ce fichier. »
-- **21.6** · Les deux · à automatiser · Modifier une image avec un autre programme, puis revenir sur son onglet → La nouvelle version s'affiche.
+- **21.1** · Les deux · auto · Ouvrir une image depuis l'arborescence → Affichée en entier dans l'onglet.
+- **21.2** · Les deux · auto · Ouvrir un PDF → Lecteur PDF.
+- **21.3** · Les deux · auto · Ouvrir un audio, puis une vidéo → Lecteurs avec contrôles.
+- **21.4** · Les deux · auto · Ouvrir un .txt, .json, .csv ou .css → Texte brut.
+- **21.5** · Les deux · auto · Ouvrir un format inconnu (.zip) → « Cobblestone ne sait pas encore afficher ce fichier. »
+- **21.6** · Les deux · auto · Modifier une image avec un autre programme, puis revenir sur son onglet → La nouvelle version s'affiche.
 
 ## 22. Opérations sur les fichiers et liens
 
