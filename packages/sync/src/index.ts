@@ -20,5 +20,16 @@ export {
   type DeviceKind,
 } from './identity';
 export { acceptSession, openSession, type Session, type SessionOptions } from './session';
+export {
+  CODE_LENGTH,
+  formatCode,
+  hostPairing,
+  joinPairing,
+  pairingCode,
+  readCode,
+  type GuestOptions,
+  type HostOptions,
+  type VaultTicket,
+} from './pairing';
 export { channelPair, decodeMessage, encodeMessage, type SyncChannel, type SyncMessage } from './protocol';
 export { AdapterSyncStore, VaultSync, type SyncStore } from './vault-sync';
