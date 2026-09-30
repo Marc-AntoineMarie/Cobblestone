@@ -57,7 +57,12 @@
   overflow: auto;
   padding: 12px 16px;
   font-size: 15px;
-  user-select: text;
+}
+
+/* Pressing a card moves it: its text, links and images are not picked up instead. */
+.canvas-node a,
+.canvas-node img {
+  -webkit-user-drag: none;
 }
 
 .canvas-body > :last-child {
