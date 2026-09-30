@@ -456,23 +456,23 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 
 ## 18. Recherche avancée
 
-- **18.1** · Les deux · à automatiser · `mot1 mot2` dans le champ de la barre latérale → Notes contenant les deux mots.
-- **18.2** · Les deux · à automatiser · `mot1 OR mot2` → Notes contenant l'un ou l'autre.
-- **18.3** · Les deux · à automatiser · `mot -autre` → Notes contenant « mot » sans « autre ».
-- **18.4** · Les deux · à automatiser · `"expression exacte"` → Seulement cette expression, dans cet ordre.
-- **18.5** · Les deux · à automatiser · `/\d{4}-\d{2}/` → Recherche par expression régulière.
-- **18.6** · Les deux · à automatiser · `file:nom` → Recherche dans les noms de fichiers.
-- **18.7** · Les deux · à automatiser · `path:Dossier` → Recherche dans les chemins.
-- **18.8** · Les deux · à automatiser · `content:mot` → Recherche dans le texte seulement.
-- **18.9** · Les deux · à automatiser · `tag:#projet` → Notes avec ce tag ou un sous-tag (`#projet/alpha`).
-- **18.10** · Les deux · à automatiser · `line:(a b)` → a et b sur une même ligne.
-- **18.11** · Les deux · à automatiser · `block:(a b)` → a et b dans un même paragraphe.
-- **18.12** · Les deux · à automatiser · `section:(a b)` → a et b sous un même titre.
-- **18.13** · Les deux · à automatiser · `task:x`, `task-todo:x`, `task-done:x` → Dans les tâches : toutes, à faire, faites.
-- **18.14** · Les deux · à automatiser · `match-case:Mot` et `ignore-case:mot` → Casse respectée, puis ignorée.
-- **18.15** · Les deux · à automatiser · `[statut]` et `[statut:actif]` → Notes ayant la propriété, puis cette valeur (listes comprises).
-- **18.16** · Les deux · à automatiser · `path:(Projets OR Journal) tag:#x` → Les combinaisons avec parenthèses fonctionnent.
-- **18.17** · Les deux · à automatiser · Regarder un résultat → Extrait avec la correspondance surlignée et le dossier de la note.
+- **18.1** · Les deux · auto · `mot1 mot2` dans le champ de la barre latérale → Notes contenant les deux mots.
+- **18.2** · Les deux · auto · `mot1 OR mot2` → Notes contenant l'un ou l'autre.
+- **18.3** · Les deux · auto · `mot -autre` → Notes contenant « mot » sans « autre ».
+- **18.4** · Les deux · auto · `"expression exacte"` → Seulement cette expression, dans cet ordre.
+- **18.5** · Les deux · auto · `/\d{4}-\d{2}/` → Recherche par expression régulière.
+- **18.6** · Les deux · auto · `file:nom` → Recherche dans les noms de fichiers.
+- **18.7** · Les deux · auto · `path:Dossier` → Recherche dans les chemins.
+- **18.8** · Les deux · auto · `content:mot` → Recherche dans le texte seulement.
+- **18.9** · Les deux · auto · `tag:#projet` → Notes avec ce tag ou un sous-tag (`#projet/alpha`).
+- **18.10** · Les deux · auto · `line:(a b)` → a et b sur une même ligne.
+- **18.11** · Les deux · auto · `block:(a b)` → a et b dans un même paragraphe.
+- **18.12** · Les deux · auto · `section:(a b)` → a et b sous un même titre.
+- **18.13** · Les deux · auto · `task:x`, `task-todo:x`, `task-done:x` → Dans les tâches : toutes, à faire, faites.
+- **18.14** · Les deux · auto · `match-case:Mot` et `ignore-case:mot` → Casse respectée, puis ignorée.
+- **18.15** · Les deux · auto · `[statut]` et `[statut:actif]` → Notes ayant la propriété, puis cette valeur (listes comprises).
+- **18.16** · Les deux · auto · `path:(Projets OR Journal) tag:#x` → Les combinaisons avec parenthèses fonctionnent.
+- **18.17** · Les deux · auto · Regarder un résultat → Extrait avec la correspondance surlignée et le dossier de la note.
 
 ## 19. Graphe
 
