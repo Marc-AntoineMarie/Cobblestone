@@ -26,21 +26,23 @@ recette('6.2', async ({ app, ui }) => {
 
 recette('6.3', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
-  await ui.rail.getByRole('button', { name: 'Masquer la barre latérale' }).click();
+  await expect(ui.sideToggle('left')).toHaveAttribute('aria-pressed', 'true');
+  await ui.sideToggle('left').click();
   await expect(ui.rail).toHaveCount(0);
-  await expect(ui.pane.locator('.tab-rail')).toBeVisible();
+  await expect(ui.sideToggle('left')).toHaveAttribute('aria-pressed', 'false');
 });
 
 recette('6.4', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
-  await ui.rail.getByRole('button', { name: 'Masquer la barre latérale' }).click();
-  await ui.pane.locator('.tab-rail').click();
+  await ui.sideToggle('left').click();
+  await expect(ui.rail).toHaveCount(0);
+  await ui.sideToggle('left').click();
   await expect(ui.rail).toBeVisible();
 });
 
 recette('6.5', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
-  await ui.rail.getByRole('button', { name: /Aujourd.hui/ }).click();
+  await ui.activityBar.getByRole('button', { name: /Aujourd.hui/ }).click();
   await expect(ui.activeTab).toContainText(today());
   await expect.poll(() => app.exists(`${today()}.md`)).toBe(true);
 });
@@ -48,7 +50,7 @@ recette('6.5', async ({ app, ui }) => {
 recette('6.6', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
   await ui.open('Idées');
-  await ui.rail.getByRole('button', { name: 'Graphe' }).click();
+  await ui.activityBar.getByRole('button', { name: 'Graphe' }).click();
   await expect(ui.tabs).toHaveCount(2);
   await expect(ui.pane.locator('.graph-view')).toBeVisible();
 });
@@ -181,15 +183,17 @@ recette('6.19', async ({ app, ui }) => {
 
 recette('6.20', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
-  const foot = ui.rail.locator('.rail-foot');
-  await expect(foot.getByRole('status')).toContainText('Sur cet appareil');
-  await expect(foot.locator('.press-status svg rect')).toHaveCount(1);
-  await expect(foot.getByRole('button', { name: 'Réglages' })).toBeVisible();
+  await ui.open('Idées');
+  const bar = ui.statusBar;
+  await expect(bar.getByRole('status')).toContainText('Sur cet appareil');
+  await expect(bar.locator('.press-status svg rect')).toHaveCount(1);
+  await expect(ui.status).toContainText(/\d+ mots/);
+  await expect(bar.getByRole('button', { name: 'Apparence' })).toBeVisible();
 });
 
 recette('6.21', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
-  await ui.rail.locator('.rail-foot').getByRole('button', { name: 'Réglages' }).click();
+  await ui.activityBar.getByRole('button', { name: 'Réglages' }).click();
   await expect(ui.activeTab).toContainText('Réglages');
   await expect(ui.page.locator('.settings-view')).toBeVisible();
 });
@@ -223,4 +227,111 @@ recette('6.24', async ({ app, ui }) => {
   await app.start({ vault: 'demo' });
   await ui.vaultMenu();
   await expect(ui.menu).not.toContainText('Ouvrir le dossier du coffre');
+});
+
+recette('6.25', async ({ app, ui }) => {
+  await app.start({ vault: baseVault() });
+  const field = ui.topBar.getByRole('button', { name: /Rechercher, ouvrir une note ou lancer une commande/ });
+  await expect(field.locator('kbd')).toHaveText(/Ctrl\+K|⌘K/);
+  await field.click();
+  await expect(ui.palette).toBeVisible();
+  await ui.palette.locator('input').fill('Plan');
+  await ui.page.keyboard.press('Enter');
+  await expect(ui.activeTab).toContainText('Plan');
+});
+
+recette('6.26', async ({ app, ui }) => {
+  await app.start({ vault: baseVault() });
+  // Folded and out of sight: the activity bar brings it back.
+  await ui.tags.locator('.section-toggle').click();
+  await expect(ui.tags.locator('.tag-row')).toHaveCount(0);
+  await ui.sideToggle('left').click();
+  await expect(ui.rail).toHaveCount(0);
+  await ui.activityBar.getByRole('button', { name: 'Tags' }).click();
+  await expect(ui.rail).toBeVisible();
+  await expect(ui.tags.locator('.tag-row').first()).toBeInViewport();
+  await ui.activityBar.getByRole('button', { name: 'Recherche' }).click();
+  await expect(ui.find).toBeFocused();
+});
+
+recette('6.27', async ({ app, ui }) => {
+  await app.start({ vault: baseVault() });
+  // A note with properties: every panel on the right has something to show.
+  await ui.open('Étude');
+  const menu = async (panel: string, item: string) => {
+    await ui.panel(panel).locator('.panel-head').click({ button: 'right' });
+    await ui.menuItem(item).click();
+  };
+  await menu('tags', 'Mettre à droite');
+  await expect(ui.margin.locator('[data-panel="tags"]')).toBeVisible();
+  await expect(ui.rail.locator('[data-panel="tags"]')).toHaveCount(0);
+  await menu('tags', 'Monter');
+  const order = () => ui.margin.locator('.panel').evaluateAll((els) => els.map((e) => (e as HTMLElement).dataset.panel));
+  expect((await order()).indexOf('tags')).toBeLessThan((await order()).indexOf('properties'));
+  await menu('search', 'Descendre');
+  expect(await ui.rail.locator('.panel').evaluateAll((els) => els.map((e) => (e as HTMLElement).dataset.panel))).toEqual([
+    'files',
+    'search',
+  ]);
+  await menu('files', 'Masquer ce panneau');
+  await expect(ui.panel('files')).toHaveCount(0);
+});
+
+recette('6.28', async ({ app, ui }) => {
+  await app.start({ vault: baseVault() });
+  await ui.open('Idées');
+  const tags = ui.panel('tags').locator('.panel-head');
+  await tags.dragTo(ui.margin.locator('[data-panel="outline"] .panel-head'));
+  const order = await ui.margin.locator('.panel').evaluateAll((els) => els.map((e) => (e as HTMLElement).dataset.panel));
+  expect(order.indexOf('tags')).toBe(order.indexOf('outline') - 1);
+  await expect(ui.rail.locator('[data-panel="tags"]')).toHaveCount(0);
+});
+
+recette('6.29', async ({ app, ui }) => {
+  await app.start({ vault: baseVault() });
+  await ui.panel('tags').locator('.panel-head').click({ button: 'right' });
+  await ui.menuItem('Masquer ce panneau').click();
+  await expect(ui.tags).toHaveCount(0);
+  await ui.sideToggle('left').click();
+  await ui.command('Afficher le panneau « Tags »');
+  await expect(ui.rail.locator('[data-panel="tags"] .tag-row').first()).toBeVisible();
+});
+
+recette('6.30', async ({ app, ui }) => {
+  await app.start({ vault: baseVault(), preferences: { theme: 'day', language: 'auto' } });
+  const button = ui.statusBar.getByRole('button', { name: 'Apparence' });
+  await button.click();
+  const quick = ui.page.getByRole('dialog', { name: 'Apparence' });
+  await expect(quick).toBeVisible();
+  await quick.getByRole('radio', { name: 'Kraft' }).click();
+  await expect.poll(() => ui.page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe('rgb(239, 228, 208)');
+  await quick.getByRole('button', { name: 'Plus grand' }).click();
+  await expect(quick.locator('output')).toHaveText('17 px');
+  await ui.page.keyboard.press('Escape');
+  await expect(quick).toHaveCount(0);
+  await button.click();
+  await ui.page.getByRole('dialog', { name: 'Apparence' }).getByRole('button', { name: 'Tous les réglages d’apparence' }).click();
+  await expect(ui.view.locator('[data-section="appearance"] > h2')).toBeInViewport();
+});
+
+recette('6.31', async ({ app, ui }) => {
+  await app.start({ vault: baseVault(), viewport: { width: 700, height: 800 } });
+  await expect(ui.vaultName).toBeVisible();
+  await expect(ui.topBar.locator('.command-field-text')).toBeHidden();
+  await expect(ui.sideToggle('left')).toBeVisible();
+  await expect(ui.activityBar).toHaveCount(0);
+  expect(await ui.overflowsSideways()).toBe(false);
+});
+
+recette('6.32', async ({ app, ui }) => {
+  await app.start({ vault: baseVault() });
+  await ui.statusBar.getByRole('button', { name: 'Apparence' }).click();
+  await ui.page.getByRole('dialog', { name: 'Apparence' }).getByRole('radio', { name: 'Concentration' }).click();
+  await expect(ui.rail).toHaveCount(0);
+  await expect(ui.statusBar).toHaveCount(0);
+  await ui.command('Disposition : Classique');
+  await expect(ui.rail).toBeVisible();
+  await expect(ui.statusBar).toBeVisible();
+  await ui.command('Disposition : Miroir');
+  await expect(ui.margin.locator('[data-panel="files"]')).toBeVisible();
 });

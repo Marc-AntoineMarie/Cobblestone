@@ -37,7 +37,27 @@ export class Ui {
     return this.page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1);
   }
 
-  // ------------------------------------------------------------- sidebar
+  // ------------------------------------------------------------- bars and side zones
+
+  get topBar() {
+    return this.page.locator('.top-bar');
+  }
+  get activityBar() {
+    return this.page.locator('.activity-bar');
+  }
+  get statusBar() {
+    return this.page.locator('.status-bar');
+  }
+  /** A panel by its id ("files", "tags", "backlinks"…), wherever it is. */
+  panel(id: string) {
+    return this.page.locator(`.panel[data-panel="${id}"]`);
+  }
+  /** The top bar's button that shows or hides a side zone. */
+  sideToggle(side: 'left' | 'right') {
+    return this.topBar.getByRole('button', {
+      name: `Afficher ou masquer le panneau de ${side === 'left' ? 'gauche' : 'droite'}`,
+    });
+  }
 
   get vaultName() {
     return this.page.locator('.vault-name');
@@ -48,11 +68,12 @@ export class Ui {
     await this.menu.waitFor();
     if (item) await this.menuItem(item).click();
   }
+  /** The left zone (files, search, bookmarks and tags in the classic layout). */
   get rail() {
-    return this.page.locator('.rail');
+    return this.page.locator('.side.is-left');
   }
   get find() {
-    return this.page.locator('.rail-find input');
+    return this.page.locator('.search-field input');
   }
   get findResults() {
     return this.page.locator('.find-results');
@@ -73,10 +94,10 @@ export class Ui {
     }
   }
   get tags() {
-    return this.page.locator('.rail-tags');
+    return this.panel('tags');
   }
   get bookmarks() {
-    return this.page.locator('.rail-bookmarks');
+    return this.panel('bookmarks');
   }
 
   // ------------------------------------------------------------- panes, tabs, note
@@ -112,11 +133,13 @@ export class Ui {
   get noteBar() {
     return this.view.locator('.note-bar');
   }
+  /** Counts of the active note, in the status bar. */
   get status() {
-    return this.view.locator('.note-status');
+    return this.statusBar.locator('.note-status');
   }
+  /** The right zone (the note's backlinks, outline, links and properties in the classic layout). */
   get margin() {
-    return this.page.locator('.margin');
+    return this.page.locator('.side.is-right');
   }
 
   /** Opens a note through the palette, by its name. */

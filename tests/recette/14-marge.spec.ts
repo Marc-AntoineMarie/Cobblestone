@@ -19,13 +19,13 @@ recette('14.1', async ({ app, ui }) => {
   await ui.editor.click();
   await ui.page.keyboard.press('Control+]');
   await expect(ui.margin).toHaveCount(0);
-  await ui.noteBar.getByRole('button', { name: 'Afficher la marge' }).click();
+  await ui.sideToggle('right').click();
   await expect(ui.margin).toBeVisible();
 });
 
 recette('14.2', async ({ app, ui }) => {
   await open(app, ui, 'Plan');
-  await expect(ui.margin.locator('#m-backlinks .count')).toHaveText('2');
+  await expect(ui.panel('backlinks').locator('.panel-head .count')).toHaveText('2');
   const context = backlinks(ui).locator('.backlink-context').first();
   await expect(context.locator('mark')).toBeVisible();
   await expect(context).not.toContainText('[[');
@@ -116,13 +116,13 @@ recette('14.11', async ({ app, ui }) => {
 recette('14.12', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
   await ui.row('Tableau.canvas').click();
-  await expect(ui.margin.locator('.margin-empty')).toContainText('La marge accompagne les notes');
+  await expect(ui.margin.locator('.side-empty')).toContainText('Ces panneaux suivent la note ouverte');
 });
 
 recette('14.13', async ({ app, ui }) => {
   await app.start({ vault: baseVault(), viewport: { width: 1000, height: 760 } });
   await ui.open('Idées');
-  await ui.noteBar.getByRole('button', { name: 'Afficher la marge' }).click();
+  await ui.sideToggle('right').click();
   await expect(ui.margin).toHaveClass(/is-drawer/);
   const scrim = ui.page.locator('.scrim');
   await expect(scrim).toBeVisible();

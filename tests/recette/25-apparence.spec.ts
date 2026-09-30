@@ -77,7 +77,7 @@ recette('25.4', async ({ app, ui }) => {
 recette('25.5', async ({ app, ui }) => {
   await app.start({ vault: baseVault(), viewport: { width: 1100, height: 760 } });
   await ui.open('Idées');
-  await ui.noteBar.getByRole('button', { name: 'Afficher la marge' }).click();
+  await ui.sideToggle('right').click();
   await expect(ui.margin).toHaveClass(/is-drawer/);
 });
 
@@ -86,7 +86,7 @@ recette('25.6', async ({ app, ui }) => {
   await ui.open('Plan');
   await expect(ui.rail).toHaveCount(0);
   await expect(ui.margin).toHaveCount(0);
-  await ui.pane.locator('.tab-rail').click();
+  await ui.sideToggle('left').click();
   await expect(ui.rail).toHaveClass(/is-drawer/);
   await expect(ui.page.locator('.scrim')).toBeVisible();
   await ui.page.locator('.scrim').click({ position: { x: 650, y: 400 } });
@@ -156,7 +156,7 @@ recette('25.10', async ({ app, ui }) => {
   await expect(day.locator('[aria-checked="true"]')).toHaveCount(1);
   expect(await css(ui.page, 'body', 'background-color')).toBe('rgb(239, 228, 208)');
   expect(await css(ui.page, 'body', 'color')).toBe('rgb(59, 42, 26)');
-  expect(await css(ui.page, '.rail', 'background-color')).not.toBe('rgb(235, 235, 228)');
+  expect(await css(ui.page, '.side.is-left', 'background-color')).not.toBe('rgb(235, 235, 228)');
 });
 
 recette('25.11', async ({ app, ui }) => {
@@ -472,4 +472,75 @@ recette('25.27', async ({ app, ui }) => {
   await graph.settle();
   const plan = await graph.node('Projets/Plan.md');
   await expect.poll(async () => (await graph.pixel(plan.sx, plan.sy)).slice(0, 3)).toEqual([59, 42, 26]);
+});
+
+const panelsOf = (zone: Locator) => zone.locator('.panel').evaluateAll((els) => els.map((e) => (e as HTMLElement).dataset.panel));
+
+recette('25.28', async ({ app, ui }) => {
+  await app.start({ vault: baseVault() });
+  const settings = await ui.settings();
+  const presets = settings.getByRole('radiogroup', { name: 'Dispositions prêtes' });
+  await expect(presets.getByRole('radio', { name: /^Classique/ })).toHaveAttribute('aria-checked', 'true');
+  await presets.getByRole('radio', { name: /^Concentration/ }).click();
+  await expect(presets.getByRole('radio', { name: /^Concentration/ })).toHaveAttribute('aria-checked', 'true');
+  await expect(ui.rail).toHaveCount(0);
+  await expect(ui.margin).toHaveCount(0);
+  await expect(ui.statusBar).toHaveCount(0);
+  await expect(ui.activityBar).toHaveCount(0);
+  await expect(ui.pane.locator('.tabs')).toBeHidden();
+  await presets.getByRole('radio', { name: /^Miroir/ }).click();
+  await expect(ui.margin.locator('[data-panel="files"]')).toBeVisible();
+  await expect(ui.rail.locator('.side-empty')).toBeVisible();
+  await presets.getByRole('radio', { name: /^Chercheur/ }).click();
+  expect(await panelsOf(ui.rail)).toEqual(['search', 'files']);
+  await presets.getByRole('radio', { name: /^Classique/ }).click();
+  await expect(ui.statusBar).toBeVisible();
+  await expect(ui.pane.locator('.tabs')).toBeVisible();
+});
+
+recette('25.29', async ({ app, ui }) => {
+  await app.start({ vault: baseVault() });
+  const settings = await ui.settings();
+  await settings.getByRole('radiogroup', { name: 'Place de Tags' }).getByRole('radio', { name: 'Droite' }).click();
+  await expect(ui.margin.locator('[data-panel="tags"]')).toBeVisible();
+  await expect(ui.rail.locator('[data-panel="tags"]')).toHaveCount(0);
+  await expect(settings.getByRole('radiogroup', { name: 'Dispositions prêtes' }).locator('[aria-checked="true"]')).toHaveCount(0);
+  await expect(settings.locator('.setting-hint', { hasText: 'Personnalisée' })).toBeVisible();
+  const diagram = settings.locator('.layout-diagram:not(.is-compact) .diagram-zone.is-right .diagram-panel');
+  await settings.getByRole('button', { name: 'Descendre Rétroliens' }).click();
+  await expect(diagram).toHaveText(['Plan', 'Rétroliens', 'Liens sortants', 'Propriétés', 'Tags']);
+  await settings.getByRole('button', { name: 'Revenir à la disposition classique' }).click();
+  await expect(settings.getByRole('radio', { name: /^Classique/ })).toHaveAttribute('aria-checked', 'true');
+  await expect(ui.rail.locator('[data-panel="tags"]')).toBeVisible();
+  await expect(diagram).toHaveText(['Rétroliens', 'Plan', 'Liens sortants', 'Propriétés']);
+});
+
+recette('25.30', async ({ app, ui }) => {
+  await app.start({ vault: baseVault(), viewport: { width: 1440, height: 900 } });
+  const settings = await ui.settings();
+  await settings.locator('#set-tabs').click();
+  await expect(ui.pane.locator('.tabs')).toBeHidden();
+  await settings.locator('#set-status-bar').click();
+  await expect(ui.statusBar).toHaveCount(0);
+  await settings.locator('#set-activity-bar').click();
+  await expect(ui.activityBar).toHaveCount(0);
+  const width = settings.getByRole('radiogroup', { name: 'Largeur des panneaux' });
+  const railWidth = async () => Math.round((await ui.rail.boundingBox())!.width);
+  await width.getByRole('radio', { name: 'Large' }).click();
+  await expect.poll(railWidth).toBe(320);
+  await width.getByRole('radio', { name: 'Étroite' }).click();
+  await expect.poll(railWidth).toBe(232);
+  await settings.locator('#set-tabs').click();
+  await expect(ui.pane.locator('.tabs')).toBeVisible();
+});
+
+recette('25.31', async ({ app, ui }) => {
+  await app.start({ vault: baseVault(), viewport: { width: 1440, height: 900 } });
+  const settings = await ui.settings();
+  await settings.getByRole('radio', { name: /^Miroir/ }).click();
+  await settings.getByRole('radiogroup', { name: 'Largeur des panneaux' }).getByRole('radio', { name: 'Large' }).click();
+  await ui.page.waitForTimeout(600);
+  await app.restart();
+  await expect(ui.margin.locator('[data-panel="files"]')).toBeVisible();
+  await expect.poll(async () => Math.round((await ui.margin.boundingBox())!.width)).toBe(320);
 });

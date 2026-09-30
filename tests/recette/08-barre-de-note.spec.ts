@@ -134,9 +134,11 @@ recette('8.10', async ({ app, ui }) => {
 recette('8.11', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
   await ui.open('Idées');
-  await ui.margin.getByRole('button', { name: 'Masquer la marge' }).click();
+  const width = (await ui.view.boundingBox())!.width;
+  await ui.sideToggle('right').click();
   await expect(ui.margin).toHaveCount(0);
-  await ui.noteBar.getByRole('button', { name: 'Afficher la marge' }).click();
+  await expect.poll(async () => (await ui.view.boundingBox())!.width).toBeGreaterThan(width + 200);
+  await ui.sideToggle('right').click();
   await expect(ui.margin).toBeVisible();
 });
 
@@ -245,9 +247,10 @@ recette('8.22', async ({ app, ui }) => {
 recette('8.23', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
   await ui.open('Idées');
-  await ui.margin.getByRole('button', { name: 'Masquer la marge' }).click();
+  await ui.sideToggle('right').click();
+  await expect(ui.margin).toHaveCount(0);
   await ui.status.getByRole('button', { name: /rétroliens/ }).click();
-  await expect(ui.margin).toBeVisible();
+  await expect(ui.margin.locator('[data-panel="backlinks"]')).toBeInViewport();
 });
 
 recette('8.24', async ({ app, ui }) => {

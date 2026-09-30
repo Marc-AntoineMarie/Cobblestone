@@ -195,7 +195,8 @@ recette('19.8', async ({ app, ui }) => {
   // Enough notes for names to wait for the zoom.
   const graph = await graphOf(app, ui, manyNotes(60));
   const box = (await graph.canvas.boundingBox())!;
-  const pointer = { x: box.x + box.width * 0.4, y: box.y + box.height * 0.6 };
+  // Whole pixels: the wheel event rounds the pointer, which far from the graph would shift the point.
+  const pointer = { x: Math.round(box.x + box.width * 0.4), y: Math.round(box.y + box.height * 0.6) };
   await ui.page.mouse.move(pointer.x, pointer.y);
   const world = async () => {
     const { view, width, height } = await graph.drawing();

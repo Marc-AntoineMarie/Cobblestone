@@ -17,6 +17,7 @@ recette('24.1', async ({ app, ui }) => {
   await expect(settings.locator('.settings-section > h2')).toHaveText([
     'Général',
     'Apparence',
+    'Disposition',
     'Éditeur',
     'Fichiers et liens',
     'Aujourd’hui',
@@ -32,7 +33,7 @@ recette('24.1', async ({ app, ui }) => {
   await settings.evaluate((el) => el.scrollTo({ top: 0 }));
   await expect(nav.getByRole('button', { name: 'Général' })).toHaveAttribute('aria-current', 'true');
   await ui.activeTab.getByRole('button', { name: 'Fermer' }).click();
-  await ui.rail.locator('.rail-foot').getByRole('button', { name: 'Réglages' }).click();
+  await ui.activityBar.getByRole('button', { name: 'Réglages' }).click();
   await expect(ui.page.locator('.settings-view')).toBeVisible();
   await ui.activeTab.getByRole('button', { name: 'Fermer' }).click();
   await ui.vaultMenu('Réglages');
@@ -270,7 +271,7 @@ recette('24.17', async ({ app, ui }) => {
   const measure = async () => ({
     text: await ui.lines.filter({ hasText: 'Un paragraphe.' }).evaluate((el) => parseFloat(getComputedStyle(el).fontSize)),
     title: await ui.page.locator('.cm-h1').evaluate((el) => parseFloat(getComputedStyle(el).fontSize)),
-    chrome: await ui.rail.locator('.vault-name').evaluate((el) => parseFloat(getComputedStyle(el).fontSize)),
+    chrome: await ui.vaultName.evaluate((el) => parseFloat(getComputedStyle(el).fontSize)),
   });
   const before = await measure();
   const settings = await ui.settings();
@@ -301,13 +302,16 @@ recette('24.19', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
   const settings = await ui.settings();
   await settings.locator('#set-text-size').selectOption('19');
-  await radio(settings, 'Large').click();
+  await radio(settings.getByRole('radiogroup', { name: 'Largeur des lignes' }), 'Large').click();
   await ui.page.waitForTimeout(600);
   await ui.vaultMenu('Changer de coffre');
   await ui.recentRows.first().locator('.recent-open').click();
   const again = await ui.settings();
   await expect(again.locator('#set-text-size')).toHaveValue('19');
-  await expect(radio(again, 'Large')).toHaveAttribute('aria-checked', 'true');
+  await expect(radio(again.getByRole('radiogroup', { name: 'Largeur des lignes' }), 'Large')).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
 });
 
 recette('24.20', async ({ app, ui }) => {
@@ -323,7 +327,7 @@ recette('24.21', async ({ app, ui }) => {
   });
   const settings = await ui.settings();
   await settings.locator('#set-text-size').selectOption('24');
-  await radio(settings, 'Large').click();
+  await radio(settings.getByRole('radiogroup', { name: 'Largeur des lignes' }), 'Large').click();
   await ui.open('Essai');
   await ui.editEnd();
   const embed = ui.editor.locator('.cm-embed-note');
@@ -353,5 +357,5 @@ recette('24.22', async ({ app, ui }) => {
   await search.fill('xylophone');
   await expect(settings.locator('.settings-empty')).toContainText('Aucun réglage ne correspond');
   await search.fill('');
-  await expect(settings.locator('.settings-section:visible')).toHaveCount(7);
+  await expect(settings.locator('.settings-section:visible')).toHaveCount(8);
 });

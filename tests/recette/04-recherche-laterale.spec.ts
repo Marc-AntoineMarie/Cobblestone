@@ -92,7 +92,7 @@ recette('4.9', async ({ app, ui }) => {
 recette('4.10', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
   await ui.find.fill('plan');
-  await ui.rail.locator('.rail-find-clear').click();
+  await ui.rail.locator('.search-field-clear').click();
   await expect(ui.find).toHaveValue('');
 });
 
