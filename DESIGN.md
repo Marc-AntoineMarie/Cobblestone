@@ -9,8 +9,8 @@ colors:
   ink-2: '#4B5575'
   ink-3: '#6E7797'
   rule: '#1E2A4F26'
-  pink: '#FF48B0'
-  pink-deep: '#C0277E'
+  accent: '#FF48B0'
+  accent-deep: '#C0277E'
   yellow: '#FFE800'
   green: '#00A95C'
   green-deep: '#0E7A4A'
@@ -24,7 +24,7 @@ colors:
   night-paper-3: '#232942'
   night-ink: '#ECEBE4'
   night-ink-2: '#A3A9C0'
-  night-pink: '#FF5CBA'
+  night-accent: '#FF5CBA'
   night-yellow: '#FFE14D'
   danger-plate: '#C8283C'
   on-danger: '#FFFFFF'
@@ -106,7 +106,7 @@ spacing:
   xxl: '56px'
 components:
   button-primary:
-    backgroundColor: '{colors.pink}'
+    backgroundColor: '{colors.accent}'
     textColor: '{colors.ink}'
     rounded: '{rounded.cut}'
     padding: '6px 14px'
@@ -138,18 +138,19 @@ Rejected on purpose: the charcoal IDE shell with a purple accent, the grey-sideb
 **Key Characteristics:**
 
 - Paper grounds, ink text: body text is navy ink, never pure black or grey.
-- Spot colours have jobs: pink acts, yellow marks, green and red report state. Nothing is decorative.
+- Spot colours have jobs: the accent (pink in the house theme) acts, the mark (yellow) marks, green and red report state. Nothing is decorative.
+- Everyone prints their own run: eight themes, colours by role, fonts, density and corners are set in Réglages › Apparence, with a live preview. The roles never change; only their inks do.
 - Overprint is the signature: selection, link hover and highlights multiply ink over ink.
 - One chrome size (13px): hierarchy comes from weight, case, width, ink and rules.
 - Fixed stations: every panel has one place and one job.
 
 ## Colors
 
-A restrained print palette: two neutrals (paper and ink) and a small set of spot inks with fixed roles.
+A restrained print palette: two neutrals (paper and ink) and a small set of spot inks with fixed roles. The values below are the house theme, **Atelier** (day) and **Atelier nuit** (night); every other theme keeps the same roles with other inks (see Themes).
 
 - **Paper** `#F4F4F0` (day stock): the ground of every surface. `paper-2` for the stack rail and inputs, `paper-3` for hover.
 - **Ink** `#1E2A4F` (navy): all text and icons. `ink-2` for secondary text (6.7:1), `ink-3` for rules and non-text marks only (4.0:1, never body text).
-- **Fluorescent Pink** `#FF48B0`: the action ink. Primary buttons (pink fill, navy text, 4.5:1), link underlines, focus rings, the selection overprint. `pink-deep` when pink must carry text on paper.
+- **Accent**, fluorescent pink `#FF48B0` in Atelier: the action ink. Primary buttons (accent fill, `on-accent` text, 4.5:1), link underlines, focus rings, the selection overprint. `accent-deep` when the accent must carry text on paper. Tokens: `--accent`, `--accent-deep`, `--on-accent`, `--accent-overprint`.
 - **Yellow** `#FFE800`: the marking ink. `==highlights==`, the selected item in lists, search hits.
 - **Green / Red** (`green-deep`, `red-deep` for text): sync and task states, always paired with a word and a shape. Destructive actions and error notices print on the `danger-plate` with white text.
 - **Plates**: the pressed segment of a control and notices print as a reversed ink plate (`plate` / `on-plate`).
@@ -158,9 +159,19 @@ A restrained print palette: two neutrals (paper and ink) and a small set of spot
 
 Light or dark follows the reading scene: long writing sessions at a desk by daylight get day stock; evening sessions get night stock. Both are complete; the system follows the OS unless the user chooses.
 
+### Themes
+
+A theme is a set of inks for the roles, printed on day stock (light) or night stock (dark). The reader picks one theme for each stock.
+
+- **Built in** (`packages/app/src/themes.ts`): Atelier, Papier (serif notes), Kraft (warm, serif notes), Forêt, Contraste élevé (Atkinson Hyperlegible) by day; Atelier nuit, Minuit (OLED black), Crépuscule (warm, serif notes) by night.
+- **Roles a theme sets**: `paper`, `paper-2`, `paper-3`, `ink`, `ink-2`, `ink-3`, `accent`, `on-accent`, `mark`, `mark-ink`, and optionally the font of the notes. `paper-3` and `ink-3` are derived when left out; rules, hover, plates, overprint and the grain are always derived from the roles, so a theme made by a reader is as complete as the built-in ones.
+- **Legibility is checked, not hoped for**: every built-in theme passes text 4.5:1 (ink and ink-2 on paper, ink-2 on paper-2, on-accent on accent, mark-ink on mark) and hints 3:1 (ink-3 on paper), in a unit test. The settings run the same check on a reader's colours and say which pair becomes hard to read.
+- **Readers' changes**: colours retouched role by role on any theme (kept per theme, with a way back), themes of their own (copied from any theme, renamed, exported as `.cobblestone-theme.json` and imported elsewhere), and CSS snippets (`.cobblestone/snippets`, Obsidian's `.obsidian/snippets` read too).
+- Atelier and Atelier nuit are written out in `tokens.css`; other themes set the same custom properties on the root element.
+
 ## Typography
 
-One family, Archivo (variable weight and width), carries the whole system; Commit Mono is reserved for code.
+One family, Archivo (variable weight and width), carries the whole system; Commit Mono is reserved for code. Readers may change three fonts in the appearance settings, each a token: the interface (`--font`: Archivo, Atkinson Hyperlegible, the system's), the notes (`--font-note`: the theme's, Archivo, Literata, Atkinson Hyperlegible, the system's with or without serifs) and code (`--mono`: Commit Mono or the system's). Titles stay in the interface font, like a poster headline over the text. All fonts ship with the app, so it works offline.
 
 - **Chrome** 13px, weight 450, width 92: every label, button, tab, tree row and menu. No other chrome size exists.
 - **Chrome labels** 13px, weight 650, width 80, uppercase, +0.06em tracking: section labels in the rail and marginalia.
@@ -183,21 +194,23 @@ Flat print. Surfaces separate by paper tone and 1px ink rules, not shadows. The 
 
 ## Shapes
 
-Paper is cut, not moulded: 3px corners on controls, 4px on sheets laid on top (finder, menus, share), 2px on images, a 1px hairline on marks, square pages, pills only for tags and collaborator badges. Rules are 1px ink at 15% opacity. Halftone dots are the one texture, used for graph nodes and empty-state illustrations; the paper carries a static grain below 3% opacity.
+Paper is cut, not moulded: `--radius` corners on controls (3px by default; the reader picks square 0, soft 3 or round 8), 4px on sheets laid on top (finder, menus, share), 2px on images, a 1px hairline on marks, square pages, pills only for tags and collaborator badges. Rules are 1px ink at 15% opacity. Halftone dots are the one texture, used for graph nodes and empty-state illustrations; the paper carries a static grain below 3% opacity.
 
 ## Components
 
-- **Buttons**: primary is a pink ink block with navy text; secondary is paper with a 1px ink rule; ghost is ink text that gains a paper-3 ground on hover. 13px, weight 600.
-- **Links in notes**: navy text, 2px pink underline offset 3px; hover overprints a pink block behind the word. Unresolved links use a dashed underline in ink-3.
-- **Tree rows**: 28px tall, icon and name, tabular counts right-aligned; hover paper-3, selected yellow overprint.
+- **Buttons**: primary is an accent ink block with on-accent text (pink and navy in Atelier); secondary is paper with a 1px ink rule; ghost is ink text that gains a paper-3 ground on hover. 13px, weight 600.
+- **Links in notes**: ink text, 2px accent underline offset 3px; hover overprints an accent block behind the word. Unresolved links use a dashed underline in ink-3.
+- **Tree rows**: `--row` tall (28px by default; the density setting makes it 24 compact or 34 airy, tags follow), icon and name, tabular counts right-aligned; hover paper-3, selected yellow overprint.
+- **Settings**: one page, the sections listed on the left (following the scroll), a search field that keeps only matching settings, and on wide screens a live preview on the right: the app in miniature, painted with the theme pointed at.
 - **Tabs**: paper tabs whose active sheet shares the sheet's ground; inactive tabs sit on paper-2.
-- **Focus**: 2px pink ring offset 2px on every interactive element.
+- **Focus**: 2px accent ring offset 2px on every interactive element.
 - **Sync status**: named states, each a word and a shape: Synced (filled dot), Syncing (half dot), Offline (hollow dot), Conflict (triangle).
 - **Callouts**: a tinted ground of their ink at low strength with an ink title; no coloured side stripe.
 
 ## Do's and Don'ts
 
-- **Do** give every spot ink one job and keep it.
+- **Do** give every spot ink one job and keep it, in every theme.
+- **Do** write colours as role tokens (`--accent`, `--mark`…), never as a theme's values: the reader's theme must reach every surface.
 - **Do** keep body text in navy ink on paper; check 4.5:1 for every text pair.
 - **Do** use overprint (multiply on day stock, screen on night stock) for selection, hover and marks.
 - **Do** keep motion damped: sheets feed in with a short ease-out; nothing bounces or snaps.
