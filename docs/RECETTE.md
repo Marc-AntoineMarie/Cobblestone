@@ -346,18 +346,18 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 
 ## 12. Mode lecture
 
-- **12.1** · Les deux · à automatiser · Passer une note riche en mode Lire → Titres, listes, tableaux (en-têtes en petites capitales), code, citations, encadrés, formules et images sont rendus.
-- **12.2** · Les deux · à automatiser · Cocher une tâche en lecture → Le fichier passe à `[x]` et la ligne se barre.
-- **12.3** · Les deux · à automatiser · Cliquer le titre d'un encadré repliable, puis Tab et Entrée ou Espace → Il se replie et se déplie, à la souris comme au clavier.
-- **12.4** · Les deux · à automatiser · Liens internes, externes et tags en lecture → Mêmes comportements qu'en écriture, Ctrl+clic compris.
-- **12.5** · Les deux · à automatiser · Note intégrée en lecture → Son en-tête ouvre la note ; ses tâches ne sont pas cochables.
-- **12.6** · Les deux · à automatiser · Bloc de code `mermaid` → Diagramme dessiné, clair ou sombre selon le papier.
-- **12.7** · Les deux · à automatiser · Diagramme Mermaid invalide → Message d'erreur rouge dans le bloc, sans plantage.
-- **12.8** · Les deux · à automatiser · Notes de bas de page `[^1]` → Rendues en bas de la note, avec renvois.
-- **12.9** · Les deux · à automatiser · HTML simple dans une note (`<details>`, `<b>`) → Rendu ; les scripts sont supprimés (voir Sécurité).
-- **12.10** · Les deux · à automatiser · Modifier la note dans un autre panneau pendant qu'elle est en lecture → La lecture se met à jour sans perdre la position de défilement.
-- **12.11** · Les deux · à automatiser · Changer le réglage des retours à la ligne simples → Le rendu des retours simples change en lecture.
-- **12.12** · Les deux · à automatiser · Réglages › Largeur des lignes « Toute la largeur » → Le texte occupe toute la largeur, en écriture comme en lecture.
+- **12.1** · Les deux · auto · Passer une note riche en mode Lire → Titres, listes, tableaux (en-têtes en petites capitales), code, citations, encadrés, formules et images sont rendus.
+- **12.2** · Les deux · auto · Cocher une tâche en lecture → Le fichier passe à `[x]` et la ligne se barre.
+- **12.3** · Les deux · auto · Cliquer le titre d'un encadré repliable, puis Tab et Entrée ou Espace → Il se replie et se déplie, à la souris comme au clavier.
+- **12.4** · Les deux · auto · Liens internes, externes et tags en lecture → Mêmes comportements qu'en écriture, Ctrl+clic compris.
+- **12.5** · Les deux · auto · Note intégrée en lecture → Son en-tête ouvre la note ; ses tâches ne sont pas cochables.
+- **12.6** · Les deux · auto · Bloc de code `mermaid` → Diagramme dessiné, clair ou sombre selon le papier.
+- **12.7** · Les deux · auto · Diagramme Mermaid invalide → Message d'erreur rouge dans le bloc, sans plantage.
+- **12.8** · Les deux · auto · Notes de bas de page `[^1]` → Rendues en bas de la note, avec renvois.
+- **12.9** · Les deux · auto · HTML simple dans une note (`<details>`, `<b>`) → Rendu ; les scripts sont supprimés (voir Sécurité).
+- **12.10** · Les deux · auto · Modifier la note dans un autre panneau pendant qu'elle est en lecture → La lecture se met à jour sans perdre la position de défilement.
+- **12.11** · Les deux · auto · Changer le réglage des retours à la ligne simples → Le rendu des retours simples change en lecture.
+- **12.12** · Les deux · auto · Réglages › Largeur des lignes « Toute la largeur » → Le texte occupe toute la largeur, en écriture comme en lecture.
 
 ## 13. Aperçu au survol
 
