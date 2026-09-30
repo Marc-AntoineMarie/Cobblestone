@@ -637,6 +637,7 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 - **25.24** · Les deux · auto · Un fichier .css dans `.cobblestone/snippets` : l'activer dans « Extraits CSS » ; le modifier ailleurs puis « Recharger » ; redémarrer → Il s'applique aussitôt, puis dans sa nouvelle version, et reste actif au prochain lancement.
 - **25.25** · Les deux · auto · Ouvrir un coffre Obsidian dont un extrait CSS est activé dans Obsidian → L'extrait est listé avec l'étiquette « Obsidian » et déjà actif ; `.obsidian/` n'est pas modifié.
 - **25.26** · Bureau · auto · « Ouvrir le dossier » des extraits CSS → Le dossier `.cobblestone/snippets` est créé s'il manque et s'affiche dans le gestionnaire de fichiers.
+- **25.27** · Les deux · auto · Changer de thème de jour (Atelier puis Kraft) avec le graphe ouvert dans un autre onglet → Revenu au graphe, les points ont l'encre du nouveau thème.
 
 ## 26. Spécifique à l'app web
 

@@ -1,5 +1,6 @@
 import type { Locator, Page } from '@playwright/test';
 import { expect, recette } from './lib/recette';
+import { Graph } from './lib/graph';
 import { baseVault, obsidianVault } from './lib/vaults';
 
 // 25. Apparence et tailles d'écran.
@@ -459,3 +460,16 @@ recette(
   },
   { seulement: ['bureau'] },
 );
+
+recette('25.27', async ({ app, ui }) => {
+  await app.start({ vault: baseVault(), preferences: { theme: 'day', language: 'auto' } });
+  await ui.page.keyboard.press('Control+g');
+  const graph = new Graph(ui);
+  await graph.settle();
+  const settings = await ui.settings();
+  await card(settings.getByRole('radiogroup', { name: 'Thème de jour' }), 'Kraft').click();
+  await ui.tab('Graphe').click();
+  await graph.settle();
+  const plan = await graph.node('Projets/Plan.md');
+  await expect.poll(async () => (await graph.pixel(plan.sx, plan.sy)).slice(0, 3)).toEqual([59, 42, 26]);
+});

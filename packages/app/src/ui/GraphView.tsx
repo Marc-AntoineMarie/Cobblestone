@@ -98,7 +98,7 @@ function readInks() {
 export function GraphView({ focus, visible }: { focus?: string; visible: boolean }) {
   const session = useSession();
   const revision = useVaultRevision();
-  const { paper } = usePreferences();
+  const { paper, theme, preferences } = usePreferences();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [options, setOptions] = useState<Options>({ query: '', orphans: true, attachments: false, unresolved: false, depth: 1 });
   const pinsKey = `graph-pins:${session.entry.id}`;
@@ -177,12 +177,18 @@ export function GraphView({ focus, visible }: { focus?: string; visible: boolean
     return { nodes: finalNodes, links: finalLinks };
   }, [session, revision, options, focus]);
 
-  // Read the inks after the paper stock has been applied to the document.
+  // Read the inks after the paper and theme have been applied to the document.
   const [inks, setInks] = useState(readInks);
   useEffect(() => {
-    const frame = requestAnimationFrame(() => setInks(readInks()));
+    // Same inks, same object: the layout is not started again for nothing.
+    const frame = requestAnimationFrame(() =>
+      setInks((previous) => {
+        const next = readInks();
+        return JSON.stringify(next) === JSON.stringify(previous) ? previous : next;
+      }),
+    );
     return () => cancelAnimationFrame(frame);
-  }, [paper]);
+  }, [paper, theme, preferences.colorOverrides]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
