@@ -10,6 +10,7 @@
 
 ```
 packages/core     engine (no DOM, no Node)
+packages/sync     sync between devices (Yjs)         → no host yet
 packages/node     Node file system adapter          → used by apps/desktop (main process)
 packages/app      shared React interface            → used by apps/web and apps/desktop (renderer)
 apps/web          browser host
@@ -44,6 +45,12 @@ apps/desktop      Electron host
 - Per vault, in `.cobblestone/app.json`. On first open they are imported from `.obsidian/` when present.
 - Per device (theme, language, open tabs, recent files, graph pins) in the host's storage, so they do not travel with the vault or conflict between devices.
 
-## Next: sync
+## Sync (`packages/sync`)
 
-Each note will get a Yjs document persisted in `.cobblestone/`, bridged to its file both ways. Devices exchange updates over WebRTC (with a small signaling service), encrypted end to end. A relay peer, self-hosted or hosted, keeps shared documents available when no device is online. See [ROADMAP.md](ROADMAP.md).
+The engine is written; no host runs it yet. See [ROADMAP.md](ROADMAP.md).
+
+- **One CRDT per vault** (`model.ts`): a Yjs map of files by a stable id that survives renames. A text file holds a `Y.Text`, merged character by character; a binary file holds the SHA-256 of its bytes, fetched by hash from a device that has them. A deleted file stays as a tombstone. Two live files on one path are settled the same way on every device: the smallest id keeps the name, an identical copy is merged, a different one is renamed "Name (conflit abcd).md".
+- **Files stay the truth** (`vault-sync.ts`): `VaultSync` turns the vault's events into CRDT changes (a text edit becomes the smallest diff) and writes what other devices changed back through the vault, so the app shows it like any other change: deletions, then moves, then contents. It recognises the echo of its own writes. The CRDT is saved in `.cobblestone/sync/vault.bin`; on start, what changed on disk meanwhile is taken in.
+- **Transport-agnostic** (`protocol.ts`): a `SyncChannel` carries messages (`hello` with a state vector, `update`, and blob requests), encoded as bytes. Tests join devices in memory with `channelPair()`.
+- **Next**: pairing with a code and end-to-end encryption; a local-network transport between desktops; then WebRTC with a small, self-hostable signaling service, and an encrypted relay for when no other device is online.
+- **Known limit**: the editor saves 350 ms after the last key, and the engine works from the saved file; text typed at the same moment on two devices can lose a few characters. Binding the editor to the `Y.Text` (y-codemirror) will remove it.

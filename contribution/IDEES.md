@@ -8,18 +8,25 @@ Statuts : **à faire** (décidé), **à décider** (il faut trancher), **en cour
 
 ## En priorité
 
-### Synchronisation entre appareils — à faire
+### Synchronisation entre appareils — en cours
 
 Le but premier de Cobblestone : retrouver ses notes sur son PC portable, son PC fixe et plus tard son
-téléphone, sans serveur qui les garde. **Pas encore disponible** : aujourd'hui, chaque appareil a sa
-copie.
+téléphone, sans serveur qui les garde. **Pas encore disponible dans l'app** : aujourd'hui, chaque
+appareil a sa copie.
 
-- Chaque note devient un document CRDT (Yjs) relié à son fichier Markdown, qui reste la référence.
-- Synchronisation directe entre appareils (WebRTC), appairage par code ou QR code, chiffrée de bout en
-  bout.
-- Un petit service de mise en relation, auto-hébergeable ; un relais chiffré pour synchroniser quand
-  l'autre appareil est éteint.
-- Historique des versions de chaque note, conflits résolus sans perte.
+- **Fait** : le moteur (voir le journal, `feat/synchro-moteur`) : le coffre en CRDT (Yjs), fusion des
+  textes, renommages, suppressions vers la corbeille, pièces jointes par empreinte, conflits de noms,
+  rattrapage de ce qui a changé app fermée. Testé entre appareils simulés en mémoire.
+- **À faire, dans l'ordre** :
+  1. Appairage par code (ou QR code) et chiffrement de bout en bout ; page Réglages › Synchronisation
+     (appareils appairés, état, dernière synchro).
+  2. Transport sur le réseau local entre deux apps de bureau, sans aucun serveur.
+  3. Transport WebRTC par Internet et pour l'app web, avec un petit service de mise en relation
+     auto-hébergeable ; un relais chiffré pour synchroniser quand l'autre appareil est éteint.
+- Historique des versions de chaque note.
+- **Limite connue** : l'éditeur enregistre 350 ms après la dernière touche ; une frappe au même moment
+  sur deux appareils peut perdre quelques caractères. Remède prévu : relier l'éditeur directement au
+  texte partagé (y-codemirror) quand la synchro arrivera dans l'app.
 - **À décider** : où héberger le service de mise en relation et le relais officiels.
 
 ### Refonte du design et personnalisation — presque faite
