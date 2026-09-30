@@ -27,17 +27,19 @@ copie.
 Demande du 30 septembre : une interface ergonomique, intuitive, optimisée pour l'utilisateur, et
 **personnalisable à fond** depuis les réglages, avec un aperçu en direct.
 
-- Maquettes dans Claude Design d'abord, validées avant le code. Première proposition du 30 septembre :
+- Maquettes dans Claude Design, validées (carte blanche) :
   https://claude.ai/artifact/Lk4b71TLeUhCzyCvcemJ98 (espace de travail, personnalisation rapide,
-  Réglages › Apparence et › Disposition avec aperçu, variante Minuit). **En attente des retours.**
-- Barre d'activité à gauche (un panneau à la fois), champ de commande au centre de la barre du haut,
-  panneau de contexte à onglets (Liens, Plan, Propriétés), barre d'état avec un bouton Apparence.
-- Thèmes par défaut prêts à l'emploi, et création de ses propres thèmes (couleurs de chaque rôle,
-  polices, tailles, densité, arrondis).
-- Emplacement des éléments : barres latérales à gauche ou à droite, panneaux déplaçables, ordre et
-  visibilité des sections, position des onglets et des barres d'outils.
-- Aperçu en direct de chaque réglage, et retour aux valeurs par défaut en un clic.
-- Import et export de thèmes, compatibilité avec les extraits CSS d'Obsidian.
+  Réglages › Apparence et › Disposition avec aperçu, variante Minuit).
+- **Fait** : l'apparence (voir le journal, `feat/themes`) : huit thèmes, couleurs par rôle, thèmes à
+  soi exportables, polices, densité, coins, extraits CSS, réglages à sections avec recherche et aperçu.
+- **À faire, prochaine étape** : la disposition.
+  - Barre du haut : le coffre, un champ de commande au centre, les boutons des panneaux.
+  - Barre d'activité à gauche (un panneau à la fois) ; panneau de contexte à onglets (Liens, Plan,
+    Propriétés) ; barre d'état avec un bouton Apparence (personnalisation rapide).
+  - Chaque panneau à gauche, à droite ou masqué, dans l'ordre voulu, déplaçable à la souris.
+  - Dispositions prêtes (Classique, Concentration, Chercheur, Miroir, Onglets sur le côté), onglets
+    en haut, sur le côté ou masqués, largeur des panneaux, barre d'état ; Réglages › Disposition avec
+    aperçu.
 
 ## Téléphone — plus tard (après la synchronisation)
 

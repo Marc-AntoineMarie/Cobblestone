@@ -229,7 +229,7 @@
 }
 
 .tree[data-drop-root='true'] {
-  background: color-mix(in srgb, var(--pink) 8%, transparent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
 }
 
 .tree-canvas {
@@ -241,7 +241,7 @@
   left: 6px;
   right: 6px;
   top: 0;
-  height: 28px;
+  height: var(--row);
   display: flex;
   align-items: center;
   gap: 4px;
@@ -257,7 +257,7 @@
 }
 
 .tree-row:focus-visible {
-  outline: 2px solid var(--pink);
+  outline: 2px solid var(--accent);
   outline-offset: -2px;
 }
 
@@ -279,13 +279,13 @@
 @keyframes reveal {
   0%,
   30% {
-    box-shadow: inset 0 0 0 2px var(--pink);
+    box-shadow: inset 0 0 0 2px var(--accent);
   }
 }
 
 .tree-row.is-drop-target {
-  background: color-mix(in srgb, var(--pink) 18%, transparent);
-  box-shadow: inset 0 0 0 1px var(--pink);
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  box-shadow: inset 0 0 0 1px var(--accent);
 }
 
 .tree-guide {
@@ -318,7 +318,9 @@
   white-space: nowrap;
 }
 
-.tree-ext {
+/* A small printed tag: a file's type, where a snippet comes from. */
+.tree-ext,
+.badge {
   flex: none;
   padding: 0 5px;
   border: 1px solid var(--rule-strong);
@@ -358,7 +360,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  height: 28px;
+  height: var(--row);
   padding-right: 8px;
   border-radius: var(--radius);
 }
@@ -384,7 +386,7 @@
 }
 
 .tag-hash {
-  color: var(--pink-deep);
+  color: var(--accent-deep);
   font-weight: 700;
   margin-right: 1px;
 }
@@ -415,7 +417,7 @@
 
 .find-hit[aria-selected='true'] {
   background: var(--hover);
-  box-shadow: inset 2px 0 0 var(--pink);
+  box-shadow: inset 2px 0 0 var(--accent);
 }
 
 .find-name {
@@ -445,7 +447,7 @@
   display: inline-flex;
   gap: 8px;
   align-items: center;
-  color: var(--pink-deep);
+  color: var(--accent-deep);
   font-weight: 650;
 }
 
@@ -506,7 +508,7 @@
 
 .split-handle:hover,
 body.is-resizing .split-handle:active {
-  background: color-mix(in srgb, var(--pink) 40%, transparent);
+  background: color-mix(in srgb, var(--accent) 40%, transparent);
 }
 
 body.is-resizing {
@@ -582,7 +584,7 @@ body.is-resizing {
   top: 6px;
   bottom: 6px;
   width: 2px;
-  background: var(--pink);
+  background: var(--accent);
 }
 
 .tab svg {
@@ -762,7 +764,7 @@ button.crumb:hover {
 
 .note-title:focus-visible {
   outline: none;
-  box-shadow: 0 2px 0 var(--pink);
+  box-shadow: 0 2px 0 var(--accent);
 }
 
 .note-status {
@@ -781,7 +783,7 @@ button.crumb:hover {
 .status-link:hover {
   color: var(--ink);
   text-decoration: underline;
-  text-decoration-color: var(--pink);
+  text-decoration-color: var(--accent);
   text-underline-offset: 3px;
 }
 
@@ -855,13 +857,13 @@ button.crumb:hover {
   text-align: left;
   color: var(--ink);
   text-decoration: underline;
-  text-decoration-color: var(--pink);
+  text-decoration-color: var(--accent);
   text-decoration-thickness: 1.5px;
   text-underline-offset: 3px;
 }
 
 .margin-link:hover {
-  background: var(--pink-overprint);
+  background: var(--accent-overprint);
 }
 
 .margin-link.is-unresolved {
@@ -978,7 +980,7 @@ button.crumb:hover {
 }
 
 .tag-chip:hover {
-  border-color: var(--pink);
+  border-color: var(--accent);
   color: var(--ink);
 }
 
@@ -1033,7 +1035,7 @@ button.crumb:hover {
 }
 
 .icon-button.is-on {
-  color: var(--pink-deep);
+  color: var(--accent-deep);
 }
 
 .margin-notes .section-toggle {

@@ -39,7 +39,7 @@
 .launcher-title-pink {
   position: absolute;
   inset: 0;
-  color: var(--pink);
+  color: var(--accent);
   transform: translate(0.045em, 0.03em);
   user-select: none;
 }
@@ -78,21 +78,21 @@
 }
 
 .launch-action.is-primary {
-  background: var(--pink);
-  color: var(--on-pink);
+  background: var(--accent);
+  color: var(--on-accent);
   border-bottom-color: transparent;
 }
 
 .launch-action.is-primary svg {
-  color: var(--on-pink);
+  color: var(--on-accent);
 }
 
 .launch-action.is-primary:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--pink) 86%, var(--ink));
+  background: color-mix(in srgb, var(--accent) 86%, var(--ink));
 }
 
 .launch-action.is-primary .launch-action-text span {
-  color: color-mix(in srgb, var(--on-pink) 82%, var(--pink));
+  color: color-mix(in srgb, var(--on-accent) 82%, var(--accent));
 }
 
 .launch-action-text {
@@ -231,7 +231,7 @@
 }
 
 .mark-pink {
-  fill: var(--pink);
+  fill: var(--accent);
 }
 
 .recent-confirm {

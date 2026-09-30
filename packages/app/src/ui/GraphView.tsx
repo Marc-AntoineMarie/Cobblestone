@@ -88,7 +88,7 @@ function readInks() {
     ink2: v('--ink-2'),
     ink3: v('--ink-3'),
     paper: v('--paper'),
-    pink: v('--pink'),
+    accent: v('--accent'),
     yellow: v('--yellow'),
     rule: v('--rule-strong'),
     night: document.documentElement.dataset.paper === 'night',
@@ -98,7 +98,7 @@ function readInks() {
 export function GraphView({ focus, visible }: { focus?: string; visible: boolean }) {
   const session = useSession();
   const revision = useVaultRevision();
-  const { paper } = usePreferences();
+  const { paper, theme, preferences } = usePreferences();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [options, setOptions] = useState<Options>({ query: '', orphans: true, attachments: false, unresolved: false, depth: 1 });
   const pinsKey = `graph-pins:${session.entry.id}`;
@@ -177,12 +177,18 @@ export function GraphView({ focus, visible }: { focus?: string; visible: boolean
     return { nodes: finalNodes, links: finalLinks };
   }, [session, revision, options, focus]);
 
-  // Read the inks after the paper stock has been applied to the document.
+  // Read the inks after the paper and theme have been applied to the document.
   const [inks, setInks] = useState(readInks);
   useEffect(() => {
-    const frame = requestAnimationFrame(() => setInks(readInks()));
+    // Same inks, same object: the layout is not started again for nothing.
+    const frame = requestAnimationFrame(() =>
+      setInks((previous) => {
+        const next = readInks();
+        return JSON.stringify(next) === JSON.stringify(previous) ? previous : next;
+      }),
+    );
     return () => cancelAnimationFrame(frame);
-  }, [paper]);
+  }, [paper, theme, preferences.colorOverrides]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -314,7 +320,7 @@ export function GraphView({ focus, visible }: { focus?: string; visible: boolean
       context.lineWidth = 1 / view.k;
       for (const link of links) {
         const on = isLit(link, lit);
-        context.strokeStyle = on ? inks.pink : inks.rule;
+        context.strokeStyle = on ? inks.accent : inks.rule;
         context.globalAlpha = lit && !on ? 0.35 : 1;
         context.lineWidth = (on ? 2 : 1) / view.k;
         context.beginPath();
@@ -339,7 +345,7 @@ export function GraphView({ focus, visible }: { focus?: string; visible: boolean
         if (node === hovered || node.id === focus) {
           // Pink drum printed slightly out of register over the ink.
           context.globalCompositeOperation = inks.night ? 'screen' : 'multiply';
-          context.fillStyle = inks.pink;
+          context.fillStyle = inks.accent;
           context.beginPath();
           context.arc(node.x! + 1.2, node.y! + 1, node.radius + 1.5, 0, Math.PI * 2);
           context.fill();

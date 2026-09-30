@@ -26,7 +26,7 @@ body {
 }
 
 ::selection {
-  background: var(--pink-overprint);
+  background: var(--accent-overprint);
   color: inherit;
 }
 
@@ -54,7 +54,7 @@ button:disabled {
 }
 
 :focus-visible {
-  outline: 2px solid var(--pink);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
   border-radius: var(--radius);
 }
@@ -171,13 +171,13 @@ mark {
 }
 
 .button.is-primary {
-  background: var(--pink);
+  background: var(--accent);
   border-color: transparent;
-  color: var(--on-pink);
+  color: var(--on-accent);
 }
 
 .button.is-primary:hover {
-  background: color-mix(in srgb, var(--pink) 84%, var(--ink));
+  background: color-mix(in srgb, var(--accent) 84%, var(--ink));
 }
 
 .button.is-ghost {
@@ -262,7 +262,7 @@ input[type='search']::-webkit-search-cancel-button {
 
 input:focus-visible,
 select:focus-visible {
-  outline: 2px solid var(--pink);
+  outline: 2px solid var(--accent);
   outline-offset: -1px;
 }
 
@@ -301,7 +301,7 @@ input[type='checkbox']:disabled {
 }
 
 input[type='range'] {
-  accent-color: var(--pink);
+  accent-color: var(--accent);
 }
 
 .check {

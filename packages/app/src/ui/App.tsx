@@ -1,4 +1,5 @@
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
+import { appearanceTokens, applyTokens, paperOf, themeFor } from '../appearance';
 import { describeError, isVaultMissing } from '../errors';
 import { detectLanguage, setLanguage } from '../i18n';
 import type { Platform, VaultEntry } from '../platform';
@@ -30,15 +31,20 @@ export function App({ platform }: { platform: Platform }) {
   const [booted, setBooted] = useState(false);
   const systemNight = useMediaQuery('(prefers-color-scheme: dark)');
 
-  const paper = preferences.theme === 'system' ? (systemNight ? 'night' : 'day') : preferences.theme;
+  const theme = themeFor(preferences, paperOf(preferences, systemNight));
+  // The theme decides the stock: a dark theme prints on night paper.
+  const paper = theme.scheme === 'dark' ? 'night' : 'day';
   const language = preferences.language === 'auto' ? detectLanguage() : preferences.language;
   setLanguage(language);
+  const appliedTokens = useRef<string[]>([]);
 
   useEffect(() => {
-    document.documentElement.dataset.paper = paper;
-    document.documentElement.style.colorScheme = paper === 'night' ? 'dark' : 'light';
-    document.documentElement.lang = language;
-  }, [paper, language]);
+    const root = document.documentElement;
+    root.dataset.paper = paper;
+    root.style.colorScheme = paper === 'night' ? 'dark' : 'light';
+    root.lang = language;
+    appliedTokens.current = applyTokens(root, appearanceTokens(preferences, theme), appliedTokens.current);
+  }, [paper, language, preferences, theme]);
 
   const updatePreferences = useCallback(
     (patch: Partial<Preferences>) => {
@@ -141,7 +147,7 @@ export function App({ platform }: { platform: Platform }) {
   }, [platform, openEntry]);
 
   return (
-    <PreferencesContext.Provider value={{ preferences, update: updatePreferences, paper }}>
+    <PreferencesContext.Provider value={{ preferences, update: updatePreferences, paper, theme }}>
       {session ? (
         <SessionContext.Provider value={session}>
           <Suspense fallback={null}>

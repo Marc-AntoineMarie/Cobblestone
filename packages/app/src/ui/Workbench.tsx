@@ -1,5 +1,7 @@
 import { useEffect, type CSSProperties } from 'react';
+import { t } from '../i18n';
 import { LINE_WIDTHS } from '../settings';
+import { applySnippets } from '../snippets';
 import { registerAppCommands } from './app-commands';
 import { ContextMenu } from './ContextMenu';
 import { Finder } from './Finder';
@@ -20,6 +22,7 @@ export function Workbench({ onSwitchVault }: { onSwitchVault: () => void }) {
   const marginOpen = useStore(session.ui, (s) => s.marginOpen);
   const textSize = useStore(session.settings, (s) => s.textSize);
   const lineWidth = useStore(session.settings, (s) => s.lineWidth);
+  const snippets = useStore(session.settings, (s) => s.snippets);
   const wide = useMediaQuery('(min-width: 1180px)');
   const narrow = useMediaQuery('(max-width: 760px)');
 
@@ -47,6 +50,14 @@ export function Workbench({ onSwitchVault }: { onSwitchVault: () => void }) {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [session]);
+
+  // The vault's CSS snippets, on top of the theme; they leave with the vault.
+  useEffect(() => {
+    void applySnippets(session.vault.adapter, snippets).then((failed) => {
+      for (const path of failed) session.notify(t('settings.snippets.failed', { name: path.split('/').pop()! }), 'error');
+    });
+  }, [session, snippets]);
+  useEffect(() => () => document.head.querySelectorAll('style[data-snippet]').forEach((el) => el.remove()), []);
 
   const marginMode = wide ? 'docked' : 'drawer';
 

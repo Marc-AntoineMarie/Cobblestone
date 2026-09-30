@@ -14,7 +14,8 @@ async function back(ui: Ui, name: string) {
 recette('24.1', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
   const settings = await ui.settings();
-  await expect(settings.locator('h2')).toHaveText([
+  await expect(settings.locator('.settings-section > h2')).toHaveText([
+    'Général',
     'Apparence',
     'Éditeur',
     'Fichiers et liens',
@@ -22,6 +23,14 @@ recette('24.1', async ({ app, ui }) => {
     'Modèles',
     'À propos',
   ]);
+  // The list of sections leads to them, and follows the scroll.
+  const nav = settings.getByRole('navigation', { name: 'Sections des réglages' });
+  await nav.getByRole('button', { name: 'Modèles' }).click();
+  await expect(settings.locator('[data-section="templates"] > h2')).toBeInViewport();
+  await expect(nav.getByRole('button', { name: 'Modèles' })).toHaveAttribute('aria-current', 'true');
+  await ui.page.waitForTimeout(1300);
+  await settings.evaluate((el) => el.scrollTo({ top: 0 }));
+  await expect(nav.getByRole('button', { name: 'Général' })).toHaveAttribute('aria-current', 'true');
   await ui.activeTab.getByRole('button', { name: 'Fermer' }).click();
   await ui.rail.locator('.rail-foot').getByRole('button', { name: 'Réglages' }).click();
   await expect(ui.page.locator('.settings-view')).toBeVisible();
@@ -87,10 +96,11 @@ recette('24.5', async ({ app, ui }) => {
   });
   await ui.open('Long');
   const settings = await ui.settings();
+  const group = settings.getByRole('radiogroup', { name: 'Largeur des lignes' });
   const widths: number[] = [];
   for (const choice of ['Étroite', 'Normale', 'Large', 'Toute la largeur']) {
-    await radio(settings, choice).click();
-    await expect(radio(settings, choice)).toHaveAttribute('aria-checked', 'true');
+    await radio(group, choice).click();
+    await expect(radio(group, choice)).toHaveAttribute('aria-checked', 'true');
     await back(ui, 'Long');
     widths.push((await ui.editor.boundingBox())!.width);
     await ui.tab('Réglages').click();
@@ -319,8 +329,7 @@ recette('24.21', async ({ app, ui }) => {
   const embed = ui.editor.locator('.cm-embed-note');
   expect(await embed.evaluate((el) => el.scrollWidth <= el.clientWidth + 1)).toBe(true);
   await ui.mode('Lire');
-  await ui.reading.locator('a.internal-link', { hasText: 'Réunion' }).hover();
-  await expect(ui.preview).toBeVisible();
+  await ui.hoverForPreview(ui.reading.locator('a.internal-link', { hasText: 'Réunion' }));
   const body = ui.preview.locator('.hover-preview-body');
   expect(await body.evaluate((el) => el.scrollWidth <= el.clientWidth + 1)).toBe(true);
   await ui.page.mouse.move(5, 5);
@@ -328,4 +337,21 @@ recette('24.21', async ({ app, ui }) => {
   const card = ui.page.locator('.canvas-node').first();
   await expect(card).toBeVisible();
   expect(await ui.overflowsSideways()).toBe(false);
+});
+
+recette('24.22', async ({ app, ui }) => {
+  await app.start({ vault: baseVault() });
+  const settings = await ui.settings();
+  const search = settings.getByRole('searchbox', { name: 'Chercher un réglage' });
+  await search.fill('police');
+  await expect(settings.locator('.setting-text label')).toHaveText([
+    'Police de l’interface',
+    'Police des notes',
+    'Police du code',
+  ]);
+  await expect(settings.locator('.settings-section:visible > h2')).toHaveText(['Apparence']);
+  await search.fill('xylophone');
+  await expect(settings.locator('.settings-empty')).toContainText('Aucun réglage ne correspond');
+  await search.fill('');
+  await expect(settings.locator('.settings-section:visible')).toHaveCount(7);
 });

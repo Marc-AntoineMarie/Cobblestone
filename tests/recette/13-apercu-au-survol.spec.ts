@@ -39,8 +39,7 @@ recette('13.2', async ({ app, ui }) => {
 
 recette('13.3', async ({ app, ui }) => {
   await reading(app, ui, 'Voir [[Cible]].');
-  await linkTo(ui, 'Cible').hover();
-  await expect(ui.preview).toBeVisible();
+  await ui.hoverForPreview(linkTo(ui, 'Cible'));
   const box = (await ui.preview.boundingBox())!;
   await ui.page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, { steps: 4 });
   await ui.page.waitForTimeout(600);
@@ -52,8 +51,7 @@ recette('13.3', async ({ app, ui }) => {
 
 recette('13.4', async ({ app, ui }) => {
   await reading(app, ui, 'Voir [[Cible]].');
-  await linkTo(ui, 'Cible').hover();
-  await expect(ui.preview).toBeVisible();
+  await ui.hoverForPreview(linkTo(ui, 'Cible'));
   const box = (await ui.preview.boundingBox())!;
   await ui.page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, { steps: 4 });
   await ui.page.mouse.move(5, 5, { steps: 4 });
@@ -109,13 +107,11 @@ recette('13.9', async ({ app, ui }) => {
 
 recette('13.10', async ({ app, ui }) => {
   await reading(app, ui, 'Voir [[Cible]].');
-  await linkTo(ui, 'Cible').hover();
-  await expect(ui.preview).toBeVisible();
+  await ui.hoverForPreview(linkTo(ui, 'Cible'));
   await ui.page.keyboard.press('Escape');
   await expect(ui.preview).toHaveCount(0);
   await ui.page.mouse.move(5, 5);
-  await linkTo(ui, 'Cible').hover();
-  await expect(ui.preview).toBeVisible();
+  await ui.hoverForPreview(linkTo(ui, 'Cible'));
   await ui.page.mouse.move(640, 700);
   await ui.page.mouse.wheel(0, 200);
   await expect(ui.preview).toHaveCount(0);
@@ -130,8 +126,7 @@ recette('13.11', async ({ app, ui }) => {
     const scroller = el.closest('.note-scroll')!;
     scroller.scrollTop += el.getBoundingClientRect().bottom - (window.innerHeight - 30);
   });
-  await link.hover();
-  await expect(ui.preview).toBeVisible();
+  await ui.hoverForPreview(link);
   const [preview, anchor] = [(await ui.preview.boundingBox())!, (await link.boundingBox())!];
   expect(anchor.y).toBeGreaterThan(600);
   expect(preview.y + preview.height).toBeLessThanOrEqual(anchor.y + 1);
@@ -148,8 +143,7 @@ recette('13.12', async ({ app, ui }) => {
   await expect(ui.preview).toHaveCount(0);
   await ui.page.mouse.move(5, 5);
   await ui.page.keyboard.down('Control');
-  await link.hover();
-  await expect(ui.preview).toBeVisible();
+  await ui.hoverForPreview(link);
   await ui.page.keyboard.up('Control');
 });
 

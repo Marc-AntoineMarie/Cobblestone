@@ -246,6 +246,18 @@ export class Ui {
   get preview() {
     return this.page.locator('.hover-preview');
   }
+  /**
+   * Hovers until the hover preview shows. On a loaded machine, the element can
+   * be redrawn under the pointer before the preview's delay runs out; a real
+   * reader moves the mouse again, so the test hovers again.
+   */
+  async hoverForPreview(target: Locator) {
+    await expect(async () => {
+      await this.page.mouse.move(1, 1);
+      await target.hover();
+      await expect(this.preview).toBeVisible({ timeout: 1500 });
+    }).toPass({ timeout: 12_000 });
+  }
   get share() {
     return this.page.locator('.share-sheet');
   }

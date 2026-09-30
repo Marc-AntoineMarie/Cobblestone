@@ -1,6 +1,11 @@
 @import '@fontsource-variable/archivo/wdth.css';
 @import '@fontsource-variable/archivo/wdth-italic.css';
 @import '@fontsource/commit-mono/400.css';
+@import '@fontsource-variable/literata/wght.css';
+@import '@fontsource-variable/literata/wght-italic.css';
+@import '@fontsource/atkinson-hyperlegible/400.css';
+@import '@fontsource/atkinson-hyperlegible/400-italic.css';
+@import '@fontsource/atkinson-hyperlegible/700.css';
 @import './tokens.css';
 @import './base.css';
 @import './launcher.css';

@@ -586,7 +586,7 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 
 ## 24. Réglages
 
-- **24.1** · Les deux · auto · Ctrl+, (ou le pied de la barre, ou le menu du coffre) → Onglet « Réglages » : Apparence, Éditeur, Fichiers et liens, Aujourd'hui, Modèles, À propos.
+- **24.1** · Les deux · auto · Ctrl+, (ou le pied de la barre, ou le menu du coffre) → Onglet « Réglages » : Général, Apparence, Éditeur, Fichiers et liens, Aujourd'hui, Modèles, À propos ; la liste des sections à gauche suit le défilement, et un clic y mène.
 - **24.2** · Les deux · auto · Papier : Suivre le système, Papier de jour, Papier de nuit → Le thème change aussitôt ; « Suivre le système » suit le système en direct.
 - **24.3** · Les deux · auto · Langue : Auto, English, Français → Toute l'interface change, commandes et palette comprises ; Auto suit la langue du système ou du navigateur.
 - **24.4** · Les deux · auto · « Les nouveaux onglets s'ouvrent en » : Écrire, Lire, Source → Appliqué aux notes ouvertes ensuite.
@@ -607,6 +607,7 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 - **24.19** · Les deux · auto · Fermer puis rouvrir le coffre → Taille du texte et largeur des lignes conservées.
 - **24.20** · Les deux · auto · Ouvrir pour la première fois un coffre Obsidian dont la taille de police est 18 → Cobblestone reprend 18 px.
 - **24.21** · Les deux · auto · Grande taille et largeur « Large » dans un canvas, un aperçu au survol, une intégration → Tout reste lisible, rien ne déborde.
+- **24.22** · Les deux · auto · Champ « Chercher un réglage » : taper « police », puis un mot sans réglage → Seuls les réglages de police restent, sous leur section ; puis « Aucun réglage ne correspond ».
 
 ## 25. Apparence et tailles d'écran
 
@@ -619,6 +620,24 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 - **25.7** · Les deux · auto · Redimensionner la fenêtre en continu → Pas de chevauchement ni de défilement horizontal.
 - **25.8** · Les deux · auto · Activer « réduire les animations » dans le système → Plus d'animations (tiroirs, apparition des notes).
 - **25.9** · Les deux · auto bureau, manuel web · Zoomer et dézoomer (Ctrl+plus, Ctrl+moins) → L'interface reste cohérente.
+- **25.10** · Les deux · auto · Réglages › Apparence : thèmes de jour (Atelier, Papier, Kraft, Forêt, Contraste élevé) et de nuit (Atelier nuit, Minuit, Crépuscule) → Un clic applique le thème à toute l'app ; la carte choisie est cochée.
+- **25.11** · Les deux · auto · Pointer un thème sans cliquer → L'aperçu en direct le montre ; l'app ne change pas.
+- **25.12** · Les deux · auto · Papier de jour choisi, cliquer un thème de nuit → L'app passe en papier de nuit, avec ce thème.
+- **25.13** · Les deux · auto · Couleurs du thème : changer l'accent, puis « Revenir aux couleurs du thème » → Liens, boutons et focus prennent la couleur, puis la rendent.
+- **25.14** · Les deux · auto · Mettre le texte presque de la couleur du fond → Le message de contraste dit ce qui devient difficile à lire.
+- **25.15** · Les deux · auto · Police des notes : Literata ; puis « Celle du thème » avec le thème Papier → Les notes changent de police, en écriture et en lecture ; les titres et l'interface gardent la leur.
+- **25.16** · Les deux · auto · Police de l'interface : Atkinson Hyperlegible ; police du code : celle du système → L'interface, puis le code, changent de police.
+- **25.17** · Les deux · auto · Densité : Compacte, puis Aérée → Les lignes de l'arborescence et des tags rapetissent, puis grandissent ; le défilement de l'arborescence reste juste.
+- **25.18** · Les deux · auto · Coins : Droits, puis Ronds → Boutons, champs et cartes perdent leur arrondi, puis l'accentuent.
+- **25.19** · Les deux · auto · Fermer puis rouvrir l'app → Thèmes, couleurs, polices, densité et coins conservés (réglages de l'appareil).
+- **25.20** · Les deux · auto · Réglages dans une fenêtre étroite → Les sections passent au-dessus de la page, sans aperçu ; rien ne déborde.
+- **25.21** · Les deux · auto · « Nouveau thème à partir de … », le renommer, changer une couleur → Une copie du thème en cours apparaît, choisie ; son nom et ses couleurs se changent directement.
+- **25.22** · Les deux · auto · « Exporter », puis « Importer… » ce fichier (sur un autre appareil) ; puis importer un fichier qui n'est pas un thème → Le fichier `.cobblestone-theme.json` garde nom, papier, couleurs et police ; importé, le thème apparaît et s'applique ; le mauvais fichier est refusé avec un message clair.
+- **25.23** · Les deux · auto · « Supprimer ce thème » sur un thème à soi → Il disparaît ; l'app revient au thème par défaut de ce papier.
+- **25.24** · Les deux · auto · Un fichier .css dans `.cobblestone/snippets` : l'activer dans « Extraits CSS » ; le modifier ailleurs puis « Recharger » ; redémarrer → Il s'applique aussitôt, puis dans sa nouvelle version, et reste actif au prochain lancement.
+- **25.25** · Les deux · auto · Ouvrir un coffre Obsidian dont un extrait CSS est activé dans Obsidian → L'extrait est listé avec l'étiquette « Obsidian » et déjà actif ; `.obsidian/` n'est pas modifié.
+- **25.26** · Bureau · auto · « Ouvrir le dossier » des extraits CSS → Le dossier `.cobblestone/snippets` est créé s'il manque et s'affiche dans le gestionnaire de fichiers.
+- **25.27** · Les deux · auto · Changer de thème de jour (Atelier puis Kraft) avec le graphe ouvert dans un autre onglet → Revenu au graphe, les points ont l'encre du nouveau thème.
 
 ## 26. Spécifique à l'app web
 
