@@ -17,3 +17,4 @@ release/
 # Recette automatique
 test-results/
 playwright-report/
+.vitest/
