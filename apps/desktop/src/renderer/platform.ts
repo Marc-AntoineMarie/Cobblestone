@@ -1,6 +1,7 @@
 import { MemoryAdapter, type AdapterChange, type FileStat, type VaultAdapter } from '@cobblestone/core';
 import { demoVaultFiles, type MovedVault, type Platform, type VaultEntry } from '@cobblestone/app';
 import type { DesktopBridge } from '../preload/index';
+import { DesktopNetwork } from './network';
 
 declare global {
   interface Window {
@@ -9,6 +10,8 @@ declare global {
 }
 
 const bridge = () => window.cobblestone;
+
+let network: DesktopNetwork | null = null;
 
 /** Vault storage served by the main process through IPC. */
 class IpcAdapter implements VaultAdapter {
@@ -57,6 +60,7 @@ export const desktopPlatform: Platform = {
     const { name } = (await bridge().vaults.open(entry.id)) as { name: string };
     return new IpcAdapter(entry.id, name);
   },
+  syncNetwork: (device) => (network ??= new DesktopNetwork(bridge().lan, device)),
   openExternal: (url) => void bridge().openExternal(url),
   os: bridge().platform === 'darwin' ? 'mac' : bridge().platform === 'win32' ? 'windows' : 'linux',
   revealInFolder: async (vaultId, path) => void (await bridge().reveal(vaultId, path)),
