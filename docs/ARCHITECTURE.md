@@ -10,7 +10,7 @@
 
 ```
 packages/core     engine (no DOM, no Node)
-packages/sync     sync between devices (Yjs)         → no host yet
+packages/sync     sync between devices (Yjs)         → used by packages/app
 packages/node     Node file system adapter          → used by apps/desktop (main process)
 packages/app      shared React interface            → used by apps/web and apps/desktop (renderer)
 apps/web          browser host
@@ -54,5 +54,7 @@ The engine is written; no host runs it yet. See [ROADMAP.md](ROADMAP.md).
 - **Transport-agnostic** (`protocol.ts`): a `SyncChannel` carries messages (`hello` with a state vector, `update`, and blob requests), encoded as bytes. Tests join devices in memory with `channelPair()`.
 - **Devices and encryption** (`identity.ts`, `session.ts`, `channel.ts`): each device has an X25519 key pair; the secret half stays in the device's own storage, never in the vault. The CRDT lists the vault's devices by public key (removed ones stay listed and are refused). Two paired devices open a session with a 3DH key agreement in which each proves its key, then exchange AES-256-GCM frames whose nonce is a counter (a replayed or reordered frame ends the link). Transports only move bytes (`ByteChannel`).
 - **Pairing** (`pairing.ts`): a nine-symbol code shown on the device that has the vault and typed on the other. The code never travels: CPace, a password-authenticated key exchange on ristretto255, gives both sides the same keys only if they used the same code; an eavesdropper learns nothing, an impostor gets one guess per attempt. The new device then sends its public key, the user accepts it, and the vault flows on the same encrypted link. Primitives come from `@noble/curves` and `@noble/hashes` (audited).
-- **Next**: the settings page and the local-network transport between desktops; then WebRTC with a small, self-hostable signaling service, and an encrypted relay for when no other device is online.
+- **Devices together** (`node.ts`, `network.ts`): `SyncNode` runs one device's part: it announces the vault on a `Network` under a tag that reveals nothing of it, opens a session with each device found (one per device, the same one kept on both sides), closes the session of a removed device, and hosts pairings (five minutes, three wrong codes). `receiveVault` is the other side of a pairing. `MemoryNetworkHub` plays a network in tests.
+- **Local network** (`apps/desktop/src/main/lan.ts`, `lan-ipc.ts`, `renderer/network.ts`): on desktop, the main process announces tags by UDP multicast and carries links over TCP (length-prefixed frames, the first naming the tag); it only moves encrypted bytes, and refuses unknown tags, slow greetings and oversized frames. Windows reach it through IPC, only for their own links and for announced addresses. `Platform.syncNetwork` gives it to the app.
+- **Next**: the settings page and the dialogs; then WebRTC with a small, self-hostable signaling service, and an encrypted relay for when no other device is online.
 - **Known limit**: the editor saves 350 ms after the last key, and the engine works from the saved file; text typed at the same moment on two devices can lose a few characters. Binding the editor to the `Y.Text` (y-codemirror) will remove it.

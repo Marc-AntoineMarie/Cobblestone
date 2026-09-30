@@ -19,19 +19,20 @@ appareil a sa copie.
   rattrapage de ce qui a changé app fermée. Testé entre appareils simulés en mémoire.
 - **Fait** : le chiffrement et l'appairage (voir le journal, `feat/synchro-chiffrement`) : clé par
   appareil, sessions chiffrées de bout en bout, appairage par un code de neuf caractères.
+- **Fait** : le réseau local (voir le journal, `feat/synchro-reseau-local`) : les apps de bureau se
+  trouvent et se relient sans serveur ; appairage, reconnexion, retrait d'un appareil.
 - **À faire, dans l'ordre** :
-  1. Transport sur le réseau local entre deux apps de bureau, sans aucun serveur.
-  2. L'interface, d'après la maquette validée le 30 septembre
+  1. L'interface, d'après la maquette validée le 30 septembre
      (https://claude.ai/artifact/4nuqZmfo9fgo7kyDCY2Mde) : Réglages › Synchronisation, « Ajouter un
      appareil », « Recevoir un coffre » à l'accueil, état dans la barre d'état.
-  3. **Écriture en temps réel**, comme dans Google Docs (demande du 30 septembre) : l'éditeur relié
+  2. **Écriture en temps réel**, comme dans Google Docs (demande du 30 septembre) : l'éditeur relié
      directement au texte partagé, chaque frappe envoyée aussitôt, le curseur des autres appareils
      visible à leur nom. Hors connexion, les modifications attendent et se fusionnent au retour.
-  4. Transport WebRTC par Internet et pour l'app web, avec un petit service de mise en relation
+  3. Transport WebRTC par Internet et pour l'app web, avec un petit service de mise en relation
      auto-hébergeable ; un relais chiffré pour synchroniser quand l'autre appareil est éteint.
 - Historique des versions de chaque note.
 - **Limite connue** : l'éditeur enregistre 350 ms après la dernière touche ; une frappe au même moment
-  sur deux appareils peut perdre quelques caractères. Remède : l'écriture en temps réel (point 3).
+  sur deux appareils peut perdre quelques caractères. Remède : l'écriture en temps réel (point 2).
 - Retirer un appareil le refuse aux sessions, mais il garde les notes déjà reçues ; quand un relais
   gardera des données chiffrées, il faudra changer la clé du coffre au retrait d'un appareil.
 - **À décider** : où héberger le service de mise en relation et le relais officiels.
