@@ -298,33 +298,33 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 
 ## 10. Éditeur : liens, intégrations, tags, propriétés
 
-- **10.1** · Les deux · à automatiser · `[[Note existante]]`, curseur ailleurs → Lien souligné de rose, sans crochets.
-- **10.2** · Les deux · à automatiser · Cliquer un lien hors de la ligne du curseur → La note s'ouvre.
-- **10.3** · Les deux · à automatiser · Ctrl+clic sur un lien → La note s'ouvre dans un nouvel onglet.
-- **10.4** · Les deux · à automatiser · Clic simple sur un lien de la ligne du curseur, puis Ctrl+clic → Le clic place le curseur pour modifier ; Ctrl+clic ouvre.
-- **10.5** · Les deux · à automatiser · `[[Note|alias]]` → Le lien affiche « alias ».
-- **10.6** · Les deux · à automatiser · Cliquer `[[Note#Titre]]` → La note s'ouvre et défile jusqu'au titre.
-- **10.7** · Les deux · à automatiser · Cliquer `[[Note#^bloc]]` → La note s'ouvre au bloc.
-- **10.8** · Les deux · à automatiser · Cliquer `[[#Titre]]` → Défilement jusqu'au titre dans la même note.
-- **10.9** · Les deux · à automatiser · `[[Note qui n'existe pas]]`, puis clic → Pointillés gris ; le clic crée la note (dans le dossier des nouvelles notes) et l'ouvre.
-- **10.10** · Les deux · à automatiser · Cliquer `[[Dossier/Note inexistante]]` → La note est créée dans ce dossier.
-- **10.11** · Les deux · à automatiser · Cliquer un lien Markdown `[texte](Note.md)` → La note s'ouvre.
-- **10.12** · Les deux · à automatiser · Lien externe `[site](https://…)` ou adresse nue, puis clic → Petite flèche après le lien ; le navigateur s'ouvre (navigateur du système sur le bureau, nouvel onglet sur le web).
-- **10.13** · Les deux · à automatiser · `![[image.png]]`, curseur ailleurs → L'image s'affiche.
-- **10.14** · Les deux · à automatiser · `![[image.png|200]]` et `![[image.png|200x100]]` → L'image est redimensionnée.
-- **10.15** · Les deux · à automatiser · `![](https://…/image.png)` → L'image distante s'affiche.
-- **10.16** · Les deux · à automatiser · `![[Note]]` seul sur sa ligne → Note intégrée avec un en-tête (son nom en capitales, cliquable).
-- **10.17** · Les deux · à automatiser · `![[Note#Titre]]` et `![[Note#^bloc]]` → Seule la section ou le bloc est intégré.
-- **10.18** · Les deux · à automatiser · `![[fichier.pdf]]`, `![[son.mp3]]`, `![[video.mp4]]` → Lecteurs PDF, audio et vidéo intégrés.
-- **10.19** · Les deux · à automatiser · `![[Inexistant.png]]` → Le nom s'affiche souligné en pointillés.
-- **10.20** · Les deux · à automatiser · Cliquer sur une intégration → La syntaxe apparaît pour la modifier.
-- **10.21** · Les deux · à automatiser · Une note qui s'intègre elle-même → Message « Cette note s'intègre elle-même », sans boucle.
-- **10.22** · Les deux · à automatiser · `#tag` dans le texte, puis clic → Pastille grise ; le clic filtre la barre latérale sur ce tag.
-- **10.23** · Les deux · à automatiser · `#123` → Pas un tag (Obsidian exige une lettre).
-- **10.24** · Les deux · à automatiser · En-tête YAML en tête de note, curseur ailleurs → Carte « PROPRIÉTÉS » lisible, tags en pastilles.
-- **10.25** · Les deux · à automatiser · Cliquer la carte Propriétés, puis placer le curseur ailleurs → Le YAML apparaît pour être modifié, puis la carte revient.
-- **10.26** · Les deux · à automatiser · YAML invalide → La carte affiche le message d'erreur en rouge, sans plantage.
-- **10.27** · Les deux · à automatiser · Taper `---` en première ligne d'une note existante, sans fermer → Rien ne se transforme tant que le second `---` n'est pas écrit.
+- **10.1** · Les deux · auto · `[[Note existante]]`, curseur ailleurs → Lien souligné de rose, sans crochets.
+- **10.2** · Les deux · auto · Cliquer un lien hors de la ligne du curseur → La note s'ouvre.
+- **10.3** · Les deux · auto · Ctrl+clic sur un lien → La note s'ouvre dans un nouvel onglet.
+- **10.4** · Les deux · auto · Clic simple sur un lien de la ligne du curseur, puis Ctrl+clic → Le clic place le curseur pour modifier ; Ctrl+clic ouvre.
+- **10.5** · Les deux · auto · `[[Note|alias]]` → Le lien affiche « alias ».
+- **10.6** · Les deux · auto · Cliquer `[[Note#Titre]]` → La note s'ouvre et défile jusqu'au titre.
+- **10.7** · Les deux · auto · Cliquer `[[Note#^bloc]]` → La note s'ouvre au bloc.
+- **10.8** · Les deux · auto · Cliquer `[[#Titre]]` → Défilement jusqu'au titre dans la même note.
+- **10.9** · Les deux · auto · `[[Note qui n'existe pas]]`, puis clic → Pointillés gris ; le clic crée la note (dans le dossier des nouvelles notes) et l'ouvre.
+- **10.10** · Les deux · auto · Cliquer `[[Dossier/Note inexistante]]` → La note est créée dans ce dossier.
+- **10.11** · Les deux · auto · Cliquer un lien Markdown `[texte](Note.md)` → La note s'ouvre.
+- **10.12** · Les deux · auto · Lien externe `[site](https://…)` ou adresse nue, puis clic → Petite flèche après le lien ; le navigateur s'ouvre (navigateur du système sur le bureau, nouvel onglet sur le web).
+- **10.13** · Les deux · auto · `![[image.png]]`, curseur ailleurs → L'image s'affiche.
+- **10.14** · Les deux · auto · `![[image.png|200]]` et `![[image.png|200x100]]` → L'image est redimensionnée.
+- **10.15** · Les deux · auto · `![](https://…/image.png)` → L'image distante s'affiche.
+- **10.16** · Les deux · auto · `![[Note]]` seul sur sa ligne → Note intégrée avec un en-tête (son nom en capitales, cliquable).
+- **10.17** · Les deux · auto · `![[Note#Titre]]` et `![[Note#^bloc]]` → Seule la section ou le bloc est intégré.
+- **10.18** · Les deux · auto · `![[fichier.pdf]]`, `![[son.mp3]]`, `![[video.mp4]]` → Lecteurs PDF, audio et vidéo intégrés.
+- **10.19** · Les deux · auto · `![[Inexistant.png]]` → Le nom s'affiche souligné en pointillés.
+- **10.20** · Les deux · auto · Cliquer sur une intégration → La syntaxe apparaît pour la modifier.
+- **10.21** · Les deux · auto · Une note qui s'intègre elle-même → Message « Cette note s'intègre elle-même », sans boucle.
+- **10.22** · Les deux · auto · `#tag` dans le texte, puis clic → Pastille grise ; le clic filtre la barre latérale sur ce tag.
+- **10.23** · Les deux · auto · `#123` → Pas un tag (Obsidian exige une lettre).
+- **10.24** · Les deux · auto · En-tête YAML en tête de note, curseur ailleurs → Carte « PROPRIÉTÉS » lisible, tags en pastilles.
+- **10.25** · Les deux · auto · Cliquer la carte Propriétés, puis placer le curseur ailleurs → Le YAML apparaît pour être modifié, puis la carte revient.
+- **10.26** · Les deux · auto · YAML invalide → La carte affiche le message d'erreur en rouge, sans plantage.
+- **10.27** · Les deux · auto · Taper `---` en première ligne d'une note existante, sans fermer → Rien ne se transforme tant que le second `---` n'est pas écrit.
 
 ## 11. Autocomplétion et pièces jointes
 
