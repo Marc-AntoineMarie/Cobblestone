@@ -1,5 +1,6 @@
 import type { VaultAdapter } from '@cobblestone/core';
 import type { EditorMode } from './workspace/workspace';
+import { DEFAULT_DAY_THEME, DEFAULT_NIGHT_THEME, type NoteFont, type Theme, type ThemeColors } from './themes';
 
 /** Per-vault settings, stored in ".cobblestone/app.json" inside the vault. */
 export interface VaultSettings {
@@ -60,11 +61,42 @@ export const DEFAULT_SETTINGS: VaultSettings = {
 
 /** App-wide preferences, stored by the platform (not in the vault). */
 export interface Preferences {
+  /** Day or night paper, or whichever the system uses. */
   theme: 'system' | 'day' | 'night';
   language: 'auto' | 'en' | 'fr';
+  /** Theme of the day paper (a light theme) and of the night paper (a dark one). */
+  dayTheme: string;
+  nightTheme: string;
+  /** Themes made in the settings. */
+  customThemes: Theme[];
+  /** Colours changed in the settings, by theme id. */
+  colorOverrides: Record<string, Partial<ThemeColors>>;
+  uiFont: UiFont;
+  /** "theme": the font the theme gives its notes. */
+  noteFont: 'theme' | NoteFont;
+  codeFont: CodeFont;
+  density: Density;
+  corners: Corners;
 }
 
-export const DEFAULT_PREFERENCES: Preferences = { theme: 'system', language: 'auto' };
+export type UiFont = 'archivo' | 'atkinson' | 'system';
+export type CodeFont = 'commit-mono' | 'system';
+export type Density = 'compact' | 'normal' | 'airy';
+export type Corners = 'square' | 'soft' | 'round';
+
+export const DEFAULT_PREFERENCES: Preferences = {
+  theme: 'system',
+  language: 'auto',
+  dayTheme: DEFAULT_DAY_THEME,
+  nightTheme: DEFAULT_NIGHT_THEME,
+  customThemes: [],
+  colorOverrides: {},
+  uiFont: 'archivo',
+  noteFont: 'theme',
+  codeFont: 'commit-mono',
+  density: 'normal',
+  corners: 'soft',
+};
 
 const SETTINGS_PATH = '.cobblestone/app.json';
 

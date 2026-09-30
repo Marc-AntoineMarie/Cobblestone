@@ -7,7 +7,7 @@
 .editor-host .cm-editor {
   background: transparent;
   color: var(--ink);
-  font-family: var(--font);
+  font-family: var(--font-note);
   font-size: var(--body);
   font-stretch: 100%;
   line-height: 1.65;

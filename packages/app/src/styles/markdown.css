@@ -1,6 +1,7 @@
 /* Reading view: the same sheet, fully printed. */
 
 .markdown-rendered {
+  font-family: var(--font-note);
   font-size: var(--body);
   font-stretch: 100%;
   line-height: 1.65;

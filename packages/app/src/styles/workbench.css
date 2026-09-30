@@ -241,7 +241,7 @@
   left: 6px;
   right: 6px;
   top: 0;
-  height: 28px;
+  height: var(--row);
   display: flex;
   align-items: center;
   gap: 4px;
@@ -358,7 +358,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  height: 28px;
+  height: var(--row);
   padding-right: 8px;
   border-radius: var(--radius);
 }

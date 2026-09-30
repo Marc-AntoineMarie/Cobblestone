@@ -14,7 +14,9 @@ import {
 import { dirname, isInside } from '@cobblestone/core';
 import { t } from '../i18n';
 import type { MenuItem } from '../session';
+import { ROW_HEIGHTS } from '../appearance';
 import { useSession, useStore, useVaultRevision } from './hooks';
+import { usePreferences } from './preferences';
 
 interface Row {
   path: string;
@@ -26,7 +28,6 @@ interface Row {
   count: number;
 }
 
-const ROW_HEIGHT = 28;
 const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
 
 function fileIcon(extension: string) {
@@ -48,6 +49,7 @@ export function FileTree() {
   const activePath = useStore(session.workspace, () => session.activePath);
   const [focused, setFocused] = useState<string | null>(null);
   const [dropTarget, setDropTarget] = useState<string | null>(null);
+  const rowHeight = ROW_HEIGHTS[usePreferences().preferences.density];
   const scroller = useRef<HTMLDivElement>(null);
   const [viewport, setViewport] = useState({ top: 0, height: 600 });
 
@@ -105,14 +107,14 @@ export function FileTree() {
     if (!revealed) return;
     const index = rows.findIndex((r) => r.path === revealed);
     if (index !== -1 && scroller.current) {
-      const top = index * ROW_HEIGHT;
+      const top = index * rowHeight;
       const el = scroller.current;
-      if (top < el.scrollTop || top > el.scrollTop + el.clientHeight - ROW_HEIGHT) el.scrollTop = top - el.clientHeight / 3;
+      if (top < el.scrollTop || top > el.scrollTop + el.clientHeight - rowHeight) el.scrollTop = top - el.clientHeight / 3;
       setFocused(revealed);
     }
     const timer = setTimeout(() => session.ui.setState({ revealed: null }), 1600);
     return () => clearTimeout(timer);
-  }, [revealed, rows, session]);
+  }, [revealed, rows, session, rowHeight]);
 
   useEffect(() => {
     const el = scroller.current;
@@ -216,9 +218,9 @@ export function FileTree() {
     const index = rows.findIndex((r) => r.path === focused);
     if (index === -1) return;
     const el = scroller.current;
-    const top = index * ROW_HEIGHT;
+    const top = index * rowHeight;
     if (top < el.scrollTop) el.scrollTop = top;
-    else if (top + ROW_HEIGHT > el.scrollTop + el.clientHeight) el.scrollTop = top + ROW_HEIGHT - el.clientHeight;
+    else if (top + rowHeight > el.scrollTop + el.clientHeight) el.scrollTop = top + rowHeight - el.clientHeight;
     // Move keyboard focus only while a row of the tree has it: revealing a file must not take it from
     // the editor, nor from the rename field or a context menu opened meanwhile.
     const rowHasFocus = () => document.activeElement?.matches('.tree-row') === true && el.contains(document.activeElement);
@@ -226,7 +228,7 @@ export function FileTree() {
     requestAnimationFrame(() => {
       if (rowHasFocus()) el.querySelector<HTMLElement>(`[data-path="${CSS.escape(focused)}"]`)?.focus();
     });
-  }, [focused, rows]);
+  }, [focused, rows, rowHeight]);
 
   const onDragStart = (event: DragEvent, row: Row) => {
     event.dataTransfer.setData('application/x-cobblestone-path', row.path);
@@ -252,8 +254,8 @@ export function FileTree() {
     if (folder !== dirname(path) && !isInside(folder, path)) void session.move(path, folder);
   };
 
-  const first = Math.max(0, Math.floor(viewport.top / ROW_HEIGHT) - 10);
-  const last = Math.min(rows.length, Math.ceil((viewport.top + viewport.height) / ROW_HEIGHT) + 10);
+  const first = Math.max(0, Math.floor(viewport.top / rowHeight) - 10);
+  const last = Math.min(rows.length, Math.ceil((viewport.top + viewport.height) / rowHeight) + 10);
   const visible = rows.slice(first, last);
 
   if (rows.length === 0) {
@@ -280,12 +282,12 @@ export function FileTree() {
       onDrop={(e) => onDrop(e, null)}
       data-drop-root={dropTarget === '' ? 'true' : undefined}
     >
-      <div className="tree-canvas" style={{ height: rows.length * ROW_HEIGHT }}>
+      <div className="tree-canvas" style={{ height: rows.length * rowHeight }}>
         {visible.map((row, i) => (
           <TreeRow
             key={row.path}
             row={row}
-            top={(first + i) * ROW_HEIGHT}
+            top={(first + i) * rowHeight}
             open={!!expanded[row.path]}
             active={row.path === activePath}
             focused={row.path === focused || (focused === null && first + i === 0)}

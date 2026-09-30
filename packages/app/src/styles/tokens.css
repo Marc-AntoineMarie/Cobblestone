@@ -57,11 +57,15 @@
 
   --font: 'Archivo Variable', Archivo, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --mono: 'Commit Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  /* The notes' own font; the appearance settings may set another. */
+  --font-note: var(--font);
   --chrome: 13px;
   --body: 16.5px;
   /* Readable line length, in multiples of --body (set per vault). */
   --line-width: 42;
   --radius: 3px;
+  /* Height of a row in lists: the density of the appearance settings. */
+  --row: 28px;
   --rail-width: 264px;
   --margin-width: 288px;
   --bar: 44px;
