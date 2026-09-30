@@ -14,7 +14,7 @@
 
 .canvas-view:focus-visible {
   outline: none;
-  box-shadow: inset 0 0 0 2px var(--pink);
+  box-shadow: inset 0 0 0 2px var(--accent);
 }
 
 .canvas-world {
@@ -43,7 +43,7 @@
 }
 
 .canvas-node.is-selected {
-  outline: 2px solid var(--pink);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
@@ -106,7 +106,7 @@
 .canvas-file-title:hover {
   color: var(--ink);
   text-decoration: underline;
-  text-decoration-color: var(--pink);
+  text-decoration-color: var(--accent);
   text-underline-offset: 3px;
 }
 
@@ -175,7 +175,7 @@
 .canvas-group-label.is-input {
   height: auto;
   padding: 2px 6px;
-  border: 1px solid var(--pink);
+  border: 1px solid var(--accent);
   background: var(--paper);
   text-transform: none;
 }
@@ -209,8 +209,8 @@
 }
 
 .canvas-port:hover {
-  background: var(--pink);
-  border-color: var(--pink);
+  background: var(--accent);
+  border-color: var(--accent);
 }
 
 .canvas-port.is-top {
@@ -236,7 +236,7 @@
   bottom: -5px;
   width: 12px;
   height: 12px;
-  background: var(--pink);
+  background: var(--accent);
   border: 2px solid var(--paper);
   border-radius: 2px;
   cursor: nwse-resize;
@@ -260,7 +260,7 @@
 }
 
 .canvas-edge-line.is-wire {
-  stroke: var(--pink);
+  stroke: var(--accent);
   stroke-dasharray: 6 5;
 }
 
@@ -277,7 +277,7 @@
 }
 
 .canvas-edge.is-selected {
-  --edge-ink: var(--pink);
+  --edge-ink: var(--accent);
 }
 
 .canvas-edge-label {
@@ -304,8 +304,8 @@
   position: absolute;
   left: 0;
   top: 0;
-  background: var(--pink-overprint);
-  border: 1px solid var(--pink);
+  background: var(--accent-overprint);
+  border: 1px solid var(--accent);
   pointer-events: none;
 }
 

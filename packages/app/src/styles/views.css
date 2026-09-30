@@ -24,7 +24,7 @@
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: radial-gradient(circle, var(--pink) 1.6px, transparent 1.9px) 2px 2px / 7px 7px;
+  background: radial-gradient(circle, var(--accent) 1.6px, transparent 1.9px) 2px 2px / 7px 7px;
   mix-blend-mode: var(--overprint);
 }
 

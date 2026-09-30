@@ -26,9 +26,9 @@
   --rule: rgb(30 42 79 / 0.14);
   --rule-strong: rgb(30 42 79 / 0.28);
 
-  --pink: #ff48b0;
-  --pink-deep: #c0277e;
-  --on-pink: #1e2a4f;
+  --accent: #ff48b0;
+  --accent-deep: #c0277e;
+  --on-accent: #1e2a4f;
   --yellow: #ffe800;
   --green: #00a95c;
   --green-deep: #0e7a4a;
@@ -41,7 +41,7 @@
 
   /* Overprint: inks multiply on day stock, screen on night stock. */
   --overprint: multiply;
-  --pink-overprint: rgb(255 72 176 / 0.34);
+  --accent-overprint: rgb(255 72 176 / 0.34);
   --mark: #ffe800;
   --mark-ink: #1e2a4f;
   --selected: #ffe800;
@@ -80,9 +80,9 @@
   --rule: rgb(236 235 228 / 0.11);
   --rule-strong: rgb(236 235 228 / 0.24);
 
-  --pink: #ff5cba;
-  --pink-deep: #ff85cb;
-  --on-pink: #15192a;
+  --accent: #ff5cba;
+  --accent-deep: #ff85cb;
+  --on-accent: #15192a;
   --yellow: #ffe14d;
   --green: #2fd18a;
   --green-deep: #5fe0a6;
@@ -94,7 +94,7 @@
   --purple: #b39ae6;
 
   --overprint: screen;
-  --pink-overprint: rgb(255 92 186 / 0.3);
+  --accent-overprint: rgb(255 92 186 / 0.3);
   --mark: rgb(255 225 77 / 0.26);
   --mark-ink: #fff6c4;
   --selected: rgb(255 225 77 / 0.2);

@@ -88,7 +88,7 @@ function readInks() {
     ink2: v('--ink-2'),
     ink3: v('--ink-3'),
     paper: v('--paper'),
-    pink: v('--pink'),
+    accent: v('--accent'),
     yellow: v('--yellow'),
     rule: v('--rule-strong'),
     night: document.documentElement.dataset.paper === 'night',
@@ -314,7 +314,7 @@ export function GraphView({ focus, visible }: { focus?: string; visible: boolean
       context.lineWidth = 1 / view.k;
       for (const link of links) {
         const on = isLit(link, lit);
-        context.strokeStyle = on ? inks.pink : inks.rule;
+        context.strokeStyle = on ? inks.accent : inks.rule;
         context.globalAlpha = lit && !on ? 0.35 : 1;
         context.lineWidth = (on ? 2 : 1) / view.k;
         context.beginPath();
@@ -339,7 +339,7 @@ export function GraphView({ focus, visible }: { focus?: string; visible: boolean
         if (node === hovered || node.id === focus) {
           // Pink drum printed slightly out of register over the ink.
           context.globalCompositeOperation = inks.night ? 'screen' : 'multiply';
-          context.fillStyle = inks.pink;
+          context.fillStyle = inks.accent;
           context.beginPath();
           context.arc(node.x! + 1.2, node.y! + 1, node.radius + 1.5, 0, Math.PI * 2);
           context.fill();

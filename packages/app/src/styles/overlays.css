@@ -92,12 +92,12 @@
 .finder-label mark {
   background: none;
   color: inherit;
-  box-shadow: inset 0 -2px 0 var(--pink);
+  box-shadow: inset 0 -2px 0 var(--accent);
   border-radius: 0;
 }
 
 .finder-item.is-create {
-  color: var(--pink-deep);
+  color: var(--accent-deep);
 }
 
 .finder-item.is-create[aria-selected='true'] {
