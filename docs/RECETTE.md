@@ -261,40 +261,40 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 
 ## 9. Éditeur : écriture et mise en forme
 
-- **9.1** · Les deux · à automatiser · Taper du texte, puis ouvrir le fichier dans un autre éditeur → Le curseur est rose ; le fichier est enregistré un instant après la frappe.
-- **9.2** · Les deux · à automatiser · Écrire puis fermer aussitôt l'app (ou l'onglet du navigateur) → Rien n'est perdu à la réouverture.
-- **9.3** · Les deux · à automatiser · Ctrl+Z, Ctrl+Maj+Z et Ctrl+Y → Annuler, puis rétablir.
-- **9.4** · Les deux · à automatiser · Sélectionner du texte → Fond rose translucide.
-- **9.5** · Les deux · à automatiser · Écrire des titres de `#` à `######` → Titres de tailles décroissantes ; les `#` n'apparaissent que sur la ligne du curseur.
-- **9.6** · Les deux · à automatiser · `**gras**`, puis Ctrl+B sur une sélection, puis Ctrl+B encore → Gras, puis le gras est retiré.
-- **9.7** · Les deux · à automatiser · `*italique*`, puis Ctrl+I sur une sélection → Italique ; Ctrl+I encore le retire.
-- **9.8** · Les deux · à automatiser · `==surligné==`, puis Ctrl+Maj+H sur une sélection → Fond jaune.
-- **9.9** · Les deux · à automatiser · `~~barré~~`, puis Ctrl+Maj+X sur une sélection → Texte barré.
-- **9.10** · Les deux · à automatiser · Code en ligne entre accents graves → Police à chasse fixe sur fond gris.
-- **9.11** · Les deux · à automatiser · Déplacer le curseur sur une ligne mise en forme puis ailleurs → Les marqueurs (`**`, `==`, accents graves) apparaissent grisés sur la ligne du curseur et disparaissent ailleurs.
-- **9.12** · Les deux · à automatiser · Cliquer hors de l'éditeur → Plus aucune syntaxe visible ; la note se lit comme en lecture.
-- **9.13** · Les deux · à automatiser · Liste `- ` puis Entrée, puis Entrée sur un élément vide → Un nouveau `- ` est ajouté, puis la liste se termine.
-- **9.14** · Les deux · à automatiser · Tab et Maj+Tab dans une liste → Indentation, puis désindentation.
-- **9.15** · Les deux · à automatiser · Liste à puces, curseur ailleurs → Les `-` deviennent des points ronds.
-- **9.16** · Les deux · à automatiser · Liste numérotée `1. ` puis Entrée → `2. ` est ajouté automatiquement.
-- **9.17** · Les deux · à automatiser · Tâche `- [ ] `, puis cliquer la case → Case à cocher ; le clic la coche (`[x]` dans le fichier) et barre la ligne.
-- **9.18** · Les deux · à automatiser · Ctrl+L trois fois sur une ligne de texte → `- [ ] texte`, puis tâche cochée, puis décochée.
-- **9.19** · Les deux · à automatiser · Tâches `- [-]` et `- [/]` → Cases cochées, lignes barrées (statuts d'Obsidian).
-- **9.20** · Les deux · à automatiser · Citation `> texte` → Barre de points en demi-teinte à gauche, texte grisé.
-- **9.21** · Les deux · à automatiser · Encadrés `[!tip]`, `[!warning]`, `[!danger]`, `[!note]`, `[!question]`, `[!quote]` → Fonds teintés vert, orange, rouge, bleu, violet, gris, avec un badge au nom du type.
-- **9.22** · Les deux · à automatiser · Encadré repliable `> [!note]- Titre` → En écriture, le contenu reste visible ; en lecture, il est replié.
-- **9.23** · Les deux · à automatiser · Blocs de code avec langage (js, python, css, bash…) → Coloration syntaxique sur fond gris.
-- **9.24** · Les deux · à automatiser · `---` seul sur une ligne, curseur ailleurs → Une ligne de points horizontale.
-- **9.25** · Les deux · à automatiser · Formule `$x^2$`, curseur ailleurs → Formule rendue ; à la première formule, la source s'affiche une fraction de seconde.
-- **9.26** · Les deux · à automatiser · Bloc `$$` sur plusieurs lignes, puis cliquer dessus → Formule centrée ; le clic montre la source.
-- **9.27** · Les deux · à automatiser · Commentaire `%%texte%%` et bloc entre deux lignes `%%` → Texte grisé en italique.
-- **9.28** · Les deux · à automatiser · Identifiant de bloc ` ^mon-bloc` en fin de ligne → Petit texte grisé.
-- **9.29** · Les deux · à automatiser · Tableau Markdown en écriture → Il reste en source (le rendu des tableaux se fait en lecture).
-- **9.30** · Les deux · à automatiser · Ctrl+F dans l'éditeur → Panneau de recherche en haut de la note : chercher, suivant, précédent, remplacer, casse, expressions régulières.
-- **9.31** · Les deux · à automatiser · Réglage « Vérifier l'orthographe » activé, écrire une faute → Elle est soulignée.
-- **9.32** · Les deux · à automatiser · Coller du texte copié depuis une page web → Collé en texte.
-- **9.33** · Les deux · à automatiser · Note de plusieurs milliers de lignes → Frappe et défilement restent fluides.
-- **9.34** · Les deux · à automatiser · Fichier aux fins de ligne Windows (CRLF) → Il s'affiche et se modifie normalement.
+- **9.1** · Les deux · auto · Taper du texte, puis ouvrir le fichier dans un autre éditeur → Le curseur est rose ; le fichier est enregistré un instant après la frappe.
+- **9.2** · Les deux · auto · Écrire puis fermer aussitôt l'app (ou l'onglet du navigateur) → Rien n'est perdu à la réouverture.
+- **9.3** · Les deux · auto · Ctrl+Z, Ctrl+Maj+Z et Ctrl+Y → Annuler, puis rétablir.
+- **9.4** · Les deux · auto · Sélectionner du texte → Fond rose translucide.
+- **9.5** · Les deux · auto · Écrire des titres de `#` à `######` → Titres de tailles décroissantes ; les `#` n'apparaissent que sur la ligne du curseur.
+- **9.6** · Les deux · auto · `**gras**`, puis Ctrl+B sur une sélection, puis Ctrl+B encore → Gras, puis le gras est retiré.
+- **9.7** · Les deux · auto · `*italique*`, puis Ctrl+I sur une sélection → Italique ; Ctrl+I encore le retire.
+- **9.8** · Les deux · auto · `==surligné==`, puis Ctrl+Maj+H sur une sélection → Fond jaune.
+- **9.9** · Les deux · auto · `~~barré~~`, puis Ctrl+Maj+X sur une sélection → Texte barré.
+- **9.10** · Les deux · auto · Code en ligne entre accents graves → Police à chasse fixe sur fond gris.
+- **9.11** · Les deux · auto · Déplacer le curseur sur une ligne mise en forme puis ailleurs → Les marqueurs (`**`, `==`, accents graves) apparaissent grisés sur la ligne du curseur et disparaissent ailleurs.
+- **9.12** · Les deux · auto · Cliquer hors de l'éditeur → Plus aucune syntaxe visible ; la note se lit comme en lecture.
+- **9.13** · Les deux · auto · Liste `- ` puis Entrée, puis Entrée sur un élément vide → Un nouveau `- ` est ajouté, puis la liste se termine.
+- **9.14** · Les deux · auto · Tab et Maj+Tab dans une liste → Indentation, puis désindentation.
+- **9.15** · Les deux · auto · Liste à puces, curseur ailleurs → Les `-` deviennent des points ronds.
+- **9.16** · Les deux · auto · Liste numérotée `1. ` puis Entrée → `2. ` est ajouté automatiquement.
+- **9.17** · Les deux · auto · Tâche `- [ ] `, puis cliquer la case → Case à cocher ; le clic la coche (`[x]` dans le fichier) et barre la ligne.
+- **9.18** · Les deux · auto · Ctrl+L trois fois sur une ligne de texte → `- [ ] texte`, puis tâche cochée, puis décochée.
+- **9.19** · Les deux · auto · Tâches `- [-]` et `- [/]` → Cases cochées, lignes barrées (statuts d'Obsidian).
+- **9.20** · Les deux · auto · Citation `> texte` → Barre de points en demi-teinte à gauche, texte grisé.
+- **9.21** · Les deux · auto · Encadrés `[!tip]`, `[!warning]`, `[!danger]`, `[!note]`, `[!question]`, `[!quote]` → Fonds teintés vert, orange, rouge, bleu, violet, gris, avec un badge au nom du type.
+- **9.22** · Les deux · auto · Encadré repliable `> [!note]- Titre` → En écriture, le contenu reste visible ; en lecture, il est replié.
+- **9.23** · Les deux · auto · Blocs de code avec langage (js, python, css, bash…) → Coloration syntaxique sur fond gris.
+- **9.24** · Les deux · auto · `---` seul sur une ligne, curseur ailleurs → Une ligne de points horizontale.
+- **9.25** · Les deux · auto · Formule `$x^2$`, curseur ailleurs → Formule rendue ; à la première formule, la source s'affiche une fraction de seconde.
+- **9.26** · Les deux · auto · Bloc `$$` sur plusieurs lignes, puis cliquer dessus → Formule centrée ; le clic montre la source.
+- **9.27** · Les deux · auto · Commentaire `%%texte%%` et bloc entre deux lignes `%%` → Texte grisé en italique.
+- **9.28** · Les deux · auto · Identifiant de bloc ` ^mon-bloc` en fin de ligne → Petit texte grisé.
+- **9.29** · Les deux · auto · Tableau Markdown en écriture → Il reste en source (le rendu des tableaux se fait en lecture).
+- **9.30** · Les deux · auto · Ctrl+F dans l'éditeur → Panneau de recherche en haut de la note : chercher, suivant, précédent, remplacer, casse, expressions régulières.
+- **9.31** · Les deux · auto · Réglage « Vérifier l'orthographe » activé, écrire une faute → Elle est soulignée.
+- **9.32** · Les deux · auto · Coller du texte copié depuis une page web → Collé en texte.
+- **9.33** · Les deux · auto · Note de plusieurs milliers de lignes → Frappe et défilement restent fluides.
+- **9.34** · Les deux · auto · Fichier aux fins de ligne Windows (CRLF) → Il s'affiche et se modifie normalement.
 
 ## 10. Éditeur : liens, intégrations, tags, propriétés
 

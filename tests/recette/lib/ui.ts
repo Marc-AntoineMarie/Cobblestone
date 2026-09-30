@@ -146,6 +146,27 @@ export class Ui {
     await this.noteBar.getByRole('button', { name: which, exact: true }).click();
   }
 
+  /** Puts the cursor at the end of line n (0 is the first line). */
+  async gotoLine(n: number) {
+    await this.editor.click();
+    await this.page.keyboard.press('Control+Home');
+    for (let i = 0; i < n; i++) await this.page.keyboard.press('ArrowDown');
+    await this.page.keyboard.press('End');
+  }
+
+  /** The drawn lines of the editor. */
+  get lines() {
+    return this.editor.locator('.cm-line');
+  }
+
+  /** Text of the whole document, as the editor holds it. */
+  async doc(): Promise<string> {
+    return this.pane.locator('.cm-content').evaluate((el) => {
+      const view = (el as unknown as { cmView?: { view: { state: { doc: { toString(): string } } } } }).cmView?.view;
+      return view ? view.state.doc.toString() : (el as HTMLElement).innerText;
+    });
+  }
+
   /** Puts the cursor at the end of the note's text. */
   async editEnd() {
     await this.editor.click();
