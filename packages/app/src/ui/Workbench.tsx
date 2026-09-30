@@ -11,6 +11,7 @@ import { HoverPreview } from './HoverPreview';
 import { useMediaQuery, useSession, useStore } from './hooks';
 import { LayoutView } from './LayoutView';
 import { usePreferences } from './preferences';
+import { PairingDialog } from './PairingDialog';
 import { ShareSheet } from './ShareSheet';
 import { SideZone } from './SideZone';
 import { Toasts } from './Toasts';
@@ -98,6 +99,7 @@ export function Workbench({ onSwitchVault }: { onSwitchVault: () => void }) {
       <Finder />
       <ContextMenu />
       <ShareSheet />
+      <PairingDialog />
       <HoverPreview />
       <Toasts />
     </div>

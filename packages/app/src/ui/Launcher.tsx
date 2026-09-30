@@ -1,10 +1,11 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { FolderOpen, Plus, Sparkles, X } from 'lucide-react';
+import { FolderOpen, Plus, RefreshCw, Sparkles, X } from 'lucide-react';
 import { describeError } from '../errors';
 import { t } from '../i18n';
 import type { Platform, VaultEntry } from '../platform';
 import { LostVault } from './LostVault';
 import { Mark } from './Mark';
+import { ReceiveVault } from './ReceiveVault';
 
 interface Props {
   platform: Platform;
@@ -30,6 +31,8 @@ export function Launcher({ platform, opening, progress, onCancelOpening, error, 
   const [confirming, setConfirming] = useState<string | null>(null);
   /** Errors from picking or creating a folder; opening errors come from the app. */
   const [failure, setFailure] = useState<string | null>(null);
+  /** Receiving a vault from another device, with a code. */
+  const [receiving, setReceiving] = useState(false);
 
   const refresh = () =>
     void platform.recentVaults().then((list) => setRecent([...list].sort((a, b) => b.lastOpened - a.lastOpened)));
@@ -88,58 +91,72 @@ export function Launcher({ platform, opening, progress, onCancelOpening, error, 
           <p className="launcher-tagline">{t('launcher.tagline')}</p>
         </header>
 
-        <div className="launcher-actions">
-          {platform.capabilities.openFolder ? (
-            <button className="launch-action is-primary" onClick={pick} disabled={busy}>
-              <FolderOpen size={20} strokeWidth={1.75} aria-hidden />
-              <span className="launch-action-text">
-                <strong>{t('launcher.openFolder')}</strong>
-                <span>{t('launcher.openFolder.hint')}</span>
-              </span>
-            </button>
-          ) : (
-            <p className="launcher-note">{t('launcher.unsupported')}</p>
-          )}
-
-          {canCreate &&
-            (creating ? (
-              <form className="launch-create" onSubmit={create}>
-                <label htmlFor="vault-name">{t('launcher.nameLabel')}</label>
-                <div className="launch-create-row">
-                  <input
-                    id="vault-name"
-                    autoFocus
-                    value={name}
-                    placeholder={t('launcher.namePlaceholder')}
-                    onChange={(e) => setName(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Escape' && setCreating(false)}
-                  />
-                  <button type="submit" className="button is-primary" disabled={busy}>
-                    {t('launcher.createAction')}
-                  </button>
-                  <button type="button" className="button is-ghost" onClick={() => setCreating(false)}>
-                    {t('launcher.cancel')}
-                  </button>
-                </div>
-              </form>
-            ) : (
-              <button className="launch-action" onClick={() => setCreating(true)} disabled={busy}>
-                <Plus size={20} strokeWidth={1.75} aria-hidden />
+        {receiving ? (
+          <ReceiveVault platform={platform} onOpen={open} onClose={() => setReceiving(false)} />
+        ) : (
+          <div className="launcher-actions">
+            {platform.capabilities.openFolder ? (
+              <button className="launch-action is-primary" onClick={pick} disabled={busy}>
+                <FolderOpen size={20} strokeWidth={1.75} aria-hidden />
                 <span className="launch-action-text">
-                  <strong>{t('launcher.create')}</strong>
-                  <span>{platform.kind === 'desktop' ? t('launcher.create.hintDesktop') : t('launcher.create.hintWeb')}</span>
+                  <strong>{t('launcher.openFolder')}</strong>
+                  <span>{t('launcher.openFolder.hint')}</span>
                 </span>
               </button>
-            ))}
+            ) : (
+              <p className="launcher-note">{t('launcher.unsupported')}</p>
+            )}
 
-          <button className="launch-action" onClick={() => open(DEMO)} disabled={busy}>
-            <Sparkles size={20} strokeWidth={1.75} aria-hidden />
-            <span className="launch-action-text">
-              <strong>{t('launcher.demo')}</strong>
-              <span>{t('launcher.demo.hint')}</span>
-            </span>
-          </button>
-        </div>
+            {canCreate &&
+              (creating ? (
+                <form className="launch-create" onSubmit={create}>
+                  <label htmlFor="vault-name">{t('launcher.nameLabel')}</label>
+                  <div className="launch-create-row">
+                    <input
+                      id="vault-name"
+                      autoFocus
+                      value={name}
+                      placeholder={t('launcher.namePlaceholder')}
+                      onChange={(e) => setName(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Escape' && setCreating(false)}
+                    />
+                    <button type="submit" className="button is-primary" disabled={busy}>
+                      {t('launcher.createAction')}
+                    </button>
+                    <button type="button" className="button is-ghost" onClick={() => setCreating(false)}>
+                      {t('launcher.cancel')}
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <button className="launch-action" onClick={() => setCreating(true)} disabled={busy}>
+                  <Plus size={20} strokeWidth={1.75} aria-hidden />
+                  <span className="launch-action-text">
+                    <strong>{t('launcher.create')}</strong>
+                    <span>{platform.kind === 'desktop' ? t('launcher.create.hintDesktop') : t('launcher.create.hintWeb')}</span>
+                  </span>
+                </button>
+              ))}
+
+            {platform.syncNetwork && (
+              <button className="launch-action" onClick={() => setReceiving(true)} disabled={busy}>
+                <RefreshCw size={20} strokeWidth={1.75} aria-hidden />
+                <span className="launch-action-text">
+                  <strong>{t('launcher.receive')}</strong>
+                  <span>{t('launcher.receive.hint')}</span>
+                </span>
+              </button>
+            )}
+
+            <button className="launch-action" onClick={() => open(DEMO)} disabled={busy}>
+              <Sparkles size={20} strokeWidth={1.75} aria-hidden />
+              <span className="launch-action-text">
+                <strong>{t('launcher.demo')}</strong>
+                <span>{t('launcher.demo.hint')}</span>
+              </span>
+            </button>
+          </div>
+        )}
 
         {lost && !opening && (
           <LostVault
