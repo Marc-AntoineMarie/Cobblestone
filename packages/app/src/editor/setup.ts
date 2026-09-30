@@ -1,4 +1,4 @@
-import { autocompletion, closeBrackets, closeBracketsKeymap, completionKeymap } from '@codemirror/autocomplete';
+import { acceptCompletion, autocompletion, closeBrackets, closeBracketsKeymap, completionKeymap } from '@codemirror/autocomplete';
 import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands';
 import { markdown, markdownKeymap, markdownLanguage } from '@codemirror/lang-markdown';
 import { bracketMatching, HighlightStyle, indentOnInput, syntaxHighlighting } from '@codemirror/language';
@@ -128,6 +128,8 @@ export function createEditorState(doc: string, options: EditorOptions): EditorSt
         ...formattingKeys,
         ...closeBracketsKeymap,
         ...completionKeymap,
+        // Tab takes the suggestion too, as in Obsidian (without a list open, it indents).
+        { key: 'Tab', run: acceptCompletion },
         ...markdownKeymap,
         ...searchKeymap,
         ...historyKeymap,
