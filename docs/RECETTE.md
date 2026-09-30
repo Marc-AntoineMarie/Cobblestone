@@ -361,19 +361,19 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 
 ## 13. Aperçu au survol
 
-- **13.1** · Les deux · à automatiser · En lecture, laisser la souris sur un lien interne une demi-seconde → Une fenêtre d'aperçu montre la note rendue.
-- **13.2** · Les deux · à automatiser · Passer rapidement sur un lien → Aucun aperçu.
-- **13.3** · Les deux · à automatiser · Déplacer la souris du lien vers l'aperçu → Il reste ouvert ; on peut y faire défiler le texte.
-- **13.4** · Les deux · à automatiser · Quitter l'aperçu avec la souris → Il se ferme après un court instant.
-- **13.5** · Les deux · à automatiser · Survoler un lien vers un titre ou un bloc → Seule cette section est affichée.
-- **13.6** · Les deux · à automatiser · Survoler un lien vers une image → L'image s'affiche.
-- **13.7** · Les deux · à automatiser · Survoler un lien vers une note inexistante → « … n'existe pas encore ».
-- **13.8** · Les deux · à automatiser · Bouton d'ouverture en haut de l'aperçu, puis Ctrl+clic → La note s'ouvre, puis dans un nouvel onglet ; l'aperçu se ferme.
-- **13.9** · Les deux · à automatiser · Cliquer un lien à l'intérieur de l'aperçu → La note visée s'ouvre.
-- **13.10** · Les deux · à automatiser · Échap, ou molette hors de l'aperçu → L'aperçu se ferme.
-- **13.11** · Les deux · à automatiser · Survoler un lien tout en bas de l'écran → L'aperçu s'ouvre au-dessus du lien, entièrement visible.
-- **13.12** · Les deux · à automatiser · En écriture, survoler un lien sans Ctrl, puis avec Ctrl maintenu → Pas d'aperçu, puis aperçu.
-- **13.13** · Les deux · à automatiser · Survoler un nom dans la marge (rétroliens, liens sortants) → Aperçu de la note.
+- **13.1** · Les deux · auto · En lecture, laisser la souris sur un lien interne une demi-seconde → Une fenêtre d'aperçu montre la note rendue.
+- **13.2** · Les deux · auto · Passer rapidement sur un lien → Aucun aperçu.
+- **13.3** · Les deux · auto · Déplacer la souris du lien vers l'aperçu → Il reste ouvert ; on peut y faire défiler le texte.
+- **13.4** · Les deux · auto · Quitter l'aperçu avec la souris → Il se ferme après un court instant.
+- **13.5** · Les deux · auto · Survoler un lien vers un titre ou un bloc → Seule cette section est affichée.
+- **13.6** · Les deux · auto · Survoler un lien vers une image → L'image s'affiche.
+- **13.7** · Les deux · auto · Survoler un lien vers une note inexistante → « … n'existe pas encore ».
+- **13.8** · Les deux · auto · Bouton d'ouverture en haut de l'aperçu, puis Ctrl+clic → La note s'ouvre, puis dans un nouvel onglet ; l'aperçu se ferme.
+- **13.9** · Les deux · auto · Cliquer un lien à l'intérieur de l'aperçu → La note visée s'ouvre.
+- **13.10** · Les deux · auto · Échap, ou molette hors de l'aperçu → L'aperçu se ferme.
+- **13.11** · Les deux · auto · Survoler un lien tout en bas de l'écran → L'aperçu s'ouvre au-dessus du lien, entièrement visible.
+- **13.12** · Les deux · auto · En écriture, survoler un lien sans Ctrl, puis avec Ctrl maintenu → Pas d'aperçu, puis aperçu.
+- **13.13** · Les deux · auto · Survoler un nom dans la marge (rétroliens, liens sortants) → Aperçu de la note.
 
 ## 14. Marge
 
