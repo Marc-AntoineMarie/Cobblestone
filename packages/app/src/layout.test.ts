@@ -50,6 +50,7 @@ describe('layout', () => {
 
   it('keeps a preset for the width, and makes it custom for the rest', () => {
     expect(setLayoutOption(DEFAULT_LAYOUT, 'width', 'wide').preset).toBe('classic');
+    expect(setLayoutOption(DEFAULT_LAYOUT, 'activityLabels', false).preset).toBe('classic');
     expect(setLayoutOption(DEFAULT_LAYOUT, 'statusBar', false).preset).toBe('custom');
     expect(setLayoutOption(DEFAULT_LAYOUT, 'tabs', true).preset).toBe('classic');
   });

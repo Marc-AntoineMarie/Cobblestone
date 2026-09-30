@@ -206,6 +206,7 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 - **6.30** · Les deux · auto · Barre d'état › « Apparence » → Un panneau rapide : thèmes, papier, taille du texte, largeur des lignes, disposition, et « Tous les réglages d'apparence » ; chaque choix s'applique aussitôt ; Échap ou un clic ailleurs le ferme.
 - **6.31** · Les deux · auto · Fenêtre de moins de 760 px → La barre du haut garde le coffre, une loupe et les boutons des panneaux ; pas de barre d'activité.
 - **6.32** · Les deux · auto · « Concentration » depuis l'apparence rapide, puis palette › « Disposition : Classique » (et les autres) → Panneaux et barres disparaissent ; la commande les rend.
+- **6.33** · Les deux · auto · Regarder la barre d'activité, puis décocher « Noms sous les boutons de la barre d'activité » (Réglages › Disposition) → Chaque bouton porte son nom : les panneaux du côté gauche, puis Aujourd'hui, Graphe, Réglages ; sans les noms, la barre rétrécit aux seules icônes.
 
 ## 7. Onglets et divisions
 
