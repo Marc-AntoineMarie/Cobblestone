@@ -90,12 +90,13 @@ export function Editor({ path, tabId, mode, subpath, onView }: Props) {
   const [failure, setFailure] = useState<string | null>(null);
   pathRef.current = path;
 
-  const flush = () => {
+  /** Saves the pending edit now; `leaving`: the page is going away, keep a copy until it is written. */
+  const flush = (leaving = false) => {
     const job = pending.current;
     if (!job) return;
     clearTimeout(job.timer);
     pending.current = null;
-    if (session.vault.getFile(pathRef.current)) void session.vault.modify(pathRef.current, job.text);
+    session.saveText(pathRef.current, job.text, leaving);
   };
 
   // Create the editor once per mount; renames only change pathRef.
@@ -112,7 +113,7 @@ export function Editor({ path, tabId, mode, subpath, onView }: Props) {
           spellcheck,
           onChange: (next) => {
             if (pending.current) clearTimeout(pending.current.timer);
-            pending.current = { text: next, timer: setTimeout(flush, 350) };
+            pending.current = { text: next, timer: setTimeout(() => flush(), 350) };
           },
         });
         view = new EditorView({ state, parent: host.current });
@@ -166,11 +167,13 @@ export function Editor({ path, tabId, mode, subpath, onView }: Props) {
 
   // Save before the page goes away.
   useEffect(() => {
-    const onHide = () => flush();
+    const onHide = () => flush(true);
     window.addEventListener('beforeunload', onHide);
+    window.addEventListener('pagehide', onHide);
     document.addEventListener('visibilitychange', onHide);
     return () => {
       window.removeEventListener('beforeunload', onHide);
+      window.removeEventListener('pagehide', onHide);
       document.removeEventListener('visibilitychange', onHide);
     };
   });

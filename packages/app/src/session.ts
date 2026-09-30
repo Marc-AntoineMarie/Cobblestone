@@ -203,6 +203,7 @@ export class Session {
     const bookmarks = await loadBookmarks(adapter);
     if (bookmarks.imported && entry.kind !== 'demo') await saveBookmarks(adapter, bookmarks.items).catch(() => undefined);
     const session = new Session(platform, entry, vault, settings, workspace, bookmarks.items);
+    await session.restoreUnsaved();
     session.recent = ((await platform.storage.get<string[]>(RECENT_KEY(entry.id))) ?? []).filter((p) => vault.getFile(p));
     if (entry.kind === 'demo' && (activeTab(workspace)?.view.type ?? 'empty') === 'empty') {
       const welcome = vault.getMarkdownFiles().find((f) => /^(Welcome|Bienvenue)\.md$/.test(f.path));
@@ -243,6 +244,61 @@ export class Session {
     for (const url of this.resourceUrls.values()) URL.revokeObjectURL(url);
     this.resourceUrls.clear();
     this.vault.close();
+  }
+
+  // --------------------------------------------------------------- saving notes
+
+  private get unsavedKey() {
+    return `cobblestone:unsaved:${this.entry.id}`;
+  }
+
+  private readUnsaved(): Record<string, { text: string; at: number }> {
+    try {
+      return JSON.parse(localStorage.getItem(this.unsavedKey) ?? '{}') as Record<string, { text: string; at: number }>;
+    } catch {
+      return {};
+    }
+  }
+
+  private writeUnsaved(entries: Record<string, { text: string; at: number }>) {
+    try {
+      if (Object.keys(entries).length) localStorage.setItem(this.unsavedKey, JSON.stringify(entries));
+      else localStorage.removeItem(this.unsavedKey);
+    } catch {
+      // Full or blocked storage: the regular save still runs.
+    }
+  }
+
+  /**
+   * Saves a note's text. When the page is going away (`leaving`), the write may not
+   * finish before it does (browser storage writes are asynchronous): the text is
+   * also kept, synchronously, in local storage until the write is done, and
+   * written again when the vault next opens.
+   */
+  saveText(path: string, text: string, leaving = false) {
+    if (!this.vault.getFile(path)) return;
+    if (leaving) this.writeUnsaved({ ...this.readUnsaved(), [path]: { text, at: Date.now() } });
+    this.vault.modify(path, text).then(
+      () => {
+        if (!leaving) return;
+        const entries = this.readUnsaved();
+        if (entries[path]?.text === text) delete entries[path];
+        this.writeUnsaved(entries);
+      },
+      (error: unknown) => this.fail(error),
+    );
+  }
+
+  /** Writes the text kept by saveText when the page closed before the write finished. */
+  private async restoreUnsaved() {
+    const entries = this.readUnsaved();
+    for (const [path, { text, at }] of Object.entries(entries)) {
+      const file = this.vault.getFile(path);
+      // Skip notes changed since by someone else (another program, another device).
+      if (!file || file.stat.mtime > at + 3000) continue;
+      if ((await this.vault.read(path).catch(() => text)) !== text) await this.vault.modify(path, text).catch(() => undefined);
+    }
+    this.writeUnsaved({});
   }
 
   // --------------------------------------------------------------- feedback
