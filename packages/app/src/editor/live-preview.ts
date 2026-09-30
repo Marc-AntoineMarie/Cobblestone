@@ -459,12 +459,13 @@ export function livePreview(): Extension {
     inlinePreview,
     blockPreview,
     linkClicks,
+    linkHovers,
     clickBelow,
     EditorView.editorAttributes.of({ class: 'cm-live-preview' }),
   ];
 }
 
-/** Source mode still sizes headings and follows links with Ctrl/Cmd-click. */
+/** Source mode still sizes headings, follows links with Ctrl/Cmd-click and previews them with Ctrl/Cmd held. */
 export function sourceDecorations(): Extension {
-  return [linkClicks];
+  return [linkClicks, linkHovers];
 }
