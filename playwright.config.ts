@@ -12,7 +12,9 @@ export default defineConfig<{ platform: Platform }>({
   timeout: 30_000,
   expect: { timeout: 6_000 },
   fullyParallel: true,
-  workers: process.env.CI ? 2 : 4,
+  // Each test runs a whole app (Electron or Chrome): more at once starves a machine of memory, and
+  // timing checks (hover delays, layouts) then fail for no reason. RECETTE_WORKERS=4 on a big machine.
+  workers: Number(process.env.RECETTE_WORKERS) || 2,
   retries: process.env.CI ? 1 : 0,
   reporter: [['list'], ['./tests/recette/lib/rapport.ts']],
   use: { trace: 'retain-on-failure' },
