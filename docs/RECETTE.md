@@ -393,49 +393,49 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 
 ## 15. Palette
 
-- **15.1** · Les deux · à automatiser · Ctrl+K ou Ctrl+O, sans rien taper → Palette « Chercher une note » : notes récentes, puis notes modifiées récemment.
-- **15.2** · Les deux · à automatiser · Taper un nom approximatif ou un alias → Correspondances sur les noms, les chemins et les alias (l'alias suivi du nom de sa note).
-- **15.3** · Les deux · à automatiser · Flèches, Entrée, Ctrl+Entrée, clic → Navigation ; ouverture ; ouverture dans un nouvel onglet ; ouverture.
-- **15.4** · Les deux · à automatiser · Taper un nom inexistant, puis Maj+Entrée → La dernière ligne propose « Créer la note « … » » ; Maj+Entrée la crée directement.
-- **15.5** · Les deux · à automatiser · Taper `Dossier/Nouvelle note`, puis Maj+Entrée → La note est créée dans ce dossier, créé si besoin.
-- **15.6** · Les deux · à automatiser · Échap, puis clic hors de la palette → La palette se ferme dans les deux cas.
-- **15.7** · Les deux · à automatiser · Ctrl+P ou Ctrl+Maj+P → Palette en mode commandes (`> `), chaque commande avec son raccourci.
-- **15.8** · Les deux · à automatiser · Taper `>` dans la palette des notes, puis l'effacer → Passage en mode commandes, puis retour aux notes.
-- **15.9** · Les deux · à automatiser · Taper une commande introuvable → « Aucune commande ne correspond ».
-- **15.10** · Les deux · à automatiser · Palette des commandes sans note ouverte → Les commandes propres aux notes n'apparaissent pas.
-- **15.11** · Les deux · à automatiser · Regarder le bas de la palette → Rappel des touches : flèches, Entrée pour ouvrir, Ctrl+Entrée pour un nouvel onglet, Échap pour fermer.
+- **15.1** · Les deux · auto · Ctrl+K ou Ctrl+O, sans rien taper → Palette « Chercher une note » : notes récentes, puis notes modifiées récemment.
+- **15.2** · Les deux · auto · Taper un nom approximatif ou un alias → Correspondances sur les noms, les chemins et les alias (l'alias suivi du nom de sa note).
+- **15.3** · Les deux · auto · Flèches, Entrée, Ctrl+Entrée, clic → Navigation ; ouverture ; ouverture dans un nouvel onglet ; ouverture.
+- **15.4** · Les deux · auto · Taper un nom inexistant, puis Maj+Entrée → La dernière ligne propose « Créer la note « … » » ; Maj+Entrée la crée directement.
+- **15.5** · Les deux · auto · Taper `Dossier/Nouvelle note`, puis Maj+Entrée → La note est créée dans ce dossier, créé si besoin.
+- **15.6** · Les deux · auto · Échap, puis clic hors de la palette → La palette se ferme dans les deux cas.
+- **15.7** · Les deux · auto · Ctrl+P ou Ctrl+Maj+P → Palette en mode commandes (`> `), chaque commande avec son raccourci.
+- **15.8** · Les deux · auto · Taper `>` dans la palette des notes, puis l'effacer → Passage en mode commandes, puis retour aux notes.
+- **15.9** · Les deux · auto · Taper une commande introuvable → « Aucune commande ne correspond ».
+- **15.10** · Les deux · auto · Palette des commandes sans note ouverte → Les commandes propres aux notes n'apparaissent pas.
+- **15.11** · Les deux · auto · Regarder le bas de la palette → Rappel des touches : flèches, Entrée pour ouvrir, Ctrl+Entrée pour un nouvel onglet, Échap pour fermer.
 
 ## 16. Toutes les commandes
 
-- **16.1** · Bureau · à automatiser · Ctrl+N « Créer une note » → Une note « Sans titre » est créée et ouverte, titre sélectionné.
-- **16.2** · Web · à automatiser · Alt+N « Créer une note » → Une note « Sans titre » est créée et ouverte, titre sélectionné.
-- **16.3** · Les deux · à automatiser · Ctrl+K et Ctrl+O « Chercher une note » → La palette des notes s'ouvre.
-- **16.4** · Les deux · à automatiser · Ctrl+P et Ctrl+Maj+P « Afficher les commandes » → La palette des commandes s'ouvre.
-- **16.5** · Les deux · à automatiser · Ctrl+Maj+D « Ouvrir la note du jour » → La note du jour s'ouvre.
-- **16.6** · Les deux · à automatiser · Ctrl+E « Basculer entre écriture et lecture » → Le mode change.
-- **16.7** · Les deux · à automatiser · Palette : « Afficher la source Markdown » → Mode source, puis retour à l'aperçu.
-- **16.8** · Bureau · à automatiser · Ctrl+W « Fermer l'onglet » → L'onglet actif se ferme.
-- **16.9** · Web · à automatiser · Alt+W « Fermer l'onglet » → L'onglet actif se ferme.
-- **16.10** · Les deux · à automatiser · Ctrl+Alt+Gauche, Ctrl+Alt+Droite « Revenir en arrière », « Aller en avant » → Navigation dans l'historique.
-- **16.11** · Les deux · à automatiser · Ctrl+\ « Diviser à droite » → Nouveau panneau à droite.
-- **16.12** · Les deux · à automatiser · Palette : « Diviser en bas » → Nouveau panneau en bas.
-- **16.13** · Les deux · à automatiser · Ctrl+Maj+\ et Ctrl+[ « Afficher ou masquer la barre latérale » → La barre latérale bascule.
-- **16.14** · Les deux · à automatiser · Ctrl+] « Afficher ou masquer la marge » → La marge bascule.
-- **16.15** · Les deux · à automatiser · Ctrl+G « Ouvrir le graphe » → Le graphe s'ouvre dans un nouvel onglet.
-- **16.16** · Les deux · à automatiser · Palette : « Ouvrir le graphe autour de cette note » → Graphe local à droite.
-- **16.17** · Les deux · à automatiser · Ctrl+, « Ouvrir les réglages » → Onglet des réglages.
-- **16.18** · Les deux · à automatiser · Palette : « Changer de coffre » → Retour à l'accueil.
-- **16.19** · Les deux · à automatiser · Palette : « Basculer entre papier de jour et de nuit » → Le thème change.
-- **16.20** · Les deux · à automatiser · F2 « Renommer cette note » → Le titre prend le focus.
-- **16.21** · Les deux · à automatiser · Palette : « Mettre cette note à la corbeille » → La note part à la corbeille.
-- **16.22** · Les deux · à automatiser · Palette : « Montrer cette note dans la barre latérale » → Voir 5.40.
-- **16.23** · Les deux · à automatiser · Palette : « Copier un lien vers cette note » → `[[Nom]]` dans le presse-papiers.
-- **16.24** · Les deux · à automatiser · Palette : « Ajouter ou retirer cette note des favoris » → Le favori bascule.
-- **16.25** · Les deux · à automatiser · Alt+T « Insérer un modèle » → La liste des modèles s'ouvre.
-- **16.26** · Les deux · à automatiser · Palette : « Créer un canvas » → Un canvas « Sans titre » est créé et ouvert.
-- **16.27** · Les deux · à automatiser · Sur Mac (si disponible) → Les raccourcis utilisent Cmd et s'affichent ⌘ ⇧ ⌥.
-- **16.28** · Bureau · à automatiser · Palette, taper « gestionnaire » → « Montrer cette note dans le gestionnaire de fichiers » ; l'exécuter sélectionne la note dans son dossier.
-- **16.29** · Web · à automatiser · Palette, taper « gestionnaire » → La commande n'existe pas.
+- **16.1** · Bureau · auto · Ctrl+N « Créer une note » → Une note « Sans titre » est créée et ouverte, titre sélectionné.
+- **16.2** · Web · auto · Alt+N « Créer une note » → Une note « Sans titre » est créée et ouverte, titre sélectionné.
+- **16.3** · Les deux · auto · Ctrl+K et Ctrl+O « Chercher une note » → La palette des notes s'ouvre.
+- **16.4** · Les deux · auto · Ctrl+P et Ctrl+Maj+P « Afficher les commandes » → La palette des commandes s'ouvre.
+- **16.5** · Les deux · auto · Ctrl+Maj+D « Ouvrir la note du jour » → La note du jour s'ouvre.
+- **16.6** · Les deux · auto · Ctrl+E « Basculer entre écriture et lecture » → Le mode change.
+- **16.7** · Les deux · auto · Palette : « Afficher la source Markdown » → Mode source, puis retour à l'aperçu.
+- **16.8** · Bureau · auto · Ctrl+W « Fermer l'onglet » → L'onglet actif se ferme.
+- **16.9** · Web · auto · Alt+W « Fermer l'onglet » → L'onglet actif se ferme.
+- **16.10** · Les deux · auto · Ctrl+Alt+Gauche, Ctrl+Alt+Droite « Revenir en arrière », « Aller en avant » → Navigation dans l'historique.
+- **16.11** · Les deux · auto · Ctrl+\ « Diviser à droite » → Nouveau panneau à droite.
+- **16.12** · Les deux · auto · Palette : « Diviser en bas » → Nouveau panneau en bas.
+- **16.13** · Les deux · auto · Ctrl+Maj+\ et Ctrl+[ « Afficher ou masquer la barre latérale » → La barre latérale bascule.
+- **16.14** · Les deux · auto · Ctrl+] « Afficher ou masquer la marge » → La marge bascule.
+- **16.15** · Les deux · auto · Ctrl+G « Ouvrir le graphe » → Le graphe s'ouvre dans un nouvel onglet.
+- **16.16** · Les deux · auto · Palette : « Ouvrir le graphe autour de cette note » → Graphe local à droite.
+- **16.17** · Les deux · auto · Ctrl+, « Ouvrir les réglages » → Onglet des réglages.
+- **16.18** · Les deux · auto · Palette : « Changer de coffre » → Retour à l'accueil.
+- **16.19** · Les deux · auto · Palette : « Basculer entre papier de jour et de nuit » → Le thème change.
+- **16.20** · Les deux · auto · F2 « Renommer cette note » → Le titre prend le focus.
+- **16.21** · Les deux · auto · Palette : « Mettre cette note à la corbeille » → La note part à la corbeille.
+- **16.22** · Les deux · auto · Palette : « Montrer cette note dans la barre latérale » → Voir 5.40.
+- **16.23** · Les deux · auto · Palette : « Copier un lien vers cette note » → `[[Nom]]` dans le presse-papiers.
+- **16.24** · Les deux · auto · Palette : « Ajouter ou retirer cette note des favoris » → Le favori bascule.
+- **16.25** · Les deux · auto · Alt+T « Insérer un modèle » → La liste des modèles s'ouvre.
+- **16.26** · Les deux · auto · Palette : « Créer un canvas » → Un canvas « Sans titre » est créé et ouvert.
+- **16.27** · Les deux · manuel · Sur Mac (si disponible) → Les raccourcis utilisent Cmd et s'affichent ⌘ ⇧ ⌥.
+- **16.28** · Bureau · auto · Palette, taper « gestionnaire » → « Montrer cette note dans le gestionnaire de fichiers » ; l'exécuter sélectionne la note dans son dossier.
+- **16.29** · Web · auto · Palette, taper « gestionnaire » → La commande n'existe pas.
 
 ## 17. Note du jour et modèles
 
