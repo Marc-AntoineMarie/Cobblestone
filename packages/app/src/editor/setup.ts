@@ -133,7 +133,8 @@ export function createEditorState(doc: string, options: EditorOptions): EditorSt
         ...markdownKeymap,
         ...searchKeymap,
         ...historyKeymap,
-        ...defaultKeymap,
+        // Ctrl+[ and Ctrl+] are the app's (sidebar, margin); lists indent with Tab.
+        ...defaultKeymap.filter((binding) => binding.key !== 'Mod-[' && binding.key !== 'Mod-]'),
         indentWithTab,
       ]),
       EditorView.updateListener.of((update) => {
