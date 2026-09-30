@@ -377,19 +377,19 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 
 ## 14. Marge
 
-- **14.1** · Les deux · à automatiser · Ctrl+], puis le bouton de la marge → Masque puis affiche la marge.
-- **14.2** · Les deux · à automatiser · Regarder RÉTROLIENS → Les notes qui pointent ici, avec un compteur ; chaque extrait montre le lien surligné, sans `[[ ]]`.
-- **14.3** · Les deux · à automatiser · Cliquer le nom d'un rétrolien, puis Ctrl+clic → La note s'ouvre, puis dans un nouvel onglet.
-- **14.4** · Les deux · à automatiser · Cliquer un extrait de rétrolien → La note s'ouvre avec le curseur sur la ligne du lien.
-- **14.5** · Les deux · à automatiser · Rétrolien venant d'une propriété (`responsable: "[[Note]]"`) → Le nom de la propriété s'affiche sous la note.
-- **14.6** · Les deux · à automatiser · Cliquer « MENTIONS NON LIÉES » → La section se déplie avec un compteur : les notes qui citent le nom ou un alias sans lien.
-- **14.7** · Les deux · à automatiser · Bouton « Lier » d'une mention → Elle devient `[[Note]]`, ou `[[Note|texte]]` si la casse diffère ; elle quitte la liste et entre dans les rétroliens.
-- **14.8** · Les deux · à automatiser · Citer le nom de la note dans du code, un lien ou un commentaire → Ces citations ne comptent pas comme mentions.
-- **14.9** · Les deux · à automatiser · Cliquer un titre du PLAN, en écriture puis en lecture → Défilement jusqu'au titre dans les deux modes.
-- **14.10** · Les deux · à automatiser · LIENS SORTANTS → Notes liées (cliquables, aperçu au survol) et notes inexistantes marquées « pas encore créée », qu'un clic crée.
-- **14.11** · Les deux · à automatiser · PROPRIÉTÉS, puis clic sur un tag → Alias, valeurs du YAML et tags en pastilles ; le clic filtre la barre latérale.
-- **14.12** · Les deux · à automatiser · Ouvrir un canvas, un graphe ou une image avec la marge ouverte → Message « La marge accompagne les notes… ».
-- **14.13** · Les deux · à automatiser · Fenêtre de moins de 1180 px de large, ouvrir la marge, puis cliquer à côté → Elle s'ouvre en tiroir par-dessus avec un voile ; le clic sur le voile la ferme.
+- **14.1** · Les deux · auto · Ctrl+], puis le bouton de la marge → Masque puis affiche la marge.
+- **14.2** · Les deux · auto · Regarder RÉTROLIENS → Les notes qui pointent ici, avec un compteur ; chaque extrait montre le lien surligné, sans `[[ ]]`.
+- **14.3** · Les deux · auto · Cliquer le nom d'un rétrolien, puis Ctrl+clic → La note s'ouvre, puis dans un nouvel onglet.
+- **14.4** · Les deux · auto · Cliquer un extrait de rétrolien → La note s'ouvre avec le curseur sur la ligne du lien.
+- **14.5** · Les deux · auto · Rétrolien venant d'une propriété (`responsable: "[[Note]]"`) → Le nom de la propriété s'affiche sous la note.
+- **14.6** · Les deux · auto · Cliquer « MENTIONS NON LIÉES » → La section se déplie avec un compteur : les notes qui citent le nom ou un alias sans lien.
+- **14.7** · Les deux · auto · Bouton « Lier » d'une mention → Elle devient `[[Note]]`, ou `[[Note|texte]]` si la casse diffère ; elle quitte la liste et entre dans les rétroliens.
+- **14.8** · Les deux · auto · Citer le nom de la note dans du code, un lien ou un commentaire → Ces citations ne comptent pas comme mentions.
+- **14.9** · Les deux · auto · Cliquer un titre du PLAN, en écriture puis en lecture → Défilement jusqu'au titre dans les deux modes.
+- **14.10** · Les deux · auto · LIENS SORTANTS → Notes liées (cliquables, aperçu au survol) et notes inexistantes marquées « pas encore créée », qu'un clic crée.
+- **14.11** · Les deux · auto · PROPRIÉTÉS, puis clic sur un tag → Alias, valeurs du YAML et tags en pastilles ; le clic filtre la barre latérale.
+- **14.12** · Les deux · auto · Ouvrir un canvas, un graphe ou une image avec la marge ouverte → Message « La marge accompagne les notes… ».
+- **14.13** · Les deux · auto · Fenêtre de moins de 1180 px de large, ouvrir la marge, puis cliquer à côté → Elle s'ouvre en tiroir par-dessus avec un voile ; le clic sur le voile la ferme.
 
 ## 15. Palette
 
