@@ -120,6 +120,12 @@ export function open(state: WorkspaceState, view: ViewState, target: OpenTarget 
     const existing = path ? pane.tabs.find((t) => viewPath(t.view) === path) : undefined;
     if (existing && target === 'tab') return updatePane(state, pane.id, (p) => ({ ...p, activeTab: existing.id }));
   }
+  // Settings are one place: opening them again goes back to their tab, wherever it is.
+  if (view.type === 'settings') {
+    const holder = panes(state.layout).find((p) => p.tabs.some((t) => t.view.type === 'settings'));
+    const tab = holder?.tabs.find((t) => t.view.type === 'settings');
+    if (holder && tab) return updatePane({ ...state, activePane: holder.id }, holder.id, (p) => ({ ...p, activeTab: tab.id }));
+  }
 
   if (target === 'split-right' || target === 'split-down') {
     return split(state, target === 'split-right' ? 'row' : 'column', view);

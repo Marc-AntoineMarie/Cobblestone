@@ -43,6 +43,15 @@ describe('workspace', () => {
     expect(findPane(s)!.tabs).toHaveLength(3);
   });
 
+  it('goes back to the settings tab instead of opening another one', () => {
+    let s = open(initialWorkspace(), { type: 'settings' }, 'tab');
+    const settingsTab = activeTab(s)!.id;
+    s = open(s, note('A.md'), 'tab');
+    s = open(s, { type: 'settings' }, 'tab');
+    expect(findPane(s)!.tabs.filter((t) => t.view.type === 'settings')).toHaveLength(1);
+    expect(activeTab(s)!.id).toBe(settingsTab);
+  });
+
   it('splits and collapses panes when their last tab closes', () => {
     let s = open(initialWorkspace(), note('A.md'));
     s = split(s, 'row', note('B.md'));
