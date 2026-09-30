@@ -120,11 +120,13 @@ function buildInline(view: EditorView): DecorationSet {
             decorations.push(mark('cm-block-id').range(node.from, node.to));
             return;
           case 'InlineMath': {
-            if (isActive(node.from)) {
+            if (activeRange(node.from, node.to)) {
               decorations.push(mark('cm-math-source').range(node.from, node.to));
               return false;
             }
             const raw = state.doc.sliceString(node.from, node.to);
+            // "$$ … $$" over several lines of a paragraph: drawn by the block field, which alone may replace line breaks.
+            if (raw.includes('\n')) return false;
             const display = raw.startsWith('$$');
             const tex = display ? raw.slice(2, -2) : raw.slice(1, -1);
             decorations.push(Decoration.replace({ widget: new MathWidget(tex, false) }).range(node.from, node.to));
@@ -356,6 +358,15 @@ function buildBlocks(state: EditorState): DecorationSet {
         const lines = state.doc.sliceString(node.from, node.to).split('\n');
         const yaml = lines.slice(1, -1).join('\n');
         decorations.push(Decoration.replace({ widget: new PropertiesWidget(yaml), block: true }).range(node.from, node.to));
+        return false;
+      }
+      if (node.name === 'InlineMath' && state.doc.sliceString(node.from, node.to).includes('\n')) {
+        if (touched(node.from, node.to)) return false;
+        const tex = state.doc
+          .sliceString(node.from, node.to)
+          .replace(/^\$\$?/, '')
+          .replace(/\$?\$$/, '');
+        decorations.push(Decoration.replace({ widget: new MathWidget(tex, true) }).range(node.from, node.to));
         return false;
       }
       if (node.name === 'MathBlock') {
