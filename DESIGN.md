@@ -148,7 +148,7 @@ Rejected on purpose: the charcoal IDE shell with a purple accent, the grey-sideb
 
 A restrained print palette: two neutrals (paper and ink) and a small set of spot inks with fixed roles. The values below are the house theme, **Atelier** (day) and **Atelier nuit** (night); every other theme keeps the same roles with other inks (see Themes).
 
-- **Paper** `#F4F4F0` (day stock): the ground of every surface. `paper-2` for the stack rail and inputs, `paper-3` for hover.
+- **Paper** `#F4F4F0` (day stock): the ground of every surface. `paper-2` for the bars, the left zone and inputs, `paper-3` for hover.
 - **Ink** `#1E2A4F` (navy): all text and icons. `ink-2` for secondary text (6.7:1), `ink-3` for rules and non-text marks only (4.0:1, never body text).
 - **Accent**, fluorescent pink `#FF48B0` in Atelier: the action ink. Primary buttons (accent fill, `on-accent` text, 4.5:1), link underlines, focus rings, the selection overprint. `accent-deep` when the accent must carry text on paper. Tokens: `--accent`, `--accent-deep`, `--on-accent`, `--accent-overprint`.
 - **Yellow** `#FFE800`: the marking ink. `==highlights==`, the selected item in lists, search hits.
@@ -174,7 +174,7 @@ A theme is a set of inks for the roles, printed on day stock (light) or night st
 One family, Archivo (variable weight and width), carries the whole system; Commit Mono is reserved for code. Readers may change three fonts in the appearance settings, each a token: the interface (`--font`: Archivo, Atkinson Hyperlegible, the system's), the notes (`--font-note`: the theme's, Archivo, Literata, Atkinson Hyperlegible, the system's with or without serifs) and code (`--mono`: Commit Mono or the system's). Titles stay in the interface font, like a poster headline over the text. All fonts ship with the app, so it works offline.
 
 - **Chrome** 13px, weight 450, width 92: every label, button, tab, tree row and menu. No other chrome size exists.
-- **Chrome labels** 13px, weight 650, width 80, uppercase, +0.06em tracking: section labels in the rail and marginalia.
+- **Chrome labels** 13px, weight 650, width 80, uppercase, +0.06em tracking: panel titles and section labels.
 - **Title** expanded (width 118), weight 800, tight leading: the note title prints like a poster headline.
 - **Body** 16.5px/1.65 by default (each vault picks 13 to 24px), width 100, measure 42 times the body size (about 80 characters; 34 narrow, 54 wide). Note headings scale with the body and step down in width and weight from the title (h1 width 112/760, h2 106/720, h3 100/700).
 - **Numbers** in dates, counts, sizes and word counts use tabular figures and align in columns.
@@ -182,11 +182,14 @@ One family, Archivo (variable weight and width), carries the whole system; Commi
 
 ## Layout
 
-- **Stack rail** (left, 260px, collapsible): vault name, find field, note tree, tags, and the press status at the bottom.
-- **Sheet** (center): tabs across the top, then the note at a 70ch measure with generous margins. Sheets can split right or down.
-- **Marginalia** (right, 280px on wide screens): backlinks, outline and properties set in the margin as annotations, not a boxed panel. Below 1200px they fold into a drawer.
+- **Top bar** (44px): the vault on the left (its menu: settings, vault folder, switch vault), the command field in the middle ("Search, open a note or run a command", with its shortcut), and the buttons that show or hide the left and right zones.
+- **Activity bar** (48px, left edge): one button per shown panel (it opens the panel's zone, unfolds it and brings it into view), then Today and Graph, and Settings at the bottom.
+- **Side zones**, left and right, 272px by default (232 narrow, 320 wide): panels stacked in order, each folding by its title. Panels: Search, Bookmarks, Notes (the tree), Tags, Backlinks, Outline, Links out, Properties. A panel goes left, right or hidden — from its title's menu, by dragging its title to the other zone, or in Settings › Layout. The panels about a note show a single line when no note is open.
+- **Ready-made layouts**: Classic (finding and files left, the note's context right), Focus (nothing around the text: no panels, tabs or bars), Researcher (search and files left; backlinks, links and outline right), Mirror (Classic swapped). Changing one panel makes the layout Custom. Layouts are a preference of the device; each is also a command in the palette.
+- **Sheet** (center): tabs across the top (they can be hidden), then the note at a 70ch measure with generous margins. Sheets can split right or down.
+- **Status bar** (28px, can be hidden): where the vault stands (sync status), the active note's words, characters and backlinks, and the Appearance button that opens quick settings (themes, paper, text size, line length, layout).
 - Spacing rhythm 4 / 8 / 12 / 20 / 32 / 56. More space above a heading than below it.
-- Narrow screens: rail and marginalia become drawers; the sheet keeps a 16px gutter.
+- Narrow screens (under 760px): the top bar keeps the vault, a magnifier and the zone buttons; no activity bar; zones open as drawers over the sheet with a scrim; the sheet keeps a 16px gutter. Under 1180px the right zone is a drawer.
 
 ## Elevation & Depth
 
@@ -203,6 +206,7 @@ Paper is cut, not moulded: `--radius` corners on controls (3px by default; the r
 - **Tree rows**: `--row` tall (28px by default; the density setting makes it 24 compact or 34 airy, tags follow), icon and name, tabular counts right-aligned; hover paper-3, selected yellow overprint.
 - **Settings**: one page, the sections listed on the left (following the scroll), a search field that keeps only matching settings, and on wide screens a live preview on the right: the app in miniature, painted with the theme pointed at.
 - **Tabs**: paper tabs whose active sheet shares the sheet's ground; inactive tabs sit on paper-2.
+- **Panels**: a 36px title in chrome labels with a fold chevron and a count; right-click for Move left/right, Up, Down, Hide; drag the title to move it (a dashed accent outline marks the zone, an accent rule the place).
 - **Focus**: 2px accent ring offset 2px on every interactive element.
 - **Sync status**: named states, each a word and a shape: Synced (filled dot), Syncing (half dot), Offline (hollow dot), Conflict (triangle).
 - **Callouts**: a tinted ground of their ink at low strength with an ink title; no coloured side stripe.

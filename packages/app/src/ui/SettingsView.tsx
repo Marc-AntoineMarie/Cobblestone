@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { CalendarDays, FileText, Info, Languages, Link2, Palette, Search, Stamp } from 'lucide-react';
+import { CalendarDays, FileText, Info, Languages, LayoutPanelLeft, Link2, Palette, Search, Stamp } from 'lucide-react';
 import { LANGUAGES, t } from '../i18n';
 import type { VaultSettings } from '../settings';
 import type { Theme } from '../themes';
 import { AppearancePreview, AppearanceSettings } from './AppearanceSettings';
+import { LayoutSettings } from './LayoutSettings';
 import { useSession, useStore } from './hooks';
 import { usePreferences } from './preferences';
 import { Row, SettingsQuery, Toggle } from './settings-parts';
@@ -13,6 +14,7 @@ const VERSION = '0.1.0';
 const SECTIONS = [
   { id: 'general', icon: Languages, title: () => t('settings.general') },
   { id: 'appearance', icon: Palette, title: () => t('settings.appearance') },
+  { id: 'layout', icon: LayoutPanelLeft, title: () => t('settings.layout') },
   { id: 'editor', icon: FileText, title: () => t('settings.editor') },
   { id: 'files', icon: Link2, title: () => t('settings.files') },
   { id: 'daily', icon: CalendarDays, title: () => t('rail.today') },
@@ -69,6 +71,14 @@ export function SettingsView() {
       root.removeEventListener('scrollend', onScrollEnd);
     };
   }, []);
+
+  // Opened at a section (from the status bar's appearance, say).
+  const asked = useStore(session.ui, (s) => s.settingsSection);
+  useEffect(() => {
+    if (!asked) return;
+    session.ui.setState({ settingsSection: null });
+    if (SECTIONS.some((s) => s.id === asked)) jump(asked as SectionId);
+  }, [asked]);
 
   // Say so when the search leaves nothing.
   useEffect(() => {
@@ -152,6 +162,8 @@ export function SettingsView() {
             )}
 
             {section('appearance', <AppearanceSettings onPreview={setPreview} />)}
+
+            {section('layout', <LayoutSettings />)}
 
             {section(
               'editor',

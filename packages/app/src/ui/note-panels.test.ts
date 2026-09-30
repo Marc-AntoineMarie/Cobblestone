@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { contextSegments } from './Marginalia';
+import { contextSegments } from './NotePanels';
 
 describe('backlink context', () => {
   it('shows link labels and marks the linking one', () => {

@@ -1,5 +1,6 @@
 import type { VaultAdapter } from '@cobblestone/core';
 import type { EditorMode } from './workspace/workspace';
+import { DEFAULT_LAYOUT, type LayoutPreferences } from './layout';
 import { obsidianEnabledSnippets } from './snippets';
 import { DEFAULT_DAY_THEME, DEFAULT_NIGHT_THEME, type NoteFont, type Theme, type ThemeColors } from './themes';
 
@@ -81,6 +82,8 @@ export interface Preferences {
   codeFont: CodeFont;
   density: Density;
   corners: Corners;
+  /** Where the panels go, and which bars show. */
+  layout: LayoutPreferences;
 }
 
 export type UiFont = 'archivo' | 'atkinson' | 'system';
@@ -100,6 +103,7 @@ export const DEFAULT_PREFERENCES: Preferences = {
   codeFont: 'commit-mono',
   density: 'normal',
   corners: 'soft',
+  layout: DEFAULT_LAYOUT,
 };
 
 const SETTINGS_PATH = '.cobblestone/app.json';

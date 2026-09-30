@@ -154,7 +154,7 @@ recette('9.12', async ({ app, ui }) => {
   await ui.open('Essai');
   await ui.gotoLine(0);
   await expect(ui.lines.first()).toContainText('**');
-  await ui.rail.locator('.rail-find input').click();
+  await ui.find.click();
   await expect(ui.lines.first()).not.toContainText('**');
   await expect(ui.lines.nth(1)).not.toContainText('#');
 });
@@ -392,7 +392,8 @@ recette('9.33', async ({ app, ui }) => {
   const long = Array.from({ length: 5000 }, (_, i) => `Ligne ${i} avec un peu de **texte** et un [[lien]].`).join('\n');
   await app.start({ vault: note(long) });
   await ui.open('Essai');
-  await ui.editor.click();
+  // At the start of the text: a click in the middle could land on one of its links.
+  await ui.editor.click({ position: { x: 4, y: 4 } });
   const start = Date.now();
   await ui.page.keyboard.type('frappe rapide', { delay: 15 });
   expect(Date.now() - start).toBeLessThan(2500);

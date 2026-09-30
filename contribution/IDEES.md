@@ -22,7 +22,7 @@ copie.
 - Historique des versions de chaque note, conflits résolus sans perte.
 - **À décider** : où héberger le service de mise en relation et le relais officiels.
 
-### Refonte du design et personnalisation — en cours
+### Refonte du design et personnalisation — presque faite
 
 Demande du 30 septembre : une interface ergonomique, intuitive, optimisée pour l'utilisateur, et
 **personnalisable à fond** depuis les réglages, avec un aperçu en direct.
@@ -32,14 +32,13 @@ Demande du 30 septembre : une interface ergonomique, intuitive, optimisée pour 
   Réglages › Apparence et › Disposition avec aperçu, variante Minuit).
 - **Fait** : l'apparence (voir le journal, `feat/themes`) : huit thèmes, couleurs par rôle, thèmes à
   soi exportables, polices, densité, coins, extraits CSS, réglages à sections avec recherche et aperçu.
-- **À faire, prochaine étape** : la disposition.
-  - Barre du haut : le coffre, un champ de commande au centre, les boutons des panneaux.
-  - Barre d'activité à gauche (un panneau à la fois) ; panneau de contexte à onglets (Liens, Plan,
-    Propriétés) ; barre d'état avec un bouton Apparence (personnalisation rapide).
-  - Chaque panneau à gauche, à droite ou masqué, dans l'ordre voulu, déplaçable à la souris.
-  - Dispositions prêtes (Classique, Concentration, Chercheur, Miroir, Onglets sur le côté), onglets
-    en haut, sur le côté ou masqués, largeur des panneaux, barre d'état ; Réglages › Disposition avec
-    aperçu.
+- **Fait** : la disposition (voir le journal, `feat/disposition`) : barre du haut avec champ de
+  commande, barre d'activité, panneaux à gauche, à droite ou masqués (menu, glisser, réglages),
+  dispositions prêtes, barre d'état avec l'apparence rapide, Réglages › Disposition avec schéma.
+- **Plus tard** :
+  - Onglets sur le côté (une colonne d'onglets) ; un panneau à la fois par côté, en option.
+  - Graphe local en panneau ; redimensionner les côtés à la souris.
+  - Raccourcis clavier personnalisables (section Raccourcis des réglages).
 
 ## Téléphone — plus tard (après la synchronisation)
 

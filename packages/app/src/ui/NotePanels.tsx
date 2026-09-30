@@ -1,50 +1,17 @@
 import { useMemo, useState } from 'react';
-import { ChevronRight, PanelRightClose } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { findUnlinkedMentions, stem, type Mention } from '@cobblestone/core';
 import { t } from '../i18n';
-import { useNoteRevision, useSession, useStore } from './hooks';
+import { useNoteRevision, useSession } from './hooks';
+import { Panel } from './Panel';
 import { hidePreviewSoon, schedulePreview } from './preview';
 
-/**
- * Notes in the margin of the sheet: who links here, the outline, links out
- * and properties. Follows the active note.
- */
-export function Marginalia({ drawer }: { drawer: boolean }) {
-  const session = useSession();
-  const path = useStore(session.workspace, () => (session.activeView?.type === 'note' ? session.activePath : null));
-  const viewType = useStore(session.workspace, () => session.activeView?.type ?? 'empty');
-  const close = () => session.ui.setState({ marginOpen: false });
-
-  return (
-    <>
-      {drawer && <div className="scrim" onClick={close} aria-hidden />}
-      <aside className={`margin${drawer ? ' is-drawer' : ''}`} aria-label={t('margin.backlinks')}>
-        <header className="margin-head">
-          <button className="icon-button" onClick={close} aria-label={t('margin.hide')} title={t('margin.hide')}>
-            <PanelRightClose size={16} strokeWidth={1.75} />
-          </button>
-        </header>
-        {path ? (
-          <MarginNotes path={path} />
-        ) : (
-          <p className="margin-empty">{viewType !== 'empty' ? t('margin.notNote') : t('empty.title')}</p>
-        )}
-      </aside>
-    </>
-  );
-}
-
-function MarginNotes({ path }: { path: string }) {
+/** What the panels about a note know of it, recomputed as the vault changes. */
+function useNoteContext(path: string) {
   const session = useSession();
   const revision = useNoteRevision(path);
   const cache = session.vault.cache;
-  // Margin links preview their note on hover.
-  const hover = (target: string) => ({
-    onMouseEnter: (e: React.MouseEvent) => schedulePreview(session, target, '', e.currentTarget),
-    onMouseLeave: () => hidePreviewSoon(session),
-  });
-
-  const data = useMemo(() => {
+  return useMemo(() => {
     void revision;
     const meta = cache.getMetadata(path);
     const backlinks = cache.getBacklinks(path).map((backlink) => {
@@ -64,133 +31,154 @@ function MarginNotes({ path }: { path: string }) {
     );
     return { meta, backlinks, resolved, unresolved, properties };
   }, [session, cache, path, revision]);
+}
 
+/** Links in the panels preview their note on hover. */
+function useHover() {
+  const session = useSession();
+  return (target: string) => ({
+    onMouseEnter: (e: React.MouseEvent) => schedulePreview(session, target, '', e.currentTarget),
+    onMouseLeave: () => hidePreviewSoon(session),
+  });
+}
+
+/** Notes that link here, with the line of each link; then the notes that name this one without a link. */
+export function BacklinksPanel({ path }: { path: string }) {
+  const session = useSession();
+  const data = useNoteContext(path);
+  const hover = useHover();
   return (
-    <div className="margin-notes">
-      <section aria-labelledby="m-backlinks">
-        <h2 className="label" id="m-backlinks">
-          {t('margin.backlinks')} <span className="count">{data.backlinks.length}</span>
-        </h2>
-        {data.backlinks.length === 0 ? (
-          <p className="margin-empty">{t('margin.noBacklinks')}</p>
-        ) : (
-          <ul className="backlinks">
-            {data.backlinks.map((b) => (
-              <li key={b.source}>
+    <Panel id="backlinks" count={data.backlinks.length}>
+      {data.backlinks.length === 0 ? (
+        <p className="margin-empty">{t('margin.noBacklinks')}</p>
+      ) : (
+        <ul className="backlinks">
+          {data.backlinks.map((b) => (
+            <li key={b.source}>
+              <button
+                className="margin-link"
+                {...hover(b.source)}
+                onClick={(e) => session.openPath(b.source, e.metaKey || e.ctrlKey ? 'tab' : 'current')}
+              >
+                {stem(b.source)}
+              </button>
+              {b.contexts.map((c, i) => (
                 <button
-                  className="margin-link"
-                  {...hover(b.source)}
-                  onClick={(e) => session.openPath(b.source, e.metaKey || e.ctrlKey ? 'tab' : 'current')}
+                  key={i}
+                  className="backlink-context"
+                  onClick={() => {
+                    session.openPath(b.source);
+                    setTimeout(() => session.events.emit('jump', b.source, c.line), 60);
+                  }}
                 >
-                  {stem(b.source)}
+                  {contextSegments(c.text, c.start).map((segment, k) =>
+                    segment.hit ? <mark key={k}>{segment.text}</mark> : <span key={k}>{segment.text}</span>,
+                  )}
                 </button>
-                {b.contexts.map((c, i) => (
-                  <button
-                    key={i}
-                    className="backlink-context"
-                    onClick={() => {
-                      session.openPath(b.source);
-                      setTimeout(() => session.events.emit('jump', b.source, c.line), 60);
-                    }}
-                  >
-                    {contextSegments(c.text, c.start).map((segment, k) =>
-                      segment.hit ? <mark key={k}>{segment.text}</mark> : <span key={k}>{segment.text}</span>,
-                    )}
-                  </button>
-                ))}
-                {b.propertyKeys.length > 0 && <span className="backlink-property">{b.propertyKeys.join(', ')}</span>}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <UnlinkedMentions path={path} />
-
-      <section aria-labelledby="m-outline">
-        <h2 className="label" id="m-outline">
-          {t('margin.outline')}
-        </h2>
-        {!data.meta?.headings.length ? (
-          <p className="margin-empty">{t('margin.noOutline')}</p>
-        ) : (
-          <ol className="outline">
-            {data.meta.headings.map((h, i) => (
-              <li key={i} style={{ paddingInlineStart: (h.level - 1) * 12 }}>
-                <button className={`outline-item level-${h.level}`} onClick={() => session.events.emit('jump', path, h.line)}>
-                  {h.text}
-                </button>
-              </li>
-            ))}
-          </ol>
-        )}
-      </section>
-
-      <section aria-labelledby="m-out">
-        <h2 className="label" id="m-out">
-          {t('margin.outgoing')} <span className="count">{data.resolved.length + data.unresolved.length}</span>
-        </h2>
-        {data.resolved.length + data.unresolved.length === 0 ? (
-          <p className="margin-empty">{t('margin.noOutgoing')}</p>
-        ) : (
-          <ul className="outgoing">
-            {data.resolved.map((p) => (
-              <li key={p}>
-                <button
-                  className="margin-link"
-                  {...hover(p)}
-                  onClick={(e) => session.openPath(p, e.metaKey || e.ctrlKey ? 'tab' : 'current')}
-                >
-                  {stem(p)}
-                </button>
-              </li>
-            ))}
-            {data.unresolved.map((l) => (
-              <li key={l}>
-                <button className="margin-link is-unresolved" onClick={() => void session.openLink(l, path)}>
-                  {l}
-                </button>
-                <span className="margin-hint">{t('margin.unresolved')}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      {(data.properties.length > 0 || (data.meta?.allTags.length ?? 0) > 0 || (data.meta?.aliases.length ?? 0) > 0) && (
-        <section aria-labelledby="m-props">
-          <h2 className="label" id="m-props">
-            {t('margin.properties')}
-          </h2>
-          <dl className="properties">
-            {data.meta?.aliases.length ? (
-              <div>
-                <dt>aliases</dt>
-                <dd>{data.meta.aliases.join(', ')}</dd>
-              </div>
-            ) : null}
-            {data.properties.map(([key, value]) => (
-              <div key={key}>
-                <dt>{key}</dt>
-                <dd>{formatValue(value)}</dd>
-              </div>
-            ))}
-            {data.meta?.allTags.length ? (
-              <div>
-                <dt>{t('margin.tags')}</dt>
-                <dd className="tag-chips">
-                  {data.meta.allTags.map((tag) => (
-                    <button key={tag} className="tag-chip" onClick={() => session.findTag(tag)}>
-                      {tag}
-                    </button>
-                  ))}
-                </dd>
-              </div>
-            ) : null}
-          </dl>
-        </section>
+              ))}
+              {b.propertyKeys.length > 0 && <span className="backlink-property">{b.propertyKeys.join(', ')}</span>}
+            </li>
+          ))}
+        </ul>
       )}
-    </div>
+      <UnlinkedMentions path={path} />
+    </Panel>
+  );
+}
+
+/** The headings of the note; a click scrolls to one. */
+export function OutlinePanel({ path }: { path: string }) {
+  const session = useSession();
+  const data = useNoteContext(path);
+  return (
+    <Panel id="outline">
+      {!data.meta?.headings.length ? (
+        <p className="margin-empty">{t('margin.noOutline')}</p>
+      ) : (
+        <ol className="outline">
+          {data.meta.headings.map((h, i) => (
+            <li key={i} style={{ paddingInlineStart: (h.level - 1) * 12 }}>
+              <button className={`outline-item level-${h.level}`} onClick={() => session.events.emit('jump', path, h.line)}>
+                {h.text}
+              </button>
+            </li>
+          ))}
+        </ol>
+      )}
+    </Panel>
+  );
+}
+
+/** The notes this one links to, and the links that lead nowhere yet. */
+export function OutgoingPanel({ path }: { path: string }) {
+  const session = useSession();
+  const data = useNoteContext(path);
+  const hover = useHover();
+  return (
+    <Panel id="outgoing" count={data.resolved.length + data.unresolved.length}>
+      {data.resolved.length + data.unresolved.length === 0 ? (
+        <p className="margin-empty">{t('margin.noOutgoing')}</p>
+      ) : (
+        <ul className="outgoing">
+          {data.resolved.map((p) => (
+            <li key={p}>
+              <button
+                className="margin-link"
+                {...hover(p)}
+                onClick={(e) => session.openPath(p, e.metaKey || e.ctrlKey ? 'tab' : 'current')}
+              >
+                {stem(p)}
+              </button>
+            </li>
+          ))}
+          {data.unresolved.map((l) => (
+            <li key={l}>
+              <button className="margin-link is-unresolved" onClick={() => void session.openLink(l, path)}>
+                {l}
+              </button>
+              <span className="margin-hint">{t('margin.unresolved')}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </Panel>
+  );
+}
+
+/** Aliases, properties and tags of the note; absent when it has none. */
+export function PropertiesPanel({ path }: { path: string }) {
+  const session = useSession();
+  const data = useNoteContext(path);
+  if (!data.properties.length && !data.meta?.allTags.length && !data.meta?.aliases.length) return null;
+  return (
+    <Panel id="properties">
+      <dl className="properties">
+        {data.meta?.aliases.length ? (
+          <div>
+            <dt>aliases</dt>
+            <dd>{data.meta.aliases.join(', ')}</dd>
+          </div>
+        ) : null}
+        {data.properties.map(([key, value]) => (
+          <div key={key}>
+            <dt>{key}</dt>
+            <dd>{formatValue(value)}</dd>
+          </div>
+        ))}
+        {data.meta?.allTags.length ? (
+          <div>
+            <dt>{t('margin.tags')}</dt>
+            <dd className="tag-chips">
+              {data.meta.allTags.map((tag) => (
+                <button key={tag} className="tag-chip" onClick={() => session.findTag(tag)}>
+                  {tag}
+                </button>
+              ))}
+            </dd>
+          </div>
+        ) : null}
+      </dl>
+    </Panel>
   );
 }
 

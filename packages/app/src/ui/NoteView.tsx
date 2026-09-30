@@ -1,12 +1,12 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { EditorView } from '@codemirror/view';
-import { ArrowLeft, ArrowRight, Bookmark as BookmarkIcon, BookmarkCheck, MoreHorizontal, PanelRight, Share2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Bookmark as BookmarkIcon, BookmarkCheck, MoreHorizontal, Share2 } from 'lucide-react';
 import { dirname, stem } from '@cobblestone/core';
 import { isBookmarked } from '../bookmarks';
 import { t } from '../i18n';
 import { navigate, setMode, split, type EditorMode, type Tab, type ViewState } from '../workspace/workspace';
 import { Editor } from './Editor';
-import { useNoteRevision, useSession, useStore } from './hooks';
+import { useSession, useStore } from './hooks';
 import { ReadingView } from './ReadingView';
 
 type NoteViewState = Extract<ViewState, { type: 'note' }>;
@@ -15,7 +15,6 @@ export function NoteView({ tab, paneId, view, visible }: { tab: Tab; paneId: str
   const session = useSession();
   const defaultMode = useStore(session.settings, (s) => s.defaultMode);
   const readable = useStore(session.settings, (s) => s.readableLength);
-  const marginOpen = useStore(session.ui, (s) => s.marginOpen);
   const bookmarked = useStore(session.bookmarks, (b) => isBookmarked(b, view.path));
   const mode: EditorMode = view.mode ?? defaultMode;
   const editorView = useRef<EditorView | null>(null);
@@ -114,16 +113,6 @@ export function NoteView({ tab, paneId, view, visible }: { tab: Tab; paneId: str
           <button className="icon-button" onClick={more} aria-label={t('note.more')} title={t('note.more')}>
             <MoreHorizontal size={16} strokeWidth={1.75} />
           </button>
-          {!marginOpen && (
-            <button
-              className="icon-button"
-              onClick={() => session.ui.setState({ marginOpen: true })}
-              aria-label={t('margin.show')}
-              title={t('margin.show')}
-            >
-              <PanelRight size={16} strokeWidth={1.75} />
-            </button>
-          )}
         </div>
       </header>
 
@@ -145,8 +134,6 @@ export function NoteView({ tab, paneId, view, visible }: { tab: Tab; paneId: str
           )}
         </div>
       </div>
-
-      {visible && <NoteStatus path={view.path} />}
     </article>
   );
 }
@@ -215,31 +202,5 @@ function NoteTitle({ path, onEnter }: { path: string; onEnter: () => void }) {
         }
       }}
     />
-  );
-}
-
-function countWords(text: string): { words: number; chars: number } {
-  const body = text.replace(/^---\n[\s\S]*?\n---\n?/, '').replace(/%%[\s\S]*?%%/g, '');
-  const plain = body.replace(/[#>*_`~=[\]()|!-]/g, ' ');
-  const words = plain.match(/[\p{L}\p{N}]+(?:['’][\p{L}\p{N}]+)*/gu)?.length ?? 0;
-  return { words, chars: body.replace(/\s/g, '').length };
-}
-
-function NoteStatus({ path }: { path: string }) {
-  const session = useSession();
-  const revision = useNoteRevision(path);
-  const stats = useMemo(() => {
-    void revision;
-    const text = session.vault.cachedRead(path) ?? '';
-    return { ...countWords(text), backlinks: session.vault.cache.getBacklinks(path).length };
-  }, [session, path, revision]);
-  return (
-    <footer className="note-status" aria-live="off">
-      <span>{t('status.words', { count: stats.words })}</span>
-      <span>{t('status.chars', { count: stats.chars })}</span>
-      <button className="status-link" onClick={() => session.ui.setState({ marginOpen: true })}>
-        {t('status.backlinks', { count: stats.backlinks })}
-      </button>
-    </footer>
   );
 }
