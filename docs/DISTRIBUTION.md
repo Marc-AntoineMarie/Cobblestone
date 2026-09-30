@@ -2,15 +2,15 @@
 
 Comment une version arrive sur chaque plateforme : ce qui marche déjà, ce qui reste à faire, et les
 décisions à prendre (surtout celles qui coûtent de l'argent). La publication elle-même est décrite
-dans [contribution/REGLES.md](../contribution/REGLES.md#10-versions-et-publication).
+dans [contribution/VERSIONS.md](../contribution/VERSIONS.md).
 
 ## Publier une version (déjà en place)
 
-1. `npm run release X.Y.Z` sur `main` : vérifications, numéros de version, CHANGELOG, commit, tag,
-   push.
-2. Le tag lance [release.yml](../.github/workflows/release.yml) : CI complète, release GitHub en
-   brouillon, installeurs Linux, Windows et macOS, zip de l'app web.
-3. On relit la release brouillon puis on la publie.
+1. `npm run release X.Y.Z` sur `main` : vérifications, recette automatique, numéros de version,
+   CHANGELOG, commit, tag, push.
+2. Le tag lance [release.yml](../.github/workflows/release.yml) : CI, release GitHub en brouillon,
+   installeurs Linux, Windows et macOS, zip de l'app web.
+3. La release est publiée automatiquement une fois tous les fichiers ajoutés.
 
 Tout part de la release GitHub : les autres canaux ci-dessous reprennent ses fichiers.
 

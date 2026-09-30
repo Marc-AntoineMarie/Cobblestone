@@ -95,7 +95,9 @@ npm run e2e     # la recette automatique, sur l'app de bureau et l'app web
 - Après `npm run e2e`, l'état de chaque ligne est dans `test-results/recette.md`, et chaque test en
   échec garde sa trace (`npx playwright show-trace …`). Avant une version, il ne reste à faire à la
   main que les lignes `manuel`.
-- La CI refait tout sur chaque push ; une branche rouge ne se fusionne pas.
+- La CI refait les vérifications rapides à chaque push (formatage, types, tests unitaires,
+  construction) ; une branche rouge ne se fusionne pas. La recette complète se lance en local, et
+  sur GitHub à la demande.
 
 ## 7. Journal
 
@@ -129,15 +131,13 @@ décisions à prendre. Chaque idée a un statut (**à faire**, **à décider**, 
 
 ## 10. Versions et publication
 
-[Versionnage sémantique](https://semver.org/lang/fr/) : `MAJEUR.MINEUR.CORRECTIF`.
+Tout est dans [VERSIONS.md](VERSIONS.md) : numéros de version, ce que fait la CI, et la procédure
+pas à pas de `npm run release X.Y.Z`. L'essentiel :
 
-- En `0.x`, une nouvelle fonctionnalité monte le MINEUR (`0.2.0`), une correction le CORRECTIF
-  (`0.2.1`). À partir de `1.0.0`, un changement cassant monte le MAJEUR. Préversions : `0.3.0-beta.1`.
-- Avant une version : la recette de [docs/RECETTE.md](../docs/RECETTE.md) sur une copie d'un vrai
-  coffre, bureau et web ; avant une version mineure, un audit `docs/audit-AAAA-MM-JJ.md` (frontières
-  de confiance, stockage, dépendances, performance).
-- On publie uniquement depuis `main`, arbre propre, avec `npm run release X.Y.Z` : vérifications,
-  versions de tous les `package.json`, CHANGELOG, commit `chore(release): vX.Y.Z`, tag, push. Le tag
-  lance [release.yml](../.github/workflows/release.yml) (installeurs et app web), voir
-  [docs/DISTRIBUTION.md](../docs/DISTRIBUTION.md).
-- Rien n'est poussé, tagué ou publié sans l'accord du mainteneur.
+- Versionnage sémantique ; en `0.x`, une fonctionnalité monte le MINEUR (`0.2.0`), une correction le
+  CORRECTIF (`0.2.1`).
+- Avant une version : la recette manuelle ; avant une version mineure, un audit
+  `docs/audit-AAAA-MM-JJ.md`. `npm run release` lance lui-même les vérifications et la recette
+  automatique.
+- On publie uniquement depuis `main`, et rien n'est poussé, tagué ou publié sans l'accord du
+  mainteneur.

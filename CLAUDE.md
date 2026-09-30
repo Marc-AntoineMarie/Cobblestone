@@ -43,7 +43,10 @@ Ces règles s'appliquent strictement à chaque session. La méthode complète es
 ## Versions
 
 - SemVer ; en `0.x`, une fonctionnalité monte le mineur, une correction le correctif.
-- Publier uniquement avec `npm run release X.Y.Z` (met à jour versions et CHANGELOG, commit et tag).
+- Publier uniquement avec `npm run release X.Y.Z` (vérifications, recette automatique, versions,
+  CHANGELOG, commit et tag) ; procédure complète dans [contribution/VERSIONS.md](contribution/VERSIONS.md).
+- Plan : `0.1.0` première version installable, `0.2.0` la refonte, `0.3.0` la synchronisation,
+  `1.0.0` quand tout fonctionne ensemble après une période d'essai.
 - Un audit `docs/audit-AAAA-MM-JJ.md` précède chaque version mineure.
 
 ## Produit et design
