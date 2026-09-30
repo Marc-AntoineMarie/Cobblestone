@@ -30,4 +30,8 @@ describe('unlinked mentions', () => {
     const [m] = findUnlinkedMentions('a\nb Plan', parseMarkdown('a\nb Plan'), ['plan']);
     expect(m).toMatchObject({ line: 1, from: 4, to: 8 });
   });
+  it('does not count names inside links or web addresses', () => {
+    const text = 'Un [lien](https://x.org/Étude), [Étude ici](Autre.md) et https://site.fr/Étude/page.';
+    expect(findUnlinkedMentions(text, parseMarkdown(text), ['Étude'])).toEqual([]);
+  });
 });

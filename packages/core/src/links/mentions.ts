@@ -29,7 +29,10 @@ export function findUnlinkedMentions(text: string, metadata: NoteMetadata | unde
       skip.push(lineRange(section.startLine, section.endLine));
     }
   }
-  for (const m of text.matchAll(/`[^`\n]+`|%%[\s\S]*?%%/g)) skip.push({ from: m.index, to: m.index + m[0].length });
+  // Inline code, comments, markdown links (to notes or to the web) and bare web addresses.
+  for (const m of text.matchAll(/`[^`\n]+`|%%[\s\S]*?%%|!?\[[^\]\n]*\]\([^)\n]*\)|\b[a-z][a-z0-9+.-]*:\/\/[^\s)>\]]+/gi)) {
+    skip.push({ from: m.index, to: m.index + m[0].length });
+  }
 
   const lineOf = (pos: number) => {
     let lo = 0;
