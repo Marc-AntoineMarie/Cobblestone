@@ -33,6 +33,35 @@ interface Options {
   depth: number;
 }
 
+/**
+ * What the graph drew last, in screen coordinates of its canvas. A canvas has
+ * no elements to inspect: the recette tests read the drawing through this.
+ */
+export interface GraphProbe {
+  view: { x: number; y: number; k: number };
+  width: number;
+  height: number;
+  /** True while the layout is still settling. */
+  moving: boolean;
+  hovered: string | null;
+  nodes: {
+    id: string;
+    kind: GraphNode['kind'];
+    degree: number;
+    radius: number;
+    /** World position, as pins are saved. */
+    x: number;
+    y: number;
+    /** Position on the canvas. */
+    sx: number;
+    sy: number;
+    pinned: boolean;
+    dimmed: boolean;
+    labelled: boolean;
+  }[];
+  links: { source: string; target: string; lit: boolean }[];
+}
+
 /** Deterministic pseudo-random numbers, so the same vault lays out the same way. */
 function seeded(seed: number) {
   let s = seed >>> 0 || 1;
@@ -260,17 +289,27 @@ export function GraphView({ focus, visible }: { focus?: string; visible: boolean
       return best;
     };
 
+    /** The hovered node and its neighbours, or null when nothing is hovered. */
+    const litNodes = () => (hovered ? new Set([hovered.id, ...(neighbours.get(hovered.id) ?? [])]) : null);
+    const isLit = (link: (typeof links)[number], lit: Set<string> | null) =>
+      !!lit && lit.has(link.source.id) && lit.has(link.target.id) && (link.source === hovered || link.target === hovered);
+    const isLabelled = (node: GraphNode, lit: Set<string> | null) => {
+      const important = node === hovered || node.id === focus || (lit?.has(node.id) ?? false);
+      const showAll = view.k > 1.1 || nodes.length < 40;
+      if (!showAll && !important && node.degree < 6) return false;
+      return !lit || lit.has(node.id);
+    };
+
     function draw() {
       context.setTransform(dpr, 0, 0, dpr, 0, 0);
       context.clearRect(0, 0, width, height);
       context.translate(width / 2 + view.x, height / 2 + view.y);
       context.scale(view.k, view.k);
-      const lit = hovered ? new Set([hovered.id, ...(neighbours.get(hovered.id) ?? [])]) : null;
+      const lit = litNodes();
 
       context.lineWidth = 1 / view.k;
       for (const link of links) {
-        const on =
-          lit && lit.has(link.source.id) && lit.has(link.target.id) && (link.source === hovered || link.target === hovered);
+        const on = isLit(link, lit);
         context.strokeStyle = on ? inks.pink : inks.rule;
         context.globalAlpha = lit && !on ? 0.35 : 1;
         context.lineWidth = (on ? 2 : 1) / view.k;
@@ -312,14 +351,12 @@ export function GraphView({ focus, visible }: { focus?: string; visible: boolean
       }
       context.globalAlpha = 1;
 
-      const showAll = view.k > 1.1 || nodes.length < 40;
       context.font = `500 ${12 / view.k}px 'Archivo Variable', system-ui, sans-serif`;
       context.textAlign = 'center';
       context.textBaseline = 'top';
       for (const node of nodes) {
+        if (!isLabelled(node, lit)) continue;
         const important = node === hovered || node.id === focus || (lit?.has(node.id) ?? false);
-        if (!showAll && !important && node.degree < 6) continue;
-        if (lit && !lit.has(node.id)) continue;
         context.fillStyle = important ? inks.ink : inks.ink2;
         context.fillText(node.label, node.x!, node.y! + node.radius + 3 / view.k);
       }
@@ -402,6 +439,31 @@ export function GraphView({ focus, visible }: { focus?: string; visible: boolean
       const k = Math.min(5, Math.max(0.15, view.k * Math.exp(-e.deltaY * 0.0015)));
       view = { k, x: sx - ((sx - view.x) * k) / view.k, y: sy - ((sy - view.y) * k) / view.k };
       draw();
+    };
+
+    (canvas as HTMLCanvasElement & { graphProbe?: () => GraphProbe }).graphProbe = () => {
+      const lit = litNodes();
+      return {
+        view: { ...view },
+        width,
+        height,
+        moving: simulation.alpha() >= simulation.alphaMin(),
+        hovered: hovered?.id ?? null,
+        nodes: nodes.map((node) => ({
+          id: node.id,
+          kind: node.kind,
+          degree: node.degree,
+          radius: node.radius,
+          x: node.x!,
+          y: node.y!,
+          sx: width / 2 + view.x + node.x! * view.k,
+          sy: height / 2 + view.y + node.y! * view.k,
+          pinned: node.fx != null,
+          dimmed: !!lit && !lit.has(node.id),
+          labelled: isLabelled(node, lit),
+        })),
+        links: links.map((link) => ({ source: link.source.id, target: link.target.id, lit: isLit(link, lit) })),
+      };
     };
 
     canvas.addEventListener('pointerdown', onPointerDown);
