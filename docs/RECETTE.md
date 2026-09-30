@@ -554,35 +554,35 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 
 ## 22. Opérations sur les fichiers et liens
 
-- **22.1** · Les deux · à automatiser · Renommer une note liée depuis dix autres notes → Les dix notes sont mises à jour sur le disque.
-- **22.2** · Les deux · à automatiser · Renommer une note visée par des liens avec alias, titre, bloc, intégration, lien Markdown et lien dans un tableau (`[[Note\|alias]]`) → Tous sont mis à jour sans perdre alias ni sous-chemin.
-- **22.3** · Les deux · à automatiser · Renommer une note vers un nom qui existe dans un autre dossier → Les liens deviennent `[[Dossier/Nom]]` pour rester sans ambiguïté.
-- **22.4** · Les deux · à automatiser · Déplacer un dossier de notes → Les liens vers ces notes et les liens relatifs qu'elles contiennent restent valides.
-- **22.5** · Les deux · à automatiser · Désactiver « Mettre à jour les liens » dans les réglages, puis renommer → Les liens ne sont pas modifiés et deviennent « pas encore créée ».
-- **22.6** · Les deux · à automatiser · Mettre une note à la corbeille → Elle va dans `.trash/` du coffre ; ses liens passent en pointillés.
-- **22.7** · Les deux · à automatiser · Mettre à la corbeille deux notes du même nom → `.trash/Nom.md` puis `.trash/Nom 1.md`.
-- **22.8** · Les deux · à automatiser · Réglage « suppression définitive », puis mettre une note à la corbeille → Le fichier est supprimé du disque.
-- **22.9** · Les deux · à automatiser · Mettre un dossier à la corbeille → Tout son contenu part avec ; les onglets concernés se ferment.
-- **22.10** · Les deux · à automatiser · Recréer une note supprimée sous le même nom → Les anciens liens pointent de nouveau dessus.
-- **22.11** · Les deux · à automatiser · Créer une note portant le nom d'un lien en attente → Le lien devient actif partout.
-- **22.12** · Les deux · à automatiser · Noms avec accents, espaces, parenthèses, emoji et apostrophes → Création, renommage et liens fonctionnent.
-- **22.13** · Les deux · à automatiser · Deux notes « Nom » dans deux dossiers ; `[[Nom]]` depuis un troisième dossier, puis depuis l'un des deux → Le lien vise la note au chemin le plus court, puis celle du même dossier (comme Obsidian).
+- **22.1** · Les deux · auto · Renommer une note liée depuis dix autres notes → Les dix notes sont mises à jour sur le disque.
+- **22.2** · Les deux · auto · Renommer une note visée par des liens avec alias, titre, bloc, intégration, lien Markdown et lien dans un tableau (`[[Note\|alias]]`) → Tous sont mis à jour sans perdre alias ni sous-chemin.
+- **22.3** · Les deux · auto · Renommer une note vers un nom qui existe dans un autre dossier → Les liens deviennent `[[Dossier/Nom]]` pour rester sans ambiguïté.
+- **22.4** · Les deux · auto · Déplacer un dossier de notes → Les liens vers ces notes et les liens relatifs qu'elles contiennent restent valides.
+- **22.5** · Les deux · auto · Désactiver « Mettre à jour les liens » dans les réglages, puis renommer → Les liens ne sont pas modifiés et deviennent « pas encore créée ».
+- **22.6** · Les deux · auto · Mettre une note à la corbeille → Elle va dans `.trash/` du coffre ; ses liens passent en pointillés.
+- **22.7** · Les deux · auto · Mettre à la corbeille deux notes du même nom → `.trash/Nom.md` puis `.trash/Nom 1.md`.
+- **22.8** · Les deux · auto · Réglage « suppression définitive », puis mettre une note à la corbeille → Le fichier est supprimé du disque.
+- **22.9** · Les deux · auto · Mettre un dossier à la corbeille → Tout son contenu part avec ; les onglets concernés se ferment.
+- **22.10** · Les deux · auto · Recréer une note supprimée sous le même nom → Les anciens liens pointent de nouveau dessus.
+- **22.11** · Les deux · auto · Créer une note portant le nom d'un lien en attente → Le lien devient actif partout.
+- **22.12** · Les deux · auto · Noms avec accents, espaces, parenthèses, emoji et apostrophes → Création, renommage et liens fonctionnent.
+- **22.13** · Les deux · auto · Deux notes « Nom » dans deux dossiers ; `[[Nom]]` depuis un troisième dossier, puis depuis l'un des deux → Le lien vise la note au chemin le plus court, puis celle du même dossier (comme Obsidian).
 
 ## 23. Changements faits par un autre programme
 
-- **23.1** · Les deux · à automatiser · Modifier une note ouverte avec un autre éditeur ou Obsidian → Le texte se met à jour dans Cobblestone, curseur conservé.
-- **23.2** · Les deux · à automatiser · Créer une note avec un autre programme → Elle apparaît dans l'arborescence (sur le web, au retour sur la page ou dans les secondes qui suivent).
-- **23.3** · Les deux · à automatiser · Supprimer une note avec un autre programme → Elle disparaît et son onglet se ferme.
-- **23.4** · Les deux · à automatiser · Renommer une note avec un autre programme → Elle apparaît sous son nouveau nom ; les liens ne sont pas réécrits, puisque c'est l'autre programme qui a renommé.
-- **23.5** · Les deux · à automatiser · `git pull` qui modifie plusieurs notes → Tout est pris en compte.
-- **23.6** · Les deux · à automatiser · Écrire dans une note pendant qu'un autre programme la modifie → Rien de ce qui est tapé n'est perdu.
-- **23.7** · Les deux · à automatiser · Créer un dossier caché (`.git`, `.stfolder`) dans le coffre → Il est ignoré.
-- **23.8** · Bureau · à automatiser · Renommer le dossier du coffre ouvert dans le gestionnaire de fichiers, revenir dans l'app → En 3 s au plus, encadré « « … » s'appelle maintenant « … » » ; les onglets restent derrière.
-- **23.9** · Bureau · à automatiser · « Suivre ce changement » → Le coffre se rouvre à sa nouvelle place, mêmes onglets, nouveau nom en haut de la barre latérale ; écrire enregistre dans le nouveau dossier.
-- **23.10** · Bureau · à automatiser · Pendant l'encadré, redonner au dossier son ancien nom → L'encadré disparaît et le coffre continue normalement.
-- **23.11** · Bureau · à automatiser · Renommer le dossier du coffre pendant qu'on écrit → L'ancien dossier n'est jamais recréé ; aucune note n'est perdue.
-- **23.12** · Bureau · à automatiser · Mettre le dossier du coffre ouvert à la corbeille → Encadré « introuvable » ; « Fermer le coffre » ramène à l'accueil.
-- **23.13** · Bureau · à automatiser · Déplacer le dossier du coffre ouvert sur une clé USB → Encadré « introuvable » (autre disque) ; « Retrouver le dossier… » permet de l'indiquer.
+- **23.1** · Les deux · auto · Modifier une note ouverte avec un autre éditeur ou Obsidian → Le texte se met à jour dans Cobblestone, curseur conservé.
+- **23.2** · Les deux · auto · Créer une note avec un autre programme → Elle apparaît dans l'arborescence (sur le web, au retour sur la page ou dans les secondes qui suivent).
+- **23.3** · Les deux · auto · Supprimer une note avec un autre programme → Elle disparaît et son onglet se ferme.
+- **23.4** · Les deux · auto · Renommer une note avec un autre programme → Elle apparaît sous son nouveau nom ; les liens ne sont pas réécrits, puisque c'est l'autre programme qui a renommé.
+- **23.5** · Les deux · auto · `git pull` qui modifie plusieurs notes → Tout est pris en compte.
+- **23.6** · Les deux · auto · Écrire dans une note pendant qu'un autre programme la modifie → Rien de ce qui est tapé n'est perdu.
+- **23.7** · Les deux · auto · Créer un dossier caché (`.git`, `.stfolder`) dans le coffre → Il est ignoré.
+- **23.8** · Bureau · auto · Renommer le dossier du coffre ouvert dans le gestionnaire de fichiers, revenir dans l'app → En 3 s au plus, encadré « « … » s'appelle maintenant « … » » ; les onglets restent derrière.
+- **23.9** · Bureau · auto · « Suivre ce changement » → Le coffre se rouvre à sa nouvelle place, mêmes onglets, nouveau nom en haut de la barre latérale ; écrire enregistre dans le nouveau dossier.
+- **23.10** · Bureau · auto · Pendant l'encadré, redonner au dossier son ancien nom → L'encadré disparaît et le coffre continue normalement.
+- **23.11** · Bureau · auto · Renommer le dossier du coffre pendant qu'on écrit → L'ancien dossier n'est jamais recréé ; aucune note n'est perdue.
+- **23.12** · Bureau · auto · Mettre le dossier du coffre ouvert à la corbeille → Encadré « introuvable » ; « Fermer le coffre » ramène à l'accueil.
+- **23.13** · Bureau · auto · Déplacer le dossier du coffre ouvert sur une clé USB → Encadré « introuvable » (autre disque) ; « Retrouver le dossier… » permet de l'indiquer.
 
 ## 24. Réglages
 
