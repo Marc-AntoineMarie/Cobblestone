@@ -96,20 +96,24 @@ export class Ui {
   tab(name: string) {
     return this.pane.locator('.tab').filter({ has: this.page.locator('.tab-title', { hasText: exact(name) }) });
   }
+  /** What the active tab of the active pane shows (other tabs stay in the page, hidden). */
+  get view() {
+    return this.pane.locator('.tab-content:not([hidden])');
+  }
   get title() {
-    return this.pane.locator('.note-title');
+    return this.view.locator('.note-title');
   }
   get editor() {
-    return this.pane.locator('.cm-content');
+    return this.view.locator('.cm-content');
   }
   get reading() {
-    return this.pane.locator('.reading-view');
+    return this.view.locator('.reading-view');
   }
   get noteBar() {
-    return this.pane.locator('.note-bar');
+    return this.view.locator('.note-bar');
   }
   get status() {
-    return this.pane.locator('.note-status');
+    return this.view.locator('.note-status');
   }
   get margin() {
     return this.page.locator('.margin');
@@ -214,8 +218,9 @@ export class Ui {
   /** Opens the settings tab. */
   async settings() {
     await this.page.keyboard.press('Control+,');
-    await this.page.locator('.settings-view').waitFor();
-    return this.page.locator('.settings-view');
+    const settings = this.view.locator('.settings-view');
+    await settings.waitFor();
+    return settings;
   }
 
   // ------------------------------------------------------------- floating layers

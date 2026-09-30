@@ -203,7 +203,14 @@ export class Cobble {
         window.setMinimumSize(200, 200);
         window.setContentSize(s.width, s.height);
       }, size);
-      await this.page.waitForTimeout(200);
+      // The window manager takes its time: wait until the page has the new size.
+      await this.page
+        .waitForFunction(
+          (s) => Math.abs(window.innerWidth - s.width) <= 2 && Math.abs(window.innerHeight - s.height) <= 2,
+          size,
+          { timeout: 3000 },
+        )
+        .catch(() => undefined);
     } else await this.page.setViewportSize(size);
   }
 

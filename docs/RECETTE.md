@@ -586,27 +586,27 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 
 ## 24. Réglages
 
-- **24.1** · Les deux · à automatiser · Ctrl+, (ou le pied de la barre, ou le menu du coffre) → Onglet « Réglages » : Apparence, Éditeur, Fichiers et liens, Aujourd'hui, Modèles, À propos.
-- **24.2** · Les deux · à automatiser · Papier : Suivre le système, Papier de jour, Papier de nuit → Le thème change aussitôt ; « Suivre le système » suit le système en direct.
-- **24.3** · Les deux · à automatiser · Langue : Auto, English, Français → Toute l'interface change, commandes et palette comprises ; Auto suit la langue du système ou du navigateur.
-- **24.4** · Les deux · à automatiser · « Les nouveaux onglets s'ouvrent en » : Écrire, Lire, Source → Appliqué aux notes ouvertes ensuite.
-- **24.5** · Les deux · à automatiser · Largeur des lignes : Étroite, Normale, Large, Toute la largeur → La colonne de texte change aussitôt ; le bouton choisi est marqué.
-- **24.6** · Les deux · à automatiser · Interrupteur des retours à la ligne simples → Le rendu en lecture change.
-- **24.7** · Les deux · à automatiser · Interrupteur « Vérifier l'orthographe » → Le soulignement des fautes s'active et se désactive.
-- **24.8** · Les deux · à automatiser · « Les nouvelles notes vont dans » : racine, dossier de la note active, dossier précis → Respecté par Ctrl+N, la palette et les liens en attente.
-- **24.9** · Les deux · à automatiser · « Les pièces jointes vont dans » : racine, `./`, dossier précis → Respecté au collage.
-- **24.10** · Les deux · à automatiser · Interrupteur « Mettre à jour les liens » → Voir 22.5.
-- **24.11** · Les deux · à automatiser · « Les fichiers supprimés vont » : corbeille du coffre, suppression définitive → Voir 22.6 et 22.8.
-- **24.12** · Les deux · à automatiser · Aujourd'hui : format et dossier → Voir 17.1 à 17.3.
-- **24.13** · Les deux · à automatiser · Modèles : dossier, formats de date et d'heure → Voir 17.12 et 17.13.
-- **24.14** · Les deux · à automatiser · À propos → Version et licence AGPL-3.0.
-- **24.15** · Les deux · à automatiser · Fermer puis rouvrir le coffre, puis l'app → Réglages du coffre conservés (`.cobblestone/app.json`) ; thème et langue aussi (réglages de l'appareil).
-- **24.16** · Les deux · à automatiser · Tab jusqu'à un interrupteur, puis Espace → Il bascule ; contour rose au focus.
-- **24.17** · Les deux · à automatiser · Taille du texte : 20 px → Le texte et les titres des notes grossissent en écriture et en lecture ; l'interface garde sa taille.
-- **24.18** · Les deux · à automatiser · Écran de 1920 px, largeur « Normale », taille par défaut → Colonne d'environ 700 px, environ 80 caractères par ligne.
-- **24.19** · Les deux · à automatiser · Fermer puis rouvrir le coffre → Taille du texte et largeur des lignes conservées.
-- **24.20** · Les deux · à automatiser · Ouvrir pour la première fois un coffre Obsidian dont la taille de police est 18 → Cobblestone reprend 18 px.
-- **24.21** · Les deux · à automatiser · Grande taille et largeur « Large » dans un canvas, un aperçu au survol, une intégration → Tout reste lisible, rien ne déborde.
+- **24.1** · Les deux · auto · Ctrl+, (ou le pied de la barre, ou le menu du coffre) → Onglet « Réglages » : Apparence, Éditeur, Fichiers et liens, Aujourd'hui, Modèles, À propos.
+- **24.2** · Les deux · auto · Papier : Suivre le système, Papier de jour, Papier de nuit → Le thème change aussitôt ; « Suivre le système » suit le système en direct.
+- **24.3** · Les deux · auto · Langue : Auto, English, Français → Toute l'interface change, commandes et palette comprises ; Auto suit la langue du système ou du navigateur.
+- **24.4** · Les deux · auto · « Les nouveaux onglets s'ouvrent en » : Écrire, Lire, Source → Appliqué aux notes ouvertes ensuite.
+- **24.5** · Les deux · auto · Largeur des lignes : Étroite, Normale, Large, Toute la largeur → La colonne de texte change aussitôt ; le bouton choisi est marqué.
+- **24.6** · Les deux · auto · Interrupteur des retours à la ligne simples → Le rendu en lecture change.
+- **24.7** · Les deux · auto · Interrupteur « Vérifier l'orthographe » → Le soulignement des fautes s'active et se désactive.
+- **24.8** · Les deux · auto · « Les nouvelles notes vont dans » : racine, dossier de la note active, dossier précis → Respecté par Ctrl+N, la palette et les liens en attente.
+- **24.9** · Les deux · auto · « Les pièces jointes vont dans » : racine, `./`, dossier précis → Respecté au collage.
+- **24.10** · Les deux · auto · Interrupteur « Mettre à jour les liens » → Voir 22.5.
+- **24.11** · Les deux · auto · « Les fichiers supprimés vont » : corbeille du coffre, suppression définitive → Voir 22.6 et 22.8.
+- **24.12** · Les deux · auto · Aujourd'hui : format et dossier → Voir 17.1 à 17.3.
+- **24.13** · Les deux · auto · Modèles : dossier, formats de date et d'heure → Voir 17.12 et 17.13.
+- **24.14** · Les deux · auto · À propos → Version et licence AGPL-3.0.
+- **24.15** · Les deux · auto · Fermer puis rouvrir le coffre, puis l'app → Réglages du coffre conservés (`.cobblestone/app.json`) ; thème et langue aussi (réglages de l'appareil).
+- **24.16** · Les deux · auto · Tab jusqu'à un interrupteur, puis Espace → Il bascule ; contour rose au focus.
+- **24.17** · Les deux · auto · Taille du texte : 20 px → Le texte et les titres des notes grossissent en écriture et en lecture ; l'interface garde sa taille.
+- **24.18** · Les deux · auto · Écran de 1920 px, largeur « Normale », taille par défaut → Colonne d'environ 700 px, environ 80 caractères par ligne.
+- **24.19** · Les deux · auto · Fermer puis rouvrir le coffre → Taille du texte et largeur des lignes conservées.
+- **24.20** · Les deux · auto · Ouvrir pour la première fois un coffre Obsidian dont la taille de police est 18 → Cobblestone reprend 18 px.
+- **24.21** · Les deux · auto · Grande taille et largeur « Large » dans un canvas, un aperçu au survol, une intégration → Tout reste lisible, rien ne déborde.
 
 ## 25. Apparence et tailles d'écran
 
