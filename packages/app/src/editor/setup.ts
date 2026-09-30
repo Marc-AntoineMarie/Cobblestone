@@ -131,7 +131,8 @@ export function createEditorState(doc: string, options: EditorOptions): EditorSt
         // Tab takes the suggestion too, as in Obsidian (without a list open, it indents).
         { key: 'Tab', run: acceptCompletion },
         ...markdownKeymap,
-        ...searchKeymap,
+        // Ctrl+G opens the graph, as in Obsidian; F3 and Enter still go to the next match.
+        ...searchKeymap.filter((binding) => binding.key !== 'Mod-g' && binding.key !== 'Shift-Mod-g'),
         ...historyKeymap,
         // Ctrl+[ and Ctrl+] are the app's (sidebar, margin); lists indent with Tab.
         ...defaultKeymap.filter((binding) => binding.key !== 'Mod-[' && binding.key !== 'Mod-]'),
