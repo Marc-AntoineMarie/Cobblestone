@@ -145,7 +145,6 @@ function FinderBox({ initialMode, pick }: { initialMode: 'notes' | 'commands'; p
     return top;
   }, [session, commandMode, text, pick]);
 
-  useEffect(() => setSelected(0), [query]);
   useEffect(() => {
     list.current?.querySelector<HTMLElement>('[aria-selected="true"]')?.scrollIntoView({ block: 'nearest' });
   }, [selected]);
@@ -184,7 +183,11 @@ function FinderBox({ initialMode, pick }: { initialMode: 'notes' | 'commands'; p
             aria-expanded="true"
             aria-controls="finder-list"
             aria-activedescendant={items[selected] ? `finder-${selected}` : undefined}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              // A new query starts from its best match, even when Enter follows at once.
+              setSelected(0);
+            }}
             onKeyDown={(e) => {
               if (e.key === 'Escape') close();
               else if (e.key === 'ArrowDown') setSelected((i) => Math.min(items.length - 1, i + 1));
