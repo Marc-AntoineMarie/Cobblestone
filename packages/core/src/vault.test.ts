@@ -3,7 +3,7 @@ import { MemoryAdapter } from './adapters/memory';
 import { LinkResolver } from './links/resolver';
 import { Vault } from './vault';
 
-async function vaultOf(files: Record<string, string>) {
+async function vaultOf(files: Record<string, string | Uint8Array>) {
   const adapter = new MemoryAdapter('Test', files);
   const vault = new Vault(adapter);
   await vault.load();
@@ -197,6 +197,23 @@ describe('Vault', () => {
     await vault.settled();
     expect(events).toEqual(['Board.canvas null']);
     expect(await vault.read('Board.canvas')).toBe('{"nodes":[{"id":"a"}],"edges":[]}');
+  });
+
+  it('renames without touching links when asked', async () => {
+    const { vault } = await vaultOf({ 'Old.md': '', 'A.md': '[[Old]]' });
+    await vault.rename('Old.md', 'New.md', { updateLinks: false });
+    expect(vault.getFile('New.md')).toBeDefined();
+    expect(await vault.read('A.md')).toBe('[[Old]]');
+  });
+
+  it('replaces a binary file and announces it', async () => {
+    const { vault, adapter } = await vaultOf({ 'a.png': new Uint8Array([1, 2]) });
+    const events: string[] = [];
+    vault.on('modify', (f, content) => events.push(`${f.path} ${content}`));
+    await vault.modifyBinary('a.png', new Uint8Array([3, 4, 5]));
+    expect([...(await adapter.readBinary('a.png'))]).toEqual([3, 4, 5]);
+    expect(vault.getFile('a.png')?.stat.size).toBe(3);
+    expect(events).toEqual(['a.png null']);
   });
 
   it('applies option changes while open', async () => {

@@ -205,6 +205,18 @@ export class Vault extends Emitter<VaultEvents> {
     return this.registerFile(path, null, data.byteLength);
   }
 
+  /** Replaces a binary file's content (an attachment changed on another device). */
+  modifyBinary(path: string, data: Uint8Array): Promise<void> {
+    path = normalizePath(path);
+    return this.op(async () => {
+      const file = this.files.get(path);
+      if (!file) throw new Error(`"${path}" does not exist`);
+      await this.adapter.writeBinary(path, data);
+      file.stat = { ...file.stat, mtime: Date.now(), size: data.byteLength };
+      this.emit('modify', file, null);
+    });
+  }
+
   modify(path: string, content: string): Promise<void> {
     return this.op(() => this.doModify(normalizePath(path), content));
   }
@@ -255,12 +267,14 @@ export class Vault extends Emitter<VaultEvents> {
   /**
    * Renames or moves a file or folder. Links pointing to the moved files are
    * rewritten in every note, and relative links inside moved notes are fixed.
+   * `updateLinks: false` leaves the notes alone: a rename received from
+   * another device arrives with its own link edits.
    */
-  rename(from: string, to: string): Promise<void> {
-    return this.op(() => this.doRename(normalizePath(from), normalizePath(to)));
+  rename(from: string, to: string, { updateLinks }: { updateLinks?: boolean } = {}): Promise<void> {
+    return this.op(() => this.doRename(normalizePath(from), normalizePath(to), updateLinks ?? this.options.updateLinksOnRename));
   }
 
-  private async doRename(from: string, to: string): Promise<void> {
+  private async doRename(from: string, to: string, updateLinks: boolean): Promise<void> {
     if (from === to) return;
     const kind = this.files.has(from) ? 'file' : this.folders.has(from) ? 'folder' : null;
     if (!kind) throw new Error(`"${from}" does not exist`);
@@ -277,7 +291,7 @@ export class Vault extends Emitter<VaultEvents> {
     const mapping = new Map(moved.map((p) => [p, to + p.slice(from.length)]));
 
     // Snapshot links to the moved files before the index changes.
-    const edits = this.options.updateLinksOnRename ? this.collectLinkEdits(mapping) : null;
+    const edits = updateLinks ? this.collectLinkEdits(mapping) : null;
 
     await this.ensureFolder(dirname(to));
     if (caseOnly) {
@@ -309,7 +323,7 @@ export class Vault extends Emitter<VaultEvents> {
     this.emit('rename', to, from, kind);
 
     if (edits) await this.applyLinkEdits(edits, mapping);
-    if (this.options.updateLinksOnRename) await this.updateCanvasReferences(new Map([[from, to]]));
+    if (updateLinks) await this.updateCanvasReferences(new Map([[from, to]]));
   }
 
   // ------------------------------------------------------------- internals
