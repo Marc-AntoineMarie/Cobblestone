@@ -610,67 +610,67 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 
 ## 25. Apparence et tailles d'écran
 
-- **25.1** · Les deux · à automatiser · Papier de jour → Fond papier clair, encre bleu nuit, roses et jaunes vifs, grain léger.
-- **25.2** · Les deux · à automatiser · Papier de nuit → Fond bleu nuit, encre claire, surlignages lisibles.
-- **25.3** · Les deux · à automatiser · Basculer jour et nuit avec une note, un graphe et un canvas ouverts → Tout change de papier ; rien ne devient illisible.
-- **25.4** · Les deux · à automatiser · Parcourir toute l'interface avec Tab → Chaque élément qui prend le focus a un contour rose.
-- **25.5** · Les deux · à automatiser · Fenêtre de moins de 1180 px → La marge devient un tiroir.
-- **25.6** · Les deux · à automatiser · Fenêtre de moins de 760 px ou téléphone → Barre latérale et marge fermées par défaut, en tiroirs avec voile ; le fil d'Ariane ne garde que le nom.
-- **25.7** · Les deux · à automatiser · Redimensionner la fenêtre en continu → Pas de chevauchement ni de défilement horizontal.
-- **25.8** · Les deux · à automatiser · Activer « réduire les animations » dans le système → Plus d'animations (tiroirs, apparition des notes).
-- **25.9** · Les deux · à automatiser · Zoomer et dézoomer (Ctrl+plus, Ctrl+moins) → L'interface reste cohérente.
+- **25.1** · Les deux · auto · Papier de jour → Fond papier clair, encre bleu nuit, roses et jaunes vifs, grain léger.
+- **25.2** · Les deux · auto · Papier de nuit → Fond bleu nuit, encre claire, surlignages lisibles.
+- **25.3** · Les deux · auto · Basculer jour et nuit avec une note, un graphe et un canvas ouverts → Tout change de papier ; rien ne devient illisible.
+- **25.4** · Les deux · auto · Parcourir toute l'interface avec Tab → Chaque élément qui prend le focus a un contour rose.
+- **25.5** · Les deux · auto · Fenêtre de moins de 1180 px → La marge devient un tiroir.
+- **25.6** · Les deux · auto · Fenêtre de moins de 760 px ou téléphone → Barre latérale et marge fermées par défaut, en tiroirs avec voile ; le fil d'Ariane ne garde que le nom.
+- **25.7** · Les deux · auto · Redimensionner la fenêtre en continu → Pas de chevauchement ni de défilement horizontal.
+- **25.8** · Les deux · auto · Activer « réduire les animations » dans le système → Plus d'animations (tiroirs, apparition des notes).
+- **25.9** · Les deux · auto bureau, manuel web · Zoomer et dézoomer (Ctrl+plus, Ctrl+moins) → L'interface reste cohérente.
 
 ## 26. Spécifique à l'app web
 
-- **26.1** · Web · à automatiser · Chrome : ouvrir un vrai dossier, écrire, vérifier le fichier sur le disque → Le fichier est modifié.
-- **26.2** · Web · à automatiser · Firefox : créer un coffre du navigateur, écrire, recharger → Le contenu est conservé.
-- **26.3** · Web · à automatiser · Regarder l'onglet vide et la palette → Alt+N et Alt+W sont affichés à la place de Ctrl+N et Ctrl+W.
-- **26.4** · Web · à automatiser · Firefox : Alt+T dans une note → La liste des modèles s'ouvre, pas le menu Outils du navigateur.
-- **26.5** · Web · à automatiser · Ctrl+P, Ctrl+O, Ctrl+G, Ctrl+K → Les commandes de Cobblestone s'ouvrent, pas l'impression, l'ouverture ou la recherche du navigateur.
-- **26.6** · Web · à automatiser · Fermer l'onglet du navigateur juste après avoir écrit → Le texte est enregistré.
-- **26.7** · Web · à automatiser · Chrome : modifier un fichier du dossier ouvert avec un autre programme, puis revenir sur la page → Le changement est pris en compte.
-- **26.8** · Web · à automatiser · Fenêtre de navigation privée → Les coffres du navigateur disparaissent à la fermeture (comportement normal).
-- **26.9** · Web · à automatiser · Deux onglets du navigateur sur le même coffre → Limite connue : chacun a sa propre vue ; ne pas écrire dans les deux.
+- **26.1** · Web · auto · Chrome : ouvrir un vrai dossier, écrire, vérifier le fichier sur le disque → Le fichier est modifié.
+- **26.2** · Web · manuel · Firefox : créer un coffre du navigateur, écrire, recharger → Le contenu est conservé.
+- **26.3** · Web · auto · Regarder l'onglet vide et la palette → Alt+N et Alt+W sont affichés à la place de Ctrl+N et Ctrl+W.
+- **26.4** · Web · manuel · Firefox : Alt+T dans une note → La liste des modèles s'ouvre, pas le menu Outils du navigateur.
+- **26.5** · Web · auto · Ctrl+P, Ctrl+O, Ctrl+G, Ctrl+K → Les commandes de Cobblestone s'ouvrent, pas l'impression, l'ouverture ou la recherche du navigateur.
+- **26.6** · Web · auto · Fermer l'onglet du navigateur juste après avoir écrit → Le texte est enregistré.
+- **26.7** · Web · auto · Chrome : modifier un fichier du dossier ouvert avec un autre programme, puis revenir sur la page → Le changement est pris en compte.
+- **26.8** · Web · auto · Fenêtre de navigation privée → Les coffres du navigateur disparaissent à la fermeture (comportement normal).
+- **26.9** · Web · manuel · Deux onglets du navigateur sur le même coffre → Limite connue : chacun a sa propre vue ; ne pas écrire dans les deux.
 
 ## 27. Spécifique à l'app de bureau
 
-- **27.1** · Bureau · à automatiser · Cliquer un lien externe → Il s'ouvre dans le navigateur du système, jamais dans la fenêtre de l'app.
-- **27.2** · Bureau · à automatiser · Réduire la fenêtre au minimum → Elle ne descend pas sous 480 × 360.
-- **27.3** · Bureau · à automatiser · Regarder le haut de la fenêtre, puis appuyer sur Alt → La barre de menu est masquée ; Alt l'affiche.
-- **27.4** · Bureau · à automatiser · Coffres récents avec un long chemin → Le chemin complet est affiché, tronqué par la gauche.
-- **27.5** · Bureau · à automatiser · Coffre sur un disque externe ou un dossier synchronisé (Nextcloud, Syncthing) → Tout fonctionne ; les changements extérieurs sont pris en compte.
-- **27.6** · Bureau · à automatiser · Regarder `~/.config/Cobblestone/` → `vaults.json` et `storage.json` y sont.
-- **27.7** · Bureau · à automatiser · Version installée (AppImage ou .deb) → Icône et nom « Cobblestone » dans le menu et la barre des tâches.
-- **27.8** · Bureau · à automatiser · Fermer la fenêtre → L'app se quitte.
-- **27.9** · Bureau · à automatiser · Installer le .deb produit par `npm run dist -w @cobblestone/desktop` → L'icône Cobblestone (les pavés) apparaît dans le menu des applications et le dock, pas un engrenage.
-- **27.10** · Bureau · à automatiser · `npm run dev:desktop` sous X11 → La fenêtre porte l'icône Cobblestone.
+- **27.1** · Bureau · auto · Cliquer un lien externe → Il s'ouvre dans le navigateur du système, jamais dans la fenêtre de l'app.
+- **27.2** · Bureau · auto · Réduire la fenêtre au minimum → Elle ne descend pas sous 480 × 360.
+- **27.3** · Bureau · auto · Regarder le haut de la fenêtre, puis appuyer sur Alt → La barre de menu est masquée ; Alt l'affiche.
+- **27.4** · Bureau · auto · Coffres récents avec un long chemin → Le chemin complet est affiché, tronqué par la gauche.
+- **27.5** · Bureau · manuel · Coffre sur un disque externe ou un dossier synchronisé (Nextcloud, Syncthing) → Tout fonctionne ; les changements extérieurs sont pris en compte.
+- **27.6** · Bureau · auto · Regarder `~/.config/Cobblestone/` → `vaults.json` et `storage.json` y sont.
+- **27.7** · Bureau · manuel · Version installée (AppImage ou .deb) → Icône et nom « Cobblestone » dans le menu et la barre des tâches.
+- **27.8** · Bureau · auto · Fermer la fenêtre → L'app se quitte.
+- **27.9** · Bureau · manuel · Installer le .deb produit par `npm run dist -w @cobblestone/desktop` → L'icône Cobblestone (les pavés) apparaît dans le menu des applications et le dock, pas un engrenage.
+- **27.10** · Bureau · manuel · `npm run dev:desktop` sous X11 → La fenêtre porte l'icône Cobblestone.
 
 ## 28. Sécurité
 
-- **28.1** · Les deux · à automatiser · Note contenant `<script>alert(1)</script>`, en écriture puis en lecture → Rien ne s'exécute.
-- **28.2** · Les deux · à automatiser · Note contenant `<img src=x onerror="alert(1)">` → Rien ne s'exécute.
-- **28.3** · Les deux · à automatiser · Lien `[clic](javascript:alert(1))` → Le clic n'exécute rien.
-- **28.4** · Les deux · à automatiser · `<iframe src="https://example.org">` dans une note → Aucune page intégrée ne s'affiche.
-- **28.5** · Les deux · à automatiser · Image SVG contenant un script, intégrée avec `![[x.svg]]` → Elle s'affiche comme image ; le script ne s'exécute pas.
-- **28.6** · Les deux · à automatiser · Diagramme Mermaid contenant du HTML ou un lien `javascript:` → Neutralisé.
-- **28.7** · Les deux · à automatiser · Lien `[x](../../etc/passwd)` → Traité comme une note inexistante ; rien n'est lu hors du coffre.
+- **28.1** · Les deux · auto · Note contenant `<script>alert(1)</script>`, en écriture puis en lecture → Rien ne s'exécute.
+- **28.2** · Les deux · auto · Note contenant `<img src=x onerror="alert(1)">` → Rien ne s'exécute.
+- **28.3** · Les deux · auto · Lien `[clic](javascript:alert(1))` → Le clic n'exécute rien.
+- **28.4** · Les deux · auto · `<iframe src="https://example.org">` dans une note → Aucune page intégrée ne s'affiche.
+- **28.5** · Les deux · auto · Image SVG contenant un script, intégrée avec `![[x.svg]]` → Elle s'affiche comme image ; le script ne s'exécute pas.
+- **28.6** · Les deux · auto · Diagramme Mermaid contenant du HTML ou un lien `javascript:` → Neutralisé.
+- **28.7** · Les deux · auto · Lien `[x](../../etc/passwd)` → Traité comme une note inexistante ; rien n'est lu hors du coffre.
 
 ## 29. Robustesse et performance
 
-- **29.1** · Les deux · à automatiser · Coffre de plus de 5 000 notes → Ouverture en quelques secondes ; recherche et arborescence fluides.
-- **29.2** · Les deux · à automatiser · Note de 1 Mo → Elle s'ouvre et se modifie.
-- **29.3** · Les deux · à automatiser · Fichier vide et fichier sans extension → Aucune erreur.
-- **29.4** · Les deux · à automatiser · Liens cassés partout et intégrations circulaires → Ni boucle ni plantage.
-- **29.5** · Les deux · à automatiser · Couper le réseau → Tout fonctionne : les notes sont locales.
-- **29.6** · Les deux · à automatiser · Une heure d'utilisation avec beaucoup d'onglets → Pas de ralentissement notable.
-- **29.7** · Les deux · à automatiser · Quitter l'app pendant le déplacement d'un gros dossier → Aucun fichier perdu.
-- **29.8** · Les deux · à automatiser · Provoquer des erreurs (dossier supprimé, disque plein, droits retirés) → Toujours une phrase en français ; jamais « Error invoking remote method » ni un code brut comme ENOENT.
+- **29.1** · Les deux · auto · Coffre de plus de 5 000 notes → Ouverture en quelques secondes ; recherche et arborescence fluides.
+- **29.2** · Les deux · auto · Note de 1 Mo → Elle s'ouvre et se modifie.
+- **29.3** · Les deux · auto · Fichier vide et fichier sans extension → Aucune erreur.
+- **29.4** · Les deux · auto · Liens cassés partout et intégrations circulaires → Ni boucle ni plantage.
+- **29.5** · Les deux · auto · Couper le réseau → Tout fonctionne : les notes sont locales.
+- **29.6** · Les deux · manuel · Une heure d'utilisation avec beaucoup d'onglets → Pas de ralentissement notable.
+- **29.7** · Les deux · auto · Quitter l'app pendant le déplacement d'un gros dossier → Aucun fichier perdu.
+- **29.8** · Les deux · auto · Provoquer des erreurs (dossier supprimé, disque plein, droits retirés) → Toujours une phrase en français ; jamais « Error invoking remote method » ni un code brut comme ENOENT.
 
 ## 30. Retour dans Obsidian
 
-- **30.1** · Les deux · à automatiser · Après la recette, ouvrir la copie du coffre dans Obsidian → Toutes les notes s'ouvrent, rien n'est cassé.
-- **30.2** · Les deux · à automatiser · Suivre dans Obsidian des liens réécrits par Cobblestone → Ils fonctionnent.
-- **30.3** · Les deux · à automatiser · Ouvrir dans Obsidian les canvas créés ou modifiés par Cobblestone → Ils s'affichent.
-- **30.4** · Les deux · à automatiser · Regarder les réglages d'Obsidian → Inchangés.
-- **30.5** · Les deux · à automatiser · Chercher dans Obsidian les favoris ajoutés dans Cobblestone → Absents, c'est normal : ils sont dans `.cobblestone/`.
-- **30.6** · Les deux · à automatiser · Regarder `.cobblestone/` et `.trash/` dans Obsidian → Obsidian les ignore (dossiers cachés).
+- **30.1** · Les deux · manuel · Après la recette, ouvrir la copie du coffre dans Obsidian → Toutes les notes s'ouvrent, rien n'est cassé.
+- **30.2** · Les deux · manuel · Suivre dans Obsidian des liens réécrits par Cobblestone → Ils fonctionnent.
+- **30.3** · Les deux · manuel · Ouvrir dans Obsidian les canvas créés ou modifiés par Cobblestone → Ils s'affichent.
+- **30.4** · Les deux · auto · Regarder les réglages d'Obsidian → Inchangés.
+- **30.5** · Les deux · auto · Chercher dans Obsidian les favoris ajoutés dans Cobblestone → Absents, c'est normal : ils sont dans `.cobblestone/`.
+- **30.6** · Les deux · manuel · Regarder `.cobblestone/` et `.trash/` dans Obsidian → Obsidian les ignore (dossiers cachés).

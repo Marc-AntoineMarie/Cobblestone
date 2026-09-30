@@ -121,7 +121,7 @@ export class Ui {
 
   /** Opens a note through the palette, by its name. */
   async open(name: string) {
-    await this.vaultName.waitFor();
+    await this.page.locator('.workbench').waitFor();
     await this.page.keyboard.press('Control+o');
     await this.palette.locator('input').fill(name);
     await this.palette.locator('.finder-item').first().waitFor();
@@ -131,7 +131,7 @@ export class Ui {
 
   /** Opens a note in a new tab through the palette. */
   async openInNewTab(name: string) {
-    await this.vaultName.waitFor();
+    await this.page.locator('.workbench').waitFor();
     await this.page.keyboard.press('Control+o');
     await this.palette.locator('input').fill(name);
     await this.palette.locator('.finder-item').first().waitFor();

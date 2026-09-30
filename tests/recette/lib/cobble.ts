@@ -76,7 +76,7 @@ export class Cobble {
     if (this.desktop) await this.startDesktop(vault);
     else await this.startWeb(vault);
     if (vault === 'demo') await this.page.getByRole('button', { name: /Essayer la démo|Try the demo/ }).click();
-    if (vault && options.open !== false) await this.page.locator('.vault-name').waitFor();
+    if (vault && options.open !== false) await this.page.locator('.workbench').waitFor();
     return this;
   }
 
@@ -208,7 +208,7 @@ export class Cobble {
         .waitForFunction(
           (s) => Math.abs(window.innerWidth - s.width) <= 2 && Math.abs(window.innerHeight - s.height) <= 2,
           size,
-          { timeout: 3000 },
+          { timeout: 8000 },
         )
         .catch(() => undefined);
     } else await this.page.setViewportSize(size);
