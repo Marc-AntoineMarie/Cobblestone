@@ -41,7 +41,7 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 - **1.8** · Bureau · manuel · Rendre l'AppImage exécutable (`chmod +x`) et la lancer → L'app démarre comme en développement.
 - **1.9** · Bureau · manuel · Installer le .deb (`sudo apt install ./apps/desktop/release/Cobblestone-0.1.0-amd64.deb`) et lancer Cobblestone depuis le menu des applications → L'app figure dans le menu avec son icône et démarre.
 - **1.10** · Les deux · ci · `npm run check` → Formatage, types et tests unitaires passent.
-- **1.11** · Les deux · ci · `npm run e2e` → Chaque ligne affiche « ok », puis « no page errors ».
+- **1.11** · Les deux · manuel · `npm run e2e` → La recette automatique passe : `test-results/recette.md` ne compte aucun échec.
 - **1.12** · Bureau · auto · App fermée, `rm -rf ~/.config/Cobblestone` puis relancer → L'accueil n'affiche plus aucun coffre récent.
 - **1.13** · Web · auto · Outils de développement, Application, « Clear site data », puis recharger → Plus de coffre récent ni de préférences.
 

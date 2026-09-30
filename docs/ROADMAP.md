@@ -2,7 +2,7 @@
 
 The goal is a complete replacement for Obsidian, then everything Obsidian charges for or leaves to plugins, free for individuals. Organizations pay for the controls they need.
 
-## 1. Foundation — done (v0.1)
+## 1. Foundation — done (first release: 0.1.0)
 
 - Obsidian-compatible engine: metadata parser, link resolution with Obsidian's rules, rename with link updates, search with Obsidian's query syntax.
 - Desktop (Electron) and web apps, each complete on its own.
@@ -33,7 +33,7 @@ Sync is what makes a phone useful: mobile browsers cannot open a folder, so note
 
 ## 4. Full Obsidian parity
 
-- ~~Canvas (JSON Canvas format, compatible with Obsidian's `.canvas` files), templates, bookmarks, hover previews, unlinked mentions~~ (done in 0.2).
+- ~~Canvas (JSON Canvas format, compatible with Obsidian's `.canvas` files), templates, bookmarks, hover previews, unlinked mentions~~ (done, in 0.1.0).
 - Unique note creator, properties editor with types.
 - Table editing, PDF viewer with annotations, audio recorder, slides, file recovery, workspaces.
 - Customisable hotkeys, CSS snippets and themes, multiple windows.

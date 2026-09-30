@@ -3,12 +3,13 @@
 Ce dossier rassemble la façon de travailler sur Cobblestone : les règles, le journal de chaque
 changement et la liste des idées à faire.
 
-| Fichier                  | Ce qu'il contient                                                                |
-| ------------------------ | -------------------------------------------------------------------------------- |
-| [REGLES.md](REGLES.md)   | La méthode : branches, commits, code, design, vérifications, journal, versions.  |
-| [JOURNAL.md](JOURNAL.md) | Le sommaire du journal : un changement par ligne, du plus récent au plus ancien. |
-| [journal/](journal/)     | Une fiche par changement : pourquoi, ajouté, modifié, supprimé, tests, fichiers. |
-| [IDEES.md](IDEES.md)     | Tout ce qui reste à faire ou à décider, du plus prioritaire au plus lointain.    |
+| Fichier                    | Ce qu'il contient                                                                |
+| -------------------------- | -------------------------------------------------------------------------------- |
+| [REGLES.md](REGLES.md)     | La méthode : branches, commits, code, design, vérifications, journal, versions.  |
+| [JOURNAL.md](JOURNAL.md)   | Le sommaire du journal : un changement par ligne, du plus récent au plus ancien. |
+| [journal/](journal/)       | Une fiche par changement : pourquoi, ajouté, modifié, supprimé, tests, fichiers. |
+| [IDEES.md](IDEES.md)       | Tout ce qui reste à faire ou à décider, du plus prioritaire au plus lointain.    |
+| [VERSIONS.md](VERSIONS.md) | Numéros de version, ce que fait la CI, et la procédure pour publier une version. |
 
 ## Le parcours d'un changement
 
@@ -22,8 +23,8 @@ changement et la liste des idées à faire.
 6. **Journal** : `npm run journal -- new`, compléter la fiche, `npm run journal -- index`.
 7. **Fusion** : `git switch main && git merge --no-ff feat/mon-sujet`, puis suppression de la branche.
    L'idée sort d'IDEES.md.
-8. **Version** : quand un ensemble de changements est prêt et la recette passée,
-   `npm run release X.Y.Z`.
+8. **Version** : quand un ensemble de changements est prêt, `npm run release X.Y.Z` (voir
+   [VERSIONS.md](VERSIONS.md)).
 
 Les droits sur les contributions (licence accordée au mainteneur) sont dans
 [CONTRIBUTING.md](../CONTRIBUTING.md#droits-sur-les-contributions).
