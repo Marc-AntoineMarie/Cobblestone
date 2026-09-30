@@ -73,6 +73,8 @@ export interface GuestOptions {
   timeout?: number;
   /** How long to wait for the user of the other device to accept. */
   approvalTimeout?: number;
+  /** Called once both sides proved the same code, before the other device's user decides. */
+  onProven?: () => void;
 }
 
 type Point = InstanceType<typeof ristretto255.Point>;
@@ -125,6 +127,7 @@ export async function joinPairing(
       throw new SyncRefusal('wrong-code');
     }
     sendJson(raw, { t: 'pair-proof', proof: toBase64(mac(keys.guestProof, th)) });
+    options.onProven?.();
 
     const ciphers = { send: new FrameCipher(keys.toHost), receive: new FrameCipher(keys.toGuest) };
     await sealJson(raw, ciphers.send, { t: 'device', device: publicInfo(options.identity) });

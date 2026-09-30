@@ -139,6 +139,11 @@ export class VaultSync {
     } while (last !== this.queue);
   }
 
+  /** Changes the CRDT as this device (devices, settings of the sync), not as a file. */
+  change(apply: () => void) {
+    this.doc.transact(apply, LOCAL);
+  }
+
   /** Starts exchanging with another device; returns a function that ends it. */
   connect(channel: SyncChannel): () => void {
     const peer: Peer = { channel };
