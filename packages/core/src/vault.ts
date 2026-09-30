@@ -459,7 +459,11 @@ export class Vault extends Emitter<VaultEvents> {
         const known = this.files.get(change.path);
         if (!isMarkdown(change.path)) {
           if (!known) this.registerFile(change.path, null, stat.size);
-          else known.stat = stat;
+          else if (known.stat.mtime !== stat.mtime || known.stat.size !== stat.size) {
+            // Attachments and canvases changed by another program: views showing them reload.
+            known.stat = stat;
+            this.emit('modify', known, null);
+          }
           return;
         }
         const text = await this.adapter.read(change.path);

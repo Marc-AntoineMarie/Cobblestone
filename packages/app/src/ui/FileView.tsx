@@ -17,10 +17,16 @@ export function FileView({ path }: { path: string }) {
 
   useEffect(() => {
     let cancelled = false;
-    if (TEXT.has(ext)) void session.vault.read(path).then((t) => !cancelled && setText(t));
-    else void session.resourceUrl(path).then((u) => !cancelled && setUrl(u));
+    const load = () => {
+      if (TEXT.has(ext)) void session.vault.read(path).then((t) => !cancelled && setText(t));
+      else void session.resourceUrl(path).then((u) => !cancelled && setUrl(u));
+    };
+    load();
+    // Changed by another program: shown again (the session has dropped the old copy).
+    const off = session.vault.on('modify', (file) => file.path === path && load());
     return () => {
       cancelled = true;
+      off();
     };
   }, [session, path, ext]);
 
