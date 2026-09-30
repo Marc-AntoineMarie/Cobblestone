@@ -26,6 +26,16 @@ describe('Obsidian syntax for the editor', () => {
     ]);
   });
 
+  it('parses tasks with any status, as Obsidian does', () => {
+    expect(nodes('- [ ] a\n- [x] b\n- [-] c\n- [/] d\n- [>] e\n\n[-] not in a list', ['TaskMarker'])).toEqual([
+      'TaskMarker:[ ]',
+      'TaskMarker:[x]',
+      'TaskMarker:[-]',
+      'TaskMarker:[/]',
+      'TaskMarker:[>]',
+    ]);
+  });
+
   it('parses tags but not headings or numbers', () => {
     expect(nodes('# Title\n\ntext #tag #123 x#no #a/b/', ['Tag'])).toEqual(['Tag:#tag', 'Tag:#a/b']);
   });

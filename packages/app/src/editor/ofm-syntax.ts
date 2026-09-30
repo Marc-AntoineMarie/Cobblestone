@@ -1,5 +1,5 @@
 import { tags as t, Tag } from '@lezer/highlight';
-import type { BlockContext, InlineContext, Line, MarkdownConfig } from '@lezer/markdown';
+import type { BlockContext, InlineContext, LeafBlock, LeafBlockParser, Line, MarkdownConfig } from '@lezer/markdown';
 
 /*
  * Obsidian Flavored Markdown syntax for the CodeMirror/Lezer markdown parser:
@@ -259,4 +259,44 @@ export const Frontmatter: MarkdownConfig = {
   ],
 };
 
-export const obsidianMarkdown: MarkdownConfig[] = [Frontmatter, WikiLinks, Tags, Highlights, Comments, MathSyntax, BlockIds];
+/**
+ * Tasks with any status, as Obsidian allows: "- [-]", "- [/]", "- [>]"… GFM only
+ * knows "[ ]" and "[x]"; this parser runs first and builds the same nodes.
+ */
+class AnyTaskParser implements LeafBlockParser {
+  nextLine() {
+    return false;
+  }
+  finish(cx: BlockContext, leaf: LeafBlock) {
+    cx.addLeafElement(
+      leaf,
+      cx.elt('Task', leaf.start, leaf.start + leaf.content.length, [
+        cx.elt('TaskMarker', leaf.start, leaf.start + 3),
+        ...cx.parser.parseInline(leaf.content.slice(3), leaf.start + 3),
+      ]),
+    );
+    return true;
+  }
+}
+
+const AnyStatusTasks: MarkdownConfig = {
+  parseBlock: [
+    {
+      name: 'AnyStatusTask',
+      leaf: (cx, leaf) =>
+        /^\[[^\]\n]\][ \t]/.test(leaf.content) && cx.parentType().name === 'ListItem' ? new AnyTaskParser() : null,
+      before: 'TaskList',
+    },
+  ],
+};
+
+export const obsidianMarkdown: MarkdownConfig[] = [
+  Frontmatter,
+  WikiLinks,
+  Tags,
+  Highlights,
+  Comments,
+  MathSyntax,
+  BlockIds,
+  AnyStatusTasks,
+];
