@@ -30,7 +30,7 @@ jobs:
       - run: npm run build -w @cobblestone/web
       - run: npm run build -w @cobblestone/desktop
 
-  # Scénarios de bout en bout sur les vraies apps : Electron sous écran virtuel, web sous Chrome.
+  # La recette automatique sur les vraies apps : Electron sous écran virtuel, web sous Chrome.
   e2e:
     needs: check
     runs-on: ubuntu-24.04
@@ -41,17 +41,14 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - run: npm run build -w @cobblestone/desktop
-      - run: xvfb-run -a node scripts/e2e-desktop.mjs e2e-shots
-        env:
-          ELECTRON_ENABLE_LOGGING: '1'
-      - run: node scripts/e2e-web.mjs e2e-shots
-      - name: Captures en cas d'échec
-        if: failure()
+      - run: xvfb-run -a npm run e2e
+      - name: État de la recette et traces des échecs
+        if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: e2e-shots
-          path: e2e-shots
+          name: recette
+          path: test-results
+          if-no-files-found: ignore
 
   # Vulnérabilités connues dans les dépendances livrées.
   audit:
