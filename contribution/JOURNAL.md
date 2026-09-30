@@ -6,6 +6,7 @@ ajouté, modifié et supprimé, les tests, les fichiers et les commits. Ce somma
 
 | Date       | Changement                                                                                                               | Type          | Branche                      |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------ | ------------- | ---------------------------- |
+| 2026-09-30 | [CI : la recette résiste à un plantage de Chrome](journal/2026-09-30-ci-recette-chrome.md)                               | maintenance   | `ci/recette-chrome`          |
 | 2026-09-30 | [Idée : importer depuis n'importe quel logiciel Markdown](journal/2026-09-30-docs-idee-import-universel.md)              | documentation | `docs/idee-import-universel` |
 | 2026-09-30 | [Recette automatique : les 556 vérifications passent par des tests](journal/2026-09-30-test-recette-automatique.md)      | amélioration  | `test/recette-automatique`   |
 | 2026-09-30 | [Premières maquettes de la refonte personnalisable](journal/2026-09-30-docs-maquettes-refonte.md)                        | documentation | `docs/maquettes-refonte`     |
