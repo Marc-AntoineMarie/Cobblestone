@@ -66,8 +66,6 @@
   --radius: 3px;
   /* Height of a row in lists: the density of the appearance settings. */
   --row: 28px;
-  --rail-width: 264px;
-  --margin-width: 288px;
   --bar: 44px;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
 

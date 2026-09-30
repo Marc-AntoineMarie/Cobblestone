@@ -1,6 +1,7 @@
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { appearanceTokens, applyTokens, paperOf, themeFor } from '../appearance';
 import { describeError, isVaultMissing } from '../errors';
+import { normalizeLayout } from '../layout';
 import { detectLanguage, setLanguage } from '../i18n';
 import type { Platform, VaultEntry } from '../platform';
 import type { Session } from '../session';
@@ -129,7 +130,7 @@ export function App({ platform }: { platform: Platform }) {
     let cancelled = false;
     void (async () => {
       const stored = await platform.storage.get<Preferences>('preferences');
-      if (!cancelled && stored) setPreferences({ ...DEFAULT_PREFERENCES, ...stored });
+      if (!cancelled && stored) setPreferences({ ...DEFAULT_PREFERENCES, ...stored, layout: normalizeLayout(stored.layout) });
       const lastId = await platform.storage.get<string | null>(LAST_VAULT);
       const entry = lastId ? (await platform.recentVaults()).find((v) => v.id === lastId) : undefined;
       const reopenable = entry && (platform.kind === 'desktop' || entry.kind === 'browser');

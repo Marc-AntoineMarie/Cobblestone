@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { ChevronRight } from 'lucide-react';
-import { t } from '../i18n';
 import { useSession, useVaultRevision } from './hooks';
+import { Panel } from './Panel';
 
 interface TagNode {
   name: string;
@@ -10,11 +10,11 @@ interface TagNode {
   children: TagNode[];
 }
 
-/** Tags of the vault as a nested list with note counts. */
-export function TagList({ onPick }: { onPick: (tag: string) => void }) {
+/** Tags of the vault as a nested list with note counts; a tag lists its notes in the search panel. */
+export function TagsPanel() {
   const session = useSession();
   const revision = useVaultRevision();
-  const [open, setOpen] = useState(true);
+  const onPick = (tag: string) => session.findTag(tag);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
   const roots = useMemo(() => {
@@ -63,14 +63,8 @@ export function TagList({ onPick }: { onPick: (tag: string) => void }) {
   );
 
   return (
-    <section className={`rail-section rail-tags${open ? '' : ' is-collapsed'}`} aria-labelledby="rail-tags-label">
-      <header className="rail-section-head">
-        <button className="label section-toggle" id="rail-tags-label" aria-expanded={open} onClick={() => setOpen(!open)}>
-          <ChevronRight size={12} strokeWidth={2.25} className={open ? 'is-open' : undefined} aria-hidden />
-          {t('rail.tags')}
-        </button>
-      </header>
-      {open && <ul className="tag-list">{roots.map((node) => render(node, 0))}</ul>}
-    </section>
+    <Panel id="tags">
+      <ul className="tag-list">{roots.map((node) => render(node, 0))}</ul>
+    </Panel>
   );
 }

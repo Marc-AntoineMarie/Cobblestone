@@ -1,5 +1,5 @@
 import { useRef, useState, type DragEvent, type PointerEvent as ReactPointerEvent } from 'react';
-import { FileText, LayoutDashboard, Network, PanelLeftOpen, Pin, Plus, Settings2, X, File } from 'lucide-react';
+import { FileText, LayoutDashboard, Network, Pin, Plus, Settings2, X, File } from 'lucide-react';
 import { CanvasView } from '../canvas/CanvasView';
 import { basename, stem } from '@cobblestone/core';
 import { t } from '../i18n';
@@ -8,7 +8,6 @@ import {
   closeTab,
   moveTab,
   open,
-  panes,
   resizeSplit,
   togglePin,
   type Layout,
@@ -21,6 +20,7 @@ import { FileView } from './FileView';
 import { GraphView } from './GraphView';
 import { useSession, useStore } from './hooks';
 import { NoteView } from './NoteView';
+import { usePreferences } from './preferences';
 import { SettingsView } from './SettingsView';
 
 export function LayoutView() {
@@ -120,8 +120,7 @@ function PaneView({ pane }: { pane: Pane }) {
   const activePane = useStore(session.workspace, (s) => s.activePane);
   const isActive = activePane === pane.id;
   const [dragOver, setDragOver] = useState<number | null>(null);
-  const railOpen = useStore(session.ui, (s) => s.railOpen);
-  const isFirst = useStore(session.workspace, (s) => panes(s.layout)[0]?.id === pane.id);
+  const showTabs = usePreferences().preferences.layout.tabs;
 
   const focusPane = () => {
     if (!isActive) session.workspace.setState((s) => activate(s, pane.id));
@@ -143,17 +142,13 @@ function PaneView({ pane }: { pane: Pane }) {
 
   return (
     <section className={`pane${isActive ? ' is-active' : ''}`} onPointerDownCapture={focusPane} onFocusCapture={focusPane}>
-      <div className="tabs" role="tablist" onDragOver={(e) => e.preventDefault()} onDrop={(e) => onTabDrop(e, pane.tabs.length)}>
-        {!railOpen && isFirst && (
-          <button
-            className="icon-button tab-rail"
-            aria-label={t('rail.expand')}
-            title={t('rail.expand')}
-            onClick={() => session.ui.setState({ railOpen: true })}
-          >
-            <PanelLeftOpen size={16} strokeWidth={1.75} />
-          </button>
-        )}
+      <div
+        className="tabs"
+        role="tablist"
+        hidden={!showTabs}
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={(e) => onTabDrop(e, pane.tabs.length)}
+      >
         {pane.tabs.map((tab, index) => (
           <TabButton
             key={tab.id}

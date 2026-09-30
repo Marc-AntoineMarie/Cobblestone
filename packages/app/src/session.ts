@@ -28,6 +28,7 @@ import { CommandRegistry } from './commands';
 import { describeError } from './errors';
 import { getLanguage, t } from './i18n';
 import type { Platform, VaultEntry } from './platform';
+import type { PanelId } from './layout';
 import { DEFAULT_SETTINGS, formatDate, loadVaultSettings, saveVaultSettings, type VaultSettings } from './settings';
 import { applyTemplate, findTemplatesFolder, listTemplates } from './templates';
 import {
@@ -66,8 +67,15 @@ export interface Toast {
 }
 
 export interface UIState {
-  railOpen: boolean;
-  marginOpen: boolean;
+  /** The side zones, open or closed. */
+  leftOpen: boolean;
+  rightOpen: boolean;
+  /** Panels folded to their title. */
+  collapsed: Partial<Record<PanelId, boolean>>;
+  /** A panel to bring into view: its zone opens, and a hidden panel comes back. */
+  reveal: { panel: PanelId; seq: number } | null;
+  /** A section of the settings to scroll to when they open. */
+  settingsSection: string | null;
   finder: { mode: 'notes' | 'commands' } | PickRequest | null;
   menu: { x: number; y: number; items: MenuItem[] } | null;
   share: string | null;
@@ -79,8 +87,8 @@ export interface UIState {
   expanded: Record<string, boolean>;
   /** Tree item to scroll to and highlight. */
   revealed: string | null;
-  /** Text of the rail's find field. */
-  railQuery: string;
+  /** Text of the search panel's field. */
+  searchQuery: string;
   /** Hover preview of a link target. */
   preview: { linktext: string; sourcePath: string; rect: { left: number; right: number; top: number; bottom: number } } | null;
   toasts: Toast[];
@@ -122,8 +130,11 @@ export class Session {
     this.bookmarks = createStore<Bookmark[]>(() => bookmarks);
     this.workspace = createStore(() => workspace);
     this.ui = createStore<UIState>(() => ({
-      railOpen: true,
-      marginOpen: true,
+      leftOpen: true,
+      rightOpen: true,
+      collapsed: {},
+      reveal: null,
+      settingsSection: null,
       finder: null,
       menu: null,
       share: null,
@@ -131,7 +142,7 @@ export class Session {
       focusTitle: null,
       expanded: {},
       revealed: null,
-      railQuery: '',
+      searchQuery: '',
       preview: null,
       toasts: [],
     }));
@@ -388,18 +399,37 @@ export class Session {
       // A bookmarked folder is shown open, its notes in view.
       this.revealInTree(bookmark.path);
       this.ui.setState((s) => ({ expanded: { ...s.expanded, [bookmark.path]: true } }));
-    } else if (bookmark.type === 'search') this.ui.setState({ railOpen: true, railQuery: bookmark.query });
+    } else if (bookmark.type === 'search') {
+      this.ui.setState({ searchQuery: bookmark.query });
+      this.revealPanel('search');
+    }
   }
 
-  /** Lists the notes carrying a tag in the rail. */
+  /** Lists the notes carrying a tag in the search panel. */
   findTag(tag: string) {
-    this.ui.setState({ railOpen: true, railQuery: `tag:${tag.startsWith('#') ? tag : '#' + tag}` });
+    this.ui.setState({ searchQuery: `tag:${tag.startsWith('#') ? tag : '#' + tag}` });
+    this.revealPanel('search');
   }
 
   revealInTree(path: string) {
     const expanded = { ...this.ui.getState().expanded };
     for (let dir = dirname(path); dir; dir = dirname(dir)) expanded[dir] = true;
-    this.ui.setState({ expanded, revealed: path, railOpen: true });
+    this.ui.setState({ expanded, revealed: path });
+    this.revealPanel('files');
+  }
+
+  /** Opens the settings, at a section. */
+  openSettings(section?: string) {
+    this.ui.setState({ settingsSection: section ?? null });
+    this.openView({ type: 'settings' }, 'tab');
+  }
+
+  /** Brings a panel into view: unfolded, its zone open (the workbench does the rest). */
+  revealPanel(panel: PanelId) {
+    this.ui.setState((s) => ({
+      reveal: { panel, seq: (s.reveal?.seq ?? 0) + 1 },
+      collapsed: { ...s.collapsed, [panel]: false },
+    }));
   }
 
   /** Whether files can be shown in the system's file manager (a desktop vault on disk). */

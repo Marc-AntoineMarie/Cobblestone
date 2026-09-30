@@ -1,145 +1,80 @@
 import { useDeferredValue, useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
-import { CalendarDays, ChevronsUpDown, FilePlus2, FolderPlus, Network, PanelLeftClose, Search, Settings, X } from 'lucide-react';
+import { FilePlus2, FolderPlus, Search, X } from 'lucide-react';
 import { searchDocuments, stem } from '@cobblestone/core';
 import { t } from '../i18n';
-import { BookmarkList } from './BookmarkList';
 import { FileTree } from './FileTree';
 import { fuzzyMatch, highlightSegments } from './fuzzy';
 import { useSession, useStore, useVaultRevision } from './hooks';
-import { Mark } from './Mark';
-import { PressStatus } from './PressStatus';
-import { TagList } from './TagList';
+import { Panel } from './Panel';
 
-export function Rail({ onSwitchVault, drawer }: { onSwitchVault: () => void; drawer: boolean }) {
+/**
+ * One field that finds notes by name, searches their text, or creates one.
+ * While it holds a query, its zone shows only the results.
+ */
+export function SearchPanel() {
   const session = useSession();
-  const open = useStore(session.ui, (s) => s.railOpen);
-  const query = useStore(session.ui, (s) => s.railQuery);
-  const setQuery = (railQuery: string) => session.ui.setState({ railQuery });
+  const query = useStore(session.ui, (s) => s.searchQuery);
+  const setQuery = (searchQuery: string) => session.ui.setState({ searchQuery });
   const findRef = useRef<HTMLInputElement>(null);
-
-  if (!open) {
-    return null;
-  }
-
-  const vaultMenu = (event: React.MouseEvent) => {
-    const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
-    session.ui.setState({
-      menu: {
-        x: rect.left,
-        y: rect.bottom + 4,
-        items: [
-          { label: t('rail.settings'), run: () => session.openView({ type: 'settings' }, 'tab') },
-          ...(session.canRevealInSystem ? [{ label: t('rail.openVaultFolder'), run: () => session.revealInSystem('') }] : []),
-          { label: t('rail.switchVault'), run: onSwitchVault },
-        ],
-      },
-    });
-  };
-
   return (
-    <>
-      {drawer && <div className="scrim" onClick={() => session.ui.setState({ railOpen: false })} aria-hidden />}
-      <aside className={`rail${drawer ? ' is-drawer' : ''}`} aria-label={session.vault.name}>
-        <header className="rail-head">
-          <button className="vault-switch" onClick={vaultMenu} aria-haspopup="menu">
-            <Mark size={22} />
-            <span className="vault-name">{session.vault.name}</span>
-            <ChevronsUpDown size={14} strokeWidth={1.75} aria-hidden />
+    <Panel id="search" grow={!!query.trim()}>
+      <div className="search-field">
+        <Search size={15} strokeWidth={1.75} aria-hidden className="search-field-icon" />
+        <input
+          ref={findRef}
+          type="search"
+          value={query}
+          placeholder={t('rail.findPlaceholder')}
+          aria-label={t('rail.find')}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') {
+              setQuery('');
+              e.currentTarget.blur();
+            }
+          }}
+        />
+        {query && (
+          <button className="icon-button search-field-clear" onClick={() => setQuery('')} aria-label={t('launcher.cancel')}>
+            <X size={14} strokeWidth={1.75} />
           </button>
-          <button
-            className="icon-button"
-            onClick={() => session.ui.setState({ railOpen: false })}
-            title={t('rail.collapse')}
-            aria-label={t('rail.collapse')}
-          >
-            <PanelLeftClose size={16} strokeWidth={1.75} />
-          </button>
-        </header>
-
-        <div className="rail-find">
-          <Search size={15} strokeWidth={1.75} aria-hidden className="rail-find-icon" />
-          <input
-            ref={findRef}
-            type="search"
-            value={query}
-            placeholder={t('rail.findPlaceholder')}
-            aria-label={t('rail.find')}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Escape') {
-                setQuery('');
-                e.currentTarget.blur();
-              }
-            }}
-          />
-          {query && (
-            <button className="icon-button rail-find-clear" onClick={() => setQuery('')} aria-label={t('launcher.cancel')}>
-              <X size={14} strokeWidth={1.75} />
-            </button>
-          )}
-        </div>
-
-        {query.trim() ? (
-          <FindResults query={query} onDone={() => setQuery('')} inputRef={findRef} />
-        ) : (
-          <>
-            <nav className="rail-stations" aria-label="Cobblestone">
-              <button className="station" onClick={() => void session.openDailyNote()}>
-                <CalendarDays size={16} strokeWidth={1.75} aria-hidden />
-                {t('rail.today')}
-              </button>
-              <button className="station" onClick={() => session.openView({ type: 'graph' }, 'tab')}>
-                <Network size={16} strokeWidth={1.75} aria-hidden />
-                {t('rail.graph')}
-              </button>
-            </nav>
-
-            <BookmarkList />
-
-            <section className="rail-section rail-notes" aria-labelledby="rail-notes-label">
-              <header className="rail-section-head">
-                <h2 id="rail-notes-label" className="label">
-                  {t('rail.notes')}
-                </h2>
-                <div className="rail-section-actions">
-                  <button
-                    className="icon-button"
-                    onClick={() => void session.createNote()}
-                    title={t('rail.newNote')}
-                    aria-label={t('rail.newNote')}
-                  >
-                    <FilePlus2 size={15} strokeWidth={1.75} />
-                  </button>
-                  <button
-                    className="icon-button"
-                    onClick={() => void session.createFolder('')}
-                    title={t('rail.newFolder')}
-                    aria-label={t('rail.newFolder')}
-                  >
-                    <FolderPlus size={15} strokeWidth={1.75} />
-                  </button>
-                </div>
-              </header>
-              <FileTree />
-            </section>
-
-            <TagList onPick={(tag) => session.findTag(tag)} />
-          </>
         )}
+      </div>
+      {query.trim() && <FindResults query={query} onDone={() => setQuery('')} inputRef={findRef} />}
+    </Panel>
+  );
+}
 
-        <footer className="rail-foot">
-          <PressStatus />
+/** The notes and folders of the vault, with buttons to create them. */
+export function FilesPanel() {
+  const session = useSession();
+  return (
+    <Panel
+      id="files"
+      grow
+      actions={
+        <>
           <button
             className="icon-button"
-            onClick={() => session.openView({ type: 'settings' }, 'tab')}
-            title={t('rail.settings')}
-            aria-label={t('rail.settings')}
+            onClick={() => void session.createNote()}
+            title={t('rail.newNote')}
+            aria-label={t('rail.newNote')}
           >
-            <Settings size={16} strokeWidth={1.75} />
+            <FilePlus2 size={15} strokeWidth={1.75} />
           </button>
-        </footer>
-      </aside>
-    </>
+          <button
+            className="icon-button"
+            onClick={() => void session.createFolder('')}
+            title={t('rail.newFolder')}
+            aria-label={t('rail.newFolder')}
+          >
+            <FolderPlus size={15} strokeWidth={1.75} />
+          </button>
+        </>
+      }
+    >
+      <FileTree />
+    </Panel>
   );
 }
 

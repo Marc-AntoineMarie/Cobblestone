@@ -4,6 +4,7 @@ import { stem } from '@cobblestone/core';
 import { removeBookmark, type Bookmark } from '../bookmarks';
 import { t } from '../i18n';
 import { useSession, useStore } from './hooks';
+import { Panel } from './Panel';
 
 function label(bookmark: Bookmark): string {
   if (bookmark.title) return bookmark.title;
@@ -28,11 +29,10 @@ function Icon({ bookmark }: { bookmark: Bookmark }) {
 }
 
 /** Bookmarked notes, folders, headings and searches, in the order the user chose. */
-export function BookmarkList() {
+export function BookmarksPanel() {
   const session = useSession();
   const items = useStore(session.bookmarks, (b) => b);
   const activePath = useStore(session.workspace, () => session.activePath);
-  const [open, setOpen] = useState(true);
   const [expanded, setExpanded] = useState<Record<number, boolean>>({});
 
   if (items.length === 0) return null;
@@ -79,14 +79,8 @@ export function BookmarkList() {
   };
 
   return (
-    <section className={`rail-section rail-bookmarks${open ? '' : ' is-collapsed'}`} aria-labelledby="rail-bookmarks-label">
-      <header className="rail-section-head">
-        <button className="label section-toggle" id="rail-bookmarks-label" aria-expanded={open} onClick={() => setOpen(!open)}>
-          <ChevronRight size={12} strokeWidth={2.25} className={open ? 'is-open' : undefined} aria-hidden />
-          {t('rail.bookmarks')}
-        </button>
-      </header>
-      {open && <ul className="tag-list">{items.map((item) => render(item, 0))}</ul>}
-    </section>
+    <Panel id="bookmarks">
+      <ul className="tag-list">{items.map((item) => render(item, 0))}</ul>
+    </Panel>
   );
 }

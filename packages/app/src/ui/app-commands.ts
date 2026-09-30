@@ -1,8 +1,10 @@
 import { parseHotkey, type Command } from '../commands';
 import { t } from '../i18n';
+import { applyPreset, PANELS, PRESETS, type PresetId } from '../layout';
 import type { Session } from '../session';
 import type { Preferences } from '../settings';
 import { activeTab, closeTab, findPane, navigate, setMode, split } from '../workspace/workspace';
+import { panelLabel } from './Panel';
 
 /** Registers the application commands; returns a function removing them. */
 export function registerAppCommands(
@@ -115,15 +117,28 @@ export function registerAppCommands(
       name: t('cmd.toggleRail'),
       section: t('cmd.section.view'),
       hotkeys: hk('Mod+Shift+\\', 'Mod+['),
-      run: () => session.ui.setState((s) => ({ railOpen: !s.railOpen })),
+      run: () => session.ui.setState((s) => ({ leftOpen: !s.leftOpen })),
     },
     {
       id: 'view:toggle-margin',
       name: t('cmd.toggleMargin'),
       section: t('cmd.section.view'),
       hotkeys: hk('Mod+]'),
-      run: () => session.ui.setState((s) => ({ marginOpen: !s.marginOpen })),
+      run: () => session.ui.setState((s) => ({ rightOpen: !s.rightOpen })),
     },
+    // Each ready-made layout, and every panel, hidden ones included, is one command away.
+    ...(Object.keys(PRESETS) as PresetId[]).map((preset) => ({
+      id: `view:layout-${preset}`,
+      name: t('cmd.layout', { name: t(`layout.${preset}`) }),
+      section: t('cmd.section.view'),
+      run: () => options.updatePreferences({ layout: applyPreset(options.preferences().layout, preset) }),
+    })),
+    ...PANELS.map((panel) => ({
+      id: `view:panel-${panel}`,
+      name: t('cmd.showPanel', { panel: panelLabel(panel) }),
+      section: t('cmd.section.view'),
+      run: () => session.revealPanel(panel),
+    })),
     {
       id: 'view:graph',
       name: t('cmd.graph'),
