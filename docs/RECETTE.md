@@ -232,32 +232,32 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 
 ## 8. Barre d'une note et titre
 
-- **8.1** · Les deux · à automatiser · Cliquer un dossier du fil d'Ariane au-dessus de la note → Le dossier est montré dans l'arborescence ; le nom de la note est en gras.
-- **8.2** · Les deux · à automatiser · Boutons « Écrire » et « Lire » → Bascule entre l'aperçu en direct et la lecture ; le mode actif est sur fond bleu foncé.
-- **8.3** · Les deux · à automatiser · Ctrl+E, curseur dans le texte, puis en lecture → Bascule d'écriture en lecture, puis retour.
-- **8.4** · Les deux · à automatiser · Menu …, « Afficher la source Markdown » → Le bouton affiche « Source » et tout le Markdown brut est visible ; recommencer revient à l'aperçu.
-- **8.5** · Les deux · à automatiser · Bouton rose « Partager » → Une fenêtre explique que le partage arrive avec la synchronisation et propose « Copier un lien vers cette note » et « Markdown ».
-- **8.6** · Les deux · à automatiser · « Copier un lien vers cette note », puis coller ailleurs → `[[Nom de la note]]` ; l'icône devient une coche un instant.
-- **8.7** · Les deux · à automatiser · « Markdown », puis coller ailleurs → Le contenu complet de la note.
-- **8.8** · Les deux · à automatiser · Fermer la fenêtre Partager avec la croix, avec Échap, puis par un clic à côté → Elle se ferme dans les trois cas.
-- **8.9** · Les deux · à automatiser · Icône de marque-page de la barre de note → Elle devient rose et la note entre dans les favoris ; recliquer la retire.
-- **8.10** · Les deux · à automatiser · Chaque entrée du menu … (diviser à droite, diviser en bas, source, graphe autour de cette note, montrer dans la barre latérale, copier un lien, mettre à la corbeille) → Chacune fait ce qu'elle dit.
-- **8.11** · Les deux · à automatiser · Masquer la marge → Un bouton apparaît dans la barre de note pour la rouvrir.
-- **8.12** · Les deux · à automatiser · Modifier le grand titre de la note, puis Entrée → Le fichier est renommé et tous les liens sont mis à jour.
-- **8.13** · Les deux · à automatiser · Titre modifié, Entrée, puis taper aussitôt → La frappe va dans le texte, même si le renommage prend un instant.
-- **8.14** · Les deux · à automatiser · Modifier le titre, puis Échap → Rien n'est renommé, l'ancien titre revient.
-- **8.15** · Les deux · à automatiser · Modifier le titre, puis cliquer ailleurs → Le renommage est validé.
-- **8.16** · Les deux · à automatiser · Vider le titre, puis valider → L'ancien nom revient.
-- **8.17** · Les deux · à automatiser · Mettre un caractère interdit dans le titre (`/`, `#`, `:`…) → Message rouge, ancien nom rétabli.
-- **8.18** · Les deux · à automatiser · Donner au titre le nom d'une note du même dossier → Message rouge, ancien nom rétabli.
-- **8.19** · Les deux · à automatiser · Écrire un titre très long → Le titre passe sur plusieurs lignes.
-- **8.20** · Les deux · à automatiser · Créer une note (Ctrl+N, ou Alt+N sur le web) → Le titre « Sans titre » est sélectionné : taper le remplace directement.
-- **8.21** · Les deux · à automatiser · F2 dans une note → Le titre prend le focus, texte sélectionné.
-- **8.22** · Les deux · à automatiser · Écrire en regardant la barre d'état en bas → Mots, caractères et rétroliens se mettent à jour, chiffres alignés.
-- **8.23** · Les deux · à automatiser · Cliquer « N rétroliens » dans la barre d'état → La marge s'ouvre.
-- **8.24** · Les deux · à automatiser · Supprimer avec un autre programme une note ouverte → Son onglet se ferme.
-- **8.25** · Bureau · à automatiser · Menu « ⋯ » d'une note › « Afficher dans le gestionnaire de fichiers » → Son dossier s'ouvre, la note sélectionnée.
-- **8.26** · Les deux · à automatiser · Ouvrir une note que le système refuse de lire (droits retirés : chmod 000) → « Impossible de lire cette note : le système refuse l'accès à cet emplacement. » au lieu d'une page vide.
+- **8.1** · Les deux · auto · Cliquer un dossier du fil d'Ariane au-dessus de la note → Le dossier est montré dans l'arborescence ; le nom de la note est en gras.
+- **8.2** · Les deux · auto · Boutons « Écrire » et « Lire » → Bascule entre l'aperçu en direct et la lecture ; le mode actif est sur fond bleu foncé.
+- **8.3** · Les deux · auto · Ctrl+E, curseur dans le texte, puis en lecture → Bascule d'écriture en lecture, puis retour.
+- **8.4** · Les deux · auto · Menu …, « Afficher la source Markdown » → Le bouton affiche « Source » et tout le Markdown brut est visible ; recommencer revient à l'aperçu.
+- **8.5** · Les deux · auto · Bouton rose « Partager » → Une fenêtre explique que le partage arrive avec la synchronisation et propose « Copier un lien vers cette note » et « Markdown ».
+- **8.6** · Les deux · auto · « Copier un lien vers cette note », puis coller ailleurs → `[[Nom de la note]]` ; l'icône devient une coche un instant.
+- **8.7** · Les deux · auto · « Markdown », puis coller ailleurs → Le contenu complet de la note.
+- **8.8** · Les deux · auto · Fermer la fenêtre Partager avec la croix, avec Échap, puis par un clic à côté → Elle se ferme dans les trois cas.
+- **8.9** · Les deux · auto · Icône de marque-page de la barre de note → Elle devient rose et la note entre dans les favoris ; recliquer la retire.
+- **8.10** · Les deux · auto · Chaque entrée du menu … (diviser à droite, diviser en bas, source, graphe autour de cette note, montrer dans la barre latérale, copier un lien, mettre à la corbeille) → Chacune fait ce qu'elle dit.
+- **8.11** · Les deux · auto · Masquer la marge → Un bouton apparaît dans la barre de note pour la rouvrir.
+- **8.12** · Les deux · auto · Modifier le grand titre de la note, puis Entrée → Le fichier est renommé et tous les liens sont mis à jour.
+- **8.13** · Les deux · auto · Titre modifié, Entrée, puis taper aussitôt → La frappe va dans le texte, même si le renommage prend un instant.
+- **8.14** · Les deux · auto · Modifier le titre, puis Échap → Rien n'est renommé, l'ancien titre revient.
+- **8.15** · Les deux · auto · Modifier le titre, puis cliquer ailleurs → Le renommage est validé.
+- **8.16** · Les deux · auto · Vider le titre, puis valider → L'ancien nom revient.
+- **8.17** · Les deux · auto · Mettre un caractère interdit dans le titre (`/`, `#`, `:`…) → Message rouge, ancien nom rétabli.
+- **8.18** · Les deux · auto · Donner au titre le nom d'une note du même dossier → Message rouge, ancien nom rétabli.
+- **8.19** · Les deux · auto · Écrire un titre très long → Le titre passe sur plusieurs lignes.
+- **8.20** · Les deux · auto · Créer une note (Ctrl+N, ou Alt+N sur le web) → Le titre « Sans titre » est sélectionné : taper le remplace directement.
+- **8.21** · Les deux · auto · F2 dans une note → Le titre prend le focus, texte sélectionné.
+- **8.22** · Les deux · auto · Écrire en regardant la barre d'état en bas → Mots, caractères et rétroliens se mettent à jour, chiffres alignés.
+- **8.23** · Les deux · auto · Cliquer « N rétroliens » dans la barre d'état → La marge s'ouvre.
+- **8.24** · Les deux · auto · Supprimer avec un autre programme une note ouverte → Son onglet se ferme.
+- **8.25** · Bureau · auto · Menu « ⋯ » d'une note › « Afficher dans le gestionnaire de fichiers » → Son dossier s'ouvre, la note sélectionnée.
+- **8.26** · Les deux · auto · Ouvrir une note que le système refuse de lire (droits retirés : chmod 000) → « Impossible de lire cette note : le système refuse l'accès à cet emplacement. » au lieu d'une page vide.
 
 ## 9. Éditeur : écriture et mise en forme
 

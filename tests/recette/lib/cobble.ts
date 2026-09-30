@@ -436,6 +436,29 @@ export class Cobble {
     return target;
   }
 
+  /** Text in the system clipboard. */
+  async clipboard(): Promise<string> {
+    if (this.desktop) return this.electronApp!.evaluate(({ clipboard }) => clipboard.readText());
+    return this.page.evaluate(() => navigator.clipboard.readText());
+  }
+
+  /** Makes a note unreadable: file permissions on the desktop, a refusing file handle on the web. */
+  async makeUnreadable(p: string) {
+    if (this.desktop) {
+      const { chmod } = await import('node:fs/promises');
+      await chmod(path.join(this.root, p), 0o000);
+      return;
+    }
+    await this.page.evaluate((name) => {
+      const proto = FileSystemFileHandle.prototype;
+      const getFile = proto.getFile;
+      proto.getFile = function (this: FileSystemFileHandle) {
+        if (this.name === name) return Promise.reject(new DOMException('refused', 'NotAllowedError'));
+        return getFile.call(this);
+      };
+    }, p.split('/').pop()!);
+  }
+
   /** A scratch folder outside the vault, removed after the test. */
   get scratch() {
     return this.tmp;
