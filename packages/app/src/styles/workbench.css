@@ -982,6 +982,20 @@ button.crumb:hover {
   color: var(--ink);
 }
 
+/* Phone widths: the note bar keeps every action on screen; Share shows its icon only. */
+@media (max-width: 520px) {
+  .note-bar {
+    gap: 6px;
+    padding: 0 6px;
+  }
+  .note-actions {
+    gap: 2px;
+  }
+  .share-button .share-label {
+    display: none;
+  }
+}
+
 @media (max-width: 760px) {
   .note-crumbs .crumb:not(.is-current) {
     display: none;

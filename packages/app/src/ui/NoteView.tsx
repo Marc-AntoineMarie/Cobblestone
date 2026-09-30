@@ -94,9 +94,13 @@ export function NoteView({ tab, paneId, view, visible }: { tab: Tab; paneId: str
               {t('note.modeRead')}
             </button>
           </div>
-          <button className="button is-primary share-button" onClick={() => session.ui.setState({ share: view.path })}>
+          <button
+            className="button is-primary share-button"
+            onClick={() => session.ui.setState({ share: view.path })}
+            aria-label={t('note.share')}
+          >
             <Share2 size={15} strokeWidth={1.9} aria-hidden />
-            {t('note.share')}
+            <span className="share-label">{t('note.share')}</span>
           </button>
           <button
             className={`icon-button${bookmarked ? ' is-on' : ''}`}
