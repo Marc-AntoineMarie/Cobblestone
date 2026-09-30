@@ -12,6 +12,7 @@ import { hidePreviewSoon, schedulePreview } from './preview';
 export function Marginalia({ drawer }: { drawer: boolean }) {
   const session = useSession();
   const path = useStore(session.workspace, () => (session.activeView?.type === 'note' ? session.activePath : null));
+  const viewType = useStore(session.workspace, () => session.activeView?.type ?? 'empty');
   const close = () => session.ui.setState({ marginOpen: false });
 
   return (
@@ -26,7 +27,7 @@ export function Marginalia({ drawer }: { drawer: boolean }) {
         {path ? (
           <MarginNotes path={path} />
         ) : (
-          <p className="margin-empty">{session.activePath ? t('margin.notNote') : t('empty.title')}</p>
+          <p className="margin-empty">{viewType !== 'empty' ? t('margin.notNote') : t('empty.title')}</p>
         )}
       </aside>
     </>
