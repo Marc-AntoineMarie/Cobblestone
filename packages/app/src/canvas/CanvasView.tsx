@@ -7,10 +7,10 @@ import { CanvasCard } from './CanvasCard';
 import {
   arrowHead,
   bounds,
+  dropSide,
   edgeEnds,
   edgeMidpoint,
   edgePath,
-  facingSide,
   fitViewport,
   GRID,
   intersects,
@@ -252,7 +252,8 @@ export function CanvasView({ path, visible }: { path: string; visible: boolean }
       setWire(null);
       const target = document.elementFromPoint(event.clientX, event.clientY)?.closest<HTMLElement>('[data-node-id]');
       const to = target ? nodeById.get(target.dataset.nodeId!) : undefined;
-      if (to && data && to.id !== g.from.id) commit(addEdge(data, g.from.id, g.side, to.id, facingSide(to, worldPoint(event))));
+      if (to && data && to.id !== g.from.id)
+        commit(addEdge(data, g.from.id, g.side, to.id, dropSide(to, worldPoint(event), g.from)));
     }
   };
 
