@@ -40,6 +40,7 @@ Bugs trouvés par la recette, chacun dans son commit avec le numéro de sa ligne
 - Canvas : double-cliquer une carte, un groupe ou une étiquette les modifie (au lieu de créer une carte vide), une carte de note s'ouvre au double-clic et les liens des cartes répondent ; glisser une sélection faite au Maj+clic déplace les cartes ; une flèche lâchée au milieu d'une carte arrive par le côté qui fait face ; Maj+molette défile de côté partout ; un canvas modifié ailleurs s'affiche à jour.
 - Graphe : double-cliquer un point épinglé le libère au lieu d'ouvrir la note.
 - La CI lance `npm run e2e` et garde `test-results` (état de la recette, traces des échecs).
+- La recette lance deux tests à la fois (`RECETTE_WORKERS` pour en lancer plus) : à quatre, une machine de 8 Go manquait de mémoire et des tests de délai échouaient sans raison.
 - Règles (REGLES.md, CLAUDE.md, README de contribution) : la recette suit chaque changement ; l'idée « recette automatisée » sort d'IDEES.md.
 
 ## Supprimé
@@ -214,3 +215,4 @@ Bugs trouvés par la recette, chacun dans son commit avec le numéro de sa ligne
 - `b547684` ci(e2e): la CI passe la recette automatique
 - `53ffaa8` chore: ignore le cache de Vitest
 - `4a1f52e` docs(contribution): la recette suit chaque changement
+- `df45282` test(recette): deux tests à la fois par défaut
