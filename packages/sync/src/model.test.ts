@@ -61,3 +61,32 @@ describe('hashBytes', () => {
     );
   });
 });
+
+describe('VaultDoc devices', () => {
+  const device = (id: string, name: string) => ({ id, name, kind: 'desktop' as const, publicKey: `clé-${id}` });
+
+  it('lists, renames and removes devices, and trusts only those still there', () => {
+    const model = new VaultDoc();
+    model.addDevice(device('a', 'PC portable'));
+    model.addDevice(device('b', 'PC fixe'));
+    model.renameDevice('b', 'Bureau');
+    model.removeDevice('a');
+    expect(model.deviceList()).toEqual([
+      { ...device('a', 'PC portable'), removed: true },
+      { ...device('b', 'Bureau'), removed: false },
+    ]);
+    expect(model.trusts('a', 'clé-a')).toBe(false);
+    expect(model.trusts('b', 'clé-b')).toBe(true);
+    expect(model.trusts('b', 'clé-a')).toBe(false);
+    model.addDevice(device('a', 'PC portable'));
+    expect(model.trusts('a', 'clé-a')).toBe(true);
+  });
+
+  it('keeps the first sync id it is given', () => {
+    const model = new VaultDoc();
+    expect(model.syncId).toBeUndefined();
+    model.setSyncId('un');
+    model.setSyncId('deux');
+    expect(model.syncId).toBe('un');
+  });
+});
