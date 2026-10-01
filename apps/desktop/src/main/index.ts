@@ -7,6 +7,7 @@ import { NodeFsAdapter } from '@cobblestone/node';
 import { FS_METHODS, type DesktopVaultEntry, type FsMethod } from './ipc-types';
 import { JsonFile } from './json-file';
 import { forgetLanWindow, registerLan } from './lan-ipc';
+import { registerUpdates } from './updates';
 import { locationProblem, type LocationProblem } from './locations';
 import { findFolder, folderId, searchAreas } from './relocate';
 
@@ -233,6 +234,7 @@ ipcMain.handle('shell:openExternal', async (_event, url: string) => {
 });
 
 registerLan();
+registerUpdates();
 
 /** Open vaults whose folder has disappeared, so each window hears it once. */
 const lostVaults = new Set<string>();

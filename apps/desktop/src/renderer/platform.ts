@@ -60,6 +60,11 @@ export const desktopPlatform: Platform = {
     const { name } = (await bridge().vaults.open(entry.id)) as { name: string };
     return new IpcAdapter(entry.id, name);
   },
+  updates: {
+    ready: () => bridge().updates.ready(),
+    onReady: (listener) => bridge().updates.onReady(listener),
+    install: () => void bridge().updates.install(),
+  },
   syncNetwork: (device) => (network ??= new DesktopNetwork(bridge().lan, device)),
   openExternal: (url) => void bridge().openExternal(url),
   os: bridge().platform === 'darwin' ? 'mac' : bridge().platform === 'win32' ? 'windows' : 'linux',

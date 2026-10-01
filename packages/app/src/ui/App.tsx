@@ -10,6 +10,7 @@ import { PreferencesContext } from './preferences';
 import { SessionContext, useMediaQuery } from './hooks';
 import { Launcher } from './Launcher';
 import { LostVault } from './LostVault';
+import { UpdateReady } from './UpdateReady';
 
 // The workspace (editor, index, renderers) loads only once a vault opens: the first screen stays light.
 const Workbench = lazy(() => import('./Workbench').then((m) => ({ default: m.Workbench })));
@@ -181,6 +182,7 @@ export function App({ platform }: { platform: Platform }) {
           onLostClose={() => setLost(null)}
         />
       ) : null}
+      <UpdateReady platform={platform} />
     </PreferencesContext.Provider>
   );
 }

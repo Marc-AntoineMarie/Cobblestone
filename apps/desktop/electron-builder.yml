@@ -38,4 +38,8 @@ mac:
   category: public.app-category.productivity
   icon: build/icon.png
   artifactName: Cobblestone-${version}-${arch}.${ext}
-publish: null
+publish:
+  provider: github
+  owner: Marc-AntoineMarie
+  repo: Cobblestone
+  releaseType: prerelease

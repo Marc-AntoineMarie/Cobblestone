@@ -55,6 +55,12 @@ export interface Platform {
   relocateVault(entry: VaultEntry, found?: MovedVault): Promise<VaultEntry | null>;
   /** Desktop: the folder of an open vault disappeared (true) or came back (false). */
   onVaultMissing?(listener: (vaultId: string, missing: boolean) => void): () => void;
+  /** Desktop: a newer version, downloaded in the background, ready to restart into. */
+  updates?: {
+    ready(): Promise<string | null>;
+    onReady(listener: (version: string) => void): () => void;
+    install(): void;
+  };
   /** Desktop: the local network, to sync a vault with its other devices; `device` is this device's id. */
   syncNetwork?(device: string): Network;
   openExternal(url: string): void;

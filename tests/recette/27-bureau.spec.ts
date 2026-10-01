@@ -86,3 +86,5 @@ recette.manuel(
   'installer le .deb demande les droits administrateur ; le paquet contient bien les icônes (vérifié à la construction)',
 );
 recette.manuel('27.10', 'l’icône de la fenêtre se voit dans la barre des tâches, sous X11');
+
+recette.manuel('27.11', 'il faut une version publiée sur GitHub par la CI, et une app installée');
