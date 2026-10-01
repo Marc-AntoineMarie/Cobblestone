@@ -6,6 +6,7 @@ ajouté, modifié et supprimé, les tests, les fichiers et les commits. Ce somma
 
 | Date       | Changement                                                                                                               | Type          | Branche                      |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------ | ------------- | ---------------------------- |
+| 2026-10-01 | [Le relais derrière un serveur web déjà en place](journal/2026-10-01-fix-relais-proxy-existant.md)                       | correction    | `fix/relais-proxy-existant`  |
 | 2026-10-01 | [Synchroniser par Internet, par un relais sur le VPS de l'utilisateur](journal/2026-10-01-feat-synchro-internet.md)      | nouveauté     | `feat/synchro-internet`      |
 | 2026-10-01 | [Disque plein : rien de perdu, réécrit plus tard, et l'app le dit](journal/2026-10-01-fix-synchro-disque-plein.md)       | correction    | `fix/synchro-disque-plein`   |
 | 2026-10-01 | [Les dossiers se synchronisent](journal/2026-10-01-fix-synchro-dossiers.md)                                              | correction    | `fix/synchro-dossiers`       |

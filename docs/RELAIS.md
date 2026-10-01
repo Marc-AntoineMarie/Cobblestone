@@ -9,27 +9,43 @@ appareils : il ne peut lire aucune note, et ne garde rien. Le code est dans `app
 1. **DNS** : un enregistrement `A` (et `AAAA` en IPv6) pour le sous-domaine, par exemple
    `sync.exemple.fr`, vers l'adresse IP du VPS.
 2. **Docker** installé sur le VPS (`curl -fsSL https://get.docker.com | sh`).
-3. Sur le VPS :
+3. Le relais, qui écoute seulement sur la machine (`127.0.0.1:8787`) :
 
    ```sh
    git clone https://github.com/Marc-AntoineMarie/Cobblestone.git
    cd Cobblestone/deploy/relay
-   RELAY_DOMAIN=sync.exemple.fr docker compose up -d --build
+   docker compose up -d --build
+   curl http://127.0.0.1:8787/health   # → ok
    ```
 
-   Caddy obtient le certificat HTTPS tout seul (les ports 80 et 443 doivent être libres et ouverts).
+4. Le HTTPS, selon ce qui tourne déjà sur le VPS (`sudo ss -ltnp | grep -E ':(80|443) '` le dit) :
+   - **nginx** : le bloc ci-dessous, puis le certificat avec `sudo certbot --nginx -d sync.exemple.fr` ;
+   - **rien** (ports 80 et 443 libres) : `RELAY_DOMAIN=sync.exemple.fr docker compose --profile caddy up -d`,
+     Caddy obtient le certificat seul.
 
-4. Vérifier : `https://sync.exemple.fr/health` répond `ok`.
-5. Dans Cobblestone : Réglages › Synchronisation › « Adresse du relais » : `sync.exemple.fr`.
+   ```nginx
+   server {
+       listen 80;
+       server_name sync.exemple.fr;
+       location / {
+           proxy_pass http://127.0.0.1:8787;
+           proxy_http_version 1.1;
+           proxy_set_header Upgrade $http_upgrade;
+           proxy_set_header Connection "upgrade";
+           proxy_set_header Host $host;
+           proxy_set_header X-Forwarded-For $remote_addr;
+           proxy_read_timeout 1h;
+       }
+   }
+   ```
 
-Mettre à jour : `git pull` puis la même commande `docker compose up -d --build`.
+   (dans `/etc/nginx/sites-available/cobblestone-relay`, lien dans `sites-enabled`, puis
+   `sudo nginx -t && sudo systemctl reload nginx`).
 
-## Si le VPS a déjà un serveur web (nginx, Apache…)
+5. Vérifier : `https://sync.exemple.fr/health` répond `ok`.
+6. Dans Cobblestone : Réglages › Synchronisation › « Adresse du relais » : `sync.exemple.fr`.
 
-Ne lancer que le relais (`docker compose up -d --build relay`, en publiant son port :
-`ports: ['127.0.0.1:8787:8787']`), et ajouter au serveur existant un proxy WebSocket vers
-`127.0.0.1:8787` pour le sous-domaine (nginx : `proxy_pass`, avec les en-têtes `Upgrade` et
-`Connection`).
+Mettre à jour : `git pull` puis `docker compose up -d --build`.
 
 ## Limites
 
