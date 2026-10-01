@@ -27,7 +27,6 @@ appareil a sa copie.
 - **À faire, dans l'ordre** :
   1. Transport WebRTC par Internet et pour l'app web, avec un petit service de mise en relation
      auto-hébergeable ; un relais chiffré pour synchroniser quand l'autre appareil est éteint.
-- Coffre reçu qui ne s'ouvre pas tout seul sur Windows (signalé le 1er octobre) : à reproduire.
 - Options de la maquette pas encore faites : dossiers qui restent sur l'appareil, pièces jointes
   (oui/non, taille maximale), réglages du coffre (`.cobblestone/`, pas synchronisé aujourd'hui),
   service de mise en relation personnalisé, option pour masquer les curseurs des autres appareils.
@@ -47,8 +46,8 @@ droits qu'on veut (lecture, écriture…), de façon **entièrement sécurisée 
   personnes invitées ; les droits sont signés par le propriétaire et vérifiés par chaque appareil
   (une modification d'un lecteur est refusée) ; retirer quelqu'un change la clé du partage.
 - Il faut d'abord la synchronisation par Internet (service de mise en relation et relais).
-- **À décider** : comptes (adresse e-mail, serveur) ou identité sans compte (code ou lien
-  d'invitation).
+- **Décidé (1er octobre)** : les deux, au choix de chacun. Sans compte : invitation par code **et**
+  par lien. Avec compte : de vrais comptes (adresse e-mail, serveur), pour ceux qui le veulent.
 
 ### Refonte du design et personnalisation — presque faite
 
