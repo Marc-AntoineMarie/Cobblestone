@@ -6,6 +6,7 @@ ajouté, modifié et supprimé, les tests, les fichiers et les commits. Ce somma
 
 | Date       | Changement                                                                                                               | Type          | Branche                      |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------ | ------------- | ---------------------------- |
+| 2026-10-01 | [Écrire ensemble en temps réel](journal/2026-10-01-feat-synchro-direct.md)                                               | nouveauté     | `feat/synchro-direct`        |
 | 2026-10-01 | [Plus d'artifacts, et des règles pour économiser les tokens](journal/2026-10-01-docs-economie.md)                        | documentation | `docs/economie`              |
 | 2026-10-01 | [La synchronisation dans l'app : ajouter un appareil, recevoir un coffre](journal/2026-10-01-feat-synchro-interface.md)  | nouveauté     | `feat/synchro-interface`     |
 | 2026-09-30 | [Les apps de bureau se trouvent et se relient sur le réseau local](journal/2026-09-30-feat-synchro-reseau-local.md)      | nouveauté     | `feat/synchro-reseau-local`  |
