@@ -729,3 +729,4 @@ Deux apps de bureau sur le même réseau (la recette automatique lance deux apps
 - **31.15** · Bureau · manuel · Deux ordinateurs différents sur le même réseau Wi-Fi → Ils se trouvent et se synchronisent comme ci-dessus (le pare-feu peut demander d'autoriser Cobblestone la première fois).
 - **31.16** · Bureau · auto · Ouvrir la même note sur les deux et y écrire en même temps → Chaque frappe arrive aussitôt sur l'autre, rien n'est perdu, les deux notes finissent identiques ; le curseur de l'autre appareil s'affiche à son nom.
 - **31.17** · Bureau · auto · Créer un dossier vide sur l'un, puis le supprimer → Il apparaît sur l'autre, puis en disparaît.
+- **31.18** · Bureau · manuel · Disque plein sur l'un des deux pendant une synchronisation → Barre d'état « N fichiers non écrits » et la raison dans les réglages ; une fois de la place libérée, les fichiers s'écrivent seuls.

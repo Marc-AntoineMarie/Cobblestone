@@ -146,6 +146,31 @@ describe('VaultSync', () => {
     expect(folders()).toEqual(['Archives']);
   });
 
+  it('writes again later what a full disk refused, without losing it', async () => {
+    const a = await device({ 'Note.md': 'un' });
+    class FullDisk extends MemoryAdapter {
+      full = true;
+      override async write(path: string, data: string) {
+        if (this.full && !path.startsWith('.')) throw Object.assign(new Error('no space left on device'), { code: 'ENOSPC' });
+        return super.write(path, data);
+      }
+    }
+    const disk = new FullDisk('Plein', {});
+    const vault = new Vault(disk);
+    await vault.load();
+    const sync = new VaultSync(vault, new MemoryStore(), { saveDelay: 0, retryDelay: 20 });
+    await sync.start();
+    const b = { adapter: disk, vault, sync, store: new MemoryStore() };
+    link(a, b);
+    await settle(a, b);
+    expect(sync.failedWrites.count).toBe(1);
+    expect(vault.getFile('Note.md')).toBeUndefined();
+    disk.full = false;
+    await settle(a, b);
+    expect(await vault.read('Note.md')).toBe('un');
+    expect(sync.failedWrites.count).toBe(0);
+  });
+
   it('sends a note deleted on one device to the trash of the other', async () => {
     const a = await device({ 'Garder.md': 'oui', 'Jeter.md': 'non' });
     const b = await device();

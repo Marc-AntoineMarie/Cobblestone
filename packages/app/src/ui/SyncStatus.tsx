@@ -22,13 +22,14 @@ export function useConflictCopies(): string[] {
   }, [session, revision]);
 }
 
-export type SyncSummary = { kind: 'paused' | 'removed' | 'receiving' | 'online' | 'offline'; online: string[] };
+export type SyncSummary = { kind: 'paused' | 'removed' | 'failing' | 'receiving' | 'online' | 'offline'; online: string[] };
 
 /** Where the sync stands, the same in the status bar and the settings. */
 export function syncSummary(state: SyncState): SyncSummary {
   const online = state.devices.filter((d) => d.online && !d.removed).map((d) => d.name);
   if (state.paused) return { kind: 'paused', online };
   if (state.removed) return { kind: 'removed', online };
+  if (state.failed > 0) return { kind: 'failing', online };
   if (!online.length) return { kind: 'offline', online };
   if (state.receiving > 0) return { kind: 'receiving', online };
   return { kind: 'online', online };
@@ -73,6 +74,7 @@ export function SyncStatus() {
   const label = {
     paused: t('sync.status.paused'),
     removed: t('sync.status.removed'),
+    failing: t('sync.status.failing', { count: state.failed }),
     offline: t('sync.status.offline'),
     receiving: t('sync.status.receiving', { count: state.receiving }),
     online: t('sync.status.upToDate', { count: summary.online.length + 1 }),
@@ -80,7 +82,7 @@ export function SyncStatus() {
   return (
     <div className="status-sync">
       <button
-        className={`status-button sync-pill is-${summary.kind}${conflicts.length ? ' has-conflicts' : ''}${open ? ' is-on' : ''}`}
+        className={`status-button sync-pill is-${summary.kind}${conflicts.length || summary.kind === 'failing' ? ' has-conflicts' : ''}${open ? ' is-on' : ''}`}
         aria-haspopup="dialog"
         aria-expanded={open}
         onClick={() => setOpen(!open)}
@@ -105,6 +107,7 @@ export function SyncStatus() {
 function SyncGlyph({ kind }: { kind: SyncSummary['kind'] }) {
   if (kind === 'paused') return <Pause size={12} strokeWidth={2.25} aria-hidden />;
   if (kind === 'offline' || kind === 'removed') return <WifiOff size={13} strokeWidth={2} aria-hidden />;
+  if (kind === 'failing') return <TriangleAlert size={13} strokeWidth={2} aria-hidden />;
   if (kind === 'receiving') return <RefreshCw size={12} strokeWidth={2.25} aria-hidden className="sync-turning" />;
   return <span className="sync-dot is-on" aria-hidden />;
 }
@@ -171,6 +174,7 @@ function SyncStateText({ summary }: { summary: SyncSummary }) {
   const title = {
     paused: t('sync.state.paused'),
     removed: t('sync.state.removed'),
+    failing: t('sync.state.failing'),
     offline: t('sync.state.offline'),
     receiving: t('sync.state.receiving'),
     online: t('sync.state.upToDate'),
@@ -188,6 +192,8 @@ export function describeState(state: SyncState, summary: SyncSummary, now: numbe
   switch (summary.kind) {
     case 'paused':
       return t('sync.state.paused.text');
+    case 'failing':
+      return t('sync.state.failing.text', { count: state.failed, error: state.failure ?? '' });
     case 'removed':
       return t('sync.state.removed.text');
     case 'offline':
