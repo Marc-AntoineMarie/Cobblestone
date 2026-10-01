@@ -424,8 +424,9 @@ const en = {
   'sync.know': 'Good to know',
   'sync.know.encrypted.title': 'End-to-end encrypted.',
   'sync.know.encrypted': 'Only your devices can read your notes.',
-  'sync.know.network.title': 'On the same network, for now.',
-  'sync.know.network': 'Devices find each other on your home or office network. Syncing over the Internet comes next.',
+  'sync.know.network.title': 'Anywhere.',
+  'sync.know.network':
+    'On the same network, devices find each other by themselves; elsewhere they meet through a relay that only passes encrypted data.',
   'sync.know.online.title': 'Two devices exchange when both are on.',
   'sync.know.online': 'Meanwhile, changes wait and leave as soon as the devices meet again.',
   'sync.count': 'This vault is on {count} devices.',
@@ -448,7 +449,7 @@ const en = {
   'sync.encrypted': 'End-to-end encrypted',
   'sync.devices': 'Devices of this vault',
   'sync.device.self': 'This device',
-  'sync.device.online': 'Online, on the same network',
+  'sync.device.online': 'Online',
   'sync.device.offline': 'Offline',
   'sync.kind.desktop': 'Computer',
   'sync.kind.web': 'Browser',
@@ -462,7 +463,11 @@ const en = {
   'sync.conflicts.text':
     'These notes were created under the same name on two devices at once. Both versions are kept: compare them, then keep what you want.',
   'sync.networkNote':
-    'Two devices exchange when both are on, on the same network. Meanwhile, changes wait on each and leave as soon as they meet again.',
+    'Two devices exchange when both are on. Meanwhile, changes wait on each and leave as soon as they meet again.',
+  'sync.internet': 'Sync over the Internet',
+  'sync.internet.hint': 'Devices on different networks meet through a relay. It only passes encrypted data and keeps nothing.',
+  'sync.relay': 'Relay address',
+  'sync.relay.hint': 'Your own relay, or one you trust (docs/RELAIS.md explains how to install one).',
   'sync.status.upToDate': 'Up to date · {count} devices',
   'sync.status.receiving': '{count} attachments coming',
   'sync.status.offline': 'Offline',
@@ -957,9 +962,9 @@ const fr: Messages = {
   'sync.know': 'Bon à savoir',
   'sync.know.encrypted.title': 'Chiffré de bout en bout.',
   'sync.know.encrypted': 'Seuls tes appareils peuvent lire tes notes.',
-  'sync.know.network.title': 'Sur le même réseau, pour l’instant.',
+  'sync.know.network.title': 'Où que tu sois.',
   'sync.know.network':
-    'Les appareils se trouvent sur le réseau de la maison ou du bureau. La synchronisation par Internet arrive ensuite.',
+    'Sur le même réseau, les appareils se trouvent seuls ; ailleurs, ils passent par un relais qui ne fait passer que des données chiffrées.',
   'sync.know.online.title': 'Deux appareils échangent quand ils sont allumés en même temps.',
   'sync.know.online': 'Entre-temps, les modifications attendent et partent dès que les appareils se retrouvent.',
   'sync.count': 'Ce coffre est sur {count} appareils.',
@@ -983,7 +988,7 @@ const fr: Messages = {
   'sync.encrypted': 'Chiffré de bout en bout',
   'sync.devices': 'Appareils de ce coffre',
   'sync.device.self': 'Cet appareil',
-  'sync.device.online': 'En ligne, sur le même réseau',
+  'sync.device.online': 'En ligne',
   'sync.device.offline': 'Hors ligne',
   'sync.kind.desktop': 'Ordinateur',
   'sync.kind.web': 'Navigateur',
@@ -997,7 +1002,12 @@ const fr: Messages = {
   'sync.conflicts.text':
     'Ces notes ont été créées sous le même nom sur deux appareils à la fois. Les deux versions sont gardées : compare-les, puis garde ce que tu veux.',
   'sync.networkNote':
-    'Deux appareils échangent quand ils sont allumés en même temps, sur le même réseau. Entre-temps, les modifications attendent sur chacun et partent dès qu’ils se retrouvent.',
+    'Deux appareils échangent quand ils sont allumés en même temps. Entre-temps, les modifications attendent sur chacun et partent dès qu’ils se retrouvent.',
+  'sync.internet': 'Synchroniser par Internet',
+  'sync.internet.hint':
+    'Les appareils sur des réseaux différents se retrouvent par un relais. Il ne fait passer que des données chiffrées et ne garde rien.',
+  'sync.relay': 'Adresse du relais',
+  'sync.relay.hint': 'Ton propre relais, ou un relais de confiance (docs/RELAIS.md explique comment en installer un).',
   'sync.status.upToDate': 'À jour · {count} appareils',
   'sync.status.receiving': '{count} pièces jointes en route',
   'sync.status.offline': 'Hors ligne',

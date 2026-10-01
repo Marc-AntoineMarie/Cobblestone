@@ -3,9 +3,9 @@ import { Info, Lock, Pause, Play, Plus, Power, TriangleAlert, Wifi } from 'lucid
 import { stem } from '@cobblestone/core';
 import type { DeviceStatus } from '@cobblestone/sync';
 import { t } from '../i18n';
-import type { SyncState } from '../sync';
+import { relaySettings, setRelaySettings, type RelaySettings, type SyncState } from '../sync';
 import { useSession, useStore } from './hooks';
-import { Block, Row } from './settings-parts';
+import { Block, Row, Toggle } from './settings-parts';
 import { DeviceIcon, describeState, SyncStateText, syncSummary, useConflictCopies, useNow } from './SyncStatus';
 
 const KEYWORDS = 'sync synchronisation synchroniser appareil device devices code pair appairer';
@@ -55,6 +55,7 @@ function FirstTime() {
         </div>
       </Block>
       <DeviceNameRow />
+      <InternetRows />
       <Block title={t('sync.know')} keywords={KEYWORDS}>
         <ul className="sync-know">
           <li>
@@ -101,6 +102,50 @@ function SyncPicture() {
       <rect x="144" y="51" width="14" height="10" rx="2" className="sync-picture-stand" />
       <path d="M147 51v-3a4 4 0 0 1 8 0v3" className="sync-picture-stand" />
     </svg>
+  );
+}
+
+/** Over the Internet, through a relay: on or off, and which one. */
+function InternetRows() {
+  const session = useSession();
+  const [settings, setSettings] = useState<RelaySettings | null>(null);
+  useEffect(() => {
+    void relaySettings(session.platform).then(setSettings);
+  }, [session]);
+  if (!settings) return null;
+  const save = (next: RelaySettings) => {
+    setSettings(next);
+    void setRelaySettings(session.platform, next);
+  };
+  return (
+    <>
+      <Row label={t('sync.internet')} hint={t('sync.internet.hint')} keywords={`${KEYWORDS} internet relais relay`}>
+        <Toggle
+          id="sync-internet"
+          checked={settings.enabled}
+          label={t('sync.internet')}
+          onChange={(enabled) => save({ ...settings, enabled })}
+        />
+      </Row>
+      {settings.enabled && (
+        <Row
+          label={t('sync.relay')}
+          hint={t('sync.relay.hint')}
+          htmlFor="sync-relay"
+          keywords={`${KEYWORDS} internet relais relay`}
+        >
+          <input
+            id="sync-relay"
+            value={settings.url}
+            placeholder="sync.exemple.fr"
+            spellCheck={false}
+            onChange={(e) => setSettings({ ...settings, url: e.target.value })}
+            onBlur={() => save(settings)}
+            onKeyDown={(e) => e.key === 'Enter' && (e.target as HTMLInputElement).blur()}
+          />
+        </Row>
+      )}
+    </>
   );
 }
 
@@ -171,6 +216,7 @@ function SyncedVault({ state }: { state: SyncState }) {
           {t('sync.networkNote')}
         </p>
       </Block>
+      <InternetRows />
     </>
   );
 }
