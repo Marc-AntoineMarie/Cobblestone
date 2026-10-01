@@ -709,7 +709,21 @@
 }
 
 .receive-question {
-  font-weight: 650;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  border-left: 4px solid var(--accent);
+  background: var(--paper-2);
+}
+
+.receive-question h3 {
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.receive-question p {
+  color: var(--ink-2);
 }
 
 .receive-places {

@@ -251,3 +251,4 @@ recette('31.17', async ({ app, ui }, testInfo) => {
     await expect.poll(() => b.app.exists('Dossier vide'), { timeout: 20_000 }).toBe(false);
   });
 });
+recette.manuel('31.18', 'remplir un disque pour de vrai ; le cas est couvert par vault-sync.test.ts');

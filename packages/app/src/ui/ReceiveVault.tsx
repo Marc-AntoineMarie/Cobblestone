@@ -89,7 +89,10 @@ export function ReceiveVault({
             </span>
             {t('receive.accepted', { name: received.current.host.name })}
           </p>
-          <p className="receive-question">{t('receive.where')}</p>
+          <div className="receive-question">
+            <h3>{t('receive.where')}</h3>
+            <p>{t('receive.where.hint')}</p>
+          </div>
           <div className="receive-places">
             <button className="launch-action is-primary" onClick={() => void place('new')}>
               <FolderPlus size={20} strokeWidth={1.75} aria-hidden />

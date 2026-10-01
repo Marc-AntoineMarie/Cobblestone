@@ -19,6 +19,7 @@ import {
 } from '@cobblestone/sync';
 import * as Y from 'yjs';
 import type { LiveSource, RemoteCursor } from './editor/collab';
+import { describeError } from './errors';
 import { t } from './i18n';
 import type { Platform, VaultEntry } from './platform';
 
@@ -57,6 +58,9 @@ export interface SyncState {
   lastExchange: number | null;
   /** Attachments still on their way from other devices. */
   receiving: number;
+  /** Files this device could not write (a full disk…), and why: they are written again later. */
+  failed: number;
+  failure: string | null;
   pairing: PairingState | null;
 }
 
@@ -134,6 +138,8 @@ export class SyncController {
       devices: [],
       lastExchange: null,
       receiving: 0,
+      failed: 0,
+      failure: null,
       pairing: null,
     }));
   }
@@ -204,6 +210,8 @@ export class SyncController {
       devices: JSON.stringify(devices) === JSON.stringify(current.devices) ? current.devices : devices,
       lastExchange: node.lastExchange,
       receiving: node.sync.pendingAttachments,
+      failed: node.sync.failedWrites.count,
+      failure: node.sync.failedWrites.count ? describeError(node.sync.failedWrites.error) : null,
     };
     if (Object.entries(next).some(([key, value]) => current[key as keyof SyncState] !== value)) this.state.setState(next);
   }
