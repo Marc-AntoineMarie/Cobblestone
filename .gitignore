@@ -21,3 +21,4 @@ playwright-report/
 
 # Secrets du relais
 deploy/relay/.env
+!deploy/relay/.env.example
