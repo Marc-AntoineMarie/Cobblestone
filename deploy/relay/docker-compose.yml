@@ -1,0 +1,21 @@
+# Le relais derrière Caddy, qui obtient et renouvelle seul le certificat HTTPS.
+# Sur le VPS : RELAY_DOMAIN=sync.exemple.fr docker compose up -d --build
+services:
+  relay:
+    build:
+      context: ../..
+      dockerfile: apps/relay/Dockerfile
+    restart: unless-stopped
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+    environment:
+      RELAY_DOMAIN: ${RELAY_DOMAIN:?indique le sous-domaine du relais}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+volumes:
+  caddy_data:
