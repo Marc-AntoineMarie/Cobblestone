@@ -67,8 +67,8 @@ Portées courantes : `core`, `node`, `app`, `editor`, `search`, `graph`, `settin
 ## 5. Interface et design
 
 - Toute interface respecte [DESIGN.md](../DESIGN.md) ; un changement de design le met à jour.
-- Une refonte ou un nouvel écran important passe d'abord par des maquettes dans **Claude Design**,
-  validées avant d'écrire le code.
+- Pas de maquettes à part (ni Claude Design ni autre artifact) : l'interface se conçoit directement
+  dans le projet, et l'utilisateur la juge sur l'app.
 - Ergonomie avant décoration : chaque action se trouve là où la main l'attend, au clavier comme à la
   souris, et tout ce qui peut se personnaliser se règle dans les réglages, avec un aperçu.
 - Captures avant de dire « c'est fait » : `node scripts/shoot.mjs <dossier>`, relues à l'œil.

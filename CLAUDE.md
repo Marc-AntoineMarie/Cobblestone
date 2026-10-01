@@ -42,6 +42,15 @@ Ces règles s'appliquent strictement à chaque session. La méthode complète es
 - Pour l'interface : captures avec `node scripts/shoot.mjs <dossier>` et relecture visuelle.
 - La page « Recette Cobblestone » (artifact) ne sert plus : ne pas la republier.
 
+## Économiser les tokens (sans rogner la qualité)
+
+- Aucun commentaire entre les actions ; une ligne à la fin d'une étape, un résumé bref à la fin.
+- Tester en mémoire d'abord (tests unitaires), l'app réelle (recette) une fois à la fin, sur les
+  seules sections touchées ; confier les longues exécutions à un sous-agent léger qui résume.
+- Actions groupées, sorties filtrées (`grep`, `tail`), lecture de passages plutôt que de fichiers
+  entiers.
+- Écrire court : commits de 2 à 3 lignes, fiches du journal brèves.
+
 ## Versions
 
 - SemVer ; en `0.x`, une fonctionnalité monte le mineur, une correction le correctif.
@@ -59,9 +68,9 @@ Ces règles s'appliquent strictement à chaque session. La méthode complète es
   réglages vont dans `.cobblestone/`.
 - [DESIGN.md](DESIGN.md) décrit le design en place ; toute modification d'interface le respecte ou le
   met à jour.
-- **Design : ne plus utiliser de compétences (skills), dont Impeccable.** Les maquettes se font dans
-  **Claude Design** (type d'artifact « Design »), validées par l'utilisateur avant le code. Priorités :
-  ergonomie, intuitivité, et tout personnalisable dans les réglages avec un aperçu.
+- **Design : ni compétences (skills, dont Impeccable) ni artifacts** (Claude Design compris) : on
+  conçoit directement dans le projet, en respectant DESIGN.md, et l'utilisateur juge sur l'app.
+  Priorités : ergonomie, intuitivité, et tout personnalisable dans les réglages avec un aperçu.
 - Le logo actuel est provisoire : le choisir avec l'utilisateur (clin d'œil à Minecraft souhaité).
 
 ## Environnement
