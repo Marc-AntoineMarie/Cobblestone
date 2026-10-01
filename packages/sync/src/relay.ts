@@ -71,6 +71,8 @@ export class RelayNetwork implements Network {
   constructor(
     readonly url: string,
     private readonly device: string,
+    /** The account session of this device, if signed in: the relay then knows its account. */
+    private token: string | null = null,
   ) {
     this.open();
     // Devices come and go: ask again now and then (the relay answers with those it knows).
@@ -85,7 +87,7 @@ export class RelayNetwork implements Network {
     this.socket = socket;
     socket.onopen = () => {
       this.retry = 1_000;
-      this.text({ t: 'hello', device: this.device });
+      this.text({ t: 'hello', device: this.device, token: this.token ?? undefined });
       for (const tag of this.listens.keys()) this.text({ t: 'listen', tag });
       for (const tag of this.watches.keys()) this.text({ t: 'watch', tag });
       this.openWaiters.splice(0).forEach((resolve) => resolve());
@@ -220,6 +222,12 @@ export class RelayNetwork implements Network {
       this.pending.set(req, { tag, resolve, reject });
       this.text({ t: 'connect', req, to: Number(address.slice('relay:'.length)), tag });
     });
+  }
+
+  /** Signs in or out on the relay, without leaving it. */
+  setToken(token: string | null) {
+    this.token = token;
+    this.text({ t: 'hello', device: this.device, token: token ?? undefined });
   }
 
   /** Leaves the relay for good. */
