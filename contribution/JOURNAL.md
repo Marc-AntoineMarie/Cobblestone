@@ -6,6 +6,7 @@ ajouté, modifié et supprimé, les tests, les fichiers et les commits. Ce somma
 
 | Date       | Changement                                                                                                               | Type          | Branche                      |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------ | ------------- | ---------------------------- |
+| 2026-10-01 | [Les appareils d'un compte se trouvent, avec ton accord](journal/2026-10-01-feat-comptes-appareils.md)                   | nouveauté     | `feat/comptes-appareils`     |
 | 2026-10-01 | [Réglages › Compte](journal/2026-10-01-feat-comptes-app.md)                                                              | nouveauté     | `feat/comptes-app`           |
 | 2026-10-01 | [Les comptes, côté serveur](journal/2026-10-01-feat-comptes-serveur.md)                                                  | nouveauté     | `feat/comptes-serveur`       |
 | 2026-10-01 | [Le relais officiel par défaut](journal/2026-10-01-feat-relais-officiel.md)                                              | nouveauté     | `feat/relais-officiel`       |
