@@ -1,5 +1,8 @@
 import { mkdir, rm } from 'node:fs/promises';
 import path from 'node:path';
+import { mkdtemp } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { Accounts } from '../../apps/relay/src/accounts';
 import { createRelay } from '../../apps/relay/src/relay';
 import { expect, recette } from './lib/recette';
 import { askToJoin, pair, syncPopover, syncStatus, twoDevices } from './lib/sync';
@@ -276,3 +279,30 @@ recette('31.19', async ({ app, ui }, testInfo) => {
     await relay.close();
   }
 });
+
+recette('31.20', async ({ app, ui }) => {
+  const mails: string[] = [];
+  const accounts = await Accounts.open(path.join(await mkdtemp(path.join(tmpdir(), 'comptes-')), 'accounts.json'), {
+    send: async (_to, _subject, text) => void mails.push(text),
+  });
+  const relay = await createRelay({ port: 0, host: '127.0.0.1', accounts });
+  try {
+    await app.start({ vault: baseVault(), storage: { 'sync:relay': { enabled: true, url: `ws://127.0.0.1:${relay.port}` } } });
+    const section = (await ui.settings()).locator('[data-section="account"]');
+    await section.getByRole('tab', { name: 'Créer un compte' }).click();
+    await section.getByLabel('Adresse e-mail').fill('lea@exemple.fr');
+    await section.getByLabel('Mot de passe').fill('un mot de passe solide');
+    await section.getByRole('button', { name: 'Créer le compte' }).click();
+    await expect(section.getByText('Un code à six chiffres a été envoyé')).toBeVisible();
+    await section.getByLabel('Code reçu par e-mail').fill(/(\d{6})/.exec(mails.at(-1)!)![1]!);
+    await section.getByRole('button', { name: 'Valider' }).click();
+    await expect(section.getByText('Connecté en tant que lea@exemple.fr')).toBeVisible();
+    await expect(section.locator('.sync-device')).toContainText('Cet appareil');
+    await section.getByRole('button', { name: 'Se déconnecter' }).first().click();
+    await expect(section.getByRole('tab', { name: 'Se connecter' })).toBeVisible();
+  } finally {
+    await relay.close();
+  }
+});
+
+recette.manuel('31.21', 'il faut une vraie boîte e-mail (Brevo) ; le serveur est couvert par accounts.test.ts');
