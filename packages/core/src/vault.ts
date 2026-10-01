@@ -24,6 +24,8 @@ export interface VaultFolder {
 
 type VaultEvents = {
   create: [file: VaultFile];
+  /** A folder appeared (made here, by another program, or to hold a new file). */
+  'create-folder': [folder: VaultFolder];
   modify: [file: VaultFile, content: string | null];
   delete: [path: string, kind: 'file' | 'folder'];
   rename: [path: string, oldPath: string, kind: 'file' | 'folder'];
@@ -406,6 +408,7 @@ export class Vault extends Emitter<VaultEvents> {
     await this.adapter.mkdir(path);
     const folder = toFolder(path);
     this.folders.set(path, folder);
+    this.emit('create-folder', folder);
   }
 
   private registerFile(path: string, content: string | null, size = content?.length ?? 0): VaultFile {
@@ -532,7 +535,9 @@ export class Vault extends Emitter<VaultEvents> {
   private async ensureKnownFolder(path: string) {
     if (!path || this.folders.has(path)) return;
     await this.ensureKnownFolder(dirname(path));
-    this.folders.set(path, toFolder(path));
+    const folder = toFolder(path);
+    this.folders.set(path, folder);
+    this.emit('create-folder', folder);
   }
 }
 

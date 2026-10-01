@@ -115,6 +115,7 @@ export class VaultSync {
 
     this.disposers.push(
       this.vault.on('create', (file) => this.run(() => this.onLocalChange(file.path, null))),
+      this.vault.on('create-folder', (folder) => this.run(async () => this.onLocalFolder(folder.path))),
       this.vault.on('modify', (file, content) => this.run(() => this.onLocalChange(file.path, content))),
       this.vault.on('rename', (path, oldPath, kind) => this.run(() => this.onLocalRename(path, oldPath, kind))),
       this.vault.on('delete', (path, kind) => this.run(() => this.onLocalDelete(path, kind))),
@@ -211,6 +212,10 @@ export class VaultSync {
       onDisk.add(file.path);
       await this.onLocalChange(file.path, null);
     }
+    for (const folder of this.vault.getFolders()) {
+      onDisk.add(folder.path);
+      this.onLocalFolder(folder.path);
+    }
     this.doc.transact(() => {
       for (const [id, path] of [...this.pathOfId]) {
         if (!onDisk.has(path)) {
@@ -245,6 +250,13 @@ export class VaultSync {
         else this.bind(this.model.add(path, { hash, size: data.byteLength }), path);
       }, LOCAL);
     }
+  }
+
+  /** A folder of this device, empty ones included. */
+  private onLocalFolder(path: string) {
+    if (!path || this.idOnDisk.has(path) || path.split('/').some((part) => part.startsWith('.'))) return;
+    if (!this.vault.getFolder(path)) return;
+    this.doc.transact(() => this.bind(this.model.add(path, { folder: true }), path), LOCAL);
   }
 
   private async onLocalRename(path: string, oldPath: string, kind: 'file' | 'folder') {
@@ -317,16 +329,29 @@ export class VaultSync {
     this.dirty.clear();
     const concerned = this.model.entries().filter((e) => dirty.has(e.id) || (!e.deleted && this.pathOfId.get(e.id) !== e.path));
 
-    for (const entry of concerned.filter((e) => e.deleted)) {
+    // Files first, then folders from the deepest: a folder goes only once empty.
+    const depth = (e: Entry) => (e.kind === 'folder' ? 1000 - (this.pathOfId.get(e.id) ?? '').split('/').length : 0);
+    for (const entry of concerned.filter((e) => e.deleted).sort((a, b) => depth(a) - depth(b))) {
       const current = this.pathOfId.get(entry.id);
       this.unbind(entry.id);
-      if (current !== undefined && this.vault.getFile(current) && !this.idOnDisk.has(current)) {
-        await this.unheard(`delete\n${current}`, () => this.vault.delete(current));
-      }
+      if (current === undefined || this.idOnDisk.has(current)) continue;
+      const gone = entry.kind === 'folder' ? this.isEmptyFolder(current) : !!this.vault.getFile(current);
+      if (gone) await this.unheard(`delete\n${current}`, () => this.vault.delete(current));
+    }
+
+    // Folders moved: the new one is made now, the old one goes once its files have left.
+    const leftFolders: string[] = [];
+    for (const entry of concerned.filter((e) => !e.deleted && e.kind === 'folder' && this.pathOfId.get(e.id) !== e.path)) {
+      const current = this.pathOfId.get(entry.id);
+      this.bind(entry.id, entry.path);
+      if (current !== undefined) leftFolders.push(current);
+      if (!this.vault.getFolder(entry.path)) await this.vault.createFolder(entry.path);
     }
 
     // Moves, until none can go further; a cycle (two names swapped) goes through a free name.
-    let moving = concerned.filter((e) => !e.deleted && this.pathOfId.has(e.id) && this.pathOfId.get(e.id) !== e.path);
+    let moving = concerned.filter(
+      (e) => !e.deleted && e.kind !== 'folder' && this.pathOfId.has(e.id) && this.pathOfId.get(e.id) !== e.path,
+    );
     while (moving.length) {
       const next: Entry[] = [];
       for (const entry of moving) {
@@ -353,20 +378,32 @@ export class VaultSync {
       moving = next;
     }
 
+    for (const old of leftFolders.sort((a, b) => b.split('/').length - a.split('/').length)) {
+      if (!this.idOnDisk.has(old) && this.isEmptyFolder(old)) await this.unheard(`delete\n${old}`, () => this.vault.delete(old));
+    }
+
     for (const entry of concerned.filter((e) => !e.deleted)) await this.writeContent(entry);
     this.rebind();
+  }
+
+  private isEmptyFolder(path: string): boolean {
+    if (!this.vault.getFolder(path)) return false;
+    const { folders, files } = this.vault.getChildren(path);
+    return folders.length === 0 && files.length === 0;
   }
 
   /** Puts an entry's content in its file, creating it if needed; an attachment is asked for. */
   private async writeContent(entry: Entry) {
     const owner = this.idOnDisk.get(entry.path);
-    if (owner !== undefined && owner !== entry.id && this.vault.getFile(entry.path)) {
+    if (owner !== undefined && owner !== entry.id && this.vault.exists(entry.path)) {
       const other = this.model.entry(owner);
       // Another live file still sits here: this one waits for the next pass.
       if (other && !other.deleted) return;
     }
     this.bind(entry.id, entry.path);
-    if (entry.kind === 'text') {
+    if (entry.kind === 'folder') {
+      if (!this.vault.getFolder(entry.path)) await this.vault.createFolder(entry.path);
+    } else if (entry.kind === 'text') {
       const text = this.model.text(entry.id)?.toString() ?? '';
       if (!this.vault.getFile(entry.path)) {
         // Its echo comes without content, and finds the CRDT already holding it.
@@ -428,7 +465,7 @@ export class VaultSync {
   /** After conflicts are settled: each file on disk belongs to the live entry of its path. */
   private rebind() {
     for (const entry of this.model.live()) {
-      if (this.vault.getFile(entry.path) && this.pathOfId.get(entry.id) === entry.path) this.idOnDisk.set(entry.path, entry.id);
+      if (this.vault.exists(entry.path) && this.pathOfId.get(entry.id) === entry.path) this.idOnDisk.set(entry.path, entry.id);
     }
     for (const entry of this.model.entries().filter((e) => e.deleted)) {
       const path = this.pathOfId.get(entry.id);

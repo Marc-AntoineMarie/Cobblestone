@@ -123,6 +123,29 @@ describe('VaultSync', () => {
     expect(b.sync.model.live()).toHaveLength(2);
   });
 
+  it('carries folders, empty ones too, through creation, rename and deletion', async () => {
+    const a = await device({ 'Cours/Un.md': '1' });
+    const b = await device();
+    link(a, b);
+    await settle(a, b);
+    await a.vault.createFolder('Vide');
+    await settle(a, b);
+    expect(b.vault.getFolder('Vide')).toBeDefined();
+    await a.vault.rename('Vide', 'Projets/Nouveau');
+    await a.vault.rename('Cours', 'Archives');
+    await settle(a, b);
+    const folders = () =>
+      b.vault
+        .getFolders()
+        .map((f) => f.path)
+        .sort();
+    expect(folders()).toEqual(['Archives', 'Projets', 'Projets/Nouveau']);
+    expect(await b.vault.read('Archives/Un.md')).toBe('1');
+    await a.vault.delete('Projets');
+    await settle(a, b);
+    expect(folders()).toEqual(['Archives']);
+  });
+
   it('sends a note deleted on one device to the trash of the other', async () => {
     const a = await device({ 'Garder.md': 'oui', 'Jeter.md': 'non' });
     const b = await device();
