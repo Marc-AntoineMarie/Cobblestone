@@ -11,7 +11,9 @@ export type SyncMessage =
   | { type: 'blob'; hash: string; data: Uint8Array }
   | { type: 'blob-missing'; hash: string }
   /** Where this device is (its cursor in a note): forgotten when it leaves. */
-  | { type: 'presence'; data: Uint8Array };
+  | { type: 'presence'; data: Uint8Array }
+  /** Between devices of one account: who they trust, which vaults they offer (JSON). */
+  | { type: 'account'; data: Uint8Array };
 
 /** A link to one other device, whatever carries it (memory, network, relay). */
 export interface SyncChannel {
@@ -21,7 +23,7 @@ export interface SyncChannel {
   close(): void;
 }
 
-const TYPES = ['hello', 'update', 'blob-request', 'blob', 'blob-missing', 'presence'] as const;
+const TYPES = ['hello', 'update', 'blob-request', 'blob', 'blob-missing', 'presence', 'account'] as const;
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
@@ -37,7 +39,7 @@ export function encodeMessage(message: SyncMessage): Uint8Array {
       ? message.stateVector
       : message.type === 'update'
         ? message.update
-        : message.type === 'blob' || message.type === 'presence'
+        : message.type === 'blob' || message.type === 'presence' || message.type === 'account'
           ? message.data
           : new Uint8Array();
   const out = new Uint8Array(1 + 2 + label.length + payload.length);
@@ -66,6 +68,7 @@ export function decodeMessage(bytes: Uint8Array): SyncMessage {
     case 'blob-missing':
       return { type, hash };
     case 'presence':
+    case 'account':
       return { type, data: payload };
     default:
       throw new Error(`Unknown sync message ${bytes[0]}`);
