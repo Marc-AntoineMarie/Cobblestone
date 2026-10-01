@@ -95,6 +95,9 @@ Détails et coûts dans [docs/DISTRIBUTION.md](../docs/DISTRIBUTION.md).
 - Publier un dossier comme site web, gratuitement.
 - API de plugins, avec une couche de compatibilité pour les plugins Obsidian les plus utilisés.
 - Rendre Cobblestone compatible a tous les logiciels Md, il faut que l'ont puisse importer tout a partir de n'importe quoi
+- Ajouter une parti gestion de projet complete en bonus
+- pouvoir exporter dans n'importe quel format
+- avoir acces a un éditeur type word pour pouvoir faire du traitement de texte facilement en md en modifiant comme l'ont veut sans forcement taper le md a la main
 
 ## Organisations — plus tard
 
