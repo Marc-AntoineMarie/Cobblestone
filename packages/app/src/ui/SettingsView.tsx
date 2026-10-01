@@ -23,7 +23,10 @@ import { Row, SettingsQuery, Toggle } from './settings-parts';
 import { AccountSettings } from './AccountSettings';
 import { SyncSettings } from './SyncSettings';
 
-const VERSION = '0.1.0';
+declare const __APP_VERSION__: string | undefined;
+
+/** Set by the build (the version CI gives the app); tests run without it. */
+const VERSION = typeof __APP_VERSION__ === 'string' ? __APP_VERSION__ : 'dev';
 
 const SECTIONS = [
   { id: 'general', icon: Languages, title: () => t('settings.general') },
