@@ -59,6 +59,9 @@ export class VaultSync {
   /** Attachments wanted from other devices, by hash. */
   private wanted = new Map<string, string>();
   private dirty = new Set<string>();
+  /** Entries this device could not write (a full disk…), with why: tried again a little later. */
+  private failed = new Map<string, unknown>();
+  private retryTimer: ReturnType<typeof setTimeout> | undefined;
   private queue: Promise<unknown> = Promise.resolve();
   private saveTimer: ReturnType<typeof setTimeout> | undefined;
   private disposers: (() => void)[] = [];
@@ -67,7 +70,7 @@ export class VaultSync {
   constructor(
     private readonly vault: Vault,
     private readonly store: SyncStore,
-    private readonly options: { saveDelay?: number } = {},
+    private readonly options: { saveDelay?: number; retryDelay?: number } = {},
   ) {
     this.model = new VaultDoc();
   }
@@ -135,6 +138,7 @@ export class VaultSync {
     for (const peer of [...this.peers]) peer.channel.close();
     this.disposers.forEach((d) => d());
     this.disposers = [];
+    clearTimeout(this.retryTimer);
     await this.settled();
     clearTimeout(this.saveTimer);
     if (this.started) await this.store.save(Y.encodeStateAsUpdate(this.doc));
@@ -382,7 +386,14 @@ export class VaultSync {
       if (!this.idOnDisk.has(old) && this.isEmptyFolder(old)) await this.unheard(`delete\n${old}`, () => this.vault.delete(old));
     }
 
-    for (const entry of concerned.filter((e) => !e.deleted)) await this.writeContent(entry);
+    for (const entry of concerned.filter((e) => !e.deleted)) {
+      try {
+        await this.writeContent(entry);
+        this.failed.delete(entry.id);
+      } catch (error) {
+        this.failedWrite(entry.id, error);
+      }
+    }
     this.rebind();
   }
 
@@ -430,10 +441,30 @@ export class VaultSync {
     this.wanted.delete(hash);
     const entry = this.model.entry(id);
     if (!entry || entry.deleted || entry.hash !== hash) return;
-    this.hashes.set(entry.path, hash);
     this.bind(id, entry.path);
-    if (this.vault.getFile(entry.path)) await this.vault.modifyBinary(entry.path, data);
-    else await this.vault.createBinary(entry.path, data);
+    try {
+      if (this.vault.getFile(entry.path)) await this.vault.modifyBinary(entry.path, data);
+      else await this.vault.createBinary(entry.path, data);
+      this.hashes.set(entry.path, hash);
+      this.failed.delete(id);
+    } catch (error) {
+      this.failedWrite(id, error);
+    }
+  }
+
+  /** Files this device could not write, and the last reason. */
+  get failedWrites(): { count: number; error: unknown } {
+    return { count: this.failed.size, error: [...this.failed.values()].at(-1) ?? null };
+  }
+
+  /** Nothing is lost (the CRDT keeps it): the entry is written again in a while. */
+  private failedWrite(id: string, error: unknown) {
+    this.failed.set(id, error);
+    this.dirty.add(id);
+    clearTimeout(this.retryTimer);
+    this.retryTimer = setTimeout(() => {
+      if (this.started && this.dirty.size) this.run(() => this.applyRemote());
+    }, this.options.retryDelay ?? 30_000);
   }
 
   // ------------------------------------------------------------ bookkeeping
