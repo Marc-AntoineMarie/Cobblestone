@@ -165,3 +165,13 @@ gh run view --log-failed         # les journaux des étapes en échec
 gh workflow run recette.yml      # lancer la recette complète sur GitHub
 gh release view v0.1.0           # une release et ses fichiers
 ```
+
+## Versions de test (chaque push sur `main`)
+
+Le workflow « Version de test » (`.github/workflows/main-builds.yml`) publie, après la CI, une
+pré-version `X.Y.Z-main.N` avec l'installeur Windows (`.exe`), l'AppImage et le `.deb`. Une app
+installée depuis une version de test vérifie au lancement puis toutes les heures, télécharge la
+suivante en arrière-plan et propose « Redémarrer pour mettre à jour » (sinon elle s'installe à la
+fermeture). Une app installée depuis une version officielle ne suit que les versions officielles. Les
+5 dernières versions de test sont gardées. Pas de Mac : sans signature Apple, la mise à jour
+automatique y est impossible.

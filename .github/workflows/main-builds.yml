@@ -1,0 +1,106 @@
+name: Version de test
+
+# À chaque push sur main (après la CI) : une pré-version « X.Y.Z-main.N » avec les installeurs Windows
+# et Linux. Les apps installées depuis une version de test la téléchargent et proposent de redémarrer.
+# Seules les 5 dernières versions de test sont gardées.
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: main-builds
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+    permissions:
+      contents: read
+
+  prepare:
+    needs: ci
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Numéro de version
+        id: version
+        run: |
+          base=$(jq -r .version package.json)
+          # La version publiée existe déjà : les versions de test préparent la suivante.
+          if git rev-parse -q --verify "refs/tags/v$base" >/dev/null; then
+            base=$(echo "$base" | awk -F. '{print $1"."($2+1)".0"}')
+          fi
+          echo "version=$base-main.$GITHUB_RUN_NUMBER" >> "$GITHUB_OUTPUT"
+      - name: Pré-version
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          printf 'Version de test construite depuis `main` (%s). Les apps installées depuis une version de test se mettent à jour seules.\n' "${GITHUB_SHA::7}" > notes.md
+          gh release create "v$VERSION" --target "$GITHUB_SHA" --prerelease --title "Cobblestone $VERSION (test)" --notes-file notes.md
+
+  desktop:
+    needs: prepare
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            args: --linux AppImage deb
+          - os: windows-latest
+            args: --win nsis
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Version de l'app
+        shell: bash
+        env:
+          VERSION: ${{ needs.prepare.outputs.version }}
+        run: node -e "const f='apps/desktop/package.json',p=require('./'+f);p.version=process.env.VERSION;require('fs').writeFileSync(f,JSON.stringify(p,null,2)+'\n')"
+      - run: npm run build -w @cobblestone/desktop
+      - name: Installeurs
+        working-directory: apps/desktop
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: npx electron-builder ${{ matrix.args }} --publish never
+      - name: Ajout à la pré-version
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.prepare.outputs.version }}
+        run: |
+          shopt -s nullglob
+          files=(apps/desktop/release/*.AppImage apps/desktop/release/*.deb apps/desktop/release/*.exe apps/desktop/release/latest*.yml apps/desktop/release/*.blockmap)
+          [ ${#files[@]} -gt 0 ] || { echo "::error::Aucun installeur produit"; exit 1; }
+          gh release upload "v$VERSION" "${files[@]}" --clobber
+
+  cleanup:
+    needs: desktop
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - name: Garder les 5 dernières versions de test
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release list -R "$GITHUB_REPOSITORY" --limit 100 --json tagName,createdAt \
+            | jq -r '[.[] | select(.tagName | test("-main\\."))] | sort_by(.createdAt) | reverse | .[5:][] | .tagName' \
+            | while read -r tag; do gh release delete "$tag" -R "$GITHUB_REPOSITORY" --yes --cleanup-tag; done
