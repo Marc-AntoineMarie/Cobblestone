@@ -27,6 +27,7 @@ appareil a sa copie.
 - **À faire, dans l'ordre** :
   1. Transport WebRTC par Internet et pour l'app web, avec un petit service de mise en relation
      auto-hébergeable ; un relais chiffré pour synchroniser quand l'autre appareil est éteint.
+- Coffre reçu qui ne s'ouvre pas tout seul sur Windows (signalé le 1er octobre) : à reproduire.
 - Options de la maquette pas encore faites : dossiers qui restent sur l'appareil, pièces jointes
   (oui/non, taille maximale), réglages du coffre (`.cobblestone/`, pas synchronisé aujourd'hui),
   service de mise en relation personnalisé, option pour masquer les curseurs des autres appareils.
@@ -35,6 +36,19 @@ appareil a sa copie.
 - Retirer un appareil le refuse aux sessions, mais il garde les notes déjà reçues ; quand un relais
   gardera des données chiffrées, il faudra changer la clé du coffre au retrait d'un appareil.
 - **À décider** : où héberger le service de mise en relation et le relais officiels.
+
+### Partage avec d'autres personnes — à décider (après la synchronisation)
+
+Demande du 1er octobre : partager tout le coffre, une note ou un dossier avec qui on veut, avec les
+droits qu'on veut (lecture, écriture…), de façon **entièrement sécurisée et contrôlée**.
+
+- Piste : chaque personne a une identité (clé), avec un compte facultatif pour se retrouver ; chaque
+  partage (note, dossier, coffre) est un document chiffré à part, avec sa clé, envoyé seulement aux
+  personnes invitées ; les droits sont signés par le propriétaire et vérifiés par chaque appareil
+  (une modification d'un lecteur est refusée) ; retirer quelqu'un change la clé du partage.
+- Il faut d'abord la synchronisation par Internet (service de mise en relation et relais).
+- **À décider** : comptes (adresse e-mail, serveur) ou identité sans compte (code ou lien
+  d'invitation).
 
 ### Refonte du design et personnalisation — presque faite
 
