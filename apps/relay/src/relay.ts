@@ -1,5 +1,7 @@
 import { createServer, type IncomingMessage } from 'node:http';
 import { WebSocketServer, type RawData, type WebSocket } from 'ws';
+import type { Accounts } from './accounts.ts';
+import { clientAddress, handleApi } from './api.ts';
 
 /*
  * The relay: devices of a vault that are not on the same network meet here.
@@ -9,14 +11,18 @@ import { WebSocketServer, type RawData, type WebSocket } from 'ws';
  * passes frames, already encrypted end to end by the devices: it can read
  * nothing of the notes, and keeps nothing.
  *
- * Client → relay (text):  hello {device} · listen/unlisten/watch/unwatch {tag}
+ * Client → relay (text):  hello {device, token?} · listen/unlisten/watch/unwatch {tag}
  *                         · search · connect {req, to, tag} · close {link}
- * Relay → client (text):  welcome {id} · found {tag, address, device}
+ * Relay → client (text):  welcome {id} · account {signedIn} · found {tag, address, device}
  *                         · linked {req, link} · refused {req} · incoming {link, tag} · closed {link}
  * Both ways (binary):     4 bytes of link id, then the frame.
  */
 
 export interface RelayOptions {
+  /** Accounts: their API, and the tag of each account's devices. */
+  accounts?: Accounts;
+  /** Bytes a day an account (or an address, without one) may pass: only against abuse. */
+  dailyCap?: number;
   port?: number;
   host?: string;
   maxFrame?: number;
@@ -30,6 +36,8 @@ interface Client {
   socket: WebSocket;
   address: string;
   device: string;
+  /** The account this device signed in to, if any. */
+  account: string | null;
   listens: Set<string>;
   watches: Set<string>;
   links: Set<number>;
@@ -43,7 +51,11 @@ const DEFAULTS = {
   maxConnectionsPerAddress: 32,
   maxLinksPerClient: 64,
   maxTagsPerClient: 64,
+  dailyCap: 30 * 1024 ** 3,
 };
+
+/** What a device asks for as "account": the tag of its own account's devices. */
+const ACCOUNT_TAG = 'account';
 
 const TAG = /^[a-z0-9-]{1,64}$/;
 
@@ -56,7 +68,23 @@ export async function createRelay(options: RelayOptions = {}) {
   let nextClient = 1;
   let nextLink = 1;
 
-  const http = createServer((request, response) => {
+  const traffic = new Map<string, number>();
+  let day = new Date().toDateString();
+  /** Counts what passes for an account or an address; false past the day's cap. */
+  const within = (client: Client, bytes: number) => {
+    const today = new Date().toDateString();
+    if (today !== day) {
+      day = today;
+      traffic.clear();
+    }
+    const key = client.account ? `account:${client.account}` : `address:${client.address}`;
+    const total = (traffic.get(key) ?? 0) + bytes;
+    traffic.set(key, total);
+    return total <= config.dailyCap;
+  };
+
+  const http = createServer(async (request, response) => {
+    if (config.accounts && (await handleApi(config.accounts, request, response))) return;
     if (request.url === '/health') {
       response.writeHead(200, { 'content-type': 'text/plain' }).end('ok');
       return;
@@ -102,11 +130,19 @@ export async function createRelay(options: RelayOptions = {}) {
   };
 
   const onText = (client: Client, message: Record<string, unknown>) => {
-    const tag = typeof message.tag === 'string' && TAG.test(message.tag) ? message.tag : null;
+    // "account" is the tag of the device's own account: no one else can listen or watch it.
+    let tag = typeof message.tag === 'string' && TAG.test(message.tag) ? message.tag : null;
+    if (tag === ACCOUNT_TAG) tag = client.account ? `account-of-${client.account}` : null;
+    else if (tag?.startsWith('account-of-')) tag = null;
     switch (message.t) {
-      case 'hello':
+      case 'hello': {
         if (typeof message.device === 'string' && /^[0-9a-f]{16}$/.test(message.device)) client.device = message.device;
+        const session = config.accounts?.session(message.token);
+        // The account's session belongs to this very device.
+        client.account = session && session.device.id === client.device ? session.account : null;
+        send(client, { t: 'account', signedIn: !!client.account });
         return;
+      }
       case 'listen':
       case 'watch': {
         const mine = message.t === 'listen' ? client.listens : client.watches;
@@ -150,13 +186,16 @@ export async function createRelay(options: RelayOptions = {}) {
     const link = data.readUInt32BE(0);
     const ends = links.get(link);
     if (!ends || !client.links.has(link)) return;
+    if (!within(client, data.length)) {
+      client.socket.close(4008, 'daily cap reached');
+      return;
+    }
     const other = clients.get(ends[0] === client.id ? ends[1] : ends[0]);
     if (other?.socket.readyState === other?.socket.OPEN) other!.socket.send(data);
   };
 
   server.on('connection', (socket: WebSocket, request: IncomingMessage) => {
-    const address =
-      (request.headers['x-forwarded-for'] as string | undefined)?.split(',')[0]?.trim() || request.socket.remoteAddress || '';
+    const address = clientAddress(request);
     if ([...clients.values()].filter((c) => c.address === address).length >= config.maxConnectionsPerAddress) {
       socket.close(1008, 'too many connections');
       return;
@@ -166,6 +205,7 @@ export async function createRelay(options: RelayOptions = {}) {
       socket,
       address,
       device: '',
+      account: null,
       listens: new Set(),
       watches: new Set(),
       links: new Set(),
