@@ -18,3 +18,6 @@ release/
 test-results/
 playwright-report/
 .vitest/
+
+# Secrets du relais
+deploy/relay/.env

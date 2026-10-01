@@ -47,7 +47,27 @@ appareils : il ne peut lire aucune note, et ne garde rien. Le code est dans `app
 
 Mettre à jour : `git pull` puis `docker compose up -d --build`.
 
+## Comptes et e-mails (Brevo)
+
+Les comptes envoient un code par e-mail (activation, mot de passe oublié). Avec Brevo (gratuit,
+300 e-mails par jour) :
+
+1. Créer un compte sur brevo.com.
+2. **Expéditeurs, domaines** : ajouter le domaine (`marc-antoinemarie.com`) et copier chez le
+   registrar les enregistrements DNS qu'il donne (DKIM, et SPF/DMARC s'il les demande) ; attendre la
+   vérification.
+3. **SMTP & API › SMTP** : générer une clé SMTP.
+4. Sur le VPS, dans `deploy/relay` : `cp .env.example .env`, remplir `SMTP_USER`, `SMTP_PASS`
+   (la clé) et `MAIL_FROM`, puis `docker compose up -d --build`.
+
+Sans `.env`, les codes s'écrivent dans `docker compose logs relay` (pratique pour essayer).
+
+Les comptes sont dans le volume `relay_data` (`accounts.json`) : mots de passe en empreinte scrypt,
+jetons de session et codes en empreinte SHA-256, jamais en clair. À sauvegarder comme toute donnée.
+
 ## Limites
 
 - Un message (une pièce jointe) ne dépasse pas 64 Mo ; 32 connexions par adresse IP.
+- Plafond contre les abus : 30 Go par jour et par compte (ou par adresse IP sans compte), réglable
+  (`DAILY_CAP_GB`). Pas de quotas sinon.
 - Le relais ne garde rien : deux appareils échangent quand ils sont connectés en même temps.
