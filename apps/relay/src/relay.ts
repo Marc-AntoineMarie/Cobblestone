@@ -56,6 +56,8 @@ const DEFAULTS = {
 
 /** What a device asks for as "account": the tag of its own account's devices. */
 const ACCOUNT_TAG = 'account';
+/** The name a device knows a tag by: its account's tag is "account" to it. */
+const outward = (tag: string) => (tag.startsWith('account-of-') ? ACCOUNT_TAG : tag);
 
 const TAG = /^[a-z0-9-]{1,64}$/;
 
@@ -97,7 +99,7 @@ export async function createRelay(options: RelayOptions = {}) {
     if (client && client.socket.readyState === client.socket.OPEN) client.socket.send(JSON.stringify(message));
   };
   const found = (to: Client, tag: string, about: Client) =>
-    send(to, { t: 'found', tag, address: `relay:${about.id}`, device: about.device });
+    send(to, { t: 'found', tag: outward(tag), address: `relay:${about.id}`, device: about.device });
   const set = (map: Map<string, Set<number>>, tag: string) => {
     let ids = map.get(tag);
     if (!ids) map.set(tag, (ids = new Set()));
@@ -171,7 +173,7 @@ export async function createRelay(options: RelayOptions = {}) {
         links.set(link, [client.id, target.id]);
         client.links.add(link);
         target.links.add(link);
-        send(target, { t: 'incoming', link, tag });
+        send(target, { t: 'incoming', link, tag: outward(tag) });
         send(client, { t: 'linked', req: message.req, link });
         return;
       }
