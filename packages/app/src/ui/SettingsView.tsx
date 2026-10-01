@@ -1,5 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
-import { CalendarDays, FileText, Info, Languages, LayoutPanelLeft, Link2, Palette, RefreshCw, Search, Stamp } from 'lucide-react';
+import {
+  CalendarDays,
+  FileText,
+  Info,
+  Languages,
+  LayoutPanelLeft,
+  Link2,
+  Palette,
+  RefreshCw,
+  Search,
+  Stamp,
+  UserRound,
+} from 'lucide-react';
 import { LANGUAGES, t } from '../i18n';
 import type { VaultSettings } from '../settings';
 import type { Theme } from '../themes';
@@ -8,6 +20,7 @@ import { LayoutSettings } from './LayoutSettings';
 import { useSession, useStore } from './hooks';
 import { usePreferences } from './preferences';
 import { Row, SettingsQuery, Toggle } from './settings-parts';
+import { AccountSettings } from './AccountSettings';
 import { SyncSettings } from './SyncSettings';
 
 const VERSION = '0.1.0';
@@ -21,6 +34,7 @@ const SECTIONS = [
   { id: 'daily', icon: CalendarDays, title: () => t('rail.today') },
   { id: 'templates', icon: Stamp, title: () => t('settings.templates') },
   { id: 'sync', icon: RefreshCw, title: () => t('settings.sync') },
+  { id: 'account', icon: UserRound, title: () => t('settings.account') },
   { id: 'about', icon: Info, title: () => t('settings.about') },
 ] as const;
 
@@ -307,6 +321,8 @@ export function SettingsView() {
             )}
 
             {section('sync', <SyncSettings />)}
+
+            {section('account', <AccountSettings />)}
 
             {section(
               'about',

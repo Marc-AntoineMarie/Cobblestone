@@ -793,3 +793,66 @@
   white-space: nowrap;
   pointer-events: none;
 }
+
+/* ------------------------------------------------------------- account */
+
+.account-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.account-tabs button {
+  padding: 8px 12px;
+  border-bottom: 3px solid transparent;
+  color: var(--ink-2);
+  font-weight: 650;
+}
+
+.account-tabs button[aria-selected='true'] {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.account-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 420px;
+}
+
+.account-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-weight: 650;
+}
+
+.account-hint,
+.account-note {
+  color: var(--ink-2);
+  font-weight: 400;
+}
+
+.account-error {
+  color: var(--red-deep);
+  font-weight: 600;
+}
+
+.account-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.account-actions .link-button,
+.account-delete {
+  margin-right: auto;
+  padding: 0;
+  border: 0;
+}
+
+.account-delete {
+  color: var(--red-deep);
+}
