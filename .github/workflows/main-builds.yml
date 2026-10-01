@@ -90,7 +90,7 @@ jobs:
           VERSION: ${{ needs.prepare.outputs.version }}
         run: |
           shopt -s nullglob
-          files=(apps/desktop/release/*.AppImage apps/desktop/release/*.deb apps/desktop/release/*.exe apps/desktop/release/latest*.yml apps/desktop/release/*.blockmap)
+          files=(apps/desktop/release/*.AppImage apps/desktop/release/*.deb apps/desktop/release/*.exe apps/desktop/release/latest*.yml apps/desktop/release/main*.yml apps/desktop/release/*.blockmap)
           [ ${#files[@]} -gt 0 ] || { echo "::error::Aucun installeur produit"; exit 1; }
           gh release upload "v$VERSION" "${files[@]}" --clobber
 
