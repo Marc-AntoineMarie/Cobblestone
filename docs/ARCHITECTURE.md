@@ -11,6 +11,7 @@
 ```
 packages/core     engine (no DOM, no Node)
 packages/sync     sync between devices (Yjs)         → used by packages/app
+apps/relay        Internet relay (WebSocket, Node)  → deployed on a server (deploy/relay)
 packages/node     Node file system adapter          → used by apps/desktop (main process)
 packages/app      shared React interface            → used by apps/web and apps/desktop (renderer)
 apps/web          browser host
@@ -58,4 +59,5 @@ The engine is written; no host runs it yet. See [ROADMAP.md](ROADMAP.md).
 - **Local network** (`apps/desktop/src/main/lan.ts`, `lan-ipc.ts`, `renderer/network.ts`): on desktop, the main process announces tags by UDP multicast and carries links over TCP (length-prefixed frames, the first naming the tag); it only moves encrypted bytes, and refuses unknown tags, slow greetings and oversized frames. Windows reach it through IPC, only for their own links and for announced addresses. `Platform.syncNetwork` gives it to the app.
 - **In the app** (`packages/app/src/sync.ts`): `SyncController` keeps the device's key pair and the vaults it syncs in the host's storage (never in the vault), with the devices it knew so that a lost `.cobblestone/sync` does not strand it. The interface: Settings › Sync, the add-device dialog, « Receive a vault » on the start screen, the status bar.
 - **Live editing** (`packages/app/src/editor/collab.ts`): the editor works on the note's `Y.Text` (each keystroke goes to it, remote changes come in as CodeMirror changes); the file is still saved, and the engine recognises those saves. Cursors travel as `presence` messages (relative positions), forgotten when a link ends.
-- **Next**: WebRTC with a small, self-hostable signaling service, and an encrypted relay for when no other device is online.
+- **Relay** (`apps/relay`, `packages/sync/src/relay.ts`): over the Internet (and for the web app), devices meet on a WebSocket relay by tag and get links on which it only passes encrypted frames; it keeps nothing. `NetworkSet` joins the local network and the relay; the relay's address is a device setting (`sync:relay`). Pairing tags come from the first three symbols of the code, so a public relay never learns the code. Deployment: `deploy/relay` (Docker, Caddy), see `docs/RELAIS.md`.
+- **Next**: accounts (optional) and sharing; WebRTC to go direct when possible with a small, self-hostable signaling service, and an encrypted relay for when no other device is online.

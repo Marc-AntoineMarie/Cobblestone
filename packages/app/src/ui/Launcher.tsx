@@ -138,15 +138,13 @@ export function Launcher({ platform, opening, progress, onCancelOpening, error, 
                 </button>
               ))}
 
-            {platform.syncNetwork && (
-              <button className="launch-action" onClick={() => setReceiving(true)} disabled={busy}>
-                <RefreshCw size={20} strokeWidth={1.75} aria-hidden />
-                <span className="launch-action-text">
-                  <strong>{t('launcher.receive')}</strong>
-                  <span>{t('launcher.receive.hint')}</span>
-                </span>
-              </button>
-            )}
+            <button className="launch-action" onClick={() => setReceiving(true)} disabled={busy}>
+              <RefreshCw size={20} strokeWidth={1.75} aria-hidden />
+              <span className="launch-action-text">
+                <strong>{t('launcher.receive')}</strong>
+                <span>{t('launcher.receive.hint')}</span>
+              </span>
+            </button>
 
             <button className="launch-action" onClick={() => open(DEMO)} disabled={busy}>
               <Sparkles size={20} strokeWidth={1.75} aria-hidden />

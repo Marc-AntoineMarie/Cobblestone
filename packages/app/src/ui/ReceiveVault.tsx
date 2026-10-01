@@ -8,7 +8,8 @@ import { adoptReceived, loadIdentity, receiveWithCode, type Received } from '../
 
 type Stage = 'form' | 'searching' | 'waiting' | 'where';
 
-const REASONS = ['wrong-code', 'timeout', 'declined'] as const;
+/** A code nobody shows and a wrong code look the same from here. */
+const REASONS = ['wrong-code', 'declined'] as const;
 
 /**
  * On the start screen: receive a vault from another device, with the code it
@@ -55,7 +56,8 @@ export function ReceiveVault({
       setStage('where');
     } catch (e) {
       if (!alive.current) return;
-      const reason = e instanceof SyncRefusal && (REASONS as readonly string[]).includes(e.code) ? e.code : 'other';
+      const code = e instanceof SyncRefusal ? (e.code === 'timeout' ? 'wrong-code' : e.code) : 'other';
+      const reason = (REASONS as readonly string[]).includes(code) ? code : 'other';
       setError(t(`receive.error.${reason as (typeof REASONS)[number] | 'other'}`));
       setStage('form');
     }

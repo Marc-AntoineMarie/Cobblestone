@@ -29,6 +29,8 @@ export interface StartOptions {
   recents?: { id: string; name: string; location: string }[];
   /** Desktop: more environment for the app (a network port of the test's own, say). */
   env?: Record<string, string>;
+  /** Desktop: more of the app's own storage (storage.json), set before launch. */
+  storage?: Record<string, unknown>;
 }
 
 const WEB_URL = process.env.RECETTE_URL ?? 'http://localhost:5199';
@@ -87,6 +89,7 @@ export class Cobble {
     await mkdir(this.userData, { recursive: true });
     const storage: Record<string, unknown> = {};
     if (this.options.preferences) storage.preferences = this.options.preferences;
+    Object.assign(storage, this.options.storage);
     const recents: object[] = (this.options.recents ?? []).map((r, i) => ({
       ...r,
       kind: 'folder',

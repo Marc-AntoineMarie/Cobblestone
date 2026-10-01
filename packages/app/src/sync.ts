@@ -3,6 +3,8 @@ import type { Vault } from '@cobblestone/core';
 import {
   AdapterSyncStore,
   createIdentity,
+  NetworkSet,
+  RelayNetwork,
   fromBase64,
   toBase64,
   PAIRING_LIFETIME,
@@ -31,6 +33,57 @@ import type { Platform, VaultEntry } from './platform';
  */
 
 const IDENTITY_KEY = 'sync:identity';
+const RELAY_KEY = 'sync:relay';
+
+/** The official relay, used unless the user sets another. Empty: none yet. */
+export const DEFAULT_RELAY = '';
+
+export interface RelaySettings {
+  enabled: boolean;
+  /** Address of the relay: "sync.example.org", "wss://…". */
+  url: string;
+}
+
+export async function relaySettings(platform: Platform): Promise<RelaySettings> {
+  return { enabled: true, url: DEFAULT_RELAY, ...(await platform.storage.get<Partial<RelaySettings>>(RELAY_KEY)) };
+}
+
+export async function setRelaySettings(platform: Platform, settings: RelaySettings) {
+  await platform.storage.set(RELAY_KEY, settings);
+  if (shared) applyRelay(settings);
+}
+
+/** "sync.example.org" → "wss://sync.example.org"; ws:// is kept (a relay on this computer). */
+export function relayUrl(address: string): string | null {
+  const trimmed = address.trim();
+  if (!trimmed) return null;
+  if (/^wss?:\/\//i.test(trimmed)) return trimmed;
+  return `wss://${trimmed.replace(/^https?:\/\//i, '').replace(/\/+$/, '')}`;
+}
+
+/** This device's networks: the local one (desktop) and the relay, shared by every vault. */
+let shared: { networks: NetworkSet; relay: RelayNetwork | null; device: string } | null = null;
+
+function applyRelay(settings: RelaySettings) {
+  if (!shared) return;
+  const url = settings.enabled ? relayUrl(settings.url) : null;
+  if ((shared.relay?.url ?? null) === url) return;
+  if (shared.relay) {
+    shared.networks.remove(shared.relay);
+    shared.relay.close();
+  }
+  shared.relay = url ? new RelayNetwork(url, shared.device) : null;
+  if (shared.relay) shared.networks.add(shared.relay);
+}
+
+async function deviceNetwork(platform: Platform, device: string): Promise<NetworkSet> {
+  if (!shared) {
+    shared = { networks: new NetworkSet(), relay: null, device };
+    if (platform.syncNetwork) shared.networks.add(platform.syncNetwork(device));
+    applyRelay(await relaySettings(platform));
+  }
+  return shared.networks;
+}
 const VAULTS_KEY = 'sync:vaults';
 
 interface VaultRecord {
@@ -107,7 +160,7 @@ async function saveRecord(platform: Platform, id: string, record: VaultRecord | 
  */
 export async function receiveWithCode(platform: Platform, code: string, name: string, onProven: () => void): Promise<Received> {
   const identity = name.trim() ? await renameIdentity(platform, name.trim()) : await loadIdentity(platform);
-  return receiveVault(platform.syncNetwork!(identity.id), identity, code, { onProven });
+  return receiveVault(await deviceNetwork(platform, identity.id), identity, code, { onProven });
 }
 
 /** The vault just received goes to `entry`: its session starts syncing on the same link. */
@@ -131,7 +184,7 @@ export class SyncController {
     private readonly vault: Vault,
   ) {
     this.state = createStore<SyncState>(() => ({
-      available: !!platform.syncNetwork && entry.kind !== 'demo',
+      available: entry.kind !== 'demo',
       enabled: false,
       paused: false,
       removed: false,
@@ -163,7 +216,7 @@ export class SyncController {
       vault: this.vault,
       store: new AdapterSyncStore(this.vault.adapter),
       identity,
-      network: this.platform.syncNetwork!(identity.id),
+      network: await deviceNetwork(this.platform, identity.id),
       syncId,
       known: this.known,
     });

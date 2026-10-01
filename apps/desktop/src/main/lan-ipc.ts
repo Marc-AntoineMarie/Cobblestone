@@ -56,6 +56,8 @@ export function registerLan() {
     if (typeof device !== 'string' || !/^[0-9a-f]{16}$/.test(device)) throw new Error('Invalid device id');
     lan.device = device;
     tagsOf(event.sender.id);
+    // Tests of the relay cut the local network, to be sure the devices meet over the Internet.
+    if (process.env.COBBLESTONE_LAN_OFF) return;
     await (starting ??= lan.start());
   });
 

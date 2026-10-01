@@ -1,0 +1,17 @@
+{
+  "name": "@cobblestone/relay",
+  "version": "0.1.0",
+  "private": true,
+  "license": "AGPL-3.0-only",
+  "type": "module",
+  "description": "Cobblestone's relay: brings devices together over the Internet and passes their encrypted frames.",
+  "scripts": {
+    "start": "node src/main.ts"
+  },
+  "dependencies": {
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.18.1"
+  }
+}

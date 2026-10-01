@@ -725,8 +725,9 @@ Deux apps de bureau sur le même réseau (la recette automatique lance deux apps
 - **31.11** · Bureau · auto · Fermer le second, écrire sur le premier, rouvrir le second → Il se reconnecte seul et reçoit le texte.
 - **31.12** · Bureau · auto · Pendant une pause, créer une note du même nom sur les deux, puis reprendre → Les deux versions sont gardées, l'une nommée « (conflit xxxx) » ; « 1 à vérifier » dans la barre d'état, et la copie est proposée dans les réglages.
 - **31.13** · Bureau · auto · Regarder le coffre après la synchronisation → `.cobblestone/sync/vault.bin` y est ; aucune clé secrète dans le coffre ; rien dans `.obsidian/`.
-- **31.14** · Web · auto · Réglages › Synchronisation, puis l'accueil, sur le web → Un message dit que la synchronisation arrive dans l'app web ; pas de « Recevoir un coffre » à l'accueil.
+- **31.14** · Web · auto · Réglages › Synchronisation, puis l'accueil, sur le web → La synchronisation est proposée (par Internet, avec l'adresse du relais) ; « Recevoir un coffre » est à l'accueil.
 - **31.15** · Bureau · manuel · Deux ordinateurs différents sur le même réseau Wi-Fi → Ils se trouvent et se synchronisent comme ci-dessus (le pare-feu peut demander d'autoriser Cobblestone la première fois).
 - **31.16** · Bureau · auto · Ouvrir la même note sur les deux et y écrire en même temps → Chaque frappe arrive aussitôt sur l'autre, rien n'est perdu, les deux notes finissent identiques ; le curseur de l'autre appareil s'affiche à son nom.
 - **31.17** · Bureau · auto · Créer un dossier vide sur l'un, puis le supprimer → Il apparaît sur l'autre, puis en disparaît.
 - **31.18** · Bureau · manuel · Disque plein sur l'un des deux pendant une synchronisation → Barre d'état « N fichiers non écrits » et la raison dans les réglages ; une fois de la place libérée, les fichiers s'écrivent seuls.
+- **31.19** · Bureau · auto · Deux appareils sur des réseaux différents (réseau local coupé), par le relais → Ils s'appairent et se synchronisent ; le relais ne voit que des données chiffrées.
