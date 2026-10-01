@@ -199,6 +199,20 @@ describe('SyncNode', () => {
     expect(online(a)).toEqual(['B']);
   });
 
+  it('tells the other devices where this one is, and forgets it when the link ends', async () => {
+    hub = new MemoryNetworkHub();
+    const a = await device('A', { 'Note.md': 'un' });
+    await a.node.start();
+    const b = await join(a, 'B');
+    await settle(a, b);
+    a.node.publishPresence(new Uint8Array([7]));
+    await settle(a, b);
+    expect([...b.node.presences()]).toEqual([[a.identity.id, new Uint8Array([7])]]);
+    a.node.pause();
+    await settle(a, b);
+    expect(b.node.presences().size).toBe(0);
+  });
+
   it('ends a pairing after three wrong codes, or when the user declines', async () => {
     hub = new MemoryNetworkHub();
     const a = await device('A');

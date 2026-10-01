@@ -9,6 +9,7 @@ export {
   type Entry,
   type EntryKind,
 } from './model';
+export { fromBase64, toBase64 } from './crypto';
 export { bytePair, plainChannel, secureChannel, SyncRefusal, type ByteChannel, type RefusalCode } from './channel';
 export {
   createIdentity,

@@ -9,7 +9,9 @@ export type SyncMessage =
   | { type: 'update'; update: Uint8Array }
   | { type: 'blob-request'; hash: string }
   | { type: 'blob'; hash: string; data: Uint8Array }
-  | { type: 'blob-missing'; hash: string };
+  | { type: 'blob-missing'; hash: string }
+  /** Where this device is (its cursor in a note): forgotten when it leaves. */
+  | { type: 'presence'; data: Uint8Array };
 
 /** A link to one other device, whatever carries it (memory, network, relay). */
 export interface SyncChannel {
@@ -19,7 +21,7 @@ export interface SyncChannel {
   close(): void;
 }
 
-const TYPES = ['hello', 'update', 'blob-request', 'blob', 'blob-missing'] as const;
+const TYPES = ['hello', 'update', 'blob-request', 'blob', 'blob-missing', 'presence'] as const;
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
@@ -35,7 +37,7 @@ export function encodeMessage(message: SyncMessage): Uint8Array {
       ? message.stateVector
       : message.type === 'update'
         ? message.update
-        : message.type === 'blob'
+        : message.type === 'blob' || message.type === 'presence'
           ? message.data
           : new Uint8Array();
   const out = new Uint8Array(1 + 2 + label.length + payload.length);
@@ -63,6 +65,8 @@ export function decodeMessage(bytes: Uint8Array): SyncMessage {
       return { type, hash, data: payload };
     case 'blob-missing':
       return { type, hash };
+    case 'presence':
+      return { type, data: payload };
     default:
       throw new Error(`Unknown sync message ${bytes[0]}`);
   }

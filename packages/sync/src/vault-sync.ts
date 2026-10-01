@@ -51,7 +51,7 @@ export class VaultSync {
   private idOnDisk = new Map<string, string>();
   private pathOfId = new Map<string, string>();
   /** Texts this device is writing, to recognise their echo from the vault. */
-  private writing = new Map<string, string>();
+  private writing = new Map<string, Set<string>>();
   /** Renames ("from\nto") and deletions this device is making, for the same reason. */
   private echoes = new Set<string>();
   /** Hash of each binary file on disk. */
@@ -150,6 +150,33 @@ export class VaultSync {
     } while (last !== this.queue);
   }
 
+  /**
+   * A text about to be saved that the CRDT already holds (an editor working
+   * on the shared text): its echo is not a change, and comparing it with a
+   * shared text that moved on since would undo what others typed meanwhile.
+   */
+  expectWrite(path: string, text: string) {
+    let texts = this.writing.get(path);
+    if (!texts) this.writing.set(path, (texts = new Set()));
+    texts.add(text);
+  }
+
+  /** The shared text of a note on disk, for an editor to work on directly. */
+  textAt(path: string): Y.Text | null {
+    const id = this.idOnDisk.get(path);
+    return id ? this.model.text(id) : null;
+  }
+
+  /** The entry of a file on disk. */
+  entryAt(path: string): string | null {
+    return this.idOnDisk.get(path) ?? null;
+  }
+
+  /** Whether a change of the CRDT was made on this device. */
+  isOwn(origin: unknown): boolean {
+    return origin === LOCAL || origin === STORE;
+  }
+
   /** Attachments this device still waits for from the others. */
   get pendingAttachments(): number {
     return this.wanted.size;
@@ -196,8 +223,7 @@ export class VaultSync {
 
   private async onLocalChange(path: string, content: string | null) {
     if (!this.vault.getFile(path)) return;
-    if (content !== null && this.writing.get(path) === content) {
-      this.writing.delete(path);
+    if (content !== null && this.writing.get(path)?.delete(content)) {
       return;
     }
     const id = this.idOnDisk.get(path);
@@ -274,6 +300,7 @@ export class VaultSync {
         this.run(() => this.receiveBlob(message.hash, message.data));
         return;
       case 'blob-missing':
+      case 'presence':
         return;
     }
   }
@@ -345,7 +372,7 @@ export class VaultSync {
         // Its echo comes without content, and finds the CRDT already holding it.
         await this.vault.create(entry.path, text);
       } else if ((await this.vault.read(entry.path)) !== text) {
-        this.writing.set(entry.path, text);
+        this.expectWrite(entry.path, text);
         await this.vault.modify(entry.path, text);
       }
     } else if (entry.hash && this.hashes.get(entry.path) !== entry.hash) {
