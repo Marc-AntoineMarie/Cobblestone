@@ -38,3 +38,10 @@ describe('channelPair', () => {
     expect(closed).toBe(1);
   });
 });
+
+describe('presence', () => {
+  it('travels as bytes like the other messages', () => {
+    const message = { type: 'presence' as const, data: new Uint8Array([1, 2, 3]) };
+    expect(decodeMessage(encodeMessage(message))).toEqual(message);
+  });
+});

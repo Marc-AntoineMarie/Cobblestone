@@ -36,6 +36,7 @@
     "markdown-it-footnote": "^4.0.0",
     "mermaid": "^12.0.0",
     "yaml": "^2.9.1",
+    "yjs": "^13.6.33",
     "zustand": "^5.0.15"
   },
   "peerDependencies": {

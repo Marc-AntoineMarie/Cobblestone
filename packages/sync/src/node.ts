@@ -65,6 +65,10 @@ export class SyncNode {
   private started = false;
   /** When a message last came or went. */
   lastExchange: number | null = null;
+  /** Where each other device is, as it says (cursor in a note); this device's own. */
+  private readonly presence = new Map<string, Uint8Array>();
+  private ownPresence: Uint8Array | null = null;
+  private readonly presenceListeners = new Set<() => void>();
 
   constructor(private readonly options: SyncNodeOptions) {
     this.sync = new VaultSync(options.vault, options.store, { saveDelay: options.saveDelay });
@@ -231,9 +235,11 @@ export class SyncNode {
     channel.onClose(() => {
       if (this.sessions.get(peer)?.channel !== channel) return;
       this.sessions.delete(peer);
+      if (this.presence.delete(peer)) this.presenceListeners.forEach((l) => l());
       this.emit();
     });
     this.sync.connect(this.watched(channel, peer));
+    if (this.ownPresence) channel.send({ type: 'presence', data: this.ownPresence });
     this.emit();
   }
 
@@ -250,12 +256,36 @@ export class SyncNode {
       onMessage: (listener) =>
         channel.onMessage((message) => {
           if (this.model.devices.get(peer)?.removed) return;
+          if (message.type === 'presence') {
+            if (message.data.length) this.presence.set(peer, message.data);
+            else this.presence.delete(peer);
+            this.presenceListeners.forEach((l) => l());
+            return;
+          }
           seen();
           listener(message);
         }),
       onClose: (listener) => channel.onClose(listener),
       close: () => channel.close(),
     };
+  }
+
+  // ------------------------------------------------------------ presence
+
+  /** Tells the other devices where this one is; null: nowhere. */
+  publishPresence(data: Uint8Array | null) {
+    this.ownPresence = data;
+    for (const { channel } of this.sessions.values()) channel.send({ type: 'presence', data: data ?? new Uint8Array() });
+  }
+
+  /** Where the other devices are, by device id. */
+  presences(): ReadonlyMap<string, Uint8Array> {
+    return this.presence;
+  }
+
+  onPresence(listener: () => void): () => void {
+    this.presenceListeners.add(listener);
+    return () => void this.presenceListeners.delete(listener);
   }
 
   // ------------------------------------------------------------ pairing

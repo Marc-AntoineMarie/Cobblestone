@@ -217,3 +217,23 @@ recette(
 );
 
 recette.manuel('31.15', 'deux ordinateurs réels sur un même réseau Wi-Fi, avec leur pare-feu');
+
+recette('31.16', async ({ app, ui }, testInfo) => {
+  await twoDevices({ app, ui }, baseVault(), testInfo, async (a, b) => {
+    await pair(a, b);
+    await expect.poll(() => b.app.readOr('Idées.md')).toContain('Une idée');
+    await a.ui.open('Idées');
+    await b.ui.open('Idées');
+    await a.ui.editor.click();
+    await a.ui.page.keyboard.press('Control+Home');
+    await b.ui.editEnd();
+    await Promise.all([
+      a.ui.page.keyboard.type('Au début. ', { delay: 20 }),
+      b.ui.page.keyboard.type(' À la fin.', { delay: 20 }),
+    ]);
+    await expect.poll(() => a.ui.doc()).toContain('À la fin.');
+    await expect.poll(() => b.ui.doc()).toContain('Au début. ');
+    await expect.poll(() => a.app.readOr('Idées.md')).toMatch(/^Au début\. .*À la fin\.$/s);
+    await expect.poll(() => b.app.readOr('Idées.md')).toBe(await a.app.read('Idées.md'));
+  });
+});

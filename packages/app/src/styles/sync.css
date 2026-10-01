@@ -735,3 +735,47 @@
     animation: none;
   }
 }
+
+/* ------------------------------------------------------------- other devices in a note */
+
+.is-ink-0 {
+  --remote: var(--teal);
+}
+.is-ink-1 {
+  --remote: var(--purple);
+}
+.is-ink-2 {
+  --remote: var(--orange);
+}
+.is-ink-3 {
+  --remote: var(--blue);
+}
+.is-ink-4 {
+  --remote: var(--green-deep);
+}
+
+.cm-remote-selection {
+  background: color-mix(in srgb, var(--remote) 24%, transparent);
+}
+
+.cm-remote-caret {
+  position: relative;
+  margin: 0 -1px;
+  border-left: 2px solid var(--remote);
+}
+
+.cm-remote-name {
+  position: absolute;
+  bottom: 100%;
+  left: -2px;
+  padding: 0 5px;
+  border-radius: 3px 3px 3px 0;
+  background: var(--remote);
+  color: var(--paper);
+  font-family: var(--font);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.5;
+  white-space: nowrap;
+  pointer-events: none;
+}
