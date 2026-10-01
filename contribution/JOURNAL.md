@@ -6,6 +6,7 @@ ajouté, modifié et supprimé, les tests, les fichiers et les commits. Ce somma
 
 | Date       | Changement                                                                                                               | Type          | Branche                      |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------ | ------------- | ---------------------------- |
+| 2026-10-01 | [Réglages › Compte](journal/2026-10-01-feat-comptes-app.md)                                                              | nouveauté     | `feat/comptes-app`           |
 | 2026-10-01 | [Les comptes, côté serveur](journal/2026-10-01-feat-comptes-serveur.md)                                                  | nouveauté     | `feat/comptes-serveur`       |
 | 2026-10-01 | [Le relais officiel par défaut](journal/2026-10-01-feat-relais-officiel.md)                                              | nouveauté     | `feat/relais-officiel`       |
 | 2026-10-01 | [Le relais derrière un serveur web déjà en place](journal/2026-10-01-fix-relais-proxy-existant.md)                       | correction    | `fix/relais-proxy-existant`  |
