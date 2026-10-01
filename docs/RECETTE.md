@@ -726,3 +726,4 @@ Deux apps de bureau sur le même réseau (la recette automatique lance deux apps
 - **31.13** · Bureau · auto · Regarder le coffre après la synchronisation → `.cobblestone/sync/vault.bin` y est ; aucune clé secrète dans le coffre ; rien dans `.obsidian/`.
 - **31.14** · Web · auto · Réglages › Synchronisation, puis l'accueil, sur le web → Un message dit que la synchronisation arrive dans l'app web ; pas de « Recevoir un coffre » à l'accueil.
 - **31.15** · Bureau · manuel · Deux ordinateurs différents sur le même réseau Wi-Fi → Ils se trouvent et se synchronisent comme ci-dessus (le pare-feu peut demander d'autoriser Cobblestone la première fois).
+- **31.16** · Bureau · auto · Ouvrir la même note sur les deux et y écrire en même temps → Chaque frappe arrive aussitôt sur l'autre, rien n'est perdu, les deux notes finissent identiques ; le curseur de l'autre appareil s'affiche à son nom.
