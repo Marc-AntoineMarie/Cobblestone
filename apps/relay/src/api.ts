@@ -16,6 +16,7 @@ const STATUS: Record<AccountError['code'], number> = {
   unverified: 403,
   expired: 410,
   'slow-down': 429,
+  mail: 502,
 };
 
 export function clientAddress(request: IncomingMessage): string {

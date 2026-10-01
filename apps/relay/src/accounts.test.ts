@@ -1,7 +1,7 @@
 import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { Accounts, type Mailer } from './accounts.ts';
 import { createRelay } from './relay.ts';
 
@@ -68,6 +68,13 @@ describe('accounts', () => {
     await accounts.reset('a@b.fr', code(), 'second mot de passe');
     expect(accounts.session(token)).toBeNull();
     await expect(accounts.login('a@b.fr', 'second mot de passe', device('a'), 'ip')).resolves.toBeTypeOf('string');
+  });
+
+  it('say so when the e-mail cannot leave', async () => {
+    const { file } = await setup();
+    const broken = await Accounts.open(file, { send: async () => Promise.reject(new Error('535 Authentication failed')) });
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    await expect(broken.signup('a@b.fr', 'mot de passe solide', 'ip')).rejects.toMatchObject({ code: 'mail' });
   });
 
   it('survive a restart of the server', async () => {

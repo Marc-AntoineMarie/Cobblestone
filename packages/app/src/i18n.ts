@@ -513,6 +513,7 @@ const en = {
   'account.error.offline': 'The server cannot be reached. Check the connection.',
   'account.error.no-server': 'No server: Internet sync is off in Settings › Sync.',
   'account.error.server': 'The server had a problem. Try again later.',
+  'account.error.mail': 'The server could not send the e-mail (its e-mail settings). Try again later.',
   'sync.internet': 'Sync over the Internet',
   'sync.internet.hint': 'Devices on different networks meet through a relay. It only passes encrypted data and keeps nothing.',
   'sync.relay': 'Relay address',
@@ -1101,6 +1102,7 @@ const fr: Messages = {
   'account.error.offline': 'Le serveur est injoignable. Vérifie la connexion.',
   'account.error.no-server': 'Pas de serveur : la synchronisation par Internet est coupée dans Réglages › Synchronisation.',
   'account.error.server': 'Le serveur a eu un problème. Réessaie plus tard.',
+  'account.error.mail': 'Le serveur n’a pas pu envoyer l’e-mail (ses réglages d’envoi). Réessaie plus tard.',
   'sync.internet': 'Synchroniser par Internet',
   'sync.internet.hint':
     'Les appareils sur des réseaux différents se retrouvent par un relais. Il ne fait passer que des données chiffrées et ne garde rien.',

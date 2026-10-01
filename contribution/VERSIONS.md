@@ -169,7 +169,9 @@ gh release view v0.1.0           # une release et ses fichiers
 ## Versions de test (chaque push sur `main`)
 
 Le workflow « Version de test » (`.github/workflows/main-builds.yml`) publie, après la CI, une
-pré-version `X.Y.Z-main.N` avec l'installeur Windows (`.exe`), l'AppImage et le `.deb`. Une app
+pré-version `X.Y.Z-main.N` (par exemple `0.2.0-main.12` : la version suivante de la dernière
+version officielle, puis le numéro du build) avec l'installeur Windows (`.exe`), l'AppImage et le `.deb`. La dernière est copiée dans la pré-version fixe `main-latest`, que les apps de test interrogent :
+elles passent directement à la plus récente, quel que soit leur retard. Une app
 installée depuis une version de test vérifie au lancement puis toutes les heures, télécharge la
 suivante en arrière-plan et propose « Redémarrer pour mettre à jour » (sinon elle s'installe à la
 fermeture). Une app installée depuis une version officielle ne suit que les versions officielles. Les
