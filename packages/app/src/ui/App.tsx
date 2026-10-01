@@ -11,6 +11,8 @@ import { SessionContext, useMediaQuery } from './hooks';
 import { Launcher } from './Launcher';
 import { LostVault } from './LostVault';
 import { UpdateReady } from './UpdateReady';
+import { AccountLinkDialogs } from './AccountLinkDialogs';
+import { followAccount } from '../account-link';
 
 // The workspace (editor, index, renderers) loads only once a vault opens: the first screen stays light.
 const Workbench = lazy(() => import('./Workbench').then((m) => ({ default: m.Workbench })));
@@ -20,6 +22,8 @@ const LAST_VAULT = 'lastVault';
 export function App({ platform }: { platform: Platform }) {
   const [preferences, setPreferences] = useState<Preferences>(DEFAULT_PREFERENCES);
   const [session, setSession] = useState<Session | null>(null);
+  // Among the account's devices while signed in.
+  useEffect(() => followAccount(platform), [platform]);
   const [opening, setOpening] = useState<VaultEntry | null>(null);
   /** Notes read so far while a vault opens. */
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
@@ -183,6 +187,7 @@ export function App({ platform }: { platform: Platform }) {
         />
       ) : null}
       <UpdateReady platform={platform} />
+      <AccountLinkDialogs />
     </PreferencesContext.Provider>
   );
 }

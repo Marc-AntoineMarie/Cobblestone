@@ -83,6 +83,10 @@ function applyRelay(settings: RelaySettings) {
   if (shared.relay) shared.networks.add(shared.relay);
 }
 
+export function deviceNetworkFor(platform: Platform, device: string): Promise<NetworkSet> {
+  return deviceNetwork(platform, device);
+}
+
 async function deviceNetwork(platform: Platform, device: string): Promise<NetworkSet> {
   if (!shared) {
     const account = await platform.storage.get<{ token: string }>('account');
@@ -99,6 +103,44 @@ interface VaultRecord {
   paused?: boolean;
   /** Devices of the vault this device knew, to find them again if the vault's sync state is lost. */
   known?: { id: string; publicKey: string }[];
+  /** Offered to the account's other devices (on by default), under this name. */
+  account?: boolean;
+  name?: string;
+}
+
+const TRUSTED_KEY = 'account:trusted';
+
+/** The account's devices this device let in, or was let in by. */
+export async function accountTrusted(platform: Platform): Promise<DeviceInfo[]> {
+  trustedCache = (await platform.storage.get<DeviceInfo[]>(TRUSTED_KEY)) ?? [];
+  return trustedCache;
+}
+
+/** Read by running syncs: a device let in now is trusted at once. */
+let trustedCache: DeviceInfo[] = [];
+
+export async function addAccountTrusted(platform: Platform, devices: DeviceInfo[]) {
+  const all = await accountTrusted(platform);
+  for (const device of devices) if (!all.some((d) => d.id === device.id)) all.push(device);
+  trustedCache = all;
+  await platform.storage.set(TRUSTED_KEY, all);
+}
+
+/** The vaults this device offers to its account's other devices. */
+export async function accountOffers(platform: Platform): Promise<{ id: string; name: string }[]> {
+  return Object.values(await records(platform))
+    .filter((r) => r.account !== false)
+    .map((r) => ({ id: r.syncId, name: r.name ?? r.syncId }));
+}
+
+/** Sync ids of the vaults already on this device. */
+export async function localSyncIds(platform: Platform): Promise<Set<string>> {
+  return new Set(Object.values(await records(platform)).map((r) => r.syncId));
+}
+
+/** A vault offered by another device of the account goes to `entry`, and syncs when it opens. */
+export async function adoptOffer(platform: Platform, entry: VaultEntry, offer: { id: string; name: string }) {
+  await saveRecord(platform, entry.id, { syncId: offer.id, account: true, name: offer.name });
 }
 
 export type PairingState =
@@ -213,6 +255,8 @@ export class SyncController {
     handoffs.delete(this.entry.id);
     if (!record) return first?.channel.close();
     this.known = record.known ?? [];
+    this.offered = record.account !== false;
+    await accountTrusted(this.platform);
     await this.start(record.syncId, first);
     if (record.paused && !first) this.node?.pause();
     this.refresh();
@@ -226,7 +270,8 @@ export class SyncController {
       identity,
       network: await deviceNetwork(this.platform, identity.id),
       syncId,
-      known: this.known,
+      // The account's devices are trusted for a vault offered to them.
+      known: () => [...this.known, ...(this.offered ? trustedCache : [])],
     });
     await node.start(first);
     if (this.disposed) return void node.stop();
@@ -242,11 +287,32 @@ export class SyncController {
   }
 
   private known: { id: string; publicKey: string }[] = [];
+  private offered = true;
+
+  /** Whether this vault is offered to the account's other devices. */
+  async offeredToAccount(): Promise<boolean> {
+    const record = (await records(this.platform))[this.entry.id];
+    return record ? record.account !== false : false;
+  }
+
+  /** Offers this vault to the account's other devices (syncing it from now on), or stops offering it. */
+  async offerToAccount(offer: boolean) {
+    this.offered = offer;
+    if (offer && !this.node) await this.start();
+    await this.saveRecord();
+    this.refresh();
+  }
 
   private saveRecord() {
     const node = this.node;
     if (!node) return Promise.resolve();
-    return saveRecord(this.platform, this.entry.id, { syncId: node.syncId, paused: node.paused || undefined, known: this.known });
+    return saveRecord(this.platform, this.entry.id, {
+      syncId: node.syncId,
+      paused: node.paused || undefined,
+      known: this.known,
+      account: this.offered,
+      name: this.vault.name,
+    });
   }
 
   /** Saves the sync state now (the window is closing). */
