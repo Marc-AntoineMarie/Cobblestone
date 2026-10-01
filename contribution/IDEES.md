@@ -27,11 +27,9 @@ appareil a sa copie.
 - **Fait** : le réseau local (voir le journal, `feat/synchro-reseau-local`) : les apps de bureau se
   trouvent et se relient sans serveur ; appairage, reconnexion, retrait d'un appareil.
 - **À faire, dans l'ordre** :
-  1. **Adresse du relais officiel** : le sous-domaine de l'utilisateur sur son VPS, à mettre dans
-     `DEFAULT_RELAY` (packages/app/src/sync.ts) une fois le relais installé (docs/RELAIS.md).
-  2. Comptes (facultatifs) : se connecter sur un nouvel appareil le relie à ses autres appareils (avec
+  1. Comptes (facultatifs) : se connecter sur un nouvel appareil le relie à ses autres appareils (avec
      consentement) et synchronise ses coffres d'emblée ; puis le partage (section dédiée).
-  3. WebRTC pour aller en direct quand c'est possible ; relais qui garde les données chiffrées pour un
+  2. WebRTC pour aller en direct quand c'est possible ; relais qui garde les données chiffrées pour un
      appareil éteint.
 - Options de la maquette pas encore faites : dossiers qui restent sur l'appareil, pièces jointes
   (oui/non, taille maximale), réglages du coffre (`.cobblestone/`, pas synchronisé aujourd'hui),
@@ -40,7 +38,8 @@ appareil a sa copie.
 - Historique des versions de chaque note.
 - Retirer un appareil le refuse aux sessions, mais il garde les notes déjà reçues ; quand un relais
   gardera des données chiffrées, il faudra changer la clé du coffre au retrait d'un appareil.
-- **Décidé** : le relais officiel tourne sur le VPS de l'utilisateur, sous un sous-domaine à lui.
+- **Fait** : le relais officiel tourne sur le VPS de l'utilisateur (`cobblestone.marc-antoinemarie.com`).
+- Clé d'accès facultative pour réserver un relais à ses appareils (proposée le 1er octobre).
 
 ### Partage avec d'autres personnes — à décider (après la synchronisation)
 
