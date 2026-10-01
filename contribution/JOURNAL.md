@@ -6,6 +6,7 @@ ajouté, modifié et supprimé, les tests, les fichiers et les commits. Ce somma
 
 | Date       | Changement                                                                                                               | Type          | Branche                      |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------ | ------------- | ---------------------------- |
+| 2026-10-01 | [Les dossiers se synchronisent](journal/2026-10-01-fix-synchro-dossiers.md)                                              | correction    | `fix/synchro-dossiers`       |
 | 2026-10-01 | [Une version de test à chaque push, et l'app qui se met à jour seule](journal/2026-10-01-feat-mises-a-jour.md)           | nouveauté     | `feat/mises-a-jour`          |
 | 2026-10-01 | [Écrire ensemble en temps réel](journal/2026-10-01-feat-synchro-direct.md)                                               | nouveauté     | `feat/synchro-direct`        |
 | 2026-10-01 | [Plus d'artifacts, et des règles pour économiser les tokens](journal/2026-10-01-docs-economie.md)                        | documentation | `docs/economie`              |
