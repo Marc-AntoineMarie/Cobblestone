@@ -1,5 +1,6 @@
 import { mkdir, rm } from 'node:fs/promises';
 import path from 'node:path';
+import { createRelay } from '../../apps/relay/src/relay';
 import { expect, recette } from './lib/recette';
 import { askToJoin, pair, syncPopover, syncStatus, twoDevices } from './lib/sync';
 import { baseVault } from './lib/vaults';
@@ -210,10 +211,12 @@ recette(
   async ({ app, ui }) => {
     await app.start({ vault: baseVault() });
     const settings = await ui.settings();
-    await expect(settings.locator('[data-section="sync"]')).toContainText('La synchronisation arrive dans l’app web');
+    const section = settings.locator('[data-section="sync"]');
+    await expect(section.getByRole('button', { name: 'Ajouter un appareil' })).toBeVisible();
+    await expect(section.getByRole('switch', { name: 'Synchroniser par Internet' })).toHaveAttribute('aria-checked', 'true');
+    await expect(section.getByRole('textbox', { name: 'Adresse du relais' })).toBeVisible();
     await ui.switchVault();
-    await expect(ui.launcher).toBeVisible();
-    await expect(ui.page.getByRole('button', { name: /Recevoir un coffre/ })).toHaveCount(0);
+    await expect(ui.page.getByRole('button', { name: /Recevoir un coffre/ })).toBeVisible();
   },
   { seulement: ['web'] },
 );
@@ -252,3 +255,24 @@ recette('31.17', async ({ app, ui }, testInfo) => {
   });
 });
 recette.manuel('31.18', 'remplir un disque pour de vrai ; le cas est couvert par vault-sync.test.ts');
+
+recette('31.19', async ({ app, ui }, testInfo) => {
+  const relay = await createRelay({ port: 0, host: '127.0.0.1' });
+  try {
+    const storage = { 'sync:relay': { enabled: true, url: `ws://127.0.0.1:${relay.port}` } };
+    await twoDevices(
+      { app, ui },
+      baseVault(),
+      testInfo,
+      async (a, b) => {
+        await pair(a, b);
+        await expect.poll(() => b.app.readOr('Idées.md'), { timeout: 20_000 }).toContain('Une idée');
+        await a.app.write('Par Internet.md', 'passée par le relais');
+        await expect.poll(() => b.app.readOr('Par Internet.md'), { timeout: 20_000 }).toBe('passée par le relais');
+      },
+      { env: { COBBLESTONE_LAN_OFF: '1' }, storage },
+    );
+  } finally {
+    await relay.close();
+  }
+});

@@ -13,14 +13,23 @@ export interface Device {
  * that tests running side by side do not meet. The first opens `files`; the
  * second waits on its start screen. `body` gets both; the second closes after.
  */
-export async function twoDevices(first: Device, files: Files, testInfo: TestInfo, body: (a: Device, b: Device) => Promise<void>) {
+export async function twoDevices(
+  first: Device,
+  files: Files,
+  testInfo: TestInfo,
+  body: (a: Device, b: Device) => Promise<void>,
+  more: { env?: Record<string, string>; storage?: Record<string, unknown> } = {},
+) {
   // Two apps, a pairing and more: longer than a single app's test.
   testInfo.setTimeout(testInfo.timeout * 3);
-  const env = { COBBLESTONE_LAN_PORT: String(48_000 + ((testInfo.workerIndex * 97 + testInfo.retry * 13 + Date.now()) % 1500)) };
-  await first.app.start({ vault: files, env });
+  const env: Record<string, string> = {
+    COBBLESTONE_LAN_PORT: String(48_000 + ((testInfo.workerIndex * 97 + testInfo.retry * 13 + Date.now()) % 1500)),
+  };
+  Object.assign(env, more.env);
+  await first.app.start({ vault: files, env, storage: more.storage });
   const app = new Cobble('bureau', null);
   try {
-    await app.start({ vault: null, env });
+    await app.start({ vault: null, env, storage: more.storage });
     // Two windows on one screen: the one behind would stop drawing (no animation frames) and look stuck.
     for (const device of [first.app, app]) {
       await device.electron.evaluate(({ BrowserWindow }) =>
