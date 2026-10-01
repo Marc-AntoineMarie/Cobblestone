@@ -19,14 +19,20 @@ appareil a sa copie.
   rattrapage de ce qui a changé app fermée. Testé entre appareils simulés en mémoire.
 - **Fait** : le chiffrement et l'appairage (voir le journal, `feat/synchro-chiffrement`) : clé par
   appareil, sessions chiffrées de bout en bout, appairage par un code de neuf caractères.
+- **Fait** : la synchronisation par Internet, par un relais (voir le journal, `feat/synchro-internet`),
+  web compris.
 - **Fait** : l'écriture en temps réel (voir le journal, `feat/synchro-direct`), curseurs compris.
 - **Fait** : l'interface (voir le journal, `feat/synchro-interface`) : Réglages › Synchronisation,
   ajout d'un appareil, « Recevoir un coffre », barre d'état ; recette 31 avec deux apps réelles.
 - **Fait** : le réseau local (voir le journal, `feat/synchro-reseau-local`) : les apps de bureau se
   trouvent et se relient sans serveur ; appairage, reconnexion, retrait d'un appareil.
 - **À faire, dans l'ordre** :
-  1. Transport WebRTC par Internet et pour l'app web, avec un petit service de mise en relation
-     auto-hébergeable ; un relais chiffré pour synchroniser quand l'autre appareil est éteint.
+  1. **Adresse du relais officiel** : le sous-domaine de l'utilisateur sur son VPS, à mettre dans
+     `DEFAULT_RELAY` (packages/app/src/sync.ts) une fois le relais installé (docs/RELAIS.md).
+  2. Comptes (facultatifs) : se connecter sur un nouvel appareil le relie à ses autres appareils (avec
+     consentement) et synchronise ses coffres d'emblée ; puis le partage (section dédiée).
+  3. WebRTC pour aller en direct quand c'est possible ; relais qui garde les données chiffrées pour un
+     appareil éteint.
 - Options de la maquette pas encore faites : dossiers qui restent sur l'appareil, pièces jointes
   (oui/non, taille maximale), réglages du coffre (`.cobblestone/`, pas synchronisé aujourd'hui),
   service de mise en relation personnalisé, option pour masquer les curseurs des autres appareils.
@@ -34,7 +40,7 @@ appareil a sa copie.
 - Historique des versions de chaque note.
 - Retirer un appareil le refuse aux sessions, mais il garde les notes déjà reçues ; quand un relais
   gardera des données chiffrées, il faudra changer la clé du coffre au retrait d'un appareil.
-- **À décider** : où héberger le service de mise en relation et le relais officiels.
+- **Décidé** : le relais officiel tourne sur le VPS de l'utilisateur, sous un sous-domaine à lui.
 
 ### Partage avec d'autres personnes — à décider (après la synchronisation)
 
