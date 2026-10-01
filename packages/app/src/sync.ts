@@ -3,6 +3,8 @@ import type { Vault } from '@cobblestone/core';
 import {
   AdapterSyncStore,
   createIdentity,
+  fromBase64,
+  toBase64,
   PAIRING_LIFETIME,
   receiveVault,
   SyncNode,
@@ -15,6 +17,8 @@ import {
   type SyncChannel,
   type VaultTicket,
 } from '@cobblestone/sync';
+import * as Y from 'yjs';
+import type { LiveSource, RemoteCursor } from './editor/collab';
 import { t } from './i18n';
 import type { Platform, VaultEntry } from './platform';
 
@@ -161,7 +165,12 @@ export class SyncController {
     if (this.disposed) return void node.stop();
     this.node = node;
     await this.saveRecord();
-    this.offNode = node.subscribe(() => this.refresh());
+    const offPresence = node.onPresence(() => this.cursorListeners.forEach((l) => l()));
+    const offRefresh = node.subscribe(() => this.refresh());
+    this.offNode = () => {
+      offPresence();
+      offRefresh();
+    };
     this.timer = setInterval(() => this.refresh(), 1000);
   }
 
@@ -255,6 +264,69 @@ export class SyncController {
 
   removeDevice(id: string) {
     this.node?.removeDevice(id);
+  }
+
+  // ------------------------------------------------------------ writing together
+
+  private readonly cursorListeners = new Set<() => void>();
+  /** The editor whose cursor the other devices see. */
+  private publisher: object | null = null;
+
+  /** What an editor of `path` works on, to write together with the other devices. */
+  liveSource(path: () => string): LiveSource {
+    const token = {};
+    return {
+      text: () => this.node?.sync.textAt(path()) ?? null,
+      edit: (apply) => (this.node ? this.node.sync.change(apply) : apply()),
+      own: (origin) => this.node?.sync.isOwn(origin) ?? true,
+      cursors: () => this.cursorsIn(path()),
+      subscribe: (listener) => {
+        this.cursorListeners.add(listener);
+        return () => void this.cursorListeners.delete(listener);
+      },
+      publish: (anchor, head) => {
+        const node = this.node;
+        const text = node?.sync.textAt(path());
+        const entry = node?.sync.entryAt(path());
+        if (!node || !text || !entry) return;
+        const at = (index: number) => toBase64(Y.encodeRelativePosition(Y.createRelativePositionFromTypeIndex(text, index)));
+        this.publisher = token;
+        node.publishPresence(new TextEncoder().encode(JSON.stringify({ entry, anchor: at(anchor), head: at(head) })));
+      },
+      saving: (text) => {
+        if (this.node?.sync.textAt(path())) this.node.sync.expectWrite(path(), text);
+      },
+      leave: () => {
+        if (this.publisher !== token) return;
+        this.publisher = null;
+        this.node?.publishPresence(null);
+      },
+    };
+  }
+
+  private cursorsIn(path: string): RemoteCursor[] {
+    const node = this.node;
+    const entry = node?.sync.entryAt(path);
+    if (!node || !entry) return [];
+    const devices = node.devices();
+    const cursors: RemoteCursor[] = [];
+    for (const [device, data] of node.presences()) {
+      const info = devices.find((d) => d.id === device && !d.removed);
+      if (!info) continue;
+      try {
+        const where = JSON.parse(new TextDecoder().decode(data)) as { entry: string; anchor: string; head: string };
+        if (where.entry !== entry) continue;
+        const at = (rel: string) =>
+          Y.createAbsolutePositionFromRelativePosition(Y.decodeRelativePosition(fromBase64(rel)), node.model.doc)?.index;
+        const anchor = at(where.anchor);
+        const head = at(where.head);
+        if (anchor === undefined || head === undefined) continue;
+        cursors.push({ device, name: info.name, ink: parseInt(device.slice(0, 4), 16) % 5, anchor, head });
+      } catch {
+        // Another device's presence that cannot be read: not shown.
+      }
+    }
+    return cursors;
   }
 
   /** The name other devices know this one by. */

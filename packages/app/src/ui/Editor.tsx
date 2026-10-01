@@ -86,6 +86,7 @@ export function Editor({ path, tabId, mode, subpath, onView }: Props) {
   const viewRef = useRef<EditorView | null>(null);
   const pathRef = useRef(path);
   const pending = useRef<{ timer: ReturnType<typeof setTimeout>; text: string } | null>(null);
+  const live = useRef(session.sync.liveSource(() => pathRef.current));
   /** The note could not be read: no editor, so nothing empty can be saved over it. */
   const [failure, setFailure] = useState<string | null>(null);
   pathRef.current = path;
@@ -96,6 +97,7 @@ export function Editor({ path, tabId, mode, subpath, onView }: Props) {
     if (!job) return;
     clearTimeout(job.timer);
     pending.current = null;
+    live.current.saving(job.text);
     session.saveText(pathRef.current, job.text, leaving);
   };
 
@@ -111,6 +113,7 @@ export function Editor({ path, tabId, mode, subpath, onView }: Props) {
           host: createHost(session, pathRef),
           mode,
           spellcheck,
+          live: live.current,
           onChange: (next) => {
             if (pending.current) clearTimeout(pending.current.timer);
             pending.current = { text: next, timer: setTimeout(() => flush(), 350) };

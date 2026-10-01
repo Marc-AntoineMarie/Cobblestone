@@ -12,6 +12,7 @@ import { insertWikiLink, toggleTask, toggleWrap } from './commands';
 import { editorHost, type EditorHost } from './host';
 import { livePreview, sourceDecorations } from './live-preview';
 import { obsidianMarkdown, ofmTags } from './ofm-syntax';
+import { liveText, type LiveSource } from './collab';
 
 /** Token classes; colours live in the stylesheet so both paper stocks theme them. */
 const highlight = HighlightStyle.define([
@@ -52,6 +53,8 @@ export interface EditorOptions {
   onChange?: (text: string) => void;
   /** App-level shortcuts (bold, italic...) resolved to editor actions. */
   extraKeys?: KeyBinding[];
+  /** Writing together with the vault's other devices. */
+  live?: LiveSource;
 }
 
 export const modeCompartment = new Compartment();
@@ -141,6 +144,7 @@ export function createEditorState(doc: string, options: EditorOptions): EditorSt
       EditorView.updateListener.of((update) => {
         if (update.docChanged) options.onChange?.(update.state.doc.toString());
       }),
+      options.live ? liveText(options.live) : [],
     ],
   });
 }
