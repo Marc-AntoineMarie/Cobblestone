@@ -19,9 +19,21 @@ export interface Network {
   connect(address: string, tag: string): Promise<ByteChannel>;
   /** Asks the devices around to announce themselves now. */
   search(): void;
+  /**
+   * Hears of devices that announce a tag without announcing it: a relay only
+   * tells a device about the tags it listens for or watches.
+   */
+  watch?(tag: string): () => void;
 }
 
-export const PAIRING_TAG = 'pairing';
+/**
+ * The tag of a pairing in progress, from the first three symbols of its code:
+ * a relay brings the right devices together without learning the code (the
+ * rest, 30 bits, is proven by CPace, three tries at most).
+ */
+export function pairingTag(code: string): string {
+  return `pairing-${bytesToHex(hash(utf8(`cobblestone pairing tag ${code.slice(0, 3)}`))).slice(0, 12)}`;
+}
 
 export function vaultTag(syncId: string): string {
   return `vault-${bytesToHex(hash(utf8(`cobblestone vault ${syncId}`))).slice(0, 24)}`;

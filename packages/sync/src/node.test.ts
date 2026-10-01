@@ -220,7 +220,8 @@ describe('SyncNode', () => {
     const pairing = a.node.startPairing(async () => true);
     for (let i = 0; i < 3; i++) {
       const identity = createIdentity(`Faux ${i}`, 'desktop');
-      await expect(receiveVault(hub.node(identity.id), identity, 'AAAAAAAAA', { timeout: 200 })).rejects.toMatchObject({
+      const wrong = pairing.code.slice(0, 3) + (pairing.code.endsWith('A') ? 'BBBBBB' : 'AAAAAA');
+      await expect(receiveVault(hub.node(identity.id), identity, wrong, { timeout: 200 })).rejects.toMatchObject({
         code: 'wrong-code',
       });
     }

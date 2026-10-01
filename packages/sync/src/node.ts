@@ -2,7 +2,7 @@ import type { Vault } from '@cobblestone/core';
 import { SyncRefusal, type ByteChannel } from './channel';
 import { publicInfo, type DeviceIdentity, type DeviceInfo } from './identity';
 import { newId } from './model';
-import { PAIRING_TAG, vaultTag, type Network } from './network';
+import { pairingTag, vaultTag, type Network } from './network';
 import { hostPairing, joinPairing, pairingCode, type VaultTicket } from './pairing';
 import type { SyncChannel } from './protocol';
 import { acceptSession, openSession } from './session';
@@ -318,9 +318,9 @@ export class SyncNode {
     };
     const timer = setTimeout(() => finish(new SyncRefusal('timeout')), PAIRING_LIFETIME);
     const stops = [
-      network.listen(PAIRING_TAG),
+      network.listen(pairingTag(code)),
       network.onIncoming((link, tag) => {
-        if (tag !== PAIRING_TAG) return;
+        if (tag !== pairingTag(code)) return;
         if (settled || busy) return link.close();
         busy = true;
         hostPairing(link, { code, identity, vault: { id: this.syncId, name: vault.name }, approve })
@@ -359,17 +359,20 @@ export function receiveVault(
     const finish = (error: Error | null, joined?: Awaited<ReturnType<typeof joinPairing>>) => {
       if (settled) return joined?.channel.close();
       settled = true;
-      off();
+      offFound();
+      unwatch();
       clearTimeout(timer);
       if (error) reject(error);
       else resolve(joined!);
     };
-    let timer = setTimeout(() => finish(lastError), options.timeout ?? 30_000);
-    const off = network.onFound(async (tag, address) => {
-      if (tag !== PAIRING_TAG || settled || tried.has(address)) return;
+    let timer = setTimeout(() => finish(lastError), options.timeout ?? 15_000);
+    const wanted = pairingTag(code);
+    const unwatch = network.watch?.(wanted) ?? (() => {});
+    const offFound = network.onFound(async (tag, address) => {
+      if (tag !== wanted || settled || tried.has(address)) return;
       tried.add(address);
       try {
-        const link = await network.connect(address, PAIRING_TAG);
+        const link = await network.connect(address, wanted);
         const joined = await joinPairing(link, {
           code,
           identity,
