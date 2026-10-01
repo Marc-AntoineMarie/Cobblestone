@@ -23,7 +23,7 @@ import { Block } from './settings-parts';
 import { ago, DeviceIcon } from './SyncStatus';
 
 const KEYWORDS = 'compte account e-mail email mot de passe password connexion login inscription';
-const ERRORS = ['invalid', 'weak', 'exists', 'wrong', 'unverified', 'expired', 'slow-down', 'offline', 'no-server'];
+const ERRORS = ['invalid', 'weak', 'exists', 'wrong', 'unverified', 'expired', 'slow-down', 'offline', 'no-server', 'mail'];
 
 type Mode = 'signin' | 'signup' | 'verify' | 'forgot' | 'reset';
 

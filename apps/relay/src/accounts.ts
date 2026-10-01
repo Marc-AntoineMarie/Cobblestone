@@ -58,7 +58,7 @@ export interface Mailer {
   send(to: string, subject: string, text: string): Promise<void>;
 }
 
-type AccountErrorCode = 'invalid' | 'exists' | 'unknown' | 'wrong' | 'unverified' | 'expired' | 'slow-down' | 'weak';
+type AccountErrorCode = 'invalid' | 'exists' | 'unknown' | 'wrong' | 'unverified' | 'expired' | 'slow-down' | 'weak' | 'mail';
 
 export class AccountError extends Error {
   readonly code: AccountErrorCode;
@@ -170,11 +170,17 @@ export class Accounts {
       purpose === 'verify'
         ? `Ton code pour activer ton compte Cobblestone : ${code}\n\nIl est valable 15 minutes. Si tu n'as pas créé de compte, ignore ce message.`
         : `Ton code pour choisir un nouveau mot de passe Cobblestone : ${code}\n\nIl est valable 15 minutes. Si tu n'as rien demandé, ignore ce message : ton mot de passe ne change pas.`;
-    await this.mailer.send(
-      account.email,
-      purpose === 'verify' ? 'Ton code Cobblestone' : 'Nouveau mot de passe Cobblestone',
-      text,
-    );
+    try {
+      await this.mailer.send(
+        account.email,
+        purpose === 'verify' ? 'Ton code Cobblestone' : 'Nouveau mot de passe Cobblestone',
+        text,
+      );
+    } catch (error) {
+      // Logged for whoever runs the server (wrong SMTP settings…); the device hears that the e-mail did not leave.
+      console.error('Mail', error);
+      throw new AccountError('mail');
+    }
   }
 
   private takeCode(account: Account, code: unknown, purpose: Code['purpose']) {
