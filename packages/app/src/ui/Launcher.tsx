@@ -6,6 +6,7 @@ import type { Platform, VaultEntry } from '../platform';
 import { LostVault } from './LostVault';
 import { Mark } from './Mark';
 import { ReceiveVault } from './ReceiveVault';
+import { AccountOffers } from './AccountOffers';
 
 interface Props {
   platform: Platform;
@@ -192,6 +193,8 @@ export function Launcher({ platform, opening, progress, onCancelOpening, error, 
             </p>
           )
         )}
+
+        <AccountOffers platform={platform} onOpen={open} />
 
         <section className="launcher-recent" aria-labelledby="recent-title">
           <h2 id="recent-title" className="label">

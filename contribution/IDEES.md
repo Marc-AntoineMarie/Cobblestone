@@ -19,6 +19,9 @@ appareil a sa copie.
   rattrapage de ce qui a changé app fermée. Testé entre appareils simulés en mémoire.
 - **Fait** : le chiffrement et l'appairage (voir le journal, `feat/synchro-chiffrement`) : clé par
   appareil, sessions chiffrées de bout en bout, appairage par un code de neuf caractères.
+- **Fait** : les comptes (voir le journal, `feat/comptes-serveur`, `feat/comptes-app`,
+  `feat/comptes-appareils`) : un nouvel appareil se connecte, un autre l'autorise après comparaison d'un
+  code, et il reçoit les coffres proposés au compte (choix coffre par coffre).
 - **Fait** : la synchronisation par Internet, par un relais (voir le journal, `feat/synchro-internet`),
   web compris.
 - **Fait** : l'écriture en temps réel (voir le journal, `feat/synchro-direct`), curseurs compris.
@@ -27,9 +30,11 @@ appareil a sa copie.
 - **Fait** : le réseau local (voir le journal, `feat/synchro-reseau-local`) : les apps de bureau se
   trouvent et se relient sans serveur ; appairage, reconnexion, retrait d'un appareil.
 - **À faire, dans l'ordre** :
-  1. Comptes (facultatifs) : se connecter sur un nouvel appareil le relie à ses autres appareils (avec
-     consentement) et synchronise ses coffres d'emblée ; puis le partage (section dédiée).
-  2. WebRTC pour aller en direct quand c'est possible ; relais qui garde les données chiffrées pour un
+  1. Synchroniser en arrière-plan tous les coffres proposés au compte, même fermés (aujourd'hui, un
+     coffre ne s'échange que s'il est ouvert sur un appareil) ; recevoir automatiquement les coffres du
+     compte dans un dossier par défaut (option).
+  2. Le partage avec d'autres personnes (section dédiée).
+  3. WebRTC pour aller en direct quand c'est possible ; relais qui garde les données chiffrées pour un
      appareil éteint.
 - Options de la maquette pas encore faites : dossiers qui restent sur l'appareil, pièces jointes
   (oui/non, taille maximale), réglages du coffre (`.cobblestone/`, pas synchronisé aujourd'hui),

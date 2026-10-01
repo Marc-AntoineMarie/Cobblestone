@@ -317,6 +317,7 @@ export class VaultSync {
         return;
       case 'blob-missing':
       case 'presence':
+      case 'account':
         return;
     }
   }

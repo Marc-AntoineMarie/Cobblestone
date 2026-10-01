@@ -3,6 +3,7 @@ import { Info, Lock, Pause, Play, Plus, Power, TriangleAlert, Wifi } from 'lucid
 import { stem } from '@cobblestone/core';
 import type { DeviceStatus } from '@cobblestone/sync';
 import { t } from '../i18n';
+import { currentAccount, onAccountChange } from '../account';
 import { relaySettings, setRelaySettings, type RelaySettings, type SyncState } from '../sync';
 import { useSession, useStore } from './hooks';
 import { Block, Row, Toggle } from './settings-parts';
@@ -55,6 +56,7 @@ function FirstTime() {
         </div>
       </Block>
       <DeviceNameRow />
+      <AccountRow />
       <InternetRows />
       <Block title={t('sync.know')} keywords={KEYWORDS}>
         <ul className="sync-know">
@@ -102,6 +104,32 @@ function SyncPicture() {
       <rect x="144" y="51" width="14" height="10" rx="2" className="sync-picture-stand" />
       <path d="M147 51v-3a4 4 0 0 1 8 0v3" className="sync-picture-stand" />
     </svg>
+  );
+}
+
+/** Signed in: whether this vault goes to the account's other devices. */
+function AccountRow() {
+  const session = useSession();
+  const [signedIn, setSignedIn] = useState(false);
+  const [offered, setOffered] = useState<boolean | null>(null);
+  useEffect(() => {
+    void currentAccount(session.platform).then((a) => setSignedIn(!!a));
+    void session.sync.offeredToAccount().then(setOffered);
+    return onAccountChange((a) => setSignedIn(!!a));
+  }, [session]);
+  if (!signedIn || offered === null) return null;
+  return (
+    <Row label={t('sync.account')} hint={t('sync.account.hint')} keywords={`${KEYWORDS} compte account`}>
+      <Toggle
+        id="sync-account"
+        checked={offered}
+        label={t('sync.account')}
+        onChange={(next) => {
+          setOffered(next);
+          void session.sync.offerToAccount(next);
+        }}
+      />
+    </Row>
   );
 }
 
@@ -216,6 +244,7 @@ function SyncedVault({ state }: { state: SyncState }) {
           {t('sync.networkNote')}
         </p>
       </Block>
+      <AccountRow />
       <InternetRows />
     </>
   );

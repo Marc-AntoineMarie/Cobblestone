@@ -4,6 +4,7 @@ import { mkdtemp } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { Accounts } from '../../apps/relay/src/accounts';
 import { createRelay } from '../../apps/relay/src/relay';
+import { createIdentity } from '../../packages/sync/src/identity';
 import { expect, recette } from './lib/recette';
 import { askToJoin, pair, syncPopover, syncStatus, twoDevices } from './lib/sync';
 import { baseVault } from './lib/vaults';
@@ -306,3 +307,55 @@ recette('31.20', async ({ app, ui }) => {
 });
 
 recette.manuel('31.21', 'il faut une vraie boîte e-mail (Brevo) ; le serveur est couvert par accounts.test.ts');
+
+recette('31.22', async ({ app, ui }, testInfo) => {
+  const mails: string[] = [];
+  const accounts = await Accounts.open(path.join(await mkdtemp(path.join(tmpdir(), 'comptes-')), 'accounts.json'), {
+    send: async (_to, _subject, text) => void mails.push(text),
+  });
+  const relay = await createRelay({ port: 0, host: '127.0.0.1', accounts });
+  try {
+    const info = ({ id, name, kind, publicKey }: ReturnType<typeof createIdentity>) => ({ id, name, kind, publicKey });
+    const laptop = createIdentity('PC portable', 'desktop');
+    const desktop = createIdentity('PC fixe', 'desktop');
+    await accounts.signup('lea@exemple.fr', 'un mot de passe solide', 'ip');
+    const tokenA = await accounts.verify('lea@exemple.fr', /(\d{6})/.exec(mails.at(-1)!)![1]!, info(laptop));
+    const tokenB = await accounts.login('lea@exemple.fr', 'un mot de passe solide', info(desktop), 'ip');
+    const server = `http://127.0.0.1:${relay.port}`;
+    const common = { 'sync:relay': { enabled: true, url: `ws://127.0.0.1:${relay.port}` } };
+    await twoDevices(
+      { app, ui },
+      baseVault(),
+      testInfo,
+      async (a, b) => {
+        const dialog = a.ui.page.getByRole('dialog', { name: 'Un nouvel appareil sur ton compte' });
+        await expect(dialog).toContainText('PC fixe', { timeout: 30_000 });
+        const shown = (await dialog.locator('.pair-code').innerText()).replace(/\s/g, '');
+        await expect(b.ui.page.locator('.link-check')).toHaveText(/\d{3} \d{3}/);
+        expect((await b.ui.page.locator('.link-check').innerText()).replace(/\s/g, '')).toBe(shown);
+        await dialog.getByRole('button', { name: 'Autoriser PC fixe' }).click();
+        const offers = b.ui.page.locator('.account-offers');
+        await expect(offers).toContainText('Coffre', { timeout: 20_000 });
+        const where = await b.app.folder('reçus');
+        await b.app.answerFolderDialog(where);
+        await expect(b.ui.page.locator('.dialog-backdrop')).toHaveCount(0);
+        await offers.getByRole('button', { name: /Recevoir/ }).click();
+        await b.ui.page.locator('.workbench').waitFor();
+        b.app.root = path.join(where, 'Coffre');
+        await expect.poll(() => b.app.readOr('Idées.md'), { timeout: 30_000 }).toContain('Une idée');
+      },
+      {
+        env: { COBBLESTONE_LAN_OFF: '1' },
+        storage: {
+          ...common,
+          'sync:identity': laptop,
+          account: { email: 'lea@exemple.fr', token: tokenA, server },
+          'sync:vaults': { v1: { syncId: 'coffre-de-lea', account: true, name: 'Coffre' } },
+        },
+        secondStorage: { ...common, 'sync:identity': desktop, account: { email: 'lea@exemple.fr', token: tokenB, server } },
+      },
+    );
+  } finally {
+    await relay.close();
+  }
+});

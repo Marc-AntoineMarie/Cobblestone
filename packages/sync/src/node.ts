@@ -26,9 +26,11 @@ export interface SyncNodeOptions {
    * knows nothing of them (its saved state was lost), so that the devices
    * still find each other and merge again.
    */
-  known?: Pick<DeviceInfo, 'id' | 'publicKey'>[];
+  known?: KnownDevice[] | (() => KnownDevice[]);
   saveDelay?: number;
 }
+
+export type KnownDevice = Pick<DeviceInfo, 'id' | 'publicKey'> & Partial<DeviceInfo>;
 
 export interface DeviceStatus extends DeviceInfo {
   removed: boolean;
@@ -181,8 +183,13 @@ export class SyncNode {
   private readonly trusts = (id: string, publicKey: string) => {
     if (id === this.options.identity.id) return false;
     if (this.model.devices.has(id)) return this.model.trusts(id, publicKey);
-    return this.options.known?.some((d) => d.id === id && d.publicKey === publicKey) ?? false;
+    return this.knownDevices().some((d) => d.id === id && d.publicKey === publicKey);
   };
+
+  private knownDevices(): KnownDevice[] {
+    const known = this.options.known;
+    return typeof known === 'function' ? known() : (known ?? []);
+  }
 
   private readonly isRemoved = (id: string) => this.model.devices.get(id)?.removed === true;
 
@@ -232,6 +239,13 @@ export class SyncNode {
       existing.channel.close();
     }
     this.sessions.set(peer, { channel, initiator });
+    // A device known from outside the vault (the account) joins its list once it shows up.
+    const known = this.knownDevices().find((d) => d.id === peer);
+    if (known?.name && known.kind && !this.model.devices.has(peer)) {
+      this.sync.change(() =>
+        this.model.addDevice({ id: peer, name: known.name!, kind: known.kind!, publicKey: known.publicKey }),
+      );
+    }
     channel.onClose(() => {
       if (this.sessions.get(peer)?.channel !== channel) return;
       this.sessions.delete(peer);

@@ -115,6 +115,19 @@ describe('the relay with accounts', () => {
       stranger.ws.send(JSON.stringify({ t: 'watch', tag: 'account-of-x' }));
       await new Promise((resolve) => setTimeout(resolve, 200));
       expect(mine.heard.some((m) => m.includes('"signedIn":true'))).toBe(true);
+      // A second device of the account hears of the first, under the name "account".
+      const second = await open(
+        'b',
+        (
+          (await (await api('login', { email: 'a@b.fr', password: 'mot de passe solide', device: device('b') })).json()) as {
+            token: string;
+          }
+        ).token,
+      );
+      second.ws.send(JSON.stringify({ t: 'watch', tag: 'account' }));
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      expect(second.heard.some((m) => m.includes('"t":"found","tag":"account"'))).toBe(true);
+      second.ws.close();
       expect(stranger.heard.some((m) => m.includes('found'))).toBe(false);
       mine.ws.close();
       stranger.ws.close();
