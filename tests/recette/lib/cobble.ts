@@ -89,6 +89,8 @@ export class Cobble {
     await mkdir(this.userData, { recursive: true });
     const storage: Record<string, unknown> = {};
     if (this.options.preferences) storage.preferences = this.options.preferences;
+    // Tests stay off the official relay unless one is given.
+    storage['sync:relay'] = { enabled: false, url: '' };
     Object.assign(storage, this.options.storage);
     const recents: object[] = (this.options.recents ?? []).map((r, i) => ({
       ...r,
