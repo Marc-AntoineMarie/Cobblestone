@@ -10,7 +10,7 @@ import type { DeviceInfo, DeviceKind } from './identity';
  * copy cannot bring it back.
  */
 
-export type EntryKind = 'text' | 'binary';
+export type EntryKind = 'text' | 'binary' | 'folder';
 
 /** Extensions merged as text; everything else travels as bytes. */
 const TEXT_EXTENSIONS = new Set(['md', 'markdown', 'canvas', 'txt', 'css', 'json', 'csv', 'base', 'yaml', 'yml']);
@@ -122,10 +122,12 @@ export class VaultDoc {
   }
 
   /** Adds a file. Call inside a transaction of the right origin. */
-  add(path: string, content: { text: string } | { hash: string; size: number }, id = newId()): string {
+  add(path: string, content: { text: string } | { hash: string; size: number } | { folder: true }, id = newId()): string {
     const map = new Y.Map<unknown>();
     map.set('path', path);
-    if ('text' in content) {
+    if ('folder' in content) {
+      map.set('kind', 'folder');
+    } else if ('text' in content) {
       map.set('kind', 'text');
       map.set('text', new Y.Text(content.text));
     } else {
@@ -174,6 +176,7 @@ export class VaultDoc {
 
   private sameContent(a: Entry, b: Entry): boolean {
     if (a.kind !== b.kind) return false;
+    if (a.kind === 'folder') return true;
     if (a.kind === 'binary') return a.hash === b.hash;
     return this.text(a.id)?.toString() === this.text(b.id)?.toString();
   }

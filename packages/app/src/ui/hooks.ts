@@ -28,6 +28,7 @@ function changesOf(session: Session) {
     const counter = { count: 0 };
     const count = () => void counter.count++;
     session.vault.on('create', count);
+    session.vault.on('create-folder', count);
     session.vault.on('delete', count);
     session.vault.on('rename', count);
     session.vault.cache.on('resolved', count);
@@ -59,6 +60,7 @@ export function useVaultRevision(): number {
     };
     const offs = [
       session.vault.on('create', bump),
+      session.vault.on('create-folder', bump),
       session.vault.on('delete', bump),
       session.vault.on('rename', bump),
       session.vault.cache.on('resolved', bump),

@@ -1,3 +1,5 @@
+import { mkdir, rm } from 'node:fs/promises';
+import path from 'node:path';
 import { expect, recette } from './lib/recette';
 import { askToJoin, pair, syncPopover, syncStatus, twoDevices } from './lib/sync';
 import { baseVault } from './lib/vaults';
@@ -235,5 +237,17 @@ recette('31.16', async ({ app, ui }, testInfo) => {
     await expect.poll(() => b.ui.doc()).toContain('Au début. ');
     await expect.poll(() => a.app.readOr('Idées.md')).toMatch(/^Au début\. .*À la fin\.$/s);
     await expect.poll(() => b.app.readOr('Idées.md')).toBe(await a.app.read('Idées.md'));
+  });
+});
+
+recette('31.17', async ({ app, ui }, testInfo) => {
+  await twoDevices({ app, ui }, baseVault(), testInfo, async (a, b) => {
+    await pair(a, b);
+    await expect.poll(() => b.app.readOr('Idées.md')).toContain('Une idée');
+    await mkdir(path.join(a.app.root, 'Dossier vide'));
+    await expect.poll(() => b.app.exists('Dossier vide'), { timeout: 20_000 }).toBe(true);
+    await expect(b.ui.row('Dossier vide')).toBeVisible();
+    await rm(path.join(a.app.root, 'Dossier vide'), { recursive: true });
+    await expect.poll(() => b.app.exists('Dossier vide'), { timeout: 20_000 }).toBe(false);
   });
 });
