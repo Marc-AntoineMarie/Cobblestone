@@ -733,3 +733,4 @@ Deux apps de bureau sur le même réseau (la recette automatique lance deux apps
 - **31.19** · Bureau · auto · Deux appareils sur des réseaux différents (réseau local coupé), par le relais → Ils s'appairent et se synchronisent ; le relais ne voit que des données chiffrées.
 - **31.20** · Bureau · auto · Réglages › Compte : créer un compte, saisir le code reçu par e-mail → « Connecté en tant que … » et cet appareil dans la liste ; « Se déconnecter » revient au formulaire.
 - **31.21** · Les deux · manuel · Mot de passe oublié → Un code arrive par e-mail ; le nouveau mot de passe déconnecte tous les appareils.
+- **31.22** · Bureau · auto · Se connecter au même compte sur un nouvel appareil → Un autre appareil du compte demande de l'autoriser, avec le même code de vérification que celui affiché sur le nouveau ; une fois autorisé, le nouveau propose les coffres du compte et en reçoit un en un clic.

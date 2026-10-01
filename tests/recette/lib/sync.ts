@@ -18,7 +18,7 @@ export async function twoDevices(
   files: Files,
   testInfo: TestInfo,
   body: (a: Device, b: Device) => Promise<void>,
-  more: { env?: Record<string, string>; storage?: Record<string, unknown> } = {},
+  more: { env?: Record<string, string>; storage?: Record<string, unknown>; secondStorage?: Record<string, unknown> } = {},
 ) {
   // Two apps, a pairing and more: longer than a single app's test.
   testInfo.setTimeout(testInfo.timeout * 3);
@@ -29,7 +29,7 @@ export async function twoDevices(
   await first.app.start({ vault: files, env, storage: more.storage });
   const app = new Cobble('bureau', null);
   try {
-    await app.start({ vault: null, env, storage: more.storage });
+    await app.start({ vault: null, env, storage: more.secondStorage ?? more.storage });
     // Two windows on one screen: the one behind would stop drawing (no animation frames) and look stuck.
     for (const device of [first.app, app]) {
       await device.electron.evaluate(({ BrowserWindow }) =>
