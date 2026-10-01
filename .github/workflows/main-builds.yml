@@ -2,7 +2,9 @@ name: Version de test
 
 # À chaque push sur main (après la CI) : une pré-version « X.Y.Z-main.N » avec les installeurs Windows
 # et Linux. Les apps installées depuis une version de test la téléchargent et proposent de redémarrer.
-# Seules les 5 dernières versions de test sont gardées.
+# Seules les 5 dernières versions de test sont gardées. La dernière est aussi copiée dans la
+# pré-version fixe « main-latest », que les apps interrogent : elles passent directement à la plus
+# récente, quel que soit leur retard.
 
 on:
   push:
@@ -79,7 +81,8 @@ jobs:
         working-directory: apps/desktop
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
-        run: npx electron-builder ${{ matrix.args }} --publish never
+        # Les apps de test suivent la pré-version fixe main-latest (fournisseur « generic »).
+        run: npx electron-builder ${{ matrix.args }} --publish never --config electron-builder.main.cjs
       - name: Ajout à la pré-version
         shell: bash
         env:
@@ -91,8 +94,31 @@ jobs:
           [ ${#files[@]} -gt 0 ] || { echo "::error::Aucun installeur produit"; exit 1; }
           gh release upload "v$VERSION" "${files[@]}" --clobber
 
+  latest:
+    needs: [prepare, desktop]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - name: Copie dans main-latest
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.prepare.outputs.version }}
+        run: |
+          repo="$GITHUB_REPOSITORY"
+          mkdir assets
+          gh release download "v$VERSION" -R "$repo" -D assets
+          if ! gh release view main-latest -R "$repo" >/dev/null 2>&1; then
+            gh release create main-latest -R "$repo" --prerelease --title "Cobblestone (dernière version de test)" \
+              --notes "La dernière version construite depuis main. Les apps de test se mettent à jour depuis ici."
+          fi
+          for asset in $(gh release view main-latest -R "$repo" --json assets -q '.assets[].name'); do
+            gh release delete-asset main-latest "$asset" -R "$repo" --yes
+          done
+          gh release upload main-latest assets/* -R "$repo" --clobber
+
   cleanup:
-    needs: desktop
+    needs: latest
     runs-on: ubuntu-24.04
     permissions:
       contents: write
