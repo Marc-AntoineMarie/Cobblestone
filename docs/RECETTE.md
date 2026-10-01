@@ -731,3 +731,5 @@ Deux apps de bureau sur le même réseau (la recette automatique lance deux apps
 - **31.17** · Bureau · auto · Créer un dossier vide sur l'un, puis le supprimer → Il apparaît sur l'autre, puis en disparaît.
 - **31.18** · Bureau · manuel · Disque plein sur l'un des deux pendant une synchronisation → Barre d'état « N fichiers non écrits » et la raison dans les réglages ; une fois de la place libérée, les fichiers s'écrivent seuls.
 - **31.19** · Bureau · auto · Deux appareils sur des réseaux différents (réseau local coupé), par le relais → Ils s'appairent et se synchronisent ; le relais ne voit que des données chiffrées.
+- **31.20** · Bureau · auto · Réglages › Compte : créer un compte, saisir le code reçu par e-mail → « Connecté en tant que … » et cet appareil dans la liste ; « Se déconnecter » revient au formulaire.
+- **31.21** · Les deux · manuel · Mot de passe oublié → Un code arrive par e-mail ; le nouveau mot de passe déconnecte tous les appareils.

@@ -62,7 +62,14 @@ export function relayUrl(address: string): string | null {
 }
 
 /** This device's networks: the local one (desktop) and the relay, shared by every vault. */
-let shared: { networks: NetworkSet; relay: RelayNetwork | null; device: string } | null = null;
+let shared: { networks: NetworkSet; relay: RelayNetwork | null; device: string; token: string | null } | null = null;
+
+/** The account's session token: the relay then lets this device meet its account's other devices. */
+export function setRelayToken(token: string | null) {
+  if (!shared) return;
+  shared.token = token;
+  shared.relay?.setToken(token);
+}
 
 function applyRelay(settings: RelaySettings) {
   if (!shared) return;
@@ -72,13 +79,14 @@ function applyRelay(settings: RelaySettings) {
     shared.networks.remove(shared.relay);
     shared.relay.close();
   }
-  shared.relay = url ? new RelayNetwork(url, shared.device) : null;
+  shared.relay = url ? new RelayNetwork(url, shared.device, shared.token) : null;
   if (shared.relay) shared.networks.add(shared.relay);
 }
 
 async function deviceNetwork(platform: Platform, device: string): Promise<NetworkSet> {
   if (!shared) {
-    shared = { networks: new NetworkSet(), relay: null, device };
+    const account = await platform.storage.get<{ token: string }>('account');
+    shared = { networks: new NetworkSet(), relay: null, device, token: account?.token ?? null };
     if (platform.syncNetwork) shared.networks.add(platform.syncNetwork(device));
     applyRelay(await relaySettings(platform));
   }
