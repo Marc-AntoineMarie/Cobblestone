@@ -518,6 +518,9 @@ const en = {
   'receive.error.declined': 'The other device declined this one.',
   'receive.error.other': 'The link with the other device was lost. Try again.',
   'cmd.sync.addDevice': 'Add a device to sync this vault',
+  'update.ready': 'Version {version} is ready.',
+  'update.restart': 'Restart to update',
+  'update.later': 'Later',
 };
 
 export type MessageKey = keyof typeof en;
@@ -1047,6 +1050,9 @@ const fr: Messages = {
   'receive.error.declined': 'L’autre appareil a refusé celui-ci.',
   'receive.error.other': 'Le lien avec l’autre appareil a été perdu. Réessaie.',
   'cmd.sync.addDevice': 'Ajouter un appareil pour synchroniser ce coffre',
+  'update.ready': 'La version {version} est prête.',
+  'update.restart': 'Redémarrer pour mettre à jour',
+  'update.later': 'Plus tard',
 };
 
 export const LANGUAGES = { en: 'English', fr: 'Français' } as const;

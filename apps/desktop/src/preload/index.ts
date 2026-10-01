@@ -58,6 +58,12 @@ const api = {
       on('lan:frame', (id: string, frame: Uint8Array) => listener(id, frame)),
     onClosed: (listener: (id: string) => void) => on('lan:closed', (id: string) => listener(id)),
   },
+  updates: {
+    /** The version downloaded and ready, if any. */
+    ready: () => ipcRenderer.invoke('updates:ready') as Promise<string | null>,
+    onReady: (listener: (version: string) => void) => on('updates:ready', (version: string) => listener(version)),
+    install: () => ipcRenderer.invoke('updates:install') as Promise<void>,
+  },
   openExternal: (url: string) => ipcRenderer.invoke('shell:openExternal', url),
   reveal: (vaultId: string, path: string) => ipcRenderer.invoke('shell:reveal', vaultId, path),
   platform: process.platform,

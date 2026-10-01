@@ -322,3 +322,20 @@
   box-shadow: var(--shadow-sheet);
   animation: sheet-drop 180ms var(--ease);
 }
+
+/* A newer version is ready: a slip at the bottom right, above everything. */
+.update-ready {
+  position: fixed;
+  right: 16px;
+  bottom: 40px;
+  z-index: 95;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px 10px 14px;
+  border: 1px solid var(--rule-strong);
+  border-radius: calc(var(--radius) + 4px);
+  background: var(--paper);
+  box-shadow: var(--shadow-sheet);
+  color: var(--ink);
+}
