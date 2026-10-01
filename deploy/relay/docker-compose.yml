@@ -11,6 +11,12 @@ services:
     restart: unless-stopped
     ports:
       - '127.0.0.1:8787:8787'
+    # E-mails des comptes (Brevo) et plafond contre les abus : voir .env.example.
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      - relay_data:/app/data
   caddy:
     image: caddy:2
     profiles: [caddy]
@@ -24,4 +30,5 @@ services:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
 volumes:
+  relay_data:
   caddy_data:

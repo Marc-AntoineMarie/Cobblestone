@@ -39,7 +39,9 @@ appareil a sa copie.
 - Retirer un appareil le refuse aux sessions, mais il garde les notes déjà reçues ; quand un relais
   gardera des données chiffrées, il faudra changer la clé du coffre au retrait d'un appareil.
 - **Fait** : le relais officiel tourne sur le VPS de l'utilisateur (`cobblestone.marc-antoinemarie.com`).
-- Clé d'accès facultative pour réserver un relais à ses appareils (proposée le 1er octobre).
+- Pas de quotas pour l'instant (décision du 1er octobre) : seulement un plafond contre les abus
+  (30 Go par jour par compte ou par adresse IP). **Plus tard**, quand il y aura beaucoup d'utilisateurs :
+  réfléchir à des quotas.
 
 ### Partage avec d'autres personnes — à décider (après la synchronisation)
 
