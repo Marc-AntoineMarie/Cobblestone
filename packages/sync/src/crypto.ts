@@ -1,3 +1,4 @@
+import { x25519 } from '@noble/curves/ed25519.js';
 import { hkdf } from '@noble/hashes/hkdf.js';
 import { hmac } from '@noble/hashes/hmac.js';
 import { sha256 } from '@noble/hashes/sha2.js';
@@ -50,6 +51,37 @@ export function toBase64(bytes: Uint8Array): string {
 
 export function fromBase64(text: string): Uint8Array {
   return Uint8Array.from(atob(text), (c) => c.charCodeAt(0));
+}
+
+/**
+ * Seals a blob for a specific device using X25519 ECDH + AES-256-GCM.
+ * An ephemeral key pair is generated each time; the result is self-contained.
+ */
+export async function sealDeposit(theirPublicKey: Uint8Array, data: Uint8Array): Promise<Uint8Array> {
+  const ephem = x25519.keygen();
+  const shared = x25519.getSharedSecret(ephem.secretKey, theirPublicKey);
+  const [key] = deriveKeys(shared, new Uint8Array(32), ['cobblestone-deposit']);
+  const cipher = new FrameCipher(key!);
+  const ciphertext = await cipher.seal(data);
+  return concatBytes(ephem.publicKey, ciphertext);
+}
+
+/**
+ * Opens a deposit blob sealed with `sealDeposit` for us.
+ * Returns null when decryption fails.
+ */
+export async function openDeposit(mySecretKey: Uint8Array, blob: Uint8Array): Promise<Uint8Array | null> {
+  if (blob.length < 33) return null;
+  const ephemPub = blob.slice(0, 32);
+  const ciphertext = blob.slice(32);
+  try {
+    const shared = x25519.getSharedSecret(mySecretKey, ephemPub);
+    const [key] = deriveKeys(shared, new Uint8Array(32), ['cobblestone-deposit']);
+    const cipher = new FrameCipher(key!);
+    return await cipher.open(ciphertext);
+  } catch {
+    return null;
+  }
 }
 
 /**

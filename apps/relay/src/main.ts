@@ -10,6 +10,7 @@ const relay = await createRelay({
   host: process.env.HOST ?? '0.0.0.0',
   accounts,
   dailyCap: Number(process.env.DAILY_CAP_GB ?? 30) * 1024 ** 3,
+  storeHours: Number(process.env.RELAY_STORE_HOURS ?? 48),
 });
 console.log(`Cobblestone relay on port ${relay.port}`);
 

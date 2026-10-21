@@ -6,6 +6,7 @@ ajouté, modifié et supprimé, les tests, les fichiers et les commits. Ce somma
 
 | Date       | Changement                                                                                                                     | Type          | Branche                       |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------- | ----------------------------- |
+| 2026-10-21 | [Relay store-and-forward (dépôt pour appareils hors ligne)](journal/2026-10-21-feat-relay-store-forward.md)                    | nouveauté     | `feat/relay-store-forward`    |
 | 2026-10-21 | [Synchronisation en arrière-plan de tous les coffres du compte](journal/2026-10-21-feat-sync-arriere-plan.md)                  | nouveauté     | `feat/sync-arriere-plan`      |
 | 2026-10-21 | [Relay déplacé sur sync.cobblestone.marc-antoinemarie.com](journal/2026-10-21-fix-relay-sous-domaine.md)                       | correction    | `fix/relay-sous-domaine`      |
 | 2026-10-02 | [Les versions de test se proposent de nouveau](journal/2026-10-02-fix-mises-a-jour-canal.md)                                   | correction    | `fix/mises-a-jour-canal`      |

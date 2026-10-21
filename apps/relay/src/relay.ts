@@ -29,6 +29,11 @@ export interface RelayOptions {
   maxConnectionsPerAddress?: number;
   maxLinksPerClient?: number;
   maxTagsPerClient?: number;
+  /**
+   * How long (in hours) to keep a deposit for an offline device.
+   * Default: 48. Set to 0 to disable store-and-forward.
+   */
+  storeHours?: number;
 }
 
 interface Client {
@@ -42,6 +47,8 @@ interface Client {
   watches: Set<string>;
   links: Set<number>;
   alive: boolean;
+  /** Deposit payload currently being received (set by a 'deposit' text, consumed by next binary). */
+  pendingDeposit: { for: string } | null;
 }
 
 const DEFAULTS = {
@@ -52,6 +59,7 @@ const DEFAULTS = {
   maxLinksPerClient: 64,
   maxTagsPerClient: 64,
   dailyCap: 30 * 1024 ** 3,
+  storeHours: 48,
 };
 
 /** What a device asks for as "account": the tag of its own account's devices. */
@@ -69,6 +77,38 @@ export async function createRelay(options: RelayOptions = {}) {
   const links = new Map<number, [number, number]>();
   let nextClient = 1;
   let nextLink = 1;
+
+  // Store-and-forward: mailbox[to][from] = {data, expires}
+  type MailEntry = { data: Buffer; expires: number };
+  const mailboxes = new Map<string, Map<string, MailEntry>>();
+
+  const storeMs = config.storeHours * 3_600_000;
+
+  /** Delivers all non-expired deposits to a newly connected client. */
+  const deliverDeposits = (client: Client) => {
+    if (!storeMs || !client.device) return;
+    const box = mailboxes.get(client.device);
+    if (!box) return;
+    const now = Date.now();
+    for (const [from, entry] of [...box.entries()]) {
+      if (entry.expires <= now) {
+        box.delete(from);
+        continue;
+      }
+      send(client, { t: 'deposited', from });
+      client.socket.send(entry.data);
+    }
+  };
+
+  // Periodic cleanup of expired deposits.
+  const cleanupDeposits = setInterval(() => {
+    const now = Date.now();
+    for (const [to, box] of mailboxes) {
+      for (const [from, entry] of box) if (entry.expires <= now) box.delete(from);
+      if (!box.size) mailboxes.delete(to);
+    }
+  }, 3_600_000);
+  cleanupDeposits.unref();
 
   const traffic = new Map<string, number>();
   let day = new Date().toDateString();
@@ -143,6 +183,7 @@ export async function createRelay(options: RelayOptions = {}) {
         // The account's session belongs to this very device.
         client.account = session && session.device.id === client.device ? session.account : null;
         send(client, { t: 'account', signedIn: !!client.account });
+        deliverDeposits(client);
         return;
       }
       case 'listen':
@@ -180,10 +221,38 @@ export async function createRelay(options: RelayOptions = {}) {
       case 'close':
         if (client.links.has(Number(message.link))) closeLink(Number(message.link));
         return;
+      case 'deposit': {
+        if (!storeMs) return;
+        const forDevice = typeof message.for === 'string' && /^[0-9a-f]{16}$/.test(message.for) ? message.for : null;
+        if (forDevice && client.device) client.pendingDeposit = { for: forDevice };
+        return;
+      }
     }
   };
 
   const onBinary = (client: Client, data: Buffer) => {
+    // Consume a pending deposit announced by a 'deposit' text message.
+    if (client.pendingDeposit) {
+      const { for: forDevice } = client.pendingDeposit;
+      client.pendingDeposit = null;
+      if (storeMs && client.device && data.length > 0 && data.length <= config.maxFrame) {
+        let box = mailboxes.get(forDevice);
+        if (!box) {
+          box = new Map();
+          mailboxes.set(forDevice, box);
+        }
+        box.set(client.device, { data: Buffer.from(data), expires: Date.now() + storeMs });
+        // If the target is connected, deliver immediately.
+        for (const c of clients.values()) {
+          if (c.device === forDevice) {
+            send(c, { t: 'deposited', from: client.device });
+            c.socket.send(data);
+            break;
+          }
+        }
+      }
+      return;
+    }
     if (data.length < 4) return;
     const link = data.readUInt32BE(0);
     const ends = links.get(link);
@@ -212,6 +281,7 @@ export async function createRelay(options: RelayOptions = {}) {
       watches: new Set(),
       links: new Set(),
       alive: true,
+      pendingDeposit: null,
     };
     clients.set(client.id, client);
     send(client, { t: 'welcome', id: client.id });
@@ -248,9 +318,11 @@ export async function createRelay(options: RelayOptions = {}) {
   return {
     port: (http.address() as { port: number }).port,
     clients: () => clients.size,
+    storeHours: config.storeHours,
     close: () =>
       new Promise<void>((resolve) => {
         clearInterval(heartbeat);
+        clearInterval(cleanupDeposits);
         for (const client of clients.values()) client.socket.terminate();
         server.close();
         http.close(() => resolve());
