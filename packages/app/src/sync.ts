@@ -11,6 +11,7 @@ import {
   receiveVault,
   SyncNode,
   SyncRefusal,
+  type DepositTransport,
   type DeviceIdentity,
   type DeviceInfo,
   type DeviceStatus,
@@ -63,6 +64,18 @@ export function relayUrl(address: string): string | null {
 
 /** This device's networks: the local one (desktop) and the relay, shared by every vault. */
 let shared: { networks: NetworkSet; relay: RelayNetwork | null; device: string; token: string | null } | null = null;
+
+/** A DepositTransport backed by the current relay (lazily reads shared.relay at call time). */
+function relayDepositTransport(): DepositTransport {
+  return {
+    send(toDeviceId, sealedBlob) {
+      shared?.relay?.depositRaw(toDeviceId, sealedBlob);
+    },
+    onReceive(listener) {
+      return shared?.relay?.onDepositRaw(listener) ?? (() => {});
+    },
+  };
+}
 
 /** The account's session token: the relay then lets this device meet its account's other devices. */
 export function setRelayToken(token: string | null) {
@@ -274,6 +287,7 @@ export class SyncController {
       syncId,
       // The account's devices are trusted for a vault offered to them.
       known: () => [...this.known, ...(this.offered ? trustedCache : [])],
+      deposits: relayDepositTransport(),
     });
     await node.start(first);
     if (this.disposed) return void node.stop();
@@ -526,6 +540,7 @@ export class BackgroundSyncManager {
           network,
           syncId: record.syncId,
           known: () => [...(record.known ?? []), ...(record.account !== false ? trustedCache : [])],
+          deposits: relayDepositTransport(),
         });
         await node.start();
         this.nodes.set(entryId, node);

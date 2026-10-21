@@ -35,6 +35,14 @@ export {
 export { channelPair, decodeMessage, encodeMessage, type SyncChannel, type SyncMessage } from './protocol';
 export { AdapterSyncStore, VaultSync, type SyncStore } from './vault-sync';
 export { MemoryNetworkHub, pairingTag, vaultTag, type Network } from './network';
-export { PAIRING_LIFETIME, receiveVault, SyncNode, type DeviceStatus, type Pairing, type SyncNodeOptions } from './node';
+export {
+  PAIRING_LIFETIME,
+  receiveVault,
+  SyncNode,
+  type DepositTransport,
+  type DeviceStatus,
+  type Pairing,
+  type SyncNodeOptions,
+} from './node';
 export { NetworkSet, RelayNetwork } from './relay';
 export { AccountLink, checkCode, type AccountLinkOptions, type VaultOffer } from './account-link';

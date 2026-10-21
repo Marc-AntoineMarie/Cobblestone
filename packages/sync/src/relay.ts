@@ -62,6 +62,9 @@ export class RelayNetwork implements Network {
   private readonly pending = new Map<number, { tag: string; resolve: (link: RelayLink) => void; reject: (e: Error) => void }>();
   private readonly found = new Set<(tag: string, address: string, device: string) => void>();
   private readonly incoming = new Set<(link: ByteChannel, tag: string) => void>();
+  private readonly deposited = new Set<(from: string, blob: Uint8Array) => void>();
+  /** Device from last 'deposited' text message: the next binary frame is its payload. */
+  private pendingDepositFrom: string | null = null;
   private request = 0;
   private retry = 1_000;
   private timers: ReturnType<typeof setTimeout>[] = [];
@@ -95,6 +98,13 @@ export class RelayNetwork implements Network {
     socket.onmessage = (event) => {
       if (typeof event.data === 'string') return this.onText(event.data);
       const data = new Uint8Array(event.data as ArrayBuffer);
+      // Deposit payload: announced by a previous 'deposited' text message.
+      if (this.pendingDepositFrom) {
+        const from = this.pendingDepositFrom;
+        this.pendingDepositFrom = null;
+        this.deposited.forEach((l) => l(from, data));
+        return;
+      }
       if (data.length < 4) return;
       const id = new DataView(data.buffer, data.byteOffset).getUint32(0);
       this.links.get(id)?.receive(data.slice(4));
@@ -114,7 +124,7 @@ export class RelayNetwork implements Network {
   }
 
   private onText(data: string) {
-    let message: { t?: string; tag?: string; address?: string; device?: string; req?: number; link?: number };
+    let message: { t?: string; tag?: string; address?: string; device?: string; req?: number; link?: number; from?: string };
     try {
       message = JSON.parse(data);
     } catch {
@@ -151,6 +161,9 @@ export class RelayNetwork implements Network {
       case 'closed':
         this.links.get(message.link!)?.ended();
         this.links.delete(message.link!);
+        return;
+      case 'deposited':
+        if (typeof message.from === 'string') this.pendingDepositFrom = message.from;
         return;
     }
   }
@@ -222,6 +235,22 @@ export class RelayNetwork implements Network {
       this.pending.set(req, { tag, resolve, reject });
       this.text({ t: 'connect', req, to: Number(address.slice('relay:'.length)), tag });
     });
+  }
+
+  /** Sends an encrypted blob to be held for an offline device. */
+  depositRaw(toDeviceId: string, sealedBlob: Uint8Array) {
+    this.text({ t: 'deposit', for: toDeviceId });
+    if (this.socket?.readyState === WebSocket.OPEN) {
+      this.socket.send(
+        sealedBlob.buffer.slice(sealedBlob.byteOffset, sealedBlob.byteOffset + sealedBlob.byteLength) as ArrayBuffer,
+      );
+    }
+  }
+
+  /** Called when the relay delivers a deposit from another device. */
+  onDepositRaw(listener: (from: string, blob: Uint8Array) => void): () => void {
+    this.deposited.add(listener);
+    return () => void this.deposited.delete(listener);
   }
 
   /** Signs in or out on the relay, without leaving it. */

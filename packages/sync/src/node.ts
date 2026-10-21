@@ -1,5 +1,7 @@
+import * as Y from 'yjs';
 import type { Vault } from '@cobblestone/core';
 import { SyncRefusal, type ByteChannel } from './channel';
+import { fromBase64, openDeposit, sealDeposit } from './crypto';
 import { publicInfo, type DeviceIdentity, type DeviceInfo } from './identity';
 import { newId } from './model';
 import { pairingTag, vaultTag, type Network } from './network';
@@ -13,6 +15,12 @@ import { VaultSync, type SyncStore } from './vault-sync';
  * step (VaultSync), finds the vault's other devices on the network, opens an
  * encrypted session with each, and pairs new devices with a code.
  */
+
+/** Raw byte deposit/receive channel (e.g. a relay's store-and-forward). Encryption is done by SyncNode. */
+export interface DepositTransport {
+  send(toDeviceId: string, sealedBlob: Uint8Array): void;
+  onReceive(listener: (from: string, sealedBlob: Uint8Array) => void): () => void;
+}
 
 export interface SyncNodeOptions {
   vault: Vault;
@@ -28,6 +36,8 @@ export interface SyncNodeOptions {
    */
   known?: KnownDevice[] | (() => KnownDevice[]);
   saveDelay?: number;
+  /** Store-and-forward channel: deposit CRDT state for offline peers and receive deposits. */
+  deposits?: DepositTransport;
 }
 
 export type KnownDevice = Pick<DeviceInfo, 'id' | 'publicKey'> & Partial<DeviceInfo>;
@@ -108,6 +118,18 @@ export class SyncNode {
     };
     this.model.devices.observe(onDevices);
     this.disposers.push(() => this.model.devices.unobserve(onDevices));
+
+    // Receive deposits from the relay and apply them to the CRDT.
+    if (this.options.deposits) {
+      const off = this.options.deposits.onReceive(async (from, blob) => {
+        const device = this.model.devices.get(from);
+        if (!device || device.removed || !device.publicKey) return;
+        const plain = await openDeposit(fromBase64(this.options.identity.secretKey), blob).catch(() => null);
+        if (plain) Y.applyUpdate(this.sync.doc, plain);
+      });
+      this.disposers.push(off);
+    }
+
     this.started = true;
     this.resume();
     if (first) this.adopt(first.channel, first.peer, first.peer);
@@ -176,6 +198,21 @@ export class SyncNode {
 
   private emit() {
     this.listeners.forEach((l) => l());
+  }
+
+  private async depositFor(peerId: string) {
+    const { deposits, identity } = this.options;
+    if (!deposits) return;
+    const device = this.model.devices.get(peerId);
+    if (!device || device.removed || !device.publicKey) return;
+    try {
+      const state = Y.encodeStateAsUpdate(this.sync.doc);
+      const peerPubKey = fromBase64(device.publicKey);
+      const sealed = await sealDeposit(peerPubKey, state);
+      deposits.send(peerId, sealed);
+    } catch {
+      // Non-critical: the peer will sync normally when both are online.
+    }
   }
 
   // ------------------------------------------------------------ sessions
@@ -251,6 +288,8 @@ export class SyncNode {
       this.sessions.delete(peer);
       if (this.presence.delete(peer)) this.presenceListeners.forEach((l) => l());
       this.emit();
+      // Deposit the full CRDT state for this peer so it can get updates while we are offline.
+      void this.depositFor(peer);
     });
     this.sync.connect(this.watched(channel, peer));
     if (this.ownPresence) channel.send({ type: 'presence', data: this.ownPresence });
