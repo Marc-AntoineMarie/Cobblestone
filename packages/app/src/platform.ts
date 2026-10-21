@@ -61,6 +61,11 @@ export interface Platform {
     onReady(listener: (version: string) => void): () => void;
     install(): void;
   };
+  /**
+   * Opens a vault's storage for background sync without any user interaction or permission prompt.
+   * Returns null when the vault is not accessible without prompting (e.g. a real folder on the web).
+   */
+  openVaultSilent?(entry: VaultEntry): Promise<VaultAdapter | null>;
   /** Desktop: the local network, to sync a vault with its other devices; `device` is this device's id. */
   syncNetwork?(device: string): Network;
   openExternal(url: string): void;

@@ -13,6 +13,7 @@ import { LostVault } from './LostVault';
 import { UpdateReady } from './UpdateReady';
 import { AccountLinkDialogs } from './AccountLinkDialogs';
 import { followAccount } from '../account-link';
+import { backgroundSync } from '../sync';
 
 // The workspace (editor, index, renderers) loads only once a vault opens: the first screen stays light.
 const Workbench = lazy(() => import('./Workbench').then((m) => ({ default: m.Workbench })));
@@ -24,6 +25,11 @@ export function App({ platform }: { platform: Platform }) {
   const [session, setSession] = useState<Session | null>(null);
   // Among the account's devices while signed in.
   useEffect(() => followAccount(platform), [platform]);
+  // Sync all known vaults in the background (even while another vault is open).
+  useEffect(() => {
+    void backgroundSync.start(platform);
+    return () => backgroundSync.stop();
+  }, [platform]);
   const [opening, setOpening] = useState<VaultEntry | null>(null);
   /** Notes read so far while a vault opens. */
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);

@@ -60,6 +60,15 @@ export const desktopPlatform: Platform = {
     const { name } = (await bridge().vaults.open(entry.id)) as { name: string };
     return new IpcAdapter(entry.id, name);
   },
+  openVaultSilent: async (entry) => {
+    if (entry.kind === 'demo') return null;
+    try {
+      const { name } = (await bridge().vaults.open(entry.id)) as { name: string };
+      return new IpcAdapter(entry.id, name);
+    } catch {
+      return null;
+    }
+  },
   updates: {
     ready: () => bridge().updates.ready(),
     onReady: (listener) => bridge().updates.onReady(listener),
