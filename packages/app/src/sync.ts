@@ -1,5 +1,5 @@
 import { createStore, type StoreApi } from 'zustand/vanilla';
-import type { Vault } from '@cobblestone/core';
+import { Vault, type VaultAdapter } from '@cobblestone/core';
 import {
   AdapterSyncStore,
   createIdentity,
@@ -257,6 +257,8 @@ export class SyncController {
     this.known = record.known ?? [];
     this.offered = record.account !== false;
     await accountTrusted(this.platform);
+    // Stop the background node for this vault (if any) before starting the foreground one.
+    await backgroundSync.release(this.entry.id);
     await this.start(record.syncId, first);
     if (record.paused && !first) this.node?.pause();
     this.refresh();
@@ -484,3 +486,68 @@ export class SyncController {
     this.node = null;
   }
 }
+
+/**
+ * Syncs all vaults offered to the account while the app is open, even when
+ * they are not the currently open vault.
+ */
+export class BackgroundSyncManager {
+  private nodes = new Map<string, SyncNode>();
+  private started = false;
+
+  async start(platform: Platform): Promise<void> {
+    if (this.started || !platform.openVaultSilent) return;
+    this.started = true;
+    const allRecords = await records(platform);
+    if (!Object.keys(allRecords).length) return;
+    const allEntries = await platform.recentVaults();
+    const identity = await loadIdentity(platform);
+    await accountTrusted(platform);
+    const network = await deviceNetwork(platform, identity.id);
+
+    for (const [entryId, record] of Object.entries(allRecords)) {
+      if (record.paused) continue;
+      const entry = allEntries.find((e) => e.id === entryId);
+      if (!entry) continue;
+      let adapter: VaultAdapter | null = null;
+      try {
+        adapter = await platform.openVaultSilent!(entry);
+      } catch {
+        continue;
+      }
+      if (!adapter) continue;
+      try {
+        const vault = new Vault(adapter, {});
+        await vault.load();
+        const node = new SyncNode({
+          vault,
+          store: new AdapterSyncStore(adapter),
+          identity,
+          network,
+          syncId: record.syncId,
+          known: () => [...(record.known ?? []), ...(record.account !== false ? trustedCache : [])],
+        });
+        await node.start();
+        this.nodes.set(entryId, node);
+      } catch (e) {
+        console.error('[bg-sync] could not start for', entryId, e);
+      }
+    }
+  }
+
+  /** Stops the background node for `entryId` so the foreground session can take over. */
+  async release(entryId: string): Promise<void> {
+    const node = this.nodes.get(entryId);
+    if (!node) return;
+    this.nodes.delete(entryId);
+    await node.stop().catch(() => undefined);
+  }
+
+  stop(): void {
+    for (const node of this.nodes.values()) void node.stop().catch(() => undefined);
+    this.nodes.clear();
+    this.started = false;
+  }
+}
+
+export const backgroundSync = new BackgroundSyncManager();

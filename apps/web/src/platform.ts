@@ -129,6 +129,13 @@ export const webPlatform: Platform = {
     if (entry?.kind === 'browser') await (await browserVaultsRoot()).removeEntry(id, { recursive: true }).catch(() => undefined);
   },
 
+  async openVaultSilent(entry) {
+    if (entry.kind !== 'browser') return null;
+    const handle = await (await browserVaultsRoot()).getDirectoryHandle(entry.id, { create: false }).catch(() => null);
+    if (!handle) return null;
+    return new DirectoryHandleAdapter(handle, entry.name);
+  },
+
   openExternal(url) {
     if (/^(https?|mailto):/i.test(url)) window.open(url, '_blank', 'noopener,noreferrer');
   },
