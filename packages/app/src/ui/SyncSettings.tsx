@@ -1,10 +1,21 @@
-import { useEffect, useState, type FormEvent } from 'react';
-import { Info, Lock, Pause, Play, Plus, Power, TriangleAlert, Wifi } from 'lucide-react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { Info, Lock, Pause, Play, Plus, Power, TriangleAlert, Wifi, X } from 'lucide-react';
 import { stem } from '@cobblestone/core';
 import type { DeviceStatus } from '@cobblestone/sync';
 import { t } from '../i18n';
 import { currentAccount, onAccountChange } from '../account';
-import { relaySettings, setRelaySettings, type RelaySettings, type SyncState } from '../sync';
+import {
+  relaySettings,
+  setRelaySettings,
+  setSyncPrefs,
+  setVaultSyncOptions,
+  syncPrefs,
+  vaultSyncOptions,
+  type RelaySettings,
+  type SyncPrefs,
+  type SyncState,
+  type VaultSyncOptions,
+} from '../sync';
 import { useSession, useStore } from './hooks';
 import { Block, Row, Toggle } from './settings-parts';
 import { DeviceIcon, describeState, SyncStateText, syncSummary, useConflictCopies, useNow } from './SyncStatus';
@@ -58,6 +69,8 @@ function FirstTime() {
       <DeviceNameRow />
       <AccountRow />
       <InternetRows />
+      <CursorsRow />
+      <VaultSyncOptionsRows />
       <Block title={t('sync.know')} keywords={KEYWORDS}>
         <ul className="sync-know">
           <li>
@@ -246,6 +259,8 @@ function SyncedVault({ state }: { state: SyncState }) {
       </Block>
       <AccountRow />
       <InternetRows />
+      <CursorsRow />
+      <VaultSyncOptionsRows />
     </>
   );
 }
@@ -271,6 +286,116 @@ function Conflicts() {
         </ul>
       </div>
     </div>
+  );
+}
+
+/** Cursors toggle: device-wide preference. */
+function CursorsRow() {
+  const session = useSession();
+  const [prefs, setPrefs] = useState<SyncPrefs | null>(null);
+  useEffect(() => {
+    void syncPrefs(session.platform).then(setPrefs);
+  }, [session]);
+  if (!prefs) return null;
+  const save = (next: SyncPrefs) => {
+    setPrefs(next);
+    session.sync.showCursors = next.showCursors;
+    void setSyncPrefs(session.platform, next);
+  };
+  return (
+    <Row label={t('sync.cursors')} hint={t('sync.cursors.hint')} keywords={`${KEYWORDS} curseur cursor`}>
+      <Toggle
+        id="sync-cursors"
+        checked={prefs.showCursors}
+        label={t('sync.cursors')}
+        onChange={(showCursors) => save({ ...prefs, showCursors })}
+      />
+    </Row>
+  );
+}
+
+/** Attachments and local-only paths: per-vault options. */
+function VaultSyncOptionsRows() {
+  const session = useSession();
+  const [opts, setOpts] = useState<VaultSyncOptions | null>(null);
+  const [newPath, setNewPath] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    void vaultSyncOptions(session.platform, session.entry.id).then(setOpts);
+  }, [session]);
+  if (!opts) return null;
+  const save = (next: VaultSyncOptions) => {
+    setOpts(next);
+    void setVaultSyncOptions(session.platform, session.entry.id, next);
+  };
+  const addPath = () => {
+    const p = newPath.trim().replace(/^\/+|\/+$/g, '');
+    if (!p || opts.localPaths.includes(p)) return;
+    save({ ...opts, localPaths: [...opts.localPaths, p] });
+    setNewPath('');
+    inputRef.current?.focus();
+  };
+  return (
+    <>
+      <Row label={t('sync.attachments')} hint={t('sync.attachments.hint')} keywords={`${KEYWORDS} pièces jointes attachments`}>
+        <Toggle
+          id="sync-attachments"
+          checked={opts.syncAttachments}
+          label={t('sync.attachments')}
+          onChange={(syncAttachments) => save({ ...opts, syncAttachments })}
+        />
+      </Row>
+      {opts.syncAttachments && (
+        <Row
+          label={t('sync.attachments.max')}
+          hint={t('sync.attachments.max.hint')}
+          htmlFor="sync-attach-max"
+          keywords={`${KEYWORDS} pièces jointes attachments taille size`}
+        >
+          <span className="sync-field-unit">
+            <input
+              id="sync-attach-max"
+              type="number"
+              min={0}
+              step={1}
+              value={opts.maxAttachmentMb}
+              onChange={(e) => setOpts({ ...opts, maxAttachmentMb: Math.max(0, Math.floor(Number(e.target.value))) })}
+              onBlur={() => save(opts)}
+              onKeyDown={(e) => e.key === 'Enter' && (e.target as HTMLInputElement).blur()}
+            />
+            <span>{t('sync.attachments.max.unit')}</span>
+          </span>
+        </Row>
+      )}
+      <Row label={t('sync.localPaths')} hint={t('sync.localPaths.hint')} keywords={`${KEYWORDS} dossier local folder exclude`}>
+        <div className="sync-local-paths">
+          {opts.localPaths.map((p) => (
+            <span key={p} className="sync-local-path-tag">
+              <span>{p}</span>
+              <button
+                className="sync-local-path-remove"
+                aria-label={t('sync.localPaths.remove')}
+                onClick={() => save({ ...opts, localPaths: opts.localPaths.filter((x) => x !== p) })}
+              >
+                <X size={12} strokeWidth={2.5} aria-hidden />
+              </button>
+            </span>
+          ))}
+          <span className="sync-local-path-add">
+            <input
+              ref={inputRef}
+              value={newPath}
+              placeholder={t('sync.localPaths.placeholder')}
+              onChange={(e) => setNewPath(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && addPath()}
+            />
+            <button className="button" onClick={addPath}>
+              {t('sync.localPaths.add')}
+            </button>
+          </span>
+        </div>
+      </Row>
+    </>
   );
 }
 

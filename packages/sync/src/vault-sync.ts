@@ -70,9 +70,25 @@ export class VaultSync {
   constructor(
     private readonly vault: Vault,
     private readonly store: SyncStore,
-    private readonly options: { saveDelay?: number; retryDelay?: number } = {},
+    private readonly options: {
+      saveDelay?: number;
+      retryDelay?: number;
+      /** Paths (folders or files) this device keeps local: neither sent nor received from other devices. */
+      localPaths?: string[];
+      /** Skip receiving binary attachments entirely. */
+      skipAttachments?: boolean;
+      /** Maximum attachment size (bytes) this device will receive; larger ones are skipped. */
+      maxAttachmentBytes?: number;
+    } = {},
   ) {
     this.model = new VaultDoc();
+  }
+
+  /** Returns true if `path` is inside a locally-kept folder (not synced). */
+  private isLocal(path: string): boolean {
+    const local = this.options.localPaths;
+    if (!local?.length) return false;
+    return local.some((p) => path === p || path.startsWith(p.endsWith('/') ? p : `${p}/`));
   }
 
   get doc(): Y.Doc {
@@ -232,6 +248,7 @@ export class VaultSync {
 
   private async onLocalChange(path: string, content: string | null) {
     if (!this.vault.getFile(path)) return;
+    if (this.isLocal(path)) return;
     if (content !== null && this.writing.get(path)?.delete(content)) {
       return;
     }
@@ -259,6 +276,7 @@ export class VaultSync {
   /** A folder of this device, empty ones included. */
   private onLocalFolder(path: string) {
     if (!path || this.idOnDisk.has(path) || path.split('/').some((part) => part.startsWith('.'))) return;
+    if (this.isLocal(path)) return;
     if (!this.vault.getFolder(path)) return;
     this.doc.transact(() => this.bind(this.model.add(path, { folder: true }), path), LOCAL);
   }
@@ -406,6 +424,7 @@ export class VaultSync {
 
   /** Puts an entry's content in its file, creating it if needed; an attachment is asked for. */
   private async writeContent(entry: Entry) {
+    if (this.isLocal(entry.path)) return;
     const owner = this.idOnDisk.get(entry.path);
     if (owner !== undefined && owner !== entry.id && this.vault.exists(entry.path)) {
       const other = this.model.entry(owner);
@@ -425,6 +444,9 @@ export class VaultSync {
         await this.vault.modify(entry.path, text);
       }
     } else if (entry.hash && this.hashes.get(entry.path) !== entry.hash) {
+      const { skipAttachments, maxAttachmentBytes } = this.options;
+      if (skipAttachments) return;
+      if (maxAttachmentBytes !== undefined && entry.size !== undefined && entry.size > maxAttachmentBytes) return;
       this.wanted.set(entry.hash, entry.id);
       for (const peer of this.peers) peer.channel.send({ type: 'blob-request', hash: entry.hash });
     }
