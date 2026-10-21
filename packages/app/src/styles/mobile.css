@@ -1,0 +1,140 @@
+/* ================================================================
+   Mobile workbench — screens ≤ 767 px
+   ================================================================ */
+
+/* ---- root layout ---- */
+
+.mobile-workbench {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  width: 100%;
+  overflow: hidden;
+  background: var(--surface-1);
+}
+
+.mobile-screen {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Each screen fills the full area */
+.mobile-note-screen,
+.mobile-graph-screen,
+.mobile-settings-screen {
+  height: 100%;
+  overflow: hidden;
+}
+
+.mobile-panel-screen {
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ---- bottom navigation bar ---- */
+
+.mobile-nav {
+  display: flex;
+  align-items: stretch;
+  height: calc(56px + env(safe-area-inset-bottom));
+  padding-bottom: env(safe-area-inset-bottom);
+  background: var(--surface-1);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.mobile-nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 6px 4px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--text-3);
+  transition: color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.mobile-nav-btn.is-active {
+  color: var(--ink-1);
+}
+
+.mobile-nav-label {
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  line-height: 1;
+}
+
+/* ---- graph view on mobile: fill the screen ---- */
+
+.mobile-graph-screen .graph-view {
+  height: 100%;
+}
+
+.mobile-graph-screen .graph-view canvas {
+  touch-action: none;
+}
+
+/* ---- settings view on mobile: scroll ---- */
+
+.mobile-settings-screen .settings-view {
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ---- panels on mobile: no header drag ---- */
+
+.mobile-panel-screen .panel-slot {
+  border-bottom: 1px solid var(--border);
+}
+
+.mobile-panel-screen .panel-slot:last-child {
+  border-bottom: none;
+}
+
+/* ---- editor on mobile: larger touch targets ---- */
+
+@media (max-width: 767px) {
+  /* Slightly larger default body text on small screens */
+  .mobile-note-screen .cm-editor {
+    font-size: max(var(--body, 15px), 15px);
+  }
+
+  /* More padding around the note area for comfortable reading */
+  .mobile-note-screen .sheets {
+    padding: 0;
+  }
+
+  /* Prevent accidental zoom on double-tap of form inputs */
+  input,
+  textarea,
+  select {
+    font-size: max(16px, 1em);
+  }
+
+  /* Larger tap targets for buttons */
+  .mobile-panel-screen button,
+  .mobile-settings-screen button {
+    min-height: 40px;
+  }
+}
+
+/* ---- safe-area padding on narrow screens ---- */
+
+@supports (padding-top: env(safe-area-inset-top)) {
+  .mobile-workbench {
+    padding-top: env(safe-area-inset-top);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}

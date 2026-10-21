@@ -458,6 +458,41 @@ export function GraphView({ focus, visible }: { focus?: string; visible: boolean
       draw();
     };
 
+    // Pinch-to-zoom: track two active pointers to scale and pan.
+    const activePointers = new Map<number, { x: number; y: number }>();
+    let pinchStartDist = 0;
+    let pinchStartK = 1;
+    let pinchStartView = { ...view };
+
+    const onPinchDown = (e: PointerEvent) => {
+      activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (activePointers.size === 2) {
+        const [p0, p1] = [...activePointers.values()] as [{ x: number; y: number }, { x: number; y: number }];
+        pinchStartDist = Math.hypot(p1.x - p0.x, p1.y - p0.y);
+        pinchStartK = view.k;
+        pinchStartView = { ...view };
+      }
+    };
+    const onPinchMove = (e: PointerEvent) => {
+      if (!activePointers.has(e.pointerId)) return;
+      activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (activePointers.size !== 2) return;
+      const [p0, p1] = [...activePointers.values()] as [{ x: number; y: number }, { x: number; y: number }];
+      const dist = Math.hypot(p1.x - p0.x, p1.y - p0.y);
+      if (pinchStartDist < 1) return;
+      const scale = dist / pinchStartDist;
+      const rect = canvas.getBoundingClientRect();
+      const cx = (p0.x + p1.x) / 2 - rect.left - width / 2;
+      const cy = (p0.y + p1.y) / 2 - rect.top - height / 2;
+      const k = Math.min(5, Math.max(0.15, pinchStartK * scale));
+      view = { k, x: cx - ((cx - pinchStartView.x) * k) / pinchStartK, y: cy - ((cy - pinchStartView.y) * k) / pinchStartK };
+      userMoved = true;
+      draw();
+    };
+    const onPinchUp = (e: PointerEvent) => {
+      activePointers.delete(e.pointerId);
+    };
+
     (canvas as HTMLCanvasElement & { graphProbe?: () => GraphProbe }).graphProbe = () => {
       const lit = litNodes();
       return {
@@ -488,6 +523,10 @@ export function GraphView({ focus, visible }: { focus?: string; visible: boolean
     canvas.addEventListener('pointerup', onPointerUp);
     canvas.addEventListener('dblclick', onDoubleClick);
     canvas.addEventListener('wheel', onWheel, { passive: false });
+    canvas.addEventListener('pointerdown', onPinchDown);
+    canvas.addEventListener('pointermove', onPinchMove);
+    canvas.addEventListener('pointerup', onPinchUp);
+    canvas.addEventListener('pointercancel', onPinchUp);
     const observer = new ResizeObserver(resize);
     observer.observe(canvas);
     resize();
@@ -501,6 +540,10 @@ export function GraphView({ focus, visible }: { focus?: string; visible: boolean
       canvas.removeEventListener('pointerup', onPointerUp);
       canvas.removeEventListener('dblclick', onDoubleClick);
       canvas.removeEventListener('wheel', onWheel);
+      canvas.removeEventListener('pointerdown', onPinchDown);
+      canvas.removeEventListener('pointermove', onPinchMove);
+      canvas.removeEventListener('pointerup', onPinchUp);
+      canvas.removeEventListener('pointercancel', onPinchUp);
     };
   }, [data, pins, pinsLoaded, inks, visible, session, pinsKey, focus]);
 

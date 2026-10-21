@@ -92,6 +92,11 @@ export function useNoteRevision(path: string | null): number {
   return revision;
 }
 
+/** True when the viewport is phone-width (≤ 767px). */
+export function useMobile(): boolean {
+  return useMediaQuery('(max-width: 767px)');
+}
+
 export function useMediaQuery(query: string): boolean {
   const [matches, setMatches] = useState(() => typeof window !== 'undefined' && window.matchMedia(query).matches);
   useEffect(() => {

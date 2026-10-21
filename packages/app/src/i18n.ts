@@ -593,6 +593,12 @@ const en = {
   'update.ready': 'Version {version} is ready.',
   'update.restart': 'Restart to update',
   'update.later': 'Later',
+  'mobile.nav': 'Main navigation',
+  'mobile.nav.files': 'Files',
+  'mobile.nav.note': 'Note',
+  'mobile.nav.graph': 'Graph',
+  'mobile.nav.search': 'Search',
+  'mobile.nav.settings': 'Settings',
 };
 
 export type MessageKey = keyof typeof en;
@@ -1197,6 +1203,12 @@ const fr: Messages = {
   'update.ready': 'La version {version} est prête.',
   'update.restart': 'Redémarrer pour mettre à jour',
   'update.later': 'Plus tard',
+  'mobile.nav': 'Navigation principale',
+  'mobile.nav.files': 'Fichiers',
+  'mobile.nav.note': 'Note',
+  'mobile.nav.graph': 'Graphe',
+  'mobile.nav.search': 'Chercher',
+  'mobile.nav.settings': 'Réglages',
 };
 
 export const LANGUAGES = { en: 'English', fr: 'Français' } as const;
