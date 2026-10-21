@@ -38,6 +38,12 @@ export interface SyncNodeOptions {
   saveDelay?: number;
   /** Store-and-forward channel: deposit CRDT state for offline peers and receive deposits. */
   deposits?: DepositTransport;
+  /** Paths (folders or files) kept only on this device: neither sent nor received. */
+  localPaths?: string[];
+  /** Skip receiving binary attachments. */
+  skipAttachments?: boolean;
+  /** Maximum attachment size (bytes) to receive; larger ones are skipped. */
+  maxAttachmentBytes?: number;
 }
 
 export type KnownDevice = Pick<DeviceInfo, 'id' | 'publicKey'> & Partial<DeviceInfo>;
@@ -83,7 +89,12 @@ export class SyncNode {
   private readonly presenceListeners = new Set<() => void>();
 
   constructor(private readonly options: SyncNodeOptions) {
-    this.sync = new VaultSync(options.vault, options.store, { saveDelay: options.saveDelay });
+    this.sync = new VaultSync(options.vault, options.store, {
+      saveDelay: options.saveDelay,
+      localPaths: options.localPaths,
+      skipAttachments: options.skipAttachments,
+      maxAttachmentBytes: options.maxAttachmentBytes,
+    });
   }
 
   get model() {

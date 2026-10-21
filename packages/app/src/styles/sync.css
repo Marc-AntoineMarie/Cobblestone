@@ -880,3 +880,68 @@
   flex: 1;
   min-width: 0;
 }
+
+/* ---- local-only paths ---- */
+
+.sync-local-paths {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.sync-local-path-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px 2px 8px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 0.82rem;
+  font-family: var(--font-mono, monospace);
+  align-self: flex-start;
+}
+
+.sync-local-path-remove {
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-3);
+  border-radius: 2px;
+}
+
+.sync-local-path-remove:hover {
+  color: var(--red-deep);
+}
+
+.sync-local-path-add {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.sync-local-path-add input {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ---- field with unit suffix (Mo/MB) ---- */
+
+.sync-field-unit {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sync-field-unit input {
+  width: 80px;
+}
+
+.sync-field-unit span {
+  font-size: 0.85rem;
+  color: var(--text-3);
+}

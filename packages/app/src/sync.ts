@@ -110,6 +110,7 @@ async function deviceNetwork(platform: Platform, device: string): Promise<Networ
   return shared.networks;
 }
 const VAULTS_KEY = 'sync:vaults';
+const SYNC_PREFS_KEY = 'sync:prefs';
 
 interface VaultRecord {
   syncId: string;
@@ -119,6 +120,54 @@ interface VaultRecord {
   /** Offered to the account's other devices (on by default), under this name. */
   account?: boolean;
   name?: string;
+  /** Paths (folders or files) kept only on this device (not synced). */
+  localPaths?: string[];
+  /** Whether to sync binary attachments. */
+  syncAttachments?: boolean;
+  /** Maximum attachment size to receive, in MB (0 = unlimited). */
+  maxAttachmentMb?: number;
+}
+
+/** Device-wide sync preferences. */
+export interface SyncPrefs {
+  /** Show other devices' cursors in the editor (default: true). */
+  showCursors: boolean;
+}
+
+export async function syncPrefs(platform: Platform): Promise<SyncPrefs> {
+  return { showCursors: true, ...(await platform.storage.get<Partial<SyncPrefs>>(SYNC_PREFS_KEY)) };
+}
+
+export async function setSyncPrefs(platform: Platform, prefs: SyncPrefs) {
+  await platform.storage.set(SYNC_PREFS_KEY, prefs);
+}
+
+/** Per-vault sync options (attachments and local paths). */
+export interface VaultSyncOptions {
+  localPaths: string[];
+  syncAttachments: boolean;
+  maxAttachmentMb: number;
+}
+
+export async function vaultSyncOptions(platform: Platform, entryId: string): Promise<VaultSyncOptions> {
+  const record = (await records(platform))[entryId];
+  return {
+    localPaths: record?.localPaths ?? [],
+    syncAttachments: record?.syncAttachments ?? true,
+    maxAttachmentMb: record?.maxAttachmentMb ?? 0,
+  };
+}
+
+export async function setVaultSyncOptions(platform: Platform, entryId: string, opts: VaultSyncOptions) {
+  const all = await records(platform);
+  const record = all[entryId];
+  if (!record) return;
+  await saveRecord(platform, entryId, {
+    ...record,
+    localPaths: opts.localPaths,
+    syncAttachments: opts.syncAttachments,
+    maxAttachmentMb: opts.maxAttachmentMb,
+  });
 }
 
 const TRUSTED_KEY = 'account:trusted';
@@ -240,6 +289,7 @@ export class SyncController {
   private timer: ReturnType<typeof setInterval> | undefined;
   private offNode: (() => void) | null = null;
   private disposed = false;
+  showCursors = true;
 
   constructor(
     private readonly platform: Platform,
@@ -258,6 +308,7 @@ export class SyncController {
       failure: null,
       pairing: null,
     }));
+    void syncPrefs(platform).then((p) => (this.showCursors = p.showCursors));
   }
 
   /** Starts syncing if this vault syncs on this device. */
@@ -279,6 +330,7 @@ export class SyncController {
 
   private async start(syncId?: string, first?: { channel: SyncChannel; peer: string }) {
     const identity = await loadIdentity(this.platform);
+    const opts = await vaultSyncOptions(this.platform, this.entry.id);
     const node = new SyncNode({
       vault: this.vault,
       store: new AdapterSyncStore(this.vault.adapter),
@@ -288,6 +340,9 @@ export class SyncController {
       // The account's devices are trusted for a vault offered to them.
       known: () => [...this.known, ...(this.offered ? trustedCache : [])],
       deposits: relayDepositTransport(),
+      localPaths: opts.localPaths,
+      skipAttachments: !opts.syncAttachments,
+      maxAttachmentBytes: opts.maxAttachmentMb > 0 ? opts.maxAttachmentMb * 1024 * 1024 : undefined,
     });
     await node.start(first);
     if (this.disposed) return void node.stop();
@@ -430,7 +485,7 @@ export class SyncController {
       text: () => this.node?.sync.textAt(path()) ?? null,
       edit: (apply) => (this.node ? this.node.sync.change(apply) : apply()),
       own: (origin) => this.node?.sync.isOwn(origin) ?? true,
-      cursors: () => this.cursorsIn(path()),
+      cursors: () => (this.showCursors ? this.cursorsIn(path()) : []),
       subscribe: (listener) => {
         this.cursorListeners.add(listener);
         return () => void this.cursorListeners.delete(listener);
@@ -533,6 +588,11 @@ export class BackgroundSyncManager {
       try {
         const vault = new Vault(adapter, {});
         await vault.load();
+        const opts = {
+          localPaths: record.localPaths ?? [],
+          syncAttachments: record.syncAttachments ?? true,
+          maxAttachmentMb: record.maxAttachmentMb ?? 0,
+        };
         const node = new SyncNode({
           vault,
           store: new AdapterSyncStore(adapter),
@@ -541,6 +601,9 @@ export class BackgroundSyncManager {
           syncId: record.syncId,
           known: () => [...(record.known ?? []), ...(record.account !== false ? trustedCache : [])],
           deposits: relayDepositTransport(),
+          localPaths: opts.localPaths,
+          skipAttachments: !opts.syncAttachments,
+          maxAttachmentBytes: opts.maxAttachmentMb > 0 ? opts.maxAttachmentMb * 1024 * 1024 : undefined,
         });
         await node.start();
         this.nodes.set(entryId, node);
