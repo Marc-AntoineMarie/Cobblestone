@@ -1,0 +1,18 @@
+# App web Cobblestone (PWA).
+# Déploiement : WEB_DOMAIN=cobblestone.marc-antoinemarie.com docker compose up -d --build
+# Mettre à jour : git pull, puis poser le nouveau zip de l'app web dans ./dist/, puis redémarrer.
+services:
+  web:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+    environment:
+      WEB_DOMAIN: ${WEB_DOMAIN:-localhost}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./dist:/srv/web:ro
+      - caddy_data:/data
+volumes:
+  caddy_data:

@@ -43,7 +43,7 @@ appareil a sa copie.
 - Historique des versions de chaque note.
 - Retirer un appareil le refuse aux sessions, mais il garde les notes déjà reçues ; quand un relais
   gardera des données chiffrées, il faudra changer la clé du coffre au retrait d'un appareil.
-- **Fait** : le relais officiel tourne sur le VPS de l'utilisateur (`cobblestone.marc-antoinemarie.com`).
+- **Fait** : le relais officiel tourne sur le VPS de l'utilisateur (`sync.cobblestone.marc-antoinemarie.com`) ; l'app web sera à `cobblestone.marc-antoinemarie.com`.
 - Pas de quotas pour l'instant (décision du 1er octobre) : seulement un plafond contre les abus
   (30 Go par jour par compte ou par adresse IP). **Plus tard**, quand il y aura beaucoup d'utilisateurs :
   réfléchir à des quotas.

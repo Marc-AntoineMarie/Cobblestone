@@ -6,6 +6,7 @@ ajouté, modifié et supprimé, les tests, les fichiers et les commits. Ce somma
 
 | Date       | Changement                                                                                                                     | Type          | Branche                       |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------- | ----------------------------- |
+| 2026-10-21 | [Relay déplacé sur sync.cobblestone.marc-antoinemarie.com](journal/2026-10-21-fix-relay-sous-domaine.md)                       | correctif     | `fix/relay-sous-domaine`      |
 | 2026-10-02 | [Les versions de test se proposent de nouveau](journal/2026-10-02-fix-mises-a-jour-canal.md)                                   | correction    | `fix/mises-a-jour-canal`      |
 | 2026-10-02 | [La vraie version, des mises à jour d'un coup, et l'e-mail qui ne part pas](journal/2026-10-02-fix-version-et-mises-a-jour.md) | correction    | `fix/version-et-mises-a-jour` |
 | 2026-10-01 | [Le modèle de configuration du relais est publié](journal/2026-10-01-fix-relais-env-exemple.md)                                | correction    | `fix/relais-env-exemple`      |

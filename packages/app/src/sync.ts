@@ -36,7 +36,7 @@ const IDENTITY_KEY = 'sync:identity';
 const RELAY_KEY = 'sync:relay';
 
 /** The official relay, used unless the user sets another (docs/RELAIS.md to run one). */
-export const DEFAULT_RELAY = 'cobblestone.marc-antoinemarie.com';
+export const DEFAULT_RELAY = 'sync.cobblestone.marc-antoinemarie.com';
 
 export interface RelaySettings {
   enabled: boolean;
