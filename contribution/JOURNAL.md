@@ -6,6 +6,7 @@ ajouté, modifié et supprimé, les tests, les fichiers et les commits. Ce somma
 
 | Date       | Changement                                                                                                                     | Type          | Branche                       |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------- | ----------------------------- |
+| 2026-10-21 | [Application web installable (PWA)](journal/2026-10-21-feat-pwa.md)                                                            | nouveauté     | `feat/pwa`                    |
 | 2026-10-21 | [Options de synchronisation manquantes](journal/2026-10-21-feat-options-sync.md)                                               | nouveauté     | `feat/options-sync`           |
 | 2026-10-21 | [Relay store-and-forward (dépôt pour appareils hors ligne)](journal/2026-10-21-feat-relay-store-forward.md)                    | nouveauté     | `feat/relay-store-forward`    |
 | 2026-10-21 | [Synchronisation en arrière-plan de tous les coffres du compte](journal/2026-10-21-feat-sync-arriere-plan.md)                  | nouveauté     | `feat/sync-arriere-plan`      |
