@@ -8,8 +8,9 @@ import { ActivityBar, StatusBar, TopBar } from './Bars';
 import { ContextMenu } from './ContextMenu';
 import { Finder } from './Finder';
 import { HoverPreview } from './HoverPreview';
-import { useMediaQuery, useSession, useStore } from './hooks';
+import { useMediaQuery, useMobile, useSession, useStore } from './hooks';
 import { LayoutView } from './LayoutView';
+import { MobileWorkbench } from './MobileWorkbench';
 import { usePreferences } from './preferences';
 import { PairingDialog } from './PairingDialog';
 import { ShareSheet } from './ShareSheet';
@@ -22,6 +23,12 @@ import { Toasts } from './Toasts';
  * preference of the device (see layout.ts).
  */
 export function Workbench({ onSwitchVault }: { onSwitchVault: () => void }) {
+  const mobile = useMobile();
+  if (mobile) return <MobileWorkbench onSwitchVault={onSwitchVault} />;
+  return <DesktopWorkbench onSwitchVault={onSwitchVault} />;
+}
+
+function DesktopWorkbench({ onSwitchVault }: { onSwitchVault: () => void }) {
   const session = useSession();
   const { preferences, update } = usePreferences();
   const leftOpen = useStore(session.ui, (s) => s.leftOpen);
