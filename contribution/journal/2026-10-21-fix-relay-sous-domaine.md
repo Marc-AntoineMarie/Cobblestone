@@ -1,7 +1,7 @@
 ---
 date: 2026-10-21
 branche: fix/relay-sous-domaine
-type: correctif
+type: correction
 version: non publiée
 ---
 
