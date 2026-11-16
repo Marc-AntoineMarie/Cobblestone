@@ -107,7 +107,14 @@
 @media (max-width: 767px) {
   /* Slightly larger default body text on small screens */
   .mobile-note-screen .cm-editor {
-    font-size: max(var(--body, 15px), 15px);
+    font-size: max(var(--body, 16px), 16px);
+  }
+
+  /* No zoom on double tap: iOS would keep it from one screen to the next. */
+  html {
+    touch-action: manipulation;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 
   /* More padding around the note area for comfortable reading */
@@ -115,11 +122,12 @@
     padding: 0;
   }
 
-  /* Prevent accidental zoom on double-tap of form inputs */
+  /* iOS zooms in on any field under 16 px when it takes focus: a floor that more precise
+     selectors (search, settings, palette) must not lower. */
   input,
-  textarea,
+  textarea:not(.note-title),
   select {
-    font-size: max(16px, 1em);
+    font-size: max(16px, 1em) !important;
   }
 
   /* Larger tap targets for buttons */

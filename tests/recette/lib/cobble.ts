@@ -23,6 +23,8 @@ export interface StartOptions {
   preferences?: Record<string, unknown>;
   /** false: the vault is only listed on the launcher, not reopened. */
   open?: boolean;
+  /** Web: an iPhone with Safari (touch screen, phone size, iOS user agent). */
+  iphone?: boolean;
   /** Web: a browser without the File System Access API (Firefox, Safari). */
   withoutFolderAccess?: boolean;
   /** Desktop: more entries in the recent list, pointing wherever they like. */
@@ -80,7 +82,7 @@ export class Cobble {
     if (this.desktop) await this.startDesktop(vault);
     else await this.startWeb(vault);
     if (vault === 'demo') await this.page.getByRole('button', { name: /Essayer la démo|Try the demo/ }).click();
-    if (vault && options.open !== false) await this.page.locator('.workbench').waitFor();
+    if (vault && options.open !== false) await this.page.locator('.workbench, .mobile-workbench').first().waitFor();
     return this;
   }
 
@@ -127,8 +129,18 @@ export class Cobble {
   }
 
   private async startWeb(vault: StartOptions['vault']) {
+    const iphone = this.options.iphone
+      ? {
+          userAgent:
+            'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1',
+          isMobile: true,
+          hasTouch: true,
+          deviceScaleFactor: 3,
+        }
+      : {};
     this.context = await this.browser!.newContext({
-      viewport: this.options.viewport ?? { width: 1280, height: 800 },
+      ...iphone,
+      viewport: this.options.viewport ?? (this.options.iphone ? { width: 390, height: 844 } : { width: 1280, height: 800 }),
       locale: this.options.lang === 'en' ? 'en-US' : 'fr-FR',
       permissions: ['clipboard-read', 'clipboard-write'],
     });
@@ -138,7 +150,7 @@ export class Cobble {
       await this.page.addInitScript(() => Object.defineProperty(window, 'showDirectoryPicker', { value: undefined }));
     }
     await this.page.goto(WEB_URL);
-    await this.page.locator('.launcher, .workbench').first().waitFor();
+    await this.page.locator('.launcher, .workbench, .mobile-workbench').first().waitFor();
     if (this.options.preferences || (vault && vault !== 'demo')) {
       const files = vault && vault !== 'demo' ? await this.encode(vault) : null;
       await this.page.evaluate(
@@ -387,7 +399,7 @@ export class Cobble {
       await meanwhile?.();
       await this.page.reload();
     }
-    await this.page.locator('.launcher, .workbench').first().waitFor();
+    await this.page.locator('.launcher, .workbench, .mobile-workbench').first().waitFor();
   }
 
   /** Web: clears everything the site stored (« Clear site data »), then reloads. */
@@ -395,7 +407,7 @@ export class Cobble {
     const cdp = await this.context!.newCDPSession(this.page);
     await cdp.send('Storage.clearDataForOrigin', { origin: new URL(WEB_URL).origin, storageTypes: 'all' });
     await this.page.reload();
-    await this.page.locator('.launcher, .workbench').first().waitFor();
+    await this.page.locator('.launcher, .workbench, .mobile-workbench').first().waitFor();
   }
 
   /** Desktop: the next folder dialogs answer with this folder (null: cancelled). */
