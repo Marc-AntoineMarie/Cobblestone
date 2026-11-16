@@ -11,6 +11,10 @@ version: non publiée
 
 La CI (`npm audit --omit=dev --audit-level=high`) échouait : dompurify critique, markdown-it haute, nodemailer modérée.
 
+## Ajouté
+
+Rien.
+
 ## Modifié
 
 - `dompurify` 3.4.x → 3.5.x (critique : bypass SAFE_FOR_TEMPLATES, shadow root, SMIL href).
