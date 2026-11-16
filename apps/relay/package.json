@@ -9,7 +9,7 @@
     "start": "node src/main.ts"
   },
   "dependencies": {
-    "nodemailer": "^10.0.13",
+    "nodemailer": "^10.6.0",
     "ws": "^8.18.3"
   },
   "devDependencies": {
