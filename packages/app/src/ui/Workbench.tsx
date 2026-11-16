@@ -1,9 +1,5 @@
-import { useEffect, type CSSProperties } from 'react';
-import { t } from '../i18n';
+import { useEffect } from 'react';
 import { movePanel, PRESETS } from '../layout';
-import { LINE_WIDTHS } from '../settings';
-import { applySnippets } from '../snippets';
-import { registerAppCommands } from './app-commands';
 import { ActivityBar, StatusBar, TopBar } from './Bars';
 import { ContextMenu } from './ContextMenu';
 import { Finder } from './Finder';
@@ -16,6 +12,7 @@ import { PairingDialog } from './PairingDialog';
 import { ShareSheet } from './ShareSheet';
 import { SideZone } from './SideZone';
 import { Toasts } from './Toasts';
+import { useWorkbenchBasics } from './workbench-basics';
 
 /**
  * The open vault: the top bar, the activity bar, the side zones around the
@@ -33,23 +30,11 @@ function DesktopWorkbench({ onSwitchVault }: { onSwitchVault: () => void }) {
   const { preferences, update } = usePreferences();
   const leftOpen = useStore(session.ui, (s) => s.leftOpen);
   const rightOpen = useStore(session.ui, (s) => s.rightOpen);
-  const textSize = useStore(session.settings, (s) => s.textSize);
-  const lineWidth = useStore(session.settings, (s) => s.lineWidth);
-  const snippets = useStore(session.settings, (s) => s.snippets);
+  const style = useWorkbenchBasics(onSwitchVault);
   const reveal = useStore(session.ui, (s) => s.reveal);
   const wide = useMediaQuery('(min-width: 1180px)');
   const narrow = useMediaQuery('(max-width: 760px)');
   const layout = preferences.layout;
-
-  useEffect(
-    () =>
-      registerAppCommands(session, {
-        switchVault: onSwitchVault,
-        preferences: () => preferences,
-        updatePreferences: update,
-      }),
-    [session, onSwitchVault, preferences, update],
-  );
 
   // A panel asked for: its zone opens; a hidden panel goes back to its classic side.
   useEffect(() => {
@@ -69,29 +54,12 @@ function DesktopWorkbench({ onSwitchVault }: { onSwitchVault: () => void }) {
     else if (!wide) session.ui.setState({ rightOpen: false });
   }, [narrow, wide, session]);
 
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if (event.defaultPrevented || event.isComposing) return;
-      session.commands.handleKeydown(event);
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [session]);
-
-  // The vault's CSS snippets, on top of the theme; they leave with the vault.
-  useEffect(() => {
-    void applySnippets(session.vault.adapter, snippets).then((failed) => {
-      for (const path of failed) session.notify(t('settings.snippets.failed', { name: path.split('/').pop()! }), 'error');
-    });
-  }, [session, snippets]);
-  useEffect(() => () => document.head.querySelectorAll('style[data-snippet]').forEach((el) => el.remove()), []);
-
   return (
     <div
       className="workbench"
       data-left={leftOpen ? (narrow ? 'drawer' : 'docked') : 'closed'}
       data-right={rightOpen ? (wide ? 'docked' : 'drawer') : 'closed'}
-      style={{ '--body': `${textSize}px`, '--line-width': LINE_WIDTHS[lineWidth] ?? LINE_WIDTHS.normal } as CSSProperties}
+      style={style}
     >
       <TopBar onSwitchVault={onSwitchVault} />
       <div className="workbench-body">
