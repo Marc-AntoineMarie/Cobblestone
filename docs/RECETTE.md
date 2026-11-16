@@ -625,7 +625,7 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 - **25.3** · Les deux · auto · Basculer jour et nuit avec une note, un graphe et un canvas ouverts → Tout change de papier ; rien ne devient illisible.
 - **25.4** · Les deux · auto · Parcourir toute l'interface avec Tab → Chaque élément qui prend le focus a un contour rose.
 - **25.5** · Les deux · auto · Fenêtre de moins de 1180 px → Le panneau de droite devient un tiroir.
-- **25.6** · Les deux · auto · Fenêtre de moins de 760 px ou téléphone → Panneaux fermés par défaut, en tiroirs avec voile ; le fil d'Ariane ne garde que le nom.
+- **25.6** · Les deux · auto · Fenêtre de moins de 768 px ou téléphone → L'atelier téléphone prend le relais : l'accueil des notes, puis une vue à la fois, sans onglets ni panneaux latéraux.
 - **25.7** · Les deux · auto · Redimensionner la fenêtre en continu → Pas de chevauchement ni de défilement horizontal.
 - **25.8** · Les deux · auto · Activer « réduire les animations » dans le système → Plus d'animations (tiroirs, apparition des notes).
 - **25.9** · Les deux · auto bureau, manuel web · Zoomer et dézoomer (Ctrl+plus, Ctrl+moins) → L'interface reste cohérente.
@@ -738,3 +738,14 @@ Deux apps de bureau sur le même réseau (la recette automatique lance deux apps
 ## 32. Téléphone
 
 - **32.1** · Web · auto · iPhone (Safari) : ouvrir une note, toucher le titre, le texte et la recherche → La page ne zoome pas : l'échelle reste à 1 et chaque champ a un texte d'au moins 16 px.
+- **32.2** · Web · auto · Téléphone : ouvrir le coffre → L'accueil montre « Aujourd'hui » et les notes épinglées, puis les notes modifiées récemment avec un extrait et l'heure ; pastilles Récentes, Dossiers, Tags.
+- **32.3** · Web · auto · Toucher une note de l'accueil → Elle s'ouvre en lecture, en plein écran, avec « ‹ Notes » en haut et « Modifier » en bas.
+- **32.4** · Web · auto · Toucher un lien de la note, puis revenir (bouton « ‹ » ou retour du navigateur) → La note liée s'ouvre par-dessus, le bouton porte le nom de la précédente ; chaque retour remonte d'un écran, jusqu'à l'accueil.
+- **32.5** · Web · auto · Dossiers : entrer dans un dossier puis remonter ; appui long sur une note → On navigue niveau par niveau ; l'appui long ouvre un menu en bas de l'écran (épingler, partager, renommer, déplacer, dupliquer, supprimer).
+- **32.6** · Web · auto · Toucher « Chercher ou créer une note », taper un mot → Champ en bas, résultats par nom et dans le texte, « Créer » si aucune note ne porte ce nom ; « Annuler » revient à l'accueil.
+- **32.7** · Web · auto · « Modifier », écrire, puis « Terminé » → La note passe en écriture, le texte est enregistré, puis elle revient en lecture.
+- **32.8** · Web · auto · Bouton « + », puis appui long sur « + » → Une note « Sans titre » s'ouvre en écriture, titre sélectionné ; l'appui long propose note du jour, canevas et dossier.
+- **32.9** · Web · auto · Tags : toucher un tag → La recherche s'ouvre sur les notes qui le portent.
+- **32.10** · Web · auto · « … » d'une note, puis « Déplacer vers… » → Le menu propose partager, renommer, déplacer, copier le lien, graphe, dossier, source et corbeille ; la note change de dossier.
+- **32.11** · Web · auto · Graphe et réglages depuis l'accueil, palette de commandes depuis la recherche → Chacun s'ouvre en plein écran et « ‹ » ramène à l'accueil ; la palette liste les commandes de l'app (note du jour, nouvelle note…).
+- **32.12** · Web · manuel · App installée sur l'écran d'accueil de l'iPhone : glisser depuis le bord gauche → Retour à l'écran précédent.

@@ -119,7 +119,7 @@ export class Ui {
   }
   /** What the active tab of the active pane shows (other tabs stay in the page, hidden). */
   get view() {
-    return this.pane.locator('.tab-content:not([hidden])');
+    return this.page.locator('.pane.is-active .tab-content:not([hidden]), .mobile-view');
   }
   get title() {
     return this.view.locator('.note-title');
@@ -240,10 +240,49 @@ export class Ui {
 
   /** Opens the settings tab. */
   async settings() {
-    await this.page.keyboard.press('Control+,');
+    if (await this.phone.home.isVisible()) await this.phone.home.getByRole('button', { name: 'Réglages' }).click();
+    else await this.page.keyboard.press('Control+,');
     const settings = this.view.locator('.settings-view');
     await settings.waitFor();
     return settings;
+  }
+
+  // ------------------------------------------------------------- phone
+
+  /** The phone workbench (≤ 767 px): home, the stacked screen, the search. */
+  get phone() {
+    const page = this.page;
+    const home = page.locator('.mobile-home:not([hidden])');
+    const screen = page.locator('.mobile-screen');
+    return {
+      root: page.locator('.mobile-workbench'),
+      home,
+      homeTab: (name: string) => home.getByRole('tab', { name }),
+      rows: home.locator('.mobile-row'),
+      row: (name: string) =>
+        home.locator('.mobile-row').filter({ has: page.locator('.mobile-row-title', { hasText: exact(name) }) }),
+      pins: home.locator('.mobile-pin'),
+      folderUp: home.locator('.mobile-folder-up'),
+      tags: home.locator('.mobile-tag'),
+      searchPill: home.locator('.mobile-search-pill'),
+      newNote: home.locator('.mobile-new'),
+      screen,
+      back: screen.locator('.mobile-back'),
+      tools: screen.locator('.mobile-tools'),
+      title: screen.locator('.note-title'),
+      search: page.locator('.mobile-search'),
+      searchField: page.locator('.mobile-search input'),
+      cancelSearch: page.locator('.mobile-cancel'),
+      /** A long press, as a finger does it. */
+      longPress: async (target: Locator) => {
+        const box = (await target.boundingBox())!;
+        const x = box.x + box.width / 2;
+        const y = box.y + box.height / 2;
+        await target.dispatchEvent('pointerdown', { clientX: x, clientY: y, pointerType: 'touch', isPrimary: true });
+        await page.waitForTimeout(600);
+        await target.dispatchEvent('pointerup', { clientX: x, clientY: y, pointerType: 'touch', isPrimary: true });
+      },
+    };
   }
 
   // ------------------------------------------------------------- floating layers
