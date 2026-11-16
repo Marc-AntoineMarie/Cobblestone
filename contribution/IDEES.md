@@ -79,14 +79,20 @@ Demande du 30 septembre : une interface ergonomique, intuitive, optimisée pour 
   - Graphe local en panneau ; redimensionner les côtés à la souris.
   - Raccourcis clavier personnalisables (section Raccourcis des réglages).
 
-## Téléphone — plus tard (après la synchronisation)
+## Téléphone — en cours (refonte décidée le 2026-11-16)
 
-1. Application web installable (PWA) à partir de l'app web, avec une interface repensée pour le
-   tactile (barre du bas, tiroirs, grandes cibles, clavier virtuel) et le hors-ligne.
-2. Applications natives Android et iOS avec Capacitor, qui réutilisent ce travail, avec de vrais
-   dossiers (stockage partagé sur Android, app Fichiers sur iPhone).
+Refonte validée sur le prototype : pas de barre d'onglets, accueil épinglées puis récentes, note du
+jour en un geste. Fait : zoom iPhone corrigé, accueil et navigation en pile. Reste, dans l'ordre :
 
-Détails et coûts dans [docs/DISTRIBUTION.md](../docs/DISTRIBUTION.md).
+1. **Feuille d'infos de la note** (à faire) : rétroliens, liens sortants, mentions non liées, plan,
+   propriétés modifiables et graphe local dans une feuille qui monte du bas, à deux hauteurs ;
+   propriétés en pastilles sous le titre en lecture ; appui long sur un lien = aperçu en feuille.
+2. **Barre au-dessus du clavier** (à faire) : `[[ ]]`, `#`, case, titre, gras, italique, liste,
+   trombone (photo, fichiers), annuler ; suggestions de liens dans cette barre.
+3. **Tablette** (à faire) : de 768 à 1180 px, liste à gauche et note à droite ; au-delà, l'atelier.
+4. **Réglages téléphone** (à faire) : « Ouvrir les notes en » lecture ou écriture, avec aperçu.
+5. Applications natives Android et iOS avec Capacitor (plus tard), avec de vrais dossiers (stockage
+   partagé sur Android, app Fichiers sur iPhone). Détails dans [docs/DISTRIBUTION.md](../docs/DISTRIBUTION.md).
 
 ## Distribution — à décider
 
