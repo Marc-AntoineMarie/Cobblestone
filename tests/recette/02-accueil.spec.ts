@@ -12,7 +12,7 @@ recette('2.1', async ({ app, ui }) => {
   await app.start();
   await expect(ui.launcher.getByRole('heading', { name: 'Cobblestone' })).toBeVisible();
   await expect(ui.launcher.locator('.launcher-tagline')).toBeVisible();
-  await expect(ui.launcher.locator('.launch-action')).toHaveCount(3);
+  await expect(ui.launcher.locator('.launch-action')).toHaveCount(4);
   await expect(ui.launcher.locator('.launcher-empty')).toBeVisible();
 });
 

@@ -47,7 +47,7 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 
 ## 2. Écran d'accueil
 
-- **2.1** · Les deux · auto · Lancer sans coffre récent → Le nom « Cobblestone » en encre bleue avec le rose décalé, la phrase d'accroche, trois actions, et « Coffres récents » vide avec un message.
+- **2.1** · Les deux · auto · Lancer sans coffre récent → Le nom « Cobblestone » en encre bleue avec le rose décalé, la phrase d'accroche, quatre actions (ouvrir un dossier, nouveau coffre, recevoir un coffre, démo), et « Coffres récents » vide avec un message.
 - **2.2** · Bureau · auto · Cliquer « Ouvrir un dossier » → La fenêtre de choix de dossier du système s'ouvre.
 - **2.3** · Bureau · auto · Annuler la fenêtre de choix de dossier → Retour à l'accueil, rien ne change.
 - **2.4** · Bureau · auto · Choisir la copie du coffre → Le coffre s'ouvre, puis figure dans les récents avec son chemin.
