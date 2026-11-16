@@ -6,6 +6,7 @@ ajouté, modifié et supprimé, les tests, les fichiers et les commits. Ce somma
 
 | Date       | Changement                                                                                                                     | Type          | Branche                       |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------- | ----------------------------- |
+| 2026-11-16 | [Déploiement Nginx + CI/CD](journal/2026-11-16-ci-deploy-nginx.md)                                                             | maintenance   | `ci/deploy-nginx`             |
 | 2026-10-21 | [Interface mobile dédiée](journal/2026-10-21-feat-interface-mobile.md)                                                         | nouveauté     | `feat/interface-mobile`       |
 | 2026-10-21 | [Application web installable (PWA)](journal/2026-10-21-feat-pwa.md)                                                            | nouveauté     | `feat/pwa`                    |
 | 2026-10-21 | [Options de synchronisation manquantes](journal/2026-10-21-feat-options-sync.md)                                               | nouveauté     | `feat/options-sync`           |
