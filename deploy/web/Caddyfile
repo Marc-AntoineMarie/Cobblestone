@@ -1,9 +1,0 @@
-{$WEB_DOMAIN} {
-	root * /srv/web
-	file_server
-	# SPA fallback: all routes serve index.html
-	try_files {path} /index.html
-	# Service worker must not be cached
-	@sw path /sw.js
-	header @sw Cache-Control "no-cache, no-store, must-revalidate"
-}

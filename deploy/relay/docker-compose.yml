@@ -1,8 +1,6 @@
 # Le relais de Cobblestone.
-# - Le VPS a déjà un serveur web (nginx…) : `docker compose up -d --build`, puis un proxy vers
-#   127.0.0.1:8787 (voir docs/RELAIS.md).
-# - Les ports 80 et 443 sont libres : `RELAY_DOMAIN=sync.exemple.fr docker compose --profile caddy up -d --build`
-#   et Caddy gère le HTTPS.
+# Nginx sur le VPS proxifie vers 127.0.0.1:8787 (voir sync.nginx.conf).
+# Lancer : docker compose up -d --build
 services:
   relay:
     build:
@@ -11,24 +9,10 @@ services:
     restart: unless-stopped
     ports:
       - '127.0.0.1:8787:8787'
-    # E-mails des comptes (Brevo) et plafond contre les abus : voir .env.example.
     env_file:
       - path: .env
         required: false
     volumes:
       - relay_data:/app/data
-  caddy:
-    image: caddy:2
-    profiles: [caddy]
-    restart: unless-stopped
-    ports:
-      - '80:80'
-      - '443:443'
-    environment:
-      RELAY_DOMAIN: ${RELAY_DOMAIN:-}
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
 volumes:
   relay_data:
-  caddy_data:
