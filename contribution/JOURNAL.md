@@ -6,6 +6,7 @@ ajouté, modifié et supprimé, les tests, les fichiers et les commits. Ce somma
 
 | Date       | Changement                                                                                                                     | Type          | Branche                       |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------- | ----------------------------- |
+| 2026-11-16 | [Recette de l'accueil : quatre actions](journal/2026-11-16-fix-recette-accueil.md)                                             | correction    | `fix/recette-accueil`         |
 | 2026-11-16 | [Zoom automatique sur iPhone](journal/2026-11-16-fix-zoom-iphone.md)                                                           | correction    | `fix/zoom-iphone`             |
 | 2026-11-16 | [Avertissement gzip Nginx](journal/2026-11-16-fix-nginx-gzip.md)                                                               | correction    | `fix/nginx-gzip`              |
 | 2026-11-16 | [Corriger les vulnérabilités des dépendances](journal/2026-11-16-fix-vulnerabilites-deps.md)                                   | correction    | `fix/vulnerabilites-deps`     |
