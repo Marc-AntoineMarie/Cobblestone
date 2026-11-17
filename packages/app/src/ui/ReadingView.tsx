@@ -4,7 +4,7 @@ import { usePreferences } from './preferences';
 import { renderNoteInto } from './render-note';
 
 /** The note rendered as a page: links follow, tasks toggle in the file, callouts fold. */
-export function ReadingView({ path, subpath }: { path: string; subpath?: string }) {
+export function ReadingView({ path, subpath, visible = true }: { path: string; subpath?: string; visible?: boolean }) {
   const session = useSession();
   const ref = useRef<HTMLDivElement>(null);
   // Drawn again when the line break setting or the paper changes (diagrams follow the paper).
@@ -18,7 +18,9 @@ export function ReadingView({ path, subpath }: { path: string; subpath?: string 
     let cancelled = false;
 
     const toggleTask = (line: number) => {
-      void session.vault.process(path, (text) => {
+      void session.vault.process(path, (onDisk) => {
+        // The shared text, when there is one: the file can be a write behind what the others typed.
+        const text = session.sync.sharedText(path) ?? onDisk;
         const lines = text.split('\n');
         const current = lines[line];
         if (current === undefined) return text;
@@ -28,7 +30,8 @@ export function ReadingView({ path, subpath }: { path: string; subpath?: string 
     };
 
     const draw = async () => {
-      const text = await session.vault.read(path);
+      // Writing together: the shared text shows what the others type as they type it.
+      const text = session.sync.sharedText(path) ?? (await session.vault.read(path));
       if (cancelled) return;
       const scroll = container.closest('.note-scroll')?.scrollTop;
       cleanup?.();
@@ -38,6 +41,15 @@ export function ReadingView({ path, subpath }: { path: string; subpath?: string 
     };
     void draw();
     const offModify = session.vault.on('modify', (file) => file.path === path && void draw());
+    // What the other devices type, at most a few times a second.
+    let live: ReturnType<typeof setTimeout> | undefined;
+    const offShared = session.sync.watchText(path, () => {
+      if (live) return;
+      live = setTimeout(() => {
+        live = undefined;
+        void draw();
+      }, 120);
+    });
     // Link targets appearing or disappearing elsewhere change how links look here.
     let redraw: ReturnType<typeof setTimeout> | undefined;
     const offResolved = session.vault.cache.on('resolved', () => {
@@ -54,12 +66,17 @@ export function ReadingView({ path, subpath }: { path: string; subpath?: string 
     return () => {
       cancelled = true;
       clearTimeout(redraw);
+      clearTimeout(live);
+      offShared();
       cleanup?.();
       offModify();
       offResolved();
       offJump();
     };
   }, [session, path, lineBreaks, paper]);
+
+  // The other devices see this one on the note while it is the one in view.
+  useEffect(() => (visible ? session.sync.reading(path) : undefined), [session, path, visible]);
 
   useEffect(() => {
     if (!subpath || !ref.current) return;
