@@ -10,6 +10,7 @@ const tabTitles = (ui: Ui) => ui.tabs.locator('.tab-title').allTextContents();
 
 recette('7.1', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.row('Idées.md').click();
   await ui.row('Étude.md').click();
   await expect(ui.tabs).toHaveCount(1);
@@ -107,6 +108,7 @@ recette('7.10', async ({ app, ui }) => {
 
 recette('7.11', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.open('Idées');
   await ui.activeTab.click({ button: 'right' });
   await ui.menuItem('Épingler').click();
@@ -145,6 +147,7 @@ recette('7.13', async ({ app, ui }) => {
 
 recette('7.14', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.open('Idées');
   await ui.openInNewTab('Étude');
   await ui.row('Idées.md').click({ modifiers: ['Control'] });
@@ -237,6 +240,7 @@ recette('7.21', async ({ app, ui }) => {
 
 recette('7.22', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.row('Idées.md').click();
   await expect(back(ui)).toBeDisabled();
   await expect(forward(ui)).toBeDisabled();
@@ -250,6 +254,7 @@ recette('7.22', async ({ app, ui }) => {
 
 recette('7.23', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.row('Idées.md').click();
   await ui.row('Étude.md').click();
   await ui.editor.click();
@@ -262,6 +267,7 @@ recette('7.23', async ({ app, ui }) => {
 
 recette('7.24', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.row('Idées.md').click();
   await ui.row('Étude.md').click();
   await ui.row('Étude.md').focus();
@@ -296,6 +302,7 @@ recette('7.25', async ({ app, ui }) => {
 
 recette('7.26', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.open('Idées');
   await ui.openInNewTab('Étude');
   await ui.contextMenu('Idées.md', 'Mettre à la corbeille');
@@ -305,6 +312,7 @@ recette('7.26', async ({ app, ui }) => {
 
 recette('7.27', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.open('Idées');
   await ui.editor.click();
   await ui.page.keyboard.press('Control+Home');

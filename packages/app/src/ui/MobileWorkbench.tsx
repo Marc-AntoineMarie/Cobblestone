@@ -160,7 +160,6 @@ export function MobileWorkbench({ onSwitchVault, split = false }: { onSwitchVaul
     <div className={`mobile-workbench${keyboard ? ' has-keyboard' : ''}${split ? ' is-split' : ''}`} style={style}>
       <MobileHome
         hidden={!home && !split}
-        current={shownPath}
         tab={homeTab}
         onTab={setHomeTab}
         folder={folder}
@@ -174,7 +173,7 @@ export function MobileWorkbench({ onSwitchVault, split = false }: { onSwitchVaul
           tab={shown.tab}
           paneId={shown.paneId}
           motion={motion}
-          backLabel={below ? viewLabel(below) : split ? null : t('mobile.home')}
+          backLabel={below ? viewLabel(below) : split ? null : t('list.label')}
           onBack={back}
           onSearch={openSearch}
           onSheet={(tab) => openOverlay({ kind: 'sheet', tab })}
@@ -225,7 +224,7 @@ const VIEW_NAMES: Partial<Record<ViewState['type'], MessageKey>> = { graph: 'gra
 function viewLabel(view: ViewState): string {
   if ('path' in view) return stem(view.path);
   const key = VIEW_NAMES[view.type];
-  return key ? t(key) : t('mobile.home');
+  return key ? t(key) : t('list.label');
 }
 
 function MobileScreen({

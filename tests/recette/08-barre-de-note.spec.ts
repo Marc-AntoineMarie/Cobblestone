@@ -16,6 +16,7 @@ async function retitle(ui: Ui, name: string) {
 
 recette('8.1', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.open('Plan');
   await ui.noteBar.locator('.crumb', { hasText: 'Projets' }).click();
   await expect(ui.row('Projets')).toHaveClass(/is-revealed/);
@@ -103,27 +104,28 @@ recette('8.9', async ({ app, ui }) => {
   await ui.noteBar.getByRole('button', { name: 'Ajouter aux favoris' }).click();
   const on = ui.noteBar.getByRole('button', { name: 'Retirer des favoris' });
   await expect(on).toHaveClass(/is-on/);
-  await expect(ui.bookmarks).toContainText('Idées');
+  await expect(ui.pins.filter({ hasText: 'Idées' })).toHaveCount(1);
   await on.click();
-  await expect(ui.bookmarks).toHaveCount(0);
+  await expect(ui.pins.filter({ hasText: 'Idées' })).toHaveCount(0);
 });
 
 recette('8.10', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.open('Plan');
   await more(ui, 'Diviser à droite');
   await expect(ui.panes).toHaveCount(2);
-  await ui.activeTab.getByRole('button', { name: 'Fermer' }).click();
+  await ui.page.keyboard.press('Control+w');
   await more(ui, 'Diviser en bas');
   await expect(ui.page.locator('.split.is-column')).toBeVisible();
-  await ui.activeTab.getByRole('button', { name: 'Fermer' }).click();
+  await ui.page.keyboard.press('Control+w');
   await more(ui, 'Afficher la source Markdown');
   await expect(ui.noteBar.getByRole('button', { name: 'Source' })).toBeVisible();
   await more(ui, 'Afficher la source Markdown');
   await more(ui, 'Ouvrir le graphe autour de cette note');
   await expect(ui.page.locator('.graph-view')).toBeVisible();
   await ui.panes.first().locator('.cm-content').click();
-  await more(ui, 'Montrer cette note dans la barre latérale');
+  await more(ui, 'Montrer cette note dans son dossier');
   await expect(ui.row('Projets/Plan.md')).toHaveClass(/is-revealed/);
   await more(ui, 'Copier un lien vers cette note');
   await expect.poll(() => app.clipboard()).toBe('[[Plan]]');
@@ -134,12 +136,13 @@ recette('8.10', async ({ app, ui }) => {
 recette('8.11', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
   await ui.open('Idées');
+  await ui.openMargin('links');
   const width = (await ui.view.boundingBox())!.width;
-  await ui.sideToggle('right').click();
-  await expect(ui.margin).toHaveCount(0);
+  await ui.page.keyboard.press('Control+]');
+  await expect(ui.page.locator('.marge')).toHaveCount(0);
   await expect.poll(async () => (await ui.view.boundingBox())!.width).toBeGreaterThan(width + 200);
-  await ui.sideToggle('right').click();
-  await expect(ui.margin).toBeVisible();
+  await ui.page.keyboard.press('Control+]');
+  await expect(ui.page.locator('.marge')).toBeVisible();
 });
 
 recette('8.12', async ({ app, ui }) => {
@@ -247,7 +250,6 @@ recette('8.22', async ({ app, ui }) => {
 recette('8.23', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
   await ui.open('Idées');
-  await ui.sideToggle('right').click();
   await expect(ui.margin).toHaveCount(0);
   await ui.status.getByRole('button', { name: /rétroliens/ }).click();
   await expect(ui.margin.locator('[data-panel="backlinks"]')).toBeInViewport();
@@ -279,6 +281,7 @@ recette('8.26', async ({ app, ui }) => {
   await app.start({ vault: baseVault(), open: false });
   await app.makeUnreadable('Idées.md');
   await ui.recentRows.first().locator('.recent-open').click();
+  await ui.tree();
   await ui.row('Idées.md').click();
   await expect(ui.pane.locator('.editor-failure, .reading-failure')).toContainText(
     'Impossible de lire cette note : le système refuse l’accès à cet emplacement.',

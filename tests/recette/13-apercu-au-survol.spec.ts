@@ -150,6 +150,7 @@ recette('13.12', async ({ app, ui }) => {
 recette('13.13', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
   await ui.open('Idées');
+  await ui.openMargin('links');
   await ui.margin.locator('.backlinks .margin-link', { hasText: 'Bienvenue' }).hover();
   await expect(ui.preview).toContainText('Voir le');
 });

@@ -57,6 +57,7 @@ recette('20.2', async ({ app, ui }) => {
 
 recette('20.3', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.contextMenu('Projets', 'Nouveau canvas ici');
   await expect.poll(() => app.exists('Projets/Sans titre.canvas')).toBe(true);
   await expect(ui.view.locator('.canvas-view')).toBeVisible();
@@ -726,6 +727,7 @@ recette('20.41', async ({ app, ui }) => {
 
 recette('20.42', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   const sheet = new Sheet(app, ui, 'Tableau.canvas');
   await sheet.open();
   await ui.expand('Projets/Plan.md');

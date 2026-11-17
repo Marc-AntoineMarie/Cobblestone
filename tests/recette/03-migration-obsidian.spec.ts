@@ -8,6 +8,7 @@ const obsidianFiles = () =>
 
 recette('3.1', async ({ app, ui }) => {
   await app.start({ vault: obsidianVault() });
+  await ui.tree();
   for (const path of ['Bienvenue.md', 'Projets', 'assets', 'Tableau.canvas']) await expect(ui.row(path)).toBeVisible();
   await expect(ui.page.locator('.tree-row[data-path^="."]')).toHaveCount(0);
 });
@@ -62,8 +63,8 @@ recette('3.6', async ({ app, ui }) => {
 
 recette('3.7', async ({ app, ui }) => {
   await app.start({ vault: obsidianVault() });
-  await expect(ui.bookmarks).toContainText('Bienvenue');
-  await expect(ui.bookmarks).toContainText('Travail');
+  await expect(ui.pins.filter({ hasText: 'Bienvenue' })).toHaveCount(1);
+  await expect(ui.pins.filter({ hasText: 'Plan' })).toHaveCount(1);
 });
 
 recette('3.8', async ({ app, ui }) => {
@@ -86,6 +87,7 @@ recette.manuel('3.12', 'comparer avec les rétroliens affichés par Obsidian, qu
 
 recette('3.13', async ({ app, ui }) => {
   await app.start({ vault: obsidianVault() });
+  await ui.tree();
   await ui.row('Tableau.canvas').click();
   await expect(ui.page.locator('.canvas-node')).toHaveCount(3);
   await expect(ui.page.locator('.canvas-view')).toContainText('mène à');

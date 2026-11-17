@@ -32,6 +32,7 @@ async function drag(ui: Ui, from: Locator, to: Locator, whileOver?: () => Promis
 
 recette('5.1', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   const folder = ui.row('Projets');
   await folder.click();
   await expect(folder).toHaveAttribute('aria-expanded', 'true');
@@ -44,12 +45,14 @@ recette('5.1', async ({ app, ui }) => {
 
 recette('5.2', async ({ app, ui }) => {
   await app.start({ vault: media() });
+  await ui.tree();
   await expect(ui.row('Projets').locator('.tree-count')).toHaveText('3');
   await expect(ui.row('Journal').locator('.tree-count')).toHaveText('1');
 });
 
 recette('5.3', async ({ app, ui }) => {
   await app.start({ vault: media() });
+  await ui.tree();
   await ui.expand('docs/manuel.pdf');
   await ui.expand('assets/image.png');
   await expect(ui.row('assets/image.png').locator('.tree-ext')).toHaveText('png');
@@ -61,6 +64,7 @@ recette('5.3', async ({ app, ui }) => {
 
 recette('5.4', async ({ app, ui }) => {
   await app.start({ vault: media() });
+  await ui.tree();
   await ui.expand('docs/manuel.pdf');
   await ui.expand('assets/image.png');
   const icon = (path: string) => ui.row(path).locator('.tree-icon').getAttribute('class');
@@ -80,6 +84,7 @@ recette('5.4', async ({ app, ui }) => {
 
 recette('5.5', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.row('Idées.md').click();
   await expect(ui.activeTab).toContainText('Idées');
   await expect(ui.tabs).toHaveCount(1);
@@ -90,6 +95,7 @@ recette('5.5', async ({ app, ui }) => {
 
 recette('5.6', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.row('Idées.md').click();
   await ui.row('Étude.md').click({ modifiers: ['Control'] });
   await expect(ui.tabs).toHaveCount(2);
@@ -98,6 +104,7 @@ recette('5.6', async ({ app, ui }) => {
 
 recette('5.7', async ({ app, ui }) => {
   await app.start({ vault: media() });
+  await ui.tree();
   await ui.expand('Projets/Archive/Vieux.md');
   await expect(ui.row('Projets/Plan.md').locator('.tree-guide')).toHaveCount(1);
   await expect(ui.row('Projets/Archive/Vieux.md').locator('.tree-guide')).toHaveCount(2);
@@ -105,6 +112,7 @@ recette('5.7', async ({ app, ui }) => {
 
 recette('5.8', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.row('Bienvenue.md').click();
   await ui.row('Bienvenue.md').focus();
   await ui.page.keyboard.press('ArrowDown');
@@ -115,6 +123,7 @@ recette('5.8', async ({ app, ui }) => {
 
 recette('5.9', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.row('Projets').focus();
   await ui.page.keyboard.press('ArrowRight');
   await expect(ui.row('Projets')).toHaveAttribute('aria-expanded', 'true');
@@ -124,6 +133,7 @@ recette('5.9', async ({ app, ui }) => {
 
 recette('5.10', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.expand('Projets/Plan.md');
   await ui.row('Projets/Plan.md').focus();
   await ui.page.keyboard.press('ArrowLeft');
@@ -134,6 +144,7 @@ recette('5.10', async ({ app, ui }) => {
 
 recette('5.11', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.row('Idées.md').focus();
   await ui.page.keyboard.press('Enter');
   await expect(ui.activeTab).toContainText('Idées');
@@ -147,6 +158,7 @@ recette('5.11', async ({ app, ui }) => {
 
 recette('5.12', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.row('Idées.md').focus();
   await ui.page.keyboard.press('F2');
   await expect(ui.row('Idées.md').locator('.tree-rename')).toBeFocused();
@@ -155,6 +167,7 @@ recette('5.12', async ({ app, ui }) => {
 
 recette('5.13', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.row('Idées.md').focus();
   await ui.page.keyboard.press('Delete');
   await expect(ui.row('Idées.md')).toHaveCount(0);
@@ -163,6 +176,7 @@ recette('5.13', async ({ app, ui }) => {
 
 recette('5.14', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.contextMenu('Projets');
   const labels = await ui.menu.getByRole('menuitem').allTextContents();
   const expected = [
@@ -178,6 +192,7 @@ recette('5.14', async ({ app, ui }) => {
 
 recette('5.15', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.contextMenu('Idées.md');
   const labels = await ui.menu.getByRole('menuitem').allTextContents();
   const expected = [
@@ -194,6 +209,7 @@ recette('5.15', async ({ app, ui }) => {
 
 recette('5.16', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.contextMenu('Idées.md');
   await expect(ui.menu.getByRole('menuitem').first()).toBeFocused();
   await ui.page.keyboard.press('ArrowDown');
@@ -212,6 +228,7 @@ recette('5.16', async ({ app, ui }) => {
 
 recette('5.17', async ({ app, ui }) => {
   await app.start({ vault: baseVault(), viewport: { width: 900, height: 600 } });
+  await ui.tree();
   // A right click at the very corner of the window.
   await ui.row('Tableau.canvas').dispatchEvent('contextmenu', { clientX: 897, clientY: 597, button: 2 });
   const menu = (await ui.menu.boundingBox())!;
@@ -222,6 +239,7 @@ recette('5.17', async ({ app, ui }) => {
 
 recette('5.18', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.contextMenu('Projets', 'Nouvelle note ici');
   await expect(ui.activeTab).toContainText('Sans titre');
   await expect.poll(() => app.exists('Projets/Sans titre.md')).toBe(true);
@@ -233,6 +251,7 @@ recette('5.18', async ({ app, ui }) => {
 
 recette('5.19', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   for (let i = 0; i < 3; i++) {
     await ui.contextMenu('Projets', 'Nouvelle note ici');
     await ui.page.keyboard.press('Escape');
@@ -244,6 +263,7 @@ recette('5.19', async ({ app, ui }) => {
 
 recette('5.20', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.contextMenu('Projets', 'Nouveau dossier ici');
   await expect(ui.row('Projets')).toHaveAttribute('aria-expanded', 'true');
   await expect(ui.row('Projets/Nouveau dossier').locator('.tree-rename')).toBeFocused();
@@ -252,6 +272,7 @@ recette('5.20', async ({ app, ui }) => {
 
 recette('5.21', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.row('Bienvenue.md').click();
   await ui.contextMenu('Idées.md', 'Ouvrir à droite');
   await expect(ui.panes).toHaveCount(2);
@@ -260,6 +281,7 @@ recette('5.21', async ({ app, ui }) => {
 
 recette('5.22', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.contextMenu('Idées.md', 'Dupliquer');
   await expect(ui.activeTab).toContainText('Idées 1');
   await expect.poll(() => app.readOr('Idées 1.md')).toBe(await app.read('Idées.md'));
@@ -267,6 +289,7 @@ recette('5.22', async ({ app, ui }) => {
 
 recette('5.23', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.expand('assets/image.png');
   await ui.contextMenu('assets/image.png', 'Dupliquer');
   await expect.poll(() => app.exists('assets/image 1.png')).toBe(true);
@@ -282,6 +305,7 @@ async function renameInPlace(ui: Ui, path: string, name: string) {
 
 recette('5.24', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.expand('assets/image.png');
   await (await renameInPlace(ui, 'Idées.md', 'Pistes')).press('Enter');
   await expect.poll(() => app.exists('Pistes.md')).toBe(true);
@@ -292,6 +316,7 @@ recette('5.24', async ({ app, ui }) => {
 
 recette('5.25', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await (await renameInPlace(ui, 'Idées.md', 'Pistes')).press('Escape');
   await expect(ui.row('Idées.md')).toBeVisible();
   expect(await app.exists('Pistes.md')).toBe(false);
@@ -299,6 +324,7 @@ recette('5.25', async ({ app, ui }) => {
 
 recette('5.26', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await renameInPlace(ui, 'Idées.md', 'Pistes');
   await ui.page.mouse.click(700, 500);
   await expect.poll(() => app.exists('Pistes.md')).toBe(true);
@@ -306,6 +332,7 @@ recette('5.26', async ({ app, ui }) => {
 
 recette('5.27', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await (await renameInPlace(ui, 'Idées.md', 'a:b')).press('Enter');
   await expect(ui.toasts.filter({ hasText: 'Les noms ne peuvent pas contenir' })).toHaveClass(/is-error/);
   await expect(ui.row('Idées.md')).toBeVisible();
@@ -313,6 +340,7 @@ recette('5.27', async ({ app, ui }) => {
 
 recette('5.28', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await (await renameInPlace(ui, 'Idées.md', 'Étude')).press('Enter');
   await expect(ui.toasts.filter({ hasText: 'Un fichier nommé « Étude.md » existe déjà ici' })).toHaveClass(/is-error/);
   await expect(ui.row('Idées.md')).toBeVisible();
@@ -321,6 +349,7 @@ recette('5.28', async ({ app, ui }) => {
 
 recette('5.29', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await (await renameInPlace(ui, 'Idées.md', 'IDÉES')).press('Enter');
   await expect.poll(() => app.exists('IDÉES.md')).toBe(true);
   await expect.poll(() => app.read('Bienvenue.md')).toContain('[[IDÉES]]');
@@ -328,6 +357,7 @@ recette('5.29', async ({ app, ui }) => {
 
 recette('5.30', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await drag(ui, ui.row('Idées.md'), ui.row('Journal'), async () => {
     await expect(ui.row('Journal')).toHaveClass(/is-drop-target/);
   });
@@ -340,6 +370,7 @@ recette('5.30', async ({ app, ui }) => {
 
 recette('5.31', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await drag(ui, ui.row('Projets'), ui.row('Journal'));
   await expect.poll(() => app.exists('Journal/Projets/Plan.md')).toBe(true);
   expect(await app.exists('Journal/Projets/Réunion.md')).toBe(true);
@@ -347,6 +378,7 @@ recette('5.31', async ({ app, ui }) => {
 
 recette('5.32', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.expand('Projets/Plan.md');
   const tree = ui.page.locator('.tree');
   const box = (await tree.boundingBox())!;
@@ -356,6 +388,7 @@ recette('5.32', async ({ app, ui }) => {
 
 recette('5.33', async ({ app, ui }) => {
   await app.start({ vault: baseVault({ 'Projets/Archive/Vieux.md': 'ancien' }) });
+  await ui.tree();
   await ui.expand('Projets/Archive/Vieux.md');
   await drag(ui, ui.row('Projets'), ui.row('Projets/Archive'));
   await ui.page.waitForTimeout(400);
@@ -365,6 +398,7 @@ recette('5.33', async ({ app, ui }) => {
 
 recette('5.34', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.expand('Projets/Plan.md');
   await drag(ui, ui.row('Projets/Plan.md'), ui.row('Projets/Réunion.md'));
   await ui.page.waitForTimeout(400);
@@ -374,6 +408,7 @@ recette('5.34', async ({ app, ui }) => {
 
 recette('5.35', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.open('Bienvenue');
   await ui.editEnd();
   const line = ui.editor.locator('.cm-line').last();
@@ -383,14 +418,18 @@ recette('5.35', async ({ app, ui }) => {
 
 recette('5.36', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.open('Bienvenue');
+  // The row of tabs shows from the second note on.
+  await ui.openInNewTab('Idées');
   await drag(ui, ui.row('Étude.md'), ui.pane.locator('.tabs'));
-  await expect(ui.tabs).toHaveCount(2);
+  await expect(ui.tabs).toHaveCount(3);
   await expect(ui.activeTab).toContainText('Étude');
 });
 
 recette('5.37', async ({ app, ui }) => {
   await app.start({ vault: manyNotes(3000, 1000), name: 'Gros coffre' });
+  await ui.tree();
   // From the bottom up: opening a folder pushes down only the folders below it.
   for (let i = 2; i >= 0; i--) await ui.row(`Dossier ${i}`).click();
   const tree = ui.page.locator('.tree');
@@ -404,6 +443,7 @@ recette('5.37', async ({ app, ui }) => {
 
 recette('5.38', async ({ app, ui }) => {
   await app.start({ vault: { '.cobblestone/app.json': '{}' } });
+  await ui.tree();
   await expect(ui.page.locator('.tree-empty')).toContainText('Ce coffre est vide');
   await ui.page.locator('.tree-empty').getByRole('button', { name: 'Nouvelle note' }).click();
   await expect(ui.activeTab).toContainText('Sans titre');
@@ -411,9 +451,11 @@ recette('5.38', async ({ app, ui }) => {
 
 recette('5.39', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.rail.getByRole('button', { name: 'Nouvelle note' }).click();
   await expect.poll(() => app.exists('Sans titre.md')).toBe(true);
-  await ui.rail.getByRole('button', { name: 'Nouveau dossier' }).click();
+  await ui.rail.getByRole('button', { name: 'Nouvelle note' }).click({ button: 'right' });
+  await ui.menuItem('Nouveau dossier').click();
   await expect.poll(() => app.exists('Nouveau dossier')).toBe(true);
   await ui.page.keyboard.press('Escape');
   const settings = await ui.settings();
@@ -424,9 +466,10 @@ recette('5.39', async ({ app, ui }) => {
 
 recette('5.40', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.open('Plan');
   await ui.editEnd();
-  await ui.command('Montrer cette note dans la barre latérale');
+  await ui.command('Montrer cette note dans son dossier');
   await expect(ui.row('Projets')).toHaveAttribute('aria-expanded', 'true');
   await expect(ui.row('Projets/Plan.md')).toHaveClass(/is-revealed/);
   await expect(ui.row('Projets/Plan.md')).toBeInViewport();
@@ -448,6 +491,7 @@ async function recordReveals(app: import('./lib/cobble').Cobble) {
 
 recette('5.41', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   const reveals = await recordReveals(app);
   await ui.contextMenu('Idées.md', 'Afficher dans le gestionnaire de fichiers');
   await expect.poll(reveals).toEqual([`show:${app.root}/Idées.md`]);
@@ -455,6 +499,7 @@ recette('5.41', async ({ app, ui }) => {
 
 recette('5.42', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   const reveals = await recordReveals(app);
   await ui.contextMenu('Projets', 'Afficher dans le gestionnaire de fichiers');
   await expect.poll(reveals).toEqual([`show:${app.root}/Projets`]);
@@ -462,6 +507,7 @@ recette('5.42', async ({ app, ui }) => {
 
 recette('5.43', async ({ app, ui }) => {
   await app.start({ vault: media() });
+  await ui.tree();
   const reveals = await recordReveals(app);
   await ui.expand('docs/manuel.pdf');
   await ui.expand('assets/image.png');
@@ -475,6 +521,7 @@ recette('5.43', async ({ app, ui }) => {
 
 recette('5.44', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   for (const path of ['Idées.md', 'Projets']) {
     await ui.contextMenu(path);
     await expect(ui.menu).not.toContainText('gestionnaire de fichiers');

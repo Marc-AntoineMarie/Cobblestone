@@ -1,10 +1,10 @@
 import { parseHotkey, type Command } from '../commands';
 import { t } from '../i18n';
-import { applyPreset, PANELS, PRESETS, type PresetId } from '../layout';
+import { applyPreset, MARGIN_TABS, PRESETS, setLayoutOption, type PresetId } from '../layout';
 import type { Session } from '../session';
 import type { Preferences } from '../settings';
 import { activeTab, closeTab, findPane, navigate, setMode, split } from '../workspace/workspace';
-import { panelLabel } from './Panel';
+import { marginLabel } from './Panel';
 
 /** Registers the application commands; returns a function removing them. */
 export function registerAppCommands(
@@ -113,18 +113,24 @@ export function registerAppCommands(
       run: () => ws.setState(split(ws.getState(), 'column')),
     },
     {
-      id: 'view:toggle-rail',
-      name: t('cmd.toggleRail'),
+      id: 'view:toggle-list',
+      name: t('cmd.toggleList'),
       section: t('cmd.section.view'),
       hotkeys: hk('Mod+Shift+\\', 'Mod+['),
-      run: () => session.ui.setState((s) => ({ leftOpen: !s.leftOpen })),
+      run: () => {
+        const layout = options.preferences().layout;
+        options.updatePreferences({ layout: setLayoutOption(layout, 'list', !layout.list) });
+      },
     },
     {
       id: 'view:toggle-margin',
       name: t('cmd.toggleMargin'),
       section: t('cmd.section.view'),
       hotkeys: hk('Mod+]'),
-      run: () => session.ui.setState((s) => ({ rightOpen: !s.rightOpen })),
+      run: () => {
+        const layout = options.preferences().layout;
+        options.updatePreferences({ layout: setLayoutOption(layout, 'margin', !layout.margin) });
+      },
     },
     // Each ready-made layout, and every panel, hidden ones included, is one command away.
     ...(Object.keys(PRESETS) as PresetId[]).map((preset) => ({
@@ -133,9 +139,9 @@ export function registerAppCommands(
       section: t('cmd.section.view'),
       run: () => options.updatePreferences({ layout: applyPreset(options.preferences().layout, preset) }),
     })),
-    ...PANELS.map((panel) => ({
+    ...MARGIN_TABS.map((panel) => ({
       id: `view:panel-${panel}`,
-      name: t('cmd.showPanel', { panel: panelLabel(panel) }),
+      name: t('cmd.showPanel', { panel: marginLabel(panel) }),
       section: t('cmd.section.view'),
       run: () => session.revealPanel(panel),
     })),

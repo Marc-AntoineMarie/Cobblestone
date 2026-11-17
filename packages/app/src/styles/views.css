@@ -966,3 +966,111 @@
   flex: 1;
   font-weight: 650;
 }
+
+/* ---- settings › layout: the shape of the workbench ---- */
+
+.layout-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.layout-preset {
+  flex: 1 1 180px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid var(--rule-strong);
+  border-radius: calc(var(--radius) + 3px);
+  background: var(--paper);
+  text-align: left;
+}
+
+.layout-preset:hover {
+  border-color: var(--ink-3);
+}
+
+.layout-preset.is-on {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.layout-preset strong {
+  font-size: 13.5px;
+  font-weight: 700;
+}
+
+.layout-preset span:last-child {
+  color: var(--ink-3);
+}
+
+/* A small drawing of the layout: the list, the note, the margin. */
+.layout-preset-shape {
+  display: flex;
+  gap: 2px;
+  height: 42px;
+  margin-bottom: 4px;
+  padding: 3px;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--paper-2);
+}
+
+.layout-preset-list,
+.layout-preset-margin {
+  width: 14px;
+  border-radius: 1px;
+  background: var(--ink-3);
+}
+
+.layout-preset-margin {
+  width: 9px;
+}
+
+.layout-preset-sheet {
+  flex: 1;
+  border-radius: 1px;
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--rule);
+}
+
+.layout-custom {
+  flex: 1 1 100%;
+  margin: 0;
+  color: var(--ink-3);
+}
+
+.rail-settings {
+  list-style: none;
+  margin: 0 0 18px;
+  padding: 0;
+}
+
+.rail-setting {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 2px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.rail-setting:last-child {
+  border-bottom: 0;
+}
+
+.rail-setting.is-off {
+  color: var(--ink-3);
+}
+
+.rail-setting-name {
+  flex: 1;
+  min-width: 0;
+}
+
+.rail-setting .icon-button:disabled {
+  opacity: 0.35;
+}
