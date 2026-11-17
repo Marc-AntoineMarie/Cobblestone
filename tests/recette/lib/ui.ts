@@ -81,6 +81,20 @@ export class Ui {
   get findResults() {
     return this.page.locator('.find-results');
   }
+  /**
+   * Shows the folders in the list (the workbench opens on the recent notes) and
+   * returns the tree. On a phone the list has no tree: nothing to do.
+   */
+  async tree() {
+    await this.page.locator('.desk-list, .mobile-workbench').first().waitFor();
+    const tab = this.listTab('Dossiers');
+    if (await tab.count()) {
+      if ((await tab.getAttribute('aria-selected')) !== 'true') await tab.click();
+      await this.page.locator('.tree, .tree-empty').first().waitFor();
+    }
+    return this.page.locator('.tree');
+  }
+
   /** A row of the file tree, by vault path ("Projets/Plan.md"). */
   row(path: string) {
     return this.page.locator(`.tree-row[data-path="${path.replace(/"/g, '\\"')}"]`);
@@ -269,12 +283,11 @@ export class Ui {
       root: page.locator('.mobile-workbench'),
       home,
       homeTab: (name: string) => home.getByRole('tab', { name }),
-      rows: home.locator('.mobile-row'),
-      row: (name: string) =>
-        home.locator('.mobile-row').filter({ has: page.locator('.mobile-row-title', { hasText: exact(name) }) }),
-      pins: home.locator('.mobile-pin'),
-      folderUp: home.locator('.mobile-folder-up'),
-      tags: home.locator('.mobile-tag'),
+      rows: home.locator('.list-row'),
+      row: (name: string) => home.locator('.list-row').filter({ has: page.locator('.list-row-title', { hasText: exact(name) }) }),
+      pins: home.locator('.list-pin'),
+      folderUp: home.locator('.list-folder-up'),
+      tags: home.locator('.list-tag'),
       searchPill: home.locator('.mobile-search-pill'),
       newNote: home.locator('.mobile-new'),
       screen,

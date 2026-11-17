@@ -22,6 +22,7 @@ const files = () =>
 
 recette('21.1', async ({ app, ui }) => {
   await app.start({ vault: files() });
+  await ui.tree();
   await ui.expand('assets/image.png');
   await ui.row('assets/image.png').click();
   const img = ui.pane.locator('.file-view.is-image img');
@@ -30,6 +31,7 @@ recette('21.1', async ({ app, ui }) => {
 
 recette('21.2', async ({ app, ui }) => {
   await app.start({ vault: files() });
+  await ui.tree();
   await ui.expand('docs/manuel.pdf');
   await ui.row('docs/manuel.pdf').click();
   await expect(ui.pane.locator('.file-view.is-pdf iframe')).toHaveAttribute('src', /.+/);
@@ -37,6 +39,7 @@ recette('21.2', async ({ app, ui }) => {
 
 recette('21.3', async ({ app, ui }) => {
   await app.start({ vault: files() });
+  await ui.tree();
   await ui.expand('docs/son.mp3');
   await ui.row('docs/son.mp3').click();
   await expect(ui.pane.locator('.file-view audio[controls]')).toHaveAttribute('src', /.+/);
@@ -46,6 +49,7 @@ recette('21.3', async ({ app, ui }) => {
 
 recette('21.4', async ({ app, ui }) => {
   await app.start({ vault: files() });
+  await ui.tree();
   await ui.expand('docs/notes.txt');
   const expected = {
     'docs/notes.txt': 'du texte brut',
@@ -61,6 +65,7 @@ recette('21.4', async ({ app, ui }) => {
 
 recette('21.5', async ({ app, ui }) => {
   await app.start({ vault: files() });
+  await ui.tree();
   await ui.expand('docs/archive.zip');
   await ui.row('docs/archive.zip').click();
   await expect(ui.pane.locator('.file-unsupported')).toHaveText('Cobblestone ne sait pas encore afficher ce fichier.');
@@ -68,6 +73,7 @@ recette('21.5', async ({ app, ui }) => {
 
 recette('21.6', async ({ app, ui }) => {
   await app.start({ vault: files() });
+  await ui.tree();
   await ui.expand('assets/image.png');
   await ui.row('assets/image.png').click();
   const img = ui.pane.locator('.file-view.is-image img');

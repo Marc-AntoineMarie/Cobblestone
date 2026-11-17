@@ -27,6 +27,7 @@ recette('30.4', async ({ app, ui }) => {
 recette('30.5', async ({ app, ui }) => {
   const vault = obsidianVault();
   await app.start({ vault });
+  await ui.tree();
   await ui.contextMenu('Idées.md', 'Ajouter aux favoris');
   await expect.poll(() => app.readOr('.cobblestone/bookmarks.json')).toContain('Idées.md');
   expect(await app.read('.obsidian/bookmarks.json')).toBe(vault['.obsidian/bookmarks.json']);

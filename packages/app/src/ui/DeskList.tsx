@@ -57,7 +57,8 @@ export function DeskList({ width, onSwitchVault }: { width: PanelWidth; onSwitch
     event.preventDefault();
     const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
     session.ui.setState({
-      menu: { x: rect.left, y: rect.bottom + 4, items: newNoteMenu(session, tab === 'folders' ? folder : undefined) },
+      // No folder forced here: a new note follows the setting, as the palette's command does.
+      menu: { x: rect.left, y: rect.bottom + 4, items: newNoteMenu(session) },
     });
   };
 
@@ -119,11 +120,7 @@ export function DeskList({ width, onSwitchVault }: { width: PanelWidth; onSwitch
 
       <footer className="desk-list-foot">
         <div className="desk-list-actions">
-          <button
-            className="button is-primary list-new"
-            onClick={() => void session.createNote(tab === 'folders' ? folder : undefined)}
-            onContextMenu={newMenu}
-          >
+          <button className="button is-primary list-new" onClick={() => void session.createNote()} onContextMenu={newMenu}>
             <Plus size={17} strokeWidth={2.2} aria-hidden />
             {t('rail.newNote')}
           </button>

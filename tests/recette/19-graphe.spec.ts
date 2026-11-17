@@ -360,6 +360,7 @@ recette('19.17', async ({ app, ui }, testInfo) => {
 
 recette('19.18', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   // The note on the left, the graph on the right.
   await ui.open('Idées');
   await ui.page.keyboard.press('Control+\\');

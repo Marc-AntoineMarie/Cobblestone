@@ -8,6 +8,7 @@ import { baseVault, manyNotes } from './lib/vaults';
 recette('29.1', async ({ app, ui }, testInfo) => {
   testInfo.setTimeout(120_000); // preparing 5 200 notes takes a while, opening them must not
   await app.start({ vault: manyNotes(5200), name: 'Très gros coffre', open: false });
+  await ui.tree();
   const started = Date.now();
   await ui.recentRows.first().locator('.recent-open').click();
   await ui.page.locator('.workbench').waitFor({ timeout: 30_000 });
@@ -34,6 +35,7 @@ recette('29.2', async ({ app, ui }) => {
 
 recette('29.3', async ({ app, ui }) => {
   await app.start({ vault: baseVault({ 'Vide.md': '', 'SANS-EXTENSION': 'brut', 'dossier/LISEZMOI': '' }) });
+  await ui.tree();
   await ui.open('Vide');
   await ui.append('rempli');
   await ui.row('SANS-EXTENSION').click();
@@ -59,6 +61,7 @@ recette('29.4', async ({ app, ui }) => {
 
 recette('29.5', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   // The app already running: the network goes away.
   if (app.desktop) {
     await app.electron.evaluate(({ session }) => session.defaultSession.enableNetworkEmulation({ offline: true }));
@@ -81,6 +84,7 @@ recette.manuel('29.6', 'une heure d’utilisation réelle, pour juger de la flui
 recette('29.7', async ({ app, ui }) => {
   const files = Object.fromEntries(Array.from({ length: 1500 }, (_, i) => [`Gros dossier/Note ${i}.md`, `note ${i}`]));
   await app.start({ vault: baseVault(files) });
+  await ui.tree();
   await ui.contextMenu('Gros dossier', 'Renommer');
   await ui.page.locator('.tree-rename').fill('Dossier déplacé');
   await ui.page.locator('.tree-rename').press('Enter');
@@ -95,6 +99,7 @@ recette(
   '29.8',
   async ({ app, ui }) => {
     await app.start({ vault: baseVault({ 'Verrouillé/Note.md': 'x' }) });
+    await ui.tree();
     // A folder the system refuses to write into.
     await chmod(path.join(app.root, 'Verrouillé'), 0o555);
     await ui.contextMenu('Verrouillé', 'Nouvelle note ici');
@@ -112,6 +117,7 @@ recette(
   '29.8',
   async ({ app, ui }) => {
     await app.start({ vault: baseVault(), open: false });
+    await ui.tree();
     await app.makeUnreadable('Idées.md');
     await ui.recentRows.first().locator('.recent-open').click();
     await ui.row('Idées.md').click();

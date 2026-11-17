@@ -20,12 +20,14 @@ recette('23.1', async ({ app, ui }) => {
 
 recette('23.2', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await app.write('Venue d’ailleurs.md', 'bonjour');
   await expect(ui.row('Venue d’ailleurs.md')).toBeVisible(SLOW);
 });
 
 recette('23.3', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.open('Idées');
   await ui.openInNewTab('Étude');
   await app.remove('Idées.md');
@@ -35,6 +37,7 @@ recette('23.3', async ({ app, ui }) => {
 
 recette('23.4', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await app.move('Idées.md', 'Pistes.md');
   await expect(ui.row('Pistes.md')).toBeVisible(SLOW);
   await expect(ui.row('Idées.md')).toHaveCount(0);
@@ -44,6 +47,7 @@ recette('23.4', async ({ app, ui }) => {
 
 recette('23.5', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   // Like "git pull": several notes change at once.
   await Promise.all([
     app.write('Idées.md', 'tiré : idées'),
@@ -75,6 +79,7 @@ recette('23.6', async ({ app, ui }) => {
 
 recette('23.7', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await app.write('.git/config', '[core]');
   await app.write('.stfolder/marque', '');
   await app.write('Témoin.md', 'pour attendre le rafraîchissement');
@@ -148,6 +153,7 @@ recette('23.12', async ({ app, ui }) => {
 
 recette('23.13', async ({ app, ui }) => {
   await app.start({ vault: baseVault(), name: 'MonCoffre' });
+  await ui.tree();
   await ui.open('Idées');
   // Another drive: the copy there has a new folder identity, so it is not found by itself.
   const usb = path.join(await app.folder('Clé USB'), 'MonCoffre');

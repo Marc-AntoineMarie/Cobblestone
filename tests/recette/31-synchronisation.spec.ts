@@ -48,6 +48,7 @@ recette('31.3', async ({ app, ui }, testInfo) => {
     await expect
       .poll(async () => [...(await b.app.readBytes('images/logo.png').catch(() => new Uint8Array()))])
       .toEqual([...image]);
+    await b.ui.tree();
     await expect(b.ui.row('Dossier')).toBeVisible();
   });
 });
@@ -253,6 +254,7 @@ recette('31.17', async ({ app, ui }, testInfo) => {
     await expect.poll(() => b.app.readOr('Idées.md')).toContain('Une idée');
     await mkdir(path.join(a.app.root, 'Dossier vide'));
     await expect.poll(() => b.app.exists('Dossier vide'), { timeout: 20_000 }).toBe(true);
+    await b.ui.tree();
     await expect(b.ui.row('Dossier vide')).toBeVisible();
     await rm(path.join(a.app.root, 'Dossier vide'), { recursive: true });
     await expect.poll(() => b.app.exists('Dossier vide'), { timeout: 20_000 }).toBe(false);

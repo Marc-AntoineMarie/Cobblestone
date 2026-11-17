@@ -69,6 +69,7 @@ recette('22.4', async ({ app, ui }) => {
       'Dossier/Deux.md': 'deux',
     }),
   });
+  await ui.tree();
   await ui.contextMenu('Dossier', 'Nouveau dossier ici');
   await ui.page.locator('.tree-rename').press('Escape');
   await renameRow(ui, 'Dossier', 'Classeur');
@@ -89,6 +90,7 @@ recette('22.5', async ({ app, ui }) => {
 
 recette('22.6', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.contextMenu('Idées.md', 'Mettre à la corbeille');
   await expect.poll(() => app.exists('.trash/Idées.md')).toBe(true);
   expect(await linkState(app, ui, 'Bienvenue', 'Idées')).toContain('is-unresolved');
@@ -96,6 +98,7 @@ recette('22.6', async ({ app, ui }) => {
 
 recette('22.7', async ({ app, ui }) => {
   await app.start({ vault: baseVault({ 'A/Nom.md': 'un', 'B/Nom.md': 'deux' }) });
+  await ui.tree();
   await ui.expand('A/Nom.md');
   await ui.contextMenu('A/Nom.md', 'Mettre à la corbeille');
   await ui.expand('B/Nom.md');
@@ -105,6 +108,7 @@ recette('22.7', async ({ app, ui }) => {
 
 recette('22.8', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   const settings = await ui.settings();
   await settings.locator('#set-trash').selectOption('permanent');
   await ui.contextMenu('Idées.md', 'Mettre à la corbeille');
@@ -114,6 +118,7 @@ recette('22.8', async ({ app, ui }) => {
 
 recette('22.9', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.open('Plan');
   await ui.openInNewTab('Idées');
   await ui.contextMenu('Projets', 'Mettre à la corbeille');
@@ -124,6 +129,7 @@ recette('22.9', async ({ app, ui }) => {
 
 recette('22.10', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.contextMenu('Idées.md', 'Mettre à la corbeille');
   await expect.poll(() => app.exists('.trash/Idées.md')).toBe(true);
   await ui.find.fill('Idées');

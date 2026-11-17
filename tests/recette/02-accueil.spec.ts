@@ -45,6 +45,7 @@ recette('2.4', async ({ app, ui }) => {
 
 recette('2.5', async ({ app, ui }) => {
   await app.start();
+  await ui.tree();
   await app.pickFolderWith('Copie du coffre', baseVault());
   await ui.launchAction(openFolder).click();
   await expect(ui.vaultName).toHaveText('Copie du coffre');
@@ -84,6 +85,7 @@ recette('2.9', async ({ app, ui }) => {
 
 recette('2.10', async ({ app, ui }) => {
   await app.start();
+  await ui.tree();
   const parent = await app.folder('Parent');
   await app.answerFolderDialog(parent);
   await ui.launchAction(newVault).click();
@@ -115,6 +117,7 @@ recette('2.12', async ({ app, ui }) => {
 
 recette('2.13', async ({ app, ui }) => {
   await app.start();
+  await ui.tree();
   await ui.launchAction(newVault).click();
   await ui.page.getByLabel('Nom du coffre').fill('Carnet');
   await ui.page.getByRole('button', { name: 'Créer', exact: true }).click();
@@ -161,6 +164,7 @@ recette('2.18', async ({ app, ui }) => {
 
 recette('2.19', async ({ app, ui }) => {
   await app.start({ vault: baseVault(), name: 'Carnet', open: false });
+  await ui.tree();
   await ui.recent('Carnet').getByRole('button', { name: 'Supprimer ce coffre' }).click();
   await ui.recent('Carnet').getByRole('button', { name: 'Annuler' }).click();
   await expect(ui.recent('Carnet').locator('.recent-confirm')).toHaveCount(0);
@@ -235,6 +239,7 @@ recette('2.26', async ({ app, ui }) => {
 
 recette('2.27', async ({ app, ui }) => {
   await app.start({ vault: baseVault(), name: 'MonCoffre' });
+  await ui.tree();
   await ui.switchVault();
   const moved = path.join(path.dirname(app.root), 'Archives', 'MonCoffre');
   await app.folder('Archives');

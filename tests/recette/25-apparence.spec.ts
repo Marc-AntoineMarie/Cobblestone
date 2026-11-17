@@ -36,6 +36,7 @@ recette('25.2', async ({ app, ui }) => {
 
 recette('25.3', async ({ app, ui }) => {
   await app.start({ vault: baseVault(), preferences: { theme: 'day', language: 'auto' } });
+  await ui.tree();
   await ui.open('Idées');
   await ui.page.keyboard.press('Control+\\');
   await ui.row('Tableau.canvas').click();
@@ -154,7 +155,7 @@ recette('25.10', async ({ app, ui }) => {
   await expect(day.locator('[aria-checked="true"]')).toHaveCount(1);
   expect(await css(ui.page, 'body', 'background-color')).toBe('rgb(239, 228, 208)');
   expect(await css(ui.page, 'body', 'color')).toBe('rgb(59, 42, 26)');
-  expect(await css(ui.page, '.side.is-left', 'background-color')).not.toBe('rgb(235, 235, 228)');
+  expect(await css(ui.page, '.desk-list', 'background-color')).not.toBe('rgb(235, 235, 228)');
 });
 
 recette('25.11', async ({ app, ui }) => {
@@ -252,6 +253,7 @@ recette('25.16', async ({ app, ui }) => {
 recette('25.17', async ({ app, ui }) => {
   const files = Object.fromEntries(Array.from({ length: 60 }, (_, i) => [`Liste/Note ${String(i).padStart(2, '0')}.md`, 'x']));
   await app.start({ vault: baseVault(files) });
+  await ui.tree();
   await ui.row('Liste').click();
   const settings = await ui.settings();
   const tops = () =>
@@ -269,14 +271,18 @@ recette('25.17', async ({ app, ui }) => {
       label,
     ).toBe(true);
     expect(Math.round(rows[1]![1]! - rows[0]![1]!), label).toBe(height);
+    // The tags live under their own segment of the list, and follow the same density.
+    await ui.listTab('Tags').click();
     expect(
       Math.round(
         await ui.tags
-          .locator('.tag-row')
+          .locator('.list-tag')
           .first()
           .evaluate((el) => el.getBoundingClientRect().height),
       ),
+      label,
     ).toBe(height);
+    await ui.listTab('Dossiers').click();
   }
   // The last note of the long folder can still be reached.
   await ui.page.locator('.tree').evaluate((el) => el.scrollTo({ top: el.scrollHeight }));
@@ -501,8 +507,8 @@ recette('25.29', async ({ app, ui }) => {
   await expect(settings.locator('.layout-custom')).toBeVisible();
   await settings.getByRole('button', { name: 'Monter Propriétés' }).click();
   const rail = ui.page.locator('.marge-button');
-  await expect(rail).toHaveAttribute('data-tab', 'links');
-  await expect(rail.nth(1)).toHaveAttribute('data-tab', 'properties');
+  await expect(rail.first()).toHaveAttribute('data-tab', 'properties');
+  await expect(rail.nth(1)).toHaveAttribute('data-tab', 'links');
   await settings.getByRole('button', { name: 'Revenir à la disposition complète' }).click();
   await expect(ui.marginButton('outline')).toBeVisible();
   await expect(rail.nth(1)).toHaveAttribute('data-tab', 'outline');

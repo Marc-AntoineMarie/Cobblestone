@@ -22,6 +22,8 @@ recette('24.1', async ({ app, ui }) => {
     'Fichiers et liens',
     'Aujourd’hui',
     'Modèles',
+    'Synchronisation',
+    'Compte',
     'À propos',
   ]);
   // The list of sections leads to them, and follows the scroll.
@@ -177,6 +179,7 @@ recette('24.9', async ({ app, ui }) => {
 
 recette('24.10', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   const settings = await ui.settings();
   await settings.locator('#set-links').click();
   await ui.contextMenu('Idées.md', 'Renommer');
@@ -188,6 +191,7 @@ recette('24.10', async ({ app, ui }) => {
 
 recette('24.11', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.contextMenu('Idées.md', 'Mettre à la corbeille');
   await expect.poll(() => app.exists('.trash/Idées.md')).toBe(true);
   const settings = await ui.settings();
@@ -325,6 +329,7 @@ recette('24.21', async ({ app, ui }) => {
     vault: baseVault({ 'Essai.md': 'avant\n\n![[Idées]]\n\nVers [[Réunion]]\n\nfin' }),
     viewport: { width: 1280, height: 800 },
   });
+  await ui.tree();
   const settings = await ui.settings();
   await settings.locator('#set-text-size').selectOption('24');
   await radio(settings.getByRole('radiogroup', { name: 'Largeur des lignes' }), 'Large').click();
@@ -357,5 +362,5 @@ recette('24.22', async ({ app, ui }) => {
   await search.fill('xylophone');
   await expect(settings.locator('.settings-empty')).toContainText('Aucun réglage ne correspond');
   await search.fill('');
-  await expect(settings.locator('.settings-section:visible')).toHaveCount(8);
+  await expect(settings.locator('.settings-section:visible')).toHaveCount(10);
 });

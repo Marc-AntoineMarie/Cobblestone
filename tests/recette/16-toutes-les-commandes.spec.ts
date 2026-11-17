@@ -79,6 +79,7 @@ recette('16.9', async ({ app, ui }) => {
 
 recette('16.10', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.row('Idées.md').click();
   await ui.row('Étude.md').click();
   await ui.page.keyboard.press('Control+Alt+ArrowLeft');

@@ -120,7 +120,8 @@
 .workbench[data-list='drawer'] .desk-list {
   position: absolute;
   inset: 0 auto 0 0;
-  z-index: 30;
+  /* Over the scrim that covers the notes. */
+  z-index: 41;
   box-shadow: var(--shadow-sheet);
 }
 

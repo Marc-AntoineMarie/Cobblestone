@@ -259,7 +259,7 @@
 }
 
 .desk-list .list-row {
-  min-height: 0;
+  min-height: var(--row);
   padding: 6px 8px;
   border-bottom: 0;
   border-radius: var(--radius);
@@ -295,7 +295,7 @@
 }
 
 .desk-list .list-tag {
-  min-height: 26px;
+  min-height: var(--row);
   padding: 0 10px;
   font-size: 12.5px;
 }

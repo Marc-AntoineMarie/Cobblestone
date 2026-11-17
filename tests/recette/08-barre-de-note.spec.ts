@@ -16,6 +16,7 @@ async function retitle(ui: Ui, name: string) {
 
 recette('8.1', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.open('Plan');
   await ui.noteBar.locator('.crumb', { hasText: 'Projets' }).click();
   await expect(ui.row('Projets')).toHaveClass(/is-revealed/);
@@ -110,13 +111,14 @@ recette('8.9', async ({ app, ui }) => {
 
 recette('8.10', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.open('Plan');
   await more(ui, 'Diviser à droite');
   await expect(ui.panes).toHaveCount(2);
-  await ui.activeTab.getByRole('button', { name: 'Fermer' }).click();
+  await ui.page.keyboard.press('Control+w');
   await more(ui, 'Diviser en bas');
   await expect(ui.page.locator('.split.is-column')).toBeVisible();
-  await ui.activeTab.getByRole('button', { name: 'Fermer' }).click();
+  await ui.page.keyboard.press('Control+w');
   await more(ui, 'Afficher la source Markdown');
   await expect(ui.noteBar.getByRole('button', { name: 'Source' })).toBeVisible();
   await more(ui, 'Afficher la source Markdown');
@@ -279,6 +281,7 @@ recette('8.26', async ({ app, ui }) => {
   await app.start({ vault: baseVault(), open: false });
   await app.makeUnreadable('Idées.md');
   await ui.recentRows.first().locator('.recent-open').click();
+  await ui.tree();
   await ui.row('Idées.md').click();
   await expect(ui.pane.locator('.editor-failure, .reading-failure')).toContainText(
     'Impossible de lire cette note : le système refuse l’accès à cet emplacement.',

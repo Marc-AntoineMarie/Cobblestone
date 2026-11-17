@@ -131,6 +131,7 @@ recette('14.11', async ({ app, ui }) => {
 
 recette('14.12', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.open('Idées');
   await ui.openMargin('links');
   await ui.listTab('Dossiers').click();

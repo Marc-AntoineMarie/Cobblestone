@@ -82,6 +82,7 @@ recette('4.8', async ({ app, ui }) => {
 
 recette('4.9', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.tree();
   await ui.find.fill('plan');
   await ui.find.press('Escape');
   await expect(ui.find).toHaveValue('');
