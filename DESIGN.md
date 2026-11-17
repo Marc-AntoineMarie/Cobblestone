@@ -189,7 +189,7 @@ One family, Archivo (variable weight and width), carries the whole system; Commi
 - **Sheet** (center): tabs across the top (they can be hidden), then the note at a 70ch measure with generous margins. Sheets can split right or down.
 - **Status bar** (28px, can be hidden): where the vault stands (sync status), the active note's words, characters and backlinks, and the Appearance button that opens quick settings (themes, paper, text size, line length, layout).
 - Spacing rhythm 4 / 8 / 12 / 20 / 32 / 56. More space above a heading than below it.
-- Under 1180px the right zone is a drawer. Under 768px the phone workbench takes over (see Phone).
+- Under 1180px the right zone is a drawer. Under 768px, and on touch tablets up to 1180px, the phone workbench takes over (see Phone).
 
 ## Phone
 
@@ -201,6 +201,7 @@ Under 768px the workbench becomes a stack of full screens, one at a time, for th
 - **Note sheet**: the links button (with the count of links in and out) and the outline button raise a sheet from the bottom: pills for Backlinks, Links out, Outline, Properties and the local Graph. It stops at about 60% height; a tap on its handle fills the screen, a drag down or a tap on the scrim closes it. A long press on a link shows its preview along the bottom instead of following it.
 - **Keyboard bar**: while writing, a 50px paper-2 bar sits on the keyboard: [[ ]], #, checkbox, heading (cycles #, ##, ###), bold, italic, list, attach (photo or file), undo, redo, then hide keyboard and Done on the accent. Link suggestions line up as a strip just above it, the selected one on the yellow mark. The screen ends at the bar so the line being typed stays in sight.
 - **Search**: full screen, the field at the bottom above the keyboard, results above it, operator chips (tag:, path:, file:…) and Commands.
+- **Tablet** (touch screen, 768 to 1180px): the home stays on the left (300–380px) and the stack fills the right; the note shown is marked in the list on paper-2; with nothing open the right side says to pick or create a note. Back at the bottom of the stack empties the right side. With a mouse, the same width keeps the desktop.
 - **Menus** become an action sheet along the bottom edge, 48px rows.
 - **Sizes**: 44px touch targets at least, 52px rows, note text never under 16px (iOS zooms into smaller fields).
 - **Exceptions to the print rules, phone only**: the floating dock and toolbar are paper at 82% with a blur, since they lie over the text; touch controls (segments, search field, chips, toolbar) are pills; the New note button keeps the ink plate offset 3px under the pink one, as on the launcher's title.
