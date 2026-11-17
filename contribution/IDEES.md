@@ -92,6 +92,32 @@ note, barre au-dessus du clavier, tablette. Reste, dans l'ordre :
 3. Applications natives Android et iOS avec Capacitor (plus tard), avec de vrais dossiers (stockage
    partagé sur Android, app Fichiers sur iPhone). Détails dans [docs/DISTRIBUTION.md](../docs/DISTRIBUTION.md).
 
+## Refonte de l'interface sur ordinateur — à décider (demandée le 2026-11-17)
+
+Garder toutes les fonctions reprises d'Obsidian, mais rendre l'app plus accessible, plus belle et
+conforme aux usages actuels. **Des artifacts d'abord, validés par l'utilisateur, avant tout code.**
+
+1. Refonte graphique complète de l'atelier de bureau (disposition, hiérarchie, accessibilité).
+2. Interfaces au choix de l'utilisateur : une vue « document » façon Google Docs (page, barre
+   d'outils de mise en forme, sans Markdown visible) et une vue « tableur » façon Excel pour les
+   tableaux (cellules, tri, colonnes), les fichiers restant du Markdown.
+
+## IA et MCP — à décider (demandés le 2026-11-17)
+
+1. Brancher les serveurs MCP choisis par l'utilisateur, pour qu'un assistant agisse sur les notes,
+   le graphe, les tags et la recherche.
+2. Exposer le coffre lui-même comme serveur MCP (lire, chercher, créer, relier des notes), pour les
+   assistants extérieurs.
+3. Prise de notes assistée : résumer, relier, ranger, proposer des tags et des liens ; à cadrer avec
+   la vie privée (clé et modèle choisis par l'utilisateur, rien d'envoyé sans accord).
+
+## Synchronisation en direct — à vérifier (repéré le 2026-11-17)
+
+- Sur un stockage lent (téléphone), une écriture de fichier qui met plus de 350 ms peut encore
+  ramener un texte en retard dans un coffre sans texte partagé ; à mesurer sur un vrai iPhone.
+- Frappe simultanée pendant une composition du clavier (correction automatique d'iOS, Android) : à
+  tester à deux appareils réels.
+
 ## Distribution — à décider
 
 - Compte Apple Developer (99 $ par an) : macOS sans alerte à l'ouverture, puis l'App Store iOS.

@@ -224,6 +224,7 @@ Paper is cut, not moulded: `--radius` corners on controls (3px by default; the r
 - **Panels**: a 36px title in chrome labels with a fold chevron and a count; right-click for Move left/right, Up, Down, Hide; drag the title to move it (a dashed accent outline marks the zone, an accent rule the place).
 - **Focus**: 2px accent ring offset 2px on every interactive element.
 - **Sync status**: named states, each a word and a shape: Synced (filled dot), Syncing (half dot), Offline (hollow dot), Conflict (triangle).
+- **Presence on a note**: one pill per other device on the note, bordered in its ink, with its name: a full dot when it writes (its caret also shows in the text), a ring when it reads. In the note bar on the desktop, in the top bar on the phone.
 - **Callouts**: a tinted ground of their ink at low strength with an ink title; no coloured side stripe.
 
 ## Do's and Don'ts
