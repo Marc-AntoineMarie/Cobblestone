@@ -1,0 +1,312 @@
+/* ================================================================
+   The list of notes: the phone's home and the workbench's list.
+   Touch sizes by default; the workbench makes its own rows denser.
+   ================================================================ */
+
+.list-label {
+  margin: 22px 0 10px;
+  font-size: 12px;
+  font-weight: 650;
+  font-stretch: 80%;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.list-segments {
+  display: flex;
+  gap: 6px;
+}
+
+.list-segments button {
+  min-height: 36px;
+  padding: 0 15px;
+  border: 1px solid var(--rule-strong);
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+
+.list-segments button[aria-selected='true'] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.list-pins {
+  display: flex;
+  gap: 10px;
+  margin: 0 calc(-1 * var(--mobile-gutter));
+  padding: 0 var(--mobile-gutter) 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.list-pins::-webkit-scrollbar {
+  display: none;
+}
+
+.list-pin {
+  flex: 0 0 140px;
+  min-height: 108px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 4px;
+  padding: 12px;
+  border-radius: 14px;
+  background: var(--paper-2);
+  text-align: left;
+}
+
+.list-pin svg {
+  margin-bottom: auto;
+  color: var(--ink-2);
+}
+
+.list-pin b {
+  font-size: 16px;
+  font-weight: 720;
+  line-height: 1.2;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.list-pin small {
+  font-size: 12.5px;
+  color: var(--ink-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.list-pin.is-today {
+  background: var(--accent);
+  color: #fff;
+}
+
+.list-pin.is-today svg,
+.list-pin.is-today small {
+  color: rgb(255 255 255 / 0.88);
+}
+
+.list-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.list-row {
+  width: 100%;
+  min-height: 52px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 2px 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--rule);
+  text-align: left;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.list-row:active {
+  background: var(--paper-2);
+}
+
+.list-row-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-size: 17px;
+  font-weight: 650;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.list-row-title svg {
+  flex: none;
+  color: var(--ink-2);
+}
+
+.list-row time,
+.list-row-count {
+  font-size: 13px;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.list-row-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  align-self: center;
+}
+
+.list-row-detail {
+  grid-column: 1 / -1;
+  font-size: 14.5px;
+  color: var(--ink-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.list-row-folder {
+  color: var(--ink-3);
+}
+
+.list-row.is-folder {
+  align-items: center;
+}
+
+.list-folder-up {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  min-height: 48px;
+  margin-top: 12px;
+  border-bottom: 1px solid var(--rule-strong);
+  font-size: 15px;
+  color: var(--accent-deep);
+  font-weight: 600;
+}
+
+.list-folder-up b {
+  margin-left: auto;
+  color: var(--ink);
+  font-size: 17px;
+  font-weight: 720;
+}
+
+.list-rename {
+  width: 100%;
+  min-height: 52px;
+  padding: 0 12px;
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.list-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.list-tag {
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: var(--paper-2);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.list-tag span {
+  margin-left: 6px;
+  color: var(--ink-3);
+  font-weight: 500;
+}
+
+/* ---- in the workbench: denser rows, smaller text ---- */
+
+.desk-list .list-segments {
+  flex: none;
+  gap: 4px;
+  margin-bottom: 2px;
+}
+
+.desk-list .list-segments button {
+  min-height: 28px;
+  padding: 0 11px;
+  font-size: 13px;
+}
+
+.desk-list .list-label {
+  margin: 12px 0 6px;
+}
+
+.desk-list .list-pins {
+  margin: 0;
+  padding: 0 0 2px;
+}
+
+.desk-list .list-pin {
+  flex-basis: 124px;
+  min-height: 72px;
+  padding: 8px 10px;
+  border-radius: calc(var(--radius) + 5px);
+}
+
+.desk-list .list-pin b {
+  font-size: 13.5px;
+}
+
+.desk-list .list-pin small {
+  font-size: 11.5px;
+}
+
+.desk-list .list-row {
+  min-height: 0;
+  padding: 6px 8px;
+  border-bottom: 0;
+  border-radius: var(--radius);
+  gap: 0 8px;
+}
+
+.desk-list .list-row:hover {
+  background: var(--hover);
+}
+
+.desk-list .list-row[aria-current='page'] {
+  background: var(--mark);
+  color: var(--mark-ink);
+}
+
+.desk-list .list-row-title {
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.desk-list .list-row time,
+.desk-list .list-row-count {
+  font-size: 11.5px;
+}
+
+.desk-list .list-row-detail {
+  font-size: 12px;
+}
+
+.desk-list .list-tags {
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.desk-list .list-tag {
+  min-height: 26px;
+  padding: 0 10px;
+  font-size: 12.5px;
+}
+
+.desk-list .list-folder-up {
+  min-height: 34px;
+  margin-top: 6px;
+  font-size: 13px;
+}
+
+.desk-list .list-rename {
+  min-height: 30px;
+  font-size: 13px;
+}

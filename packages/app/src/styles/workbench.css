@@ -1,9 +1,9 @@
 /* ------------------------------------------------------------ frame */
 
-/* The top bar, then the activity bar, the side zones and the sheets, then the status bar. */
+/* The list, the notes and the margin, then the status bar. */
 .workbench {
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr) auto;
   /* The column never grows past the window: a long row of tabs scrolls instead. */
   grid-template-columns: minmax(0, 1fr);
   height: 100%;
@@ -11,6 +11,7 @@
 }
 
 .workbench-body {
+  position: relative;
   display: flex;
   min-width: 0;
   min-height: 0;
@@ -23,19 +24,9 @@
   background: var(--paper);
 }
 
-/* ------------------------------------------------------------ top bar */
+/* ------------------------------------------------------------ the list, on the left */
 
-.top-bar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  height: var(--bar);
-  padding: 0 8px;
-  border-bottom: 1px solid var(--rule);
-  background: var(--paper-2);
-}
-
-.top-bar .vault-switch {
+.vault-switch {
   flex: 0 1 260px;
 }
 
@@ -114,123 +105,189 @@
   white-space: nowrap;
 }
 
-/* ------------------------------------------------------------ activity bar */
-
-.activity-bar {
+.desk-list {
   flex: none;
-  width: 48px;
+  width: var(--list-width, 292px);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: 8px 0;
+  gap: 8px;
+  min-height: 0;
+  padding: 8px 10px 10px;
   border-right: 1px solid var(--rule);
   background: var(--paper-2);
 }
 
-.activity-button {
+.workbench[data-list='drawer'] .desk-list {
+  position: absolute;
+  inset: 0 auto 0 0;
+  z-index: 30;
+  box-shadow: var(--shadow-sheet);
+}
+
+.desk-list-top {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.desk-list-scroll {
+  flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+}
+
+/* The tree takes the height left under the segments. */
+.desk-list-scroll .tree {
+  flex: 1;
+  min-height: 0;
+}
+
+.desk-list-foot {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px solid var(--rule);
+}
+
+.desk-list-actions {
+  display: flex;
   align-items: center;
+  gap: 4px;
+}
+
+.list-new {
+  flex: 1;
   justify-content: center;
-  gap: 3px;
-  width: 38px;
-  min-height: 38px;
-  border-radius: var(--radius);
+  gap: 6px;
+  height: 34px;
+}
+
+/* With the list hidden, a thin handle brings it back. */
+.list-handle {
+  flex: none;
+  width: 10px;
+  display: grid;
+  place-items: center;
+  border-right: 1px solid var(--rule);
+  background: var(--paper-2);
+}
+
+.list-handle span {
+  width: 3px;
+  height: 28px;
+  border-radius: 2px;
+  background: var(--rule-strong);
+}
+
+.list-handle:hover span {
+  background: var(--accent);
+}
+
+/* ------------------------------------------------------------ the margin, on the right */
+
+.marge {
+  flex: none;
+  display: flex;
+  min-height: 0;
+  border-left: 1px solid var(--rule);
+  background: var(--paper-2);
+}
+
+.marge-panel {
+  width: var(--margin-width, 292px);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-right: 1px solid var(--rule);
+}
+
+.marge-head {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: var(--bar);
+  padding: 0 6px 0 12px;
+}
+
+.marge-head h2 {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 650;
+  font-stretch: 80%;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--ink-2);
 }
 
-.activity-button:hover {
+.marge-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.marge-body.is-graph {
+  overflow: hidden;
+}
+
+.marge-body.is-graph .graph-view {
+  height: 100%;
+}
+
+.marge-rail {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 4px;
+}
+
+.marge-button {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius);
+  color: var(--ink-3);
+}
+
+.marge-button:hover {
   background: var(--hover);
   color: var(--ink);
 }
 
-.activity-label {
-  display: none;
-}
-
-/* With names: a wider bar, each name under its icon, on two lines at most. */
-.activity-bar.has-labels {
-  width: 76px;
-}
-
-.activity-bar.has-labels .activity-button {
-  width: 68px;
-  padding: 6px 2px 5px;
-}
-
-.activity-bar.has-labels .activity-label {
-  display: block;
-  max-width: 100%;
-  font-stretch: 80%;
-  font-weight: 600;
-  line-height: 1.1;
-  text-align: center;
-  overflow-wrap: anywhere;
-}
-
-.activity-rule {
-  width: 22px;
-  height: 1px;
-  margin: 4px 0;
-  background: var(--rule-strong);
-}
-
-.activity-space {
-  flex: 1;
-}
-
-/* ------------------------------------------------------------ side zones and panels */
-
-.side {
-  flex: none;
-  width: var(--side-width, 272px);
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  overflow-y: auto;
-  background: var(--paper-2);
-}
-
-.side.is-left {
-  border-right: 1px solid var(--rule);
-}
-
-.side.is-right {
-  border-left: 1px solid var(--rule);
+.marge-button.is-on {
   background: var(--paper);
+  color: var(--ink);
+  box-shadow: inset 2px 0 0 var(--accent);
 }
 
-.side.is-drawer {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  z-index: 50;
-  width: min(var(--side-width, 272px), 86vw);
-  box-shadow: var(--shadow-sheet);
-  animation: drawer-in 220ms var(--ease);
+.marge-count {
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 3px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 10.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 
-.side.is-left.is-drawer {
-  left: 0;
-}
-
-.side.is-right.is-drawer {
-  right: 0;
-}
-
-@keyframes drawer-in {
-  from {
-    transform: translateX(-12px);
-    opacity: 0.6;
-  }
-}
-
-/* A panel dragged by its title: where it will land. */
-.side.is-drop-target {
-  outline: 2px dashed var(--accent);
-  outline-offset: -4px;
-}
+/* ------------------------------------------------------------ panels */
 
 .panel-slot {
   display: flex;
@@ -310,7 +367,6 @@
 .search-field {
   position: relative;
   flex: none;
-  margin: 0 10px 10px;
 }
 
 .search-field input {
