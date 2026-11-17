@@ -33,7 +33,7 @@ recette('24.1', async ({ app, ui }) => {
   await settings.evaluate((el) => el.scrollTo({ top: 0 }));
   await expect(nav.getByRole('button', { name: 'Général' })).toHaveAttribute('aria-current', 'true');
   await ui.activeTab.getByRole('button', { name: 'Fermer' }).click();
-  await ui.activityBar.getByRole('button', { name: 'Réglages' }).click();
+  await ui.rail.getByRole('button', { name: 'Réglages' }).click();
   await expect(ui.page.locator('.settings-view')).toBeVisible();
   await ui.activeTab.getByRole('button', { name: 'Fermer' }).click();
   await ui.vaultMenu('Réglages');

@@ -16,15 +16,22 @@ const backlinks = (ui: Ui) => ui.margin.locator('ul.backlinks').first();
 
 recette('14.1', async ({ app, ui }) => {
   await open(app, ui, 'Idées');
-  await ui.editor.click();
-  await ui.page.keyboard.press('Control+]');
-  await expect(ui.margin).toHaveCount(0);
-  await ui.sideToggle('right').click();
-  await expect(ui.margin).toBeVisible();
+  for (const [tab, title] of [
+    ['links', 'Liens'],
+    ['outline', 'Plan'],
+    ['properties', 'Propriétés'],
+    ['graph', 'Graphe local'],
+  ] as const) {
+    await ui.marginButton(tab).click();
+    await expect(ui.margin).toHaveAttribute('aria-label', title);
+    await ui.marginButton(tab).click();
+    await expect(ui.margin).toHaveCount(0);
+  }
 });
 
 recette('14.2', async ({ app, ui }) => {
   await open(app, ui, 'Plan');
+  await ui.openMargin('links');
   await expect(ui.panel('backlinks').locator('.panel-head .count')).toHaveText('2');
   const context = backlinks(ui).locator('.backlink-context').first();
   await expect(context.locator('mark')).toBeVisible();
@@ -33,6 +40,7 @@ recette('14.2', async ({ app, ui }) => {
 
 recette('14.3', async ({ app, ui }) => {
   await open(app, ui, 'Idées');
+  await ui.openMargin('links');
   const source = backlinks(ui).locator('.margin-link', { hasText: 'Bienvenue' });
   await source.click();
   await expect(ui.activeTab).toContainText('Bienvenue');
@@ -45,6 +53,7 @@ recette('14.3', async ({ app, ui }) => {
 
 recette('14.4', async ({ app, ui }) => {
   await open(app, ui, 'Idées', { 'Bienvenue.md': `# Bienvenue\n\n${LONG}\n\nTout en bas, les [[Idées]].\n` });
+  await ui.openMargin('links');
   await backlinks(ui).locator('.backlink-context').first().click();
   await expect(ui.activeTab).toContainText('Bienvenue');
   await expect(ui.lines.filter({ hasText: 'Tout en bas' })).toBeInViewport();
@@ -52,12 +61,14 @@ recette('14.4', async ({ app, ui }) => {
 
 recette('14.5', async ({ app, ui }) => {
   await open(app, ui, 'Idées', { 'Tâche.md': '---\nresponsable: "[[Idées]]"\n---\nTexte.' });
+  await ui.openMargin('links');
   const entry = backlinks(ui).locator('li', { hasText: 'Tâche' });
   await expect(entry.locator('.backlink-property')).toHaveText('responsable');
 });
 
 recette('14.6', async ({ app, ui }) => {
   await open(app, ui, 'Étude', { 'Mention.md': 'Une étude sans lien, puis la Recherche.' });
+  await ui.openMargin('links');
   await ui.margin.getByRole('button', { name: /Mentions non liées/ }).click();
   await expect(ui.margin.locator('#m-unlinked .count')).toHaveText(/[1-9]/);
   await expect(ui.margin.locator('.mention-row').first()).toContainText(/étude|Recherche/i);
@@ -65,6 +76,7 @@ recette('14.6', async ({ app, ui }) => {
 
 recette('14.7', async ({ app, ui }) => {
   await open(app, ui, 'Étude', { 'Mention.md': 'Une étude sans lien.' });
+  await ui.openMargin('links');
   await ui.margin.getByRole('button', { name: /Mentions non liées/ }).click();
   await ui.margin
     .locator('li', { hasText: 'Mention' })
@@ -80,12 +92,14 @@ recette('14.8', async ({ app, ui }) => {
   await open(app, ui, 'Étude', {
     'Codes.md': 'Du `Étude` en code.\n\n```\nÉtude\n```\n\nUn [lien](https://x.org/Étude) et %%Étude%%.',
   });
+  await ui.openMargin('links');
   await ui.margin.getByRole('button', { name: /Mentions non liées/ }).click();
   await expect(ui.margin.locator('li', { hasText: 'Codes' })).toHaveCount(0);
 });
 
 recette('14.9', async ({ app, ui }) => {
   await open(app, ui, 'Essai', { 'Essai.md': `# Haut\n\n${LONG}\n\n## Tout en bas\n\nfin` });
+  await ui.openMargin('outline');
   await ui.margin.locator('.outline-item', { hasText: 'Tout en bas' }).click();
   await expect(ui.lines.filter({ hasText: 'Tout en bas' })).toBeInViewport();
   await ui.mode('Lire');
@@ -96,6 +110,7 @@ recette('14.9', async ({ app, ui }) => {
 
 recette('14.10', async ({ app, ui }) => {
   await open(app, ui, 'Bienvenue', { 'Bienvenue.md': 'Vers [[Idées]] et [[Pas encore]].' });
+  await ui.openMargin('links');
   const out = ui.margin.locator('ul.outgoing');
   await expect(out.locator('.margin-link:not(.is-unresolved)')).toHaveText(['Idées']);
   await expect(out.locator('li', { hasText: 'Pas encore' })).toContainText('pas encore créée');
@@ -107,6 +122,7 @@ recette('14.10', async ({ app, ui }) => {
 
 recette('14.11', async ({ app, ui }) => {
   await open(app, ui, 'Étude');
+  await ui.openMargin('properties');
   const props = ui.margin.locator('.properties');
   await expect(props).toContainText('Recherche');
   await props.locator('.tag-chip', { hasText: 'recherche' }).click();
@@ -115,17 +131,20 @@ recette('14.11', async ({ app, ui }) => {
 
 recette('14.12', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
+  await ui.open('Idées');
+  await ui.openMargin('links');
+  await ui.listTab('Dossiers').click();
   await ui.row('Tableau.canvas').click();
   await expect(ui.margin.locator('.side-empty')).toContainText('Ces panneaux suivent la note ouverte');
 });
 
 recette('14.13', async ({ app, ui }) => {
-  await app.start({ vault: baseVault(), viewport: { width: 1000, height: 760 } });
-  await ui.open('Idées');
-  await ui.sideToggle('right').click();
-  await expect(ui.margin).toHaveClass(/is-drawer/);
-  const scrim = ui.page.locator('.scrim');
-  await expect(scrim).toBeVisible();
-  await scrim.click({ position: { x: 10, y: 10 } });
+  await open(app, ui, 'Idées');
+  await ui.openMargin('links');
+  await ui.editor.click();
+  await ui.page.keyboard.press('Control+]');
+  await expect(ui.page.locator('.marge')).toHaveCount(0);
+  await ui.page.keyboard.press('Control+]');
+  await expect(ui.page.locator('.marge')).toBeVisible();
   await expect(ui.margin).toHaveCount(0);
 });

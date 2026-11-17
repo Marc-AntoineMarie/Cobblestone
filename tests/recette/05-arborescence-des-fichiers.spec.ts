@@ -413,7 +413,8 @@ recette('5.39', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
   await ui.rail.getByRole('button', { name: 'Nouvelle note' }).click();
   await expect.poll(() => app.exists('Sans titre.md')).toBe(true);
-  await ui.rail.getByRole('button', { name: 'Nouveau dossier' }).click();
+  await ui.rail.getByRole('button', { name: 'Nouvelle note' }).click({ button: 'right' });
+  await ui.menuItem('Nouveau dossier').click();
   await expect.poll(() => app.exists('Nouveau dossier')).toBe(true);
   await ui.page.keyboard.press('Escape');
   const settings = await ui.settings();
@@ -426,7 +427,7 @@ recette('5.40', async ({ app, ui }) => {
   await app.start({ vault: baseVault() });
   await ui.open('Plan');
   await ui.editEnd();
-  await ui.command('Montrer cette note dans la barre latérale');
+  await ui.command('Montrer cette note dans son dossier');
   await expect(ui.row('Projets')).toHaveAttribute('aria-expanded', 'true');
   await expect(ui.row('Projets/Plan.md')).toHaveClass(/is-revealed/);
   await expect(ui.row('Projets/Plan.md')).toBeInViewport();

@@ -75,10 +75,12 @@ recette('25.4', async ({ app, ui }) => {
 });
 
 recette('25.5', async ({ app, ui }) => {
-  await app.start({ vault: baseVault(), viewport: { width: 1100, height: 760 } });
+  await app.start({ vault: baseVault(), viewport: { width: 900, height: 760 } });
   await ui.open('Idées');
-  await ui.sideToggle('right').click();
-  await expect(ui.margin).toHaveClass(/is-drawer/);
+  await expect(ui.rail).toBeVisible();
+  await expect(ui.page.locator('.workbench')).toHaveAttribute('data-list', 'drawer');
+  await ui.page.locator('.workbench-body .scrim').click({ position: { x: 600, y: 300 } });
+  await expect(ui.rail).toHaveCount(0);
 });
 
 recette('25.6', async ({ app, ui }) => {
@@ -473,70 +475,68 @@ recette('25.27', async ({ app, ui }) => {
 const panelsOf = (zone: Locator) => zone.locator('.panel').evaluateAll((els) => els.map((e) => (e as HTMLElement).dataset.panel));
 
 recette('25.28', async ({ app, ui }) => {
-  await app.start({ vault: baseVault() });
+  await app.start({ vault: baseVault(), viewport: { width: 1440, height: 900 } });
+  await ui.open('Idées');
   const settings = await ui.settings();
   const presets = settings.getByRole('radiogroup', { name: 'Dispositions prêtes' });
-  await expect(presets.getByRole('radio', { name: /^Classique/ })).toHaveAttribute('aria-checked', 'true');
-  await presets.getByRole('radio', { name: /^Concentration/ }).click();
-  await expect(presets.getByRole('radio', { name: /^Concentration/ })).toHaveAttribute('aria-checked', 'true');
-  await expect(ui.rail).toHaveCount(0);
-  await expect(ui.margin).toHaveCount(0);
+  await expect(presets.getByRole('radio', { name: /^Complet/ })).toHaveAttribute('aria-checked', 'true');
+  await presets.getByRole('radio', { name: /^Lecture/ }).click();
+  await expect(ui.rail).toBeVisible();
+  await expect(ui.page.locator('.marge')).toHaveCount(0);
   await expect(ui.statusBar).toHaveCount(0);
-  await expect(ui.activityBar).toHaveCount(0);
-  await expect(ui.pane.locator('.tabs')).toBeHidden();
-  await presets.getByRole('radio', { name: /^Miroir/ }).click();
-  await expect(ui.margin.locator('[data-panel="files"]')).toBeVisible();
-  await expect(ui.rail.locator('.side-empty')).toBeVisible();
-  await presets.getByRole('radio', { name: /^Chercheur/ }).click();
-  expect(await panelsOf(ui.rail)).toEqual(['search', 'files']);
-  await presets.getByRole('radio', { name: /^Classique/ }).click();
+  await presets.getByRole('radio', { name: /^Concentré/ }).click();
+  await expect(ui.rail).toHaveCount(0);
+  await expect(ui.page.locator('.marge')).toHaveCount(0);
+  await presets.getByRole('radio', { name: /^Complet/ }).click();
+  await expect(ui.rail).toBeVisible();
+  await expect(ui.page.locator('.marge')).toBeVisible();
   await expect(ui.statusBar).toBeVisible();
-  await expect(ui.pane.locator('.tabs')).toBeVisible();
 });
 
 recette('25.29', async ({ app, ui }) => {
-  await app.start({ vault: baseVault() });
+  await app.start({ vault: baseVault(), viewport: { width: 1440, height: 900 } });
   const settings = await ui.settings();
-  await settings.getByRole('radiogroup', { name: 'Place de Tags' }).getByRole('radio', { name: 'Droite' }).click();
-  await expect(ui.margin.locator('[data-panel="tags"]')).toBeVisible();
-  await expect(ui.rail.locator('[data-panel="tags"]')).toHaveCount(0);
-  await expect(settings.getByRole('radiogroup', { name: 'Dispositions prêtes' }).locator('[aria-checked="true"]')).toHaveCount(0);
-  await expect(settings.locator('.setting-hint', { hasText: 'Personnalisée' })).toBeVisible();
-  const diagram = settings.locator('.layout-diagram:not(.is-compact) .diagram-zone.is-right .diagram-panel');
-  await settings.getByRole('button', { name: 'Descendre Rétroliens' }).click();
-  await expect(diagram).toHaveText(['Plan', 'Rétroliens', 'Liens sortants', 'Propriétés', 'Tags']);
-  await settings.getByRole('button', { name: 'Revenir à la disposition classique' }).click();
-  await expect(settings.getByRole('radio', { name: /^Classique/ })).toHaveAttribute('aria-checked', 'true');
-  await expect(ui.rail.locator('[data-panel="tags"]')).toBeVisible();
-  await expect(diagram).toHaveText(['Rétroliens', 'Plan', 'Liens sortants', 'Propriétés']);
+  await settings.getByRole('switch', { name: 'Plan' }).click();
+  await expect(ui.marginButton('outline')).toHaveCount(0);
+  await expect(settings.locator('.layout-custom')).toBeVisible();
+  await settings.getByRole('button', { name: 'Monter Propriétés' }).click();
+  const rail = ui.page.locator('.marge-button');
+  await expect(rail).toHaveAttribute('data-tab', 'links');
+  await expect(rail.nth(1)).toHaveAttribute('data-tab', 'properties');
+  await settings.getByRole('button', { name: 'Revenir à la disposition complète' }).click();
+  await expect(ui.marginButton('outline')).toBeVisible();
+  await expect(rail.nth(1)).toHaveAttribute('data-tab', 'outline');
 });
 
 recette('25.30', async ({ app, ui }) => {
   await app.start({ vault: baseVault(), viewport: { width: 1440, height: 900 } });
+  await ui.open('Idées');
+  await ui.openInNewTab('Étude');
   const settings = await ui.settings();
-  await settings.locator('#set-tabs').click();
+  await settings.getByRole('radiogroup', { name: 'Onglets au-dessus des notes' }).getByRole('radio', { name: 'Jamais' }).click();
   await expect(ui.pane.locator('.tabs')).toBeHidden();
-  await settings.locator('#set-status-bar').click();
+  await settings.locator('#layout-status').click();
   await expect(ui.statusBar).toHaveCount(0);
-  await settings.locator('#set-activity-bar').click();
-  await expect(ui.activityBar).toHaveCount(0);
-  const width = settings.getByRole('radiogroup', { name: 'Largeur des panneaux' });
-  const railWidth = async () => Math.round((await ui.rail.boundingBox())!.width);
+  await settings.locator('#layout-margin').click();
+  await expect(ui.page.locator('.marge')).toHaveCount(0);
+  const width = settings.getByRole('radiogroup', { name: 'Largeur de la liste et de la marge' });
+  const listWidth = async () => Math.round((await ui.rail.boundingBox())!.width);
   await width.getByRole('radio', { name: 'Large' }).click();
-  await expect.poll(railWidth).toBe(320);
+  await expect.poll(listWidth).toBe(340);
   await width.getByRole('radio', { name: 'Étroite' }).click();
-  await expect.poll(railWidth).toBe(232);
-  await settings.locator('#set-tabs').click();
-  await expect(ui.pane.locator('.tabs')).toBeVisible();
+  await expect.poll(listWidth).toBe(252);
 });
 
 recette('25.31', async ({ app, ui }) => {
   await app.start({ vault: baseVault(), viewport: { width: 1440, height: 900 } });
   const settings = await ui.settings();
-  await settings.getByRole('radio', { name: /^Miroir/ }).click();
-  await settings.getByRole('radiogroup', { name: 'Largeur des panneaux' }).getByRole('radio', { name: 'Large' }).click();
+  await settings.getByRole('radio', { name: /^Lecture/ }).click();
+  await settings
+    .getByRole('radiogroup', { name: 'Largeur de la liste et de la marge' })
+    .getByRole('radio', { name: 'Large' })
+    .click();
   await ui.page.waitForTimeout(600);
   await app.restart();
-  await expect(ui.margin.locator('[data-panel="files"]')).toBeVisible();
-  await expect.poll(async () => Math.round((await ui.margin.boundingBox())!.width)).toBe(320);
+  await expect(ui.page.locator('.marge')).toHaveCount(0);
+  await expect.poll(async () => Math.round((await ui.rail.boundingBox())!.width)).toBe(340);
 });

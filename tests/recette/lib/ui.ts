@@ -37,26 +37,14 @@ export class Ui {
     return this.page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1);
   }
 
-  // ------------------------------------------------------------- bars and side zones
+  // ------------------------------------------------------------- the list, the margin, the status bar
 
-  get topBar() {
-    return this.page.locator('.top-bar');
-  }
-  get activityBar() {
-    return this.page.locator('.activity-bar');
-  }
   get statusBar() {
     return this.page.locator('.status-bar');
   }
-  /** A panel by its id ("files", "tags", "backlinks"…), wherever it is. */
+  /** A panel by its id ("backlinks", "outline"…), wherever it is. */
   panel(id: string) {
     return this.page.locator(`.panel[data-panel="${id}"]`);
-  }
-  /** The top bar's button that shows or hides a side zone. */
-  sideToggle(side: 'left' | 'right') {
-    return this.topBar.getByRole('button', {
-      name: `Afficher ou masquer le panneau de ${side === 'left' ? 'gauche' : 'droite'}`,
-    });
   }
 
   get vaultName() {
@@ -68,9 +56,24 @@ export class Ui {
     await this.menu.waitFor();
     if (item) await this.menuItem(item).click();
   }
-  /** The left zone (files, search, bookmarks and tags in the classic layout). */
+  /** The list of notes, down the left. */
   get rail() {
-    return this.page.locator('.side.is-left');
+    return this.page.locator('.desk-list');
+  }
+  /** One of the list's segments: Récentes, Dossiers, Tags. */
+  listTab(name: string) {
+    return this.rail.getByRole('tab', { name });
+  }
+  /** A row of the list, by its name (not by what its excerpt says). */
+  listRow(name: string) {
+    return this.rail.locator('.list-row').filter({ has: this.page.locator('.list-row-title', { hasText: exact(name) }) });
+  }
+  get pins() {
+    return this.rail.locator('.list-pin');
+  }
+  /** The button that shows or hides the list. */
+  get listToggle() {
+    return this.page.getByRole('button', { name: /Masquer la liste|Afficher la liste/ });
   }
   get find() {
     return this.page.locator('.search-field input');
@@ -93,11 +96,9 @@ export class Ui {
       if ((await folder.getAttribute('aria-expanded')) !== 'true') await folder.click();
     }
   }
+  /** The tags of the vault, as the list shows them. */
   get tags() {
-    return this.panel('tags');
-  }
-  get bookmarks() {
-    return this.panel('bookmarks');
+    return this.rail.locator('.list-tags');
   }
 
   // ------------------------------------------------------------- panes, tabs, note
@@ -137,9 +138,19 @@ export class Ui {
   get status() {
     return this.statusBar.locator('.note-status');
   }
-  /** The right zone (the note's backlinks, outline, links and properties in the classic layout). */
+  /** The margin's open panel (backlinks, outline, properties or the local graph). */
   get margin() {
-    return this.page.locator('.side.is-right');
+    return this.page.locator('.marge-panel');
+  }
+  /** A button of the margin's rail. */
+  marginButton(tab: 'links' | 'outline' | 'properties' | 'graph') {
+    return this.page.locator(`.marge-button[data-tab="${tab}"]`);
+  }
+  /** Opens a panel of the margin and returns it. */
+  async openMargin(tab: 'links' | 'outline' | 'properties' | 'graph') {
+    if ((await this.marginButton(tab).getAttribute('aria-pressed')) !== 'true') await this.marginButton(tab).click();
+    await this.margin.waitFor();
+    return this.margin;
   }
 
   /** Opens a note through the palette, by its name. */

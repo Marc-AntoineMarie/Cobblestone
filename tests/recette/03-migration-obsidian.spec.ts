@@ -62,8 +62,8 @@ recette('3.6', async ({ app, ui }) => {
 
 recette('3.7', async ({ app, ui }) => {
   await app.start({ vault: obsidianVault() });
-  await expect(ui.bookmarks).toContainText('Bienvenue');
-  await expect(ui.bookmarks).toContainText('Travail');
+  await expect(ui.pins.filter({ hasText: 'Bienvenue' })).toHaveCount(1);
+  await expect(ui.pins.filter({ hasText: 'Étude' })).toHaveCount(1);
 });
 
 recette('3.8', async ({ app, ui }) => {

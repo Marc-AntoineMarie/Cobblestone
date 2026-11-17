@@ -117,9 +117,9 @@ recette('16.14', async ({ app, ui }) => {
   await onNote(app, ui);
   await ui.editor.click();
   await ui.page.keyboard.press('Control+]');
-  await expect(ui.margin).toHaveCount(0);
+  await expect(ui.page.locator('.marge')).toHaveCount(0);
   await ui.page.keyboard.press('Control+]');
-  await expect(ui.margin).toBeVisible();
+  await expect(ui.page.locator('.marge')).toBeVisible();
 });
 
 recette('16.15', async ({ app, ui }) => {
@@ -169,7 +169,7 @@ recette('16.21', async ({ app, ui }) => {
 
 recette('16.22', async ({ app, ui }) => {
   await onNote(app, ui, 'Plan');
-  await ui.command('Montrer cette note dans la barre latérale');
+  await ui.command('Montrer cette note dans son dossier');
   await expect(ui.row('Projets/Plan.md')).toHaveClass(/is-revealed/);
 });
 
@@ -182,9 +182,9 @@ recette('16.23', async ({ app, ui }) => {
 recette('16.24', async ({ app, ui }) => {
   await onNote(app, ui);
   await ui.command('Ajouter ou retirer cette note des favoris');
-  await expect(ui.bookmarks).toContainText('Idées');
+  await expect(ui.pins.filter({ hasText: 'Idées' })).toHaveCount(1);
   await ui.command('Ajouter ou retirer cette note des favoris');
-  await expect(ui.bookmarks).toHaveCount(0);
+  await expect(ui.pins.filter({ hasText: 'Idées' })).toHaveCount(0);
 });
 
 recette('16.25', async ({ app, ui }) => {

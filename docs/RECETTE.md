@@ -166,47 +166,43 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 - **5.37** · Les deux · auto · Dans un coffre de plusieurs milliers de fichiers, tout déplier et faire défiler → Le défilement reste fluide.
 - **5.38** · Les deux · auto · Ouvrir un coffre vide → Message « Ce coffre est vide » et bouton « Nouvelle note ».
 - **5.39** · Les deux · auto · Icônes « Nouvelle note » et « Nouveau dossier » à côté de NOTES → Création à la racine, ou dans le dossier réglé pour les nouvelles notes.
-- **5.40** · Les deux · auto · Commande « Montrer cette note dans la barre latérale » → Les dossiers parents s'ouvrent, la ligne est encadrée de rose un instant et défile dans la vue, sans voler le focus du texte.
+- **5.40** · Les deux · auto · Commande « Montrer cette note dans son dossier » → La liste passe sur « Dossiers », les dossiers parents s'ouvrent et la ligne est encadrée un instant.
 - **5.41** · Bureau · auto · Clic droit sur une note › « Afficher dans le gestionnaire de fichiers » → Le gestionnaire de fichiers s'ouvre sur son dossier, la note sélectionnée.
 - **5.42** · Bureau · auto · Même chose sur un dossier → Son dossier parent s'ouvre, le dossier sélectionné.
 - **5.43** · Bureau · auto · Même chose sur un canvas, une image, un PDF → Le bon fichier est sélectionné.
 - **5.44** · Web · auto · Clic droit sur une note ou un dossier → Aucune entrée « gestionnaire de fichiers ».
 
-## 6. Barres et panneaux : coffre, favoris, tags, barre d'état
+## 6. La liste des notes : coffre, épinglées, tags, barre d'état
 
-- **6.1** · Les deux · auto · Cliquer le nom du coffre en haut → Menu : Réglages, Changer de coffre.
+- **6.1** · Les deux · auto · Cliquer le nom du coffre en haut de la liste → Menu : Réglages, Changer de coffre.
 - **6.2** · Les deux · auto · « Changer de coffre » juste après avoir écrit → Retour à l'accueil ; ce qui a été tapé est enregistré.
-- **6.3** · Les deux · auto · Bouton « panneau de gauche » de la barre du haut → Le panneau de gauche disparaît ; le bouton reste, non enfoncé.
-- **6.4** · Les deux · auto · Cliquer de nouveau ce bouton → Le panneau de gauche revient.
-- **6.5** · Les deux · auto · Bouton « Aujourd'hui » de la barre d'activité → La note du jour s'ouvre, créée si besoin.
-- **6.6** · Les deux · auto · Bouton « Graphe » de la barre d'activité → Le graphe s'ouvre dans un nouvel onglet.
-- **6.7** · Les deux · auto · Coffre sans favori → La section « Favoris » n'apparaît pas.
-- **6.8** · Les deux · auto · Ajouter une note aux favoris → La section « Favoris » apparaît avec elle.
-- **6.9** · Les deux · auto · Cliquer un favori, puis Ctrl+clic → La note s'ouvre, puis dans un nouvel onglet ; le favori de la note active est sur fond jaune.
-- **6.10** · Les deux · auto · Cliquer un favori de titre importé d'Obsidian → La note s'ouvre à ce titre.
-- **6.11** · Les deux · auto · Cliquer un favori de dossier → Le dossier est montré dans l'arborescence.
-- **6.12** · Les deux · auto · Cliquer un favori de recherche → Le champ de recherche se remplit avec la requête.
-- **6.13** · Les deux · auto · Cliquer un groupe de favoris → Il s'ouvre et se ferme ; son contenu est indenté.
-- **6.14** · Les deux · auto · Clic droit sur un favori, puis « Retirer des favoris » → Il disparaît de la liste.
-- **6.15** · Les deux · auto · Cliquer le titre « FAVORIS » → La section se replie puis se déplie.
-- **6.16** · Les deux · auto · Regarder la section TAGS → Tags triés, compteurs alignés, `#` en rose.
-- **6.17** · Les deux · auto · Tag imbriqué (`#projet/alpha`) → Un chevron affiche les sous-tags ; le parent compte aussi les notes des enfants.
+- **6.3** · Les deux · auto · Bouton « Masquer la liste » → La liste disparaît ; une poignée reste au bord gauche.
+- **6.4** · Les deux · auto · Cliquer la poignée → La liste revient à sa place.
+- **6.5** · Les deux · auto · Carte « Aujourd'hui », en tête des épinglées → La note du jour s'ouvre, créée si besoin.
+- **6.6** · Les deux · auto · Bouton « Graphe » en bas de la liste → Le graphe s'ouvre dans un nouvel onglet.
+- **6.7** · Les deux · auto · Coffre sans favori → Seule la carte « Aujourd'hui » est épinglée.
+- **6.8** · Les deux · auto · Ajouter une note aux favoris → Elle apparaît comme carte épinglée, avec son dossier.
+- **6.9** · Les deux · auto · Cliquer une carte épinglée → La note s'ouvre dans l'onglet courant.
+- **6.10** · Les deux · auto · Carte d'un favori de titre importé d'Obsidian → La note s'ouvre à ce titre.
+- **6.11** · Les deux · auto · Carte d'un favori de dossier → La liste passe sur « Dossiers » et montre ce dossier ouvert.
+- **6.12** · Les deux · auto · Carte d'un favori de recherche → Le champ de recherche se remplit avec la requête.
+- **6.13** · Les deux · auto · Favoris importés en groupes → Leurs favoris apparaissent à plat, une carte chacun.
+- **6.14** · Les deux · auto · Clic droit sur une carte épinglée › « Désépingler » → La carte disparaît.
+- **6.15** · Les deux · auto · Pastilles « Récentes », « Dossiers », « Tags » → Chacune remplace le contenu de la liste ; la pastille choisie est encrée.
+- **6.16** · Les deux · auto · Pastille « Tags » → Les tags du coffre, triés, chacun avec son compteur.
+- **6.17** · Les deux · auto · Tag imbriqué (`#projet/alpha`) → Il apparaît en entier avec son compteur.
 - **6.18** · Les deux · auto · Cliquer un tag → Le champ de recherche contient `tag:#nom` et liste les notes.
-- **6.19** · Les deux · auto · Cliquer le titre « TAGS » → La section se replie puis se déplie.
-- **6.20** · Les deux · auto · Regarder la barre d'état → « Sur cet appareil » avec un petit carré, les compteurs de la note active et un bouton « Apparence ».
-- **6.21** · Les deux · auto · Bouton Réglages en bas de la barre d'activité → Les réglages s'ouvrent dans un onglet.
-- **6.22** · Bureau · auto · Menu du nom du coffre › « Ouvrir le dossier du coffre » → Le gestionnaire de fichiers montre le contenu du coffre.
+- **6.19** · Les deux · auto · Clic droit sur une note de la liste → Menu : épingler, partager, renommer, déplacer vers…, dupliquer, corbeille.
+- **6.20** · Les deux · auto · Regarder la barre d'état → Les compteurs de la note active : mots, caractères, rétroliens.
+- **6.21** · Les deux · auto · Bouton Réglages en bas de la liste → Les réglages s'ouvrent dans un onglet.
+- **6.22** · Bureau · auto · Menu du nom du coffre › « Ouvrir le dossier du coffre » → Le gestionnaire de fichiers montre le coffre.
 - **6.23** · Web · auto · Menu du nom du coffre → Pas d'entrée « Ouvrir le dossier du coffre ».
 - **6.24** · Les deux · auto · Menu du nom du coffre dans la démo → Pas d'entrée « Ouvrir le dossier du coffre » (rien n'est sur le disque).
-- **6.25** · Les deux · auto · Champ « Rechercher, ouvrir une note ou lancer une commande » au milieu de la barre du haut → La palette s'ouvre pour chercher une note ; le raccourci (Ctrl+K) est écrit dans le champ.
-- **6.26** · Les deux · auto · Barre d'activité : le bouton d'un panneau, son côté fermé → Le côté s'ouvre, le panneau se déplie et se montre ; celui de Recherche met le curseur dans le champ.
-- **6.27** · Les deux · auto · Clic droit sur le titre d'un panneau → « Mettre à droite » (ou à gauche), « Monter », « Descendre », « Masquer ce panneau » ; chaque choix s'applique aussitôt.
-- **6.28** · Les deux · auto · Glisser le titre d'un panneau de l'autre côté, sur un autre panneau → Il se place juste avant lui ; un pointillé rose montre la zone pendant le glisser.
-- **6.29** · Les deux · auto · Masquer « Tags », puis palette › « Afficher le panneau « Tags » » → Il revient à sa place classique, déplié, son côté ouvert.
-- **6.30** · Les deux · auto · Barre d'état › « Apparence » → Un panneau rapide : thèmes, papier, taille du texte, largeur des lignes, disposition, et « Tous les réglages d'apparence » ; chaque choix s'applique aussitôt ; Échap ou un clic ailleurs le ferme.
-- **6.31** · Les deux · auto · Fenêtre de moins de 760 px → La barre du haut garde le coffre, une loupe et les boutons des panneaux ; pas de barre d'activité.
-- **6.32** · Les deux · auto · « Concentration » depuis l'apparence rapide, puis palette › « Disposition : Classique » (et les autres) → Panneaux et barres disparaissent ; la commande les rend.
-- **6.33** · Les deux · auto · Regarder la barre d'activité, puis décocher « Noms sous les boutons de la barre d'activité » (Réglages › Disposition) → Chaque bouton porte son nom : les panneaux du côté gauche, puis Aujourd'hui, Graphe, Réglages ; sans les noms, la barre rétrécit aux seules icônes.
+- **6.25** · Les deux · auto · Bouton « Nouvelle note » en bas de la liste, puis clic droit dessus → Une note vide s'ouvre ; le clic droit propose la note du jour, un canevas et un dossier.
+- **6.26** · Les deux · auto · Ctrl+clic sur une note de la liste → Elle s'ouvre dans un nouvel onglet.
+- **6.27** · Les deux · auto · Barre d'état › « Apparence » → Un panneau rapide : thèmes, papier, taille du texte, largeur des lignes, disposition ; Échap le ferme.
+- **6.28** · Les deux · auto · Fenêtre de moins de 1000 px → La liste passe par-dessus les notes, avec un voile ; cliquer le voile la referme.
+- **6.29** · Les deux · auto · « Concentré » depuis l'apparence rapide, puis palette › « Disposition : Complet » → La liste et la marge disparaissent, puis reviennent.
 
 ## 7. Onglets et divisions
 
@@ -328,7 +324,7 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 - **10.19** · Les deux · auto · `![[Inexistant.png]]` → Le nom s'affiche souligné en pointillés.
 - **10.20** · Les deux · auto · Cliquer sur une intégration → La syntaxe apparaît pour la modifier.
 - **10.21** · Les deux · auto · Une note qui s'intègre elle-même → Message « Cette note s'intègre elle-même », sans boucle.
-- **10.22** · Les deux · auto · `#tag` dans le texte, puis clic → Pastille grise ; le clic filtre la barre latérale sur ce tag.
+- **10.22** · Les deux · auto · `#tag` dans le texte, puis clic → Pastille grise ; le clic remplit le champ de recherche avec ce tag.
 - **10.23** · Les deux · auto · `#123` → Pas un tag (Obsidian exige une lettre).
 - **10.24** · Les deux · auto · En-tête YAML en tête de note, curseur ailleurs → Carte « PROPRIÉTÉS » lisible, tags en pastilles.
 - **10.25** · Les deux · auto · Cliquer la carte Propriétés, puis placer le curseur ailleurs → Le YAML apparaît pour être modifié, puis la carte revient.
@@ -384,9 +380,9 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 - **13.12** · Les deux · auto · En écriture, survoler un lien sans Ctrl, puis avec Ctrl maintenu → Pas d'aperçu, puis aperçu.
 - **13.13** · Les deux · auto · Survoler un nom dans la marge (rétroliens, liens sortants) → Aperçu de la note.
 
-## 14. Panneaux de la note (à droite par défaut)
+## 14. La marge : les panneaux de la note
 
-- **14.1** · Les deux · auto · Ctrl+], puis le bouton « panneau de droite » de la barre du haut → Masque puis affiche le panneau de droite.
+- **14.1** · Les deux · auto · Les boutons de la marge (Liens, Plan, Propriétés, Graphe local) → Chacun ouvre son panneau à côté de la note ; le même bouton le referme.
 - **14.2** · Les deux · auto · Regarder RÉTROLIENS → Les notes qui pointent ici, avec un compteur ; chaque extrait montre le lien surligné, sans `[[ ]]`.
 - **14.3** · Les deux · auto · Cliquer le nom d'un rétrolien, puis Ctrl+clic → La note s'ouvre, puis dans un nouvel onglet.
 - **14.4** · Les deux · auto · Cliquer un extrait de rétrolien → La note s'ouvre avec le curseur sur la ligne du lien.
@@ -397,8 +393,8 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 - **14.9** · Les deux · auto · Cliquer un titre du PLAN, en écriture puis en lecture → Défilement jusqu'au titre dans les deux modes.
 - **14.10** · Les deux · auto · LIENS SORTANTS → Notes liées (cliquables, aperçu au survol) et notes inexistantes marquées « pas encore créée », qu'un clic crée.
 - **14.11** · Les deux · auto · PROPRIÉTÉS, puis clic sur un tag → Alias, valeurs du YAML et tags en pastilles ; le clic liste ses notes dans le panneau Recherche.
-- **14.12** · Les deux · auto · Ouvrir un canvas, un graphe ou une image avec le panneau de droite ouvert → Message « Ces panneaux suivent la note ouverte… ».
-- **14.13** · Les deux · auto · Fenêtre de moins de 1180 px de large, ouvrir le panneau de droite, puis cliquer à côté → Il s'ouvre en tiroir par-dessus avec un voile ; le clic sur le voile le ferme.
+- **14.12** · Les deux · auto · Ouvrir un canvas, un graphe ou une image avec un panneau de la marge ouvert → Message « Ces panneaux suivent la note ouverte : rétroliens, plan, liens et propriétés. »
+- **14.13** · Les deux · auto · Ctrl+] → La marge entière disparaît, rail compris ; de nouveau, elle revient avec son panneau fermé.
 
 ## 15. Palette
 
@@ -428,7 +424,7 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 - **16.10** · Les deux · auto · Ctrl+Alt+Gauche, Ctrl+Alt+Droite « Revenir en arrière », « Aller en avant » → Navigation dans l'historique.
 - **16.11** · Les deux · auto · Ctrl+\ « Diviser à droite » → Nouveau panneau à droite.
 - **16.12** · Les deux · auto · Palette : « Diviser en bas » → Nouveau panneau en bas.
-- **16.13** · Les deux · auto · Ctrl+Maj+\ et Ctrl+[ « Afficher ou masquer la barre latérale » → La barre latérale bascule.
+- **16.13** · Les deux · auto · Ctrl+Maj+\ et Ctrl+[ « Afficher ou masquer la liste des notes » → La liste bascule.
 - **16.14** · Les deux · auto · Ctrl+] « Afficher ou masquer la marge » → La marge bascule.
 - **16.15** · Les deux · auto · Ctrl+G « Ouvrir le graphe » → Le graphe s'ouvre dans un nouvel onglet.
 - **16.16** · Les deux · auto · Palette : « Ouvrir le graphe autour de cette note » → Graphe local à droite.
@@ -437,7 +433,7 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 - **16.19** · Les deux · auto · Palette : « Basculer entre papier de jour et de nuit » → Le thème change.
 - **16.20** · Les deux · auto · F2 « Renommer cette note » → Le titre prend le focus.
 - **16.21** · Les deux · auto · Palette : « Mettre cette note à la corbeille » → La note part à la corbeille.
-- **16.22** · Les deux · auto · Palette : « Montrer cette note dans la barre latérale » → Voir 5.40.
+- **16.22** · Les deux · auto · Palette : « Montrer cette note dans son dossier » → Voir 5.40.
 - **16.23** · Les deux · auto · Palette : « Copier un lien vers cette note » → `[[Nom]]` dans le presse-papiers.
 - **16.24** · Les deux · auto · Palette : « Ajouter ou retirer cette note des favoris » → Le favori bascule.
 - **16.25** · Les deux · auto · Alt+T « Insérer un modèle » → La liste des modèles s'ouvre.
@@ -465,7 +461,7 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 
 ## 18. Recherche avancée
 
-- **18.1** · Les deux · auto · `mot1 mot2` dans le champ de la barre latérale → Notes contenant les deux mots.
+- **18.1** · Les deux · auto · `mot1 mot2` dans le champ de recherche de la liste → Notes contenant les deux mots.
 - **18.2** · Les deux · auto · `mot1 OR mot2` → Notes contenant l'un ou l'autre.
 - **18.3** · Les deux · auto · `mot -autre` → Notes contenant « mot » sans « autre ».
 - **18.4** · Les deux · auto · `"expression exacte"` → Seulement cette expression, dans cet ordre.
@@ -595,7 +591,7 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 
 ## 24. Réglages
 
-- **24.1** · Les deux · auto · Ctrl+, (ou le pied de la barre, ou le menu du coffre) → Onglet « Réglages » : Général, Apparence, Disposition, Éditeur, Fichiers et liens, Aujourd'hui, Modèles, À propos ; la liste des sections à gauche suit le défilement, et un clic y mène.
+- **24.1** · Les deux · auto · Ctrl+, (ou le bouton Réglages de la liste, ou le menu du coffre) → Onglet « Réglages » : sections à gauche, page à droite.
 - **24.2** · Les deux · auto · Papier : Suivre le système, Papier de jour, Papier de nuit → Le thème change aussitôt ; « Suivre le système » suit le système en direct.
 - **24.3** · Les deux · auto · Langue : Auto, English, Français → Toute l'interface change, commandes et palette comprises ; Auto suit la langue du système ou du navigateur.
 - **24.4** · Les deux · auto · « Les nouveaux onglets s'ouvrent en » : Écrire, Lire, Source → Appliqué aux notes ouvertes ensuite.
@@ -624,7 +620,7 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 - **25.2** · Les deux · auto · Papier de nuit → Fond bleu nuit, encre claire, surlignages lisibles.
 - **25.3** · Les deux · auto · Basculer jour et nuit avec une note, un graphe et un canvas ouverts → Tout change de papier ; rien ne devient illisible.
 - **25.4** · Les deux · auto · Parcourir toute l'interface avec Tab → Chaque élément qui prend le focus a un contour rose.
-- **25.5** · Les deux · auto · Fenêtre de moins de 1180 px → Le panneau de droite devient un tiroir.
+- **25.5** · Les deux · auto · Fenêtre de moins de 1000 px → La liste passe par-dessus les notes avec un voile ; cliquer le voile la referme.
 - **25.6** · Les deux · auto · Fenêtre de moins de 768 px ou téléphone → L'atelier téléphone prend le relais : l'accueil des notes, puis une vue à la fois, sans onglets ni panneaux latéraux.
 - **25.7** · Les deux · auto · Redimensionner la fenêtre en continu → Pas de chevauchement ni de défilement horizontal.
 - **25.8** · Les deux · auto · Activer « réduire les animations » dans le système → Plus d'animations (tiroirs, apparition des notes).
@@ -647,9 +643,9 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 - **25.25** · Les deux · auto · Ouvrir un coffre Obsidian dont un extrait CSS est activé dans Obsidian → L'extrait est listé avec l'étiquette « Obsidian » et déjà actif ; `.obsidian/` n'est pas modifié.
 - **25.26** · Bureau · auto · « Ouvrir le dossier » des extraits CSS → Le dossier `.cobblestone/snippets` est créé s'il manque et s'affiche dans le gestionnaire de fichiers.
 - **25.27** · Les deux · auto · Changer de thème de jour (Atelier puis Kraft) avec le graphe ouvert dans un autre onglet → Revenu au graphe, les points ont l'encre du nouveau thème.
-- **25.28** · Les deux · auto · Réglages › Disposition : Classique, Concentration, Chercheur, Miroir → Chaque disposition place aussitôt panneaux et barres ; la carte choisie est marquée.
-- **25.29** · Les deux · auto · Changer la place d'un panneau (Gauche, Droite, Masqué), puis « Monter » ou « Descendre » → Le schéma et l'app suivent ; la disposition devient « Personnalisée » ; « Revenir à la disposition classique » la rétablit.
-- **25.30** · Les deux · auto · Interrupteurs des onglets, de la barre d'état et de la barre d'activité ; largeur des panneaux → Chaque élément apparaît ou disparaît ; les panneaux s'élargissent ou rétrécissent.
+- **25.28** · Les deux · auto · Réglages › Disposition : Complet, Lecture, Concentré → Chaque disposition change aussitôt la fenêtre : la liste, la marge, la barre d'état.
+- **25.29** · Les deux · auto · Décocher un bouton de la marge, puis « Monter » un autre → Le bouton quitte le rail, la disposition devient « Personnalisée », l'ordre du rail suit ; « Revenir à la disposition complète » remet tout.
+- **25.30** · Les deux · auto · Onglets « Jamais », interrupteurs de la barre d'état et de la marge ; largeur de la liste → Chaque élément apparaît ou disparaît ; la liste s'élargit ou rétrécit.
 - **25.31** · Les deux · auto · Fermer puis rouvrir l'app → La disposition est conservée (réglage de l'appareil).
 
 ## 26. Spécifique à l'app web
