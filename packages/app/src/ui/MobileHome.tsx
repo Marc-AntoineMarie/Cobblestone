@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { createContext, useContext, useMemo, useState } from 'react';
 import {
   CalendarDays,
   ChevronDown,
@@ -21,11 +21,15 @@ import { excerpt, recentlyChanged, relativeTime } from './mobile-nav';
 
 export type HomeTab = 'recent' | 'folders' | 'tags';
 
+/** The note shown beside the list, on a tablet. */
+const CurrentNote = createContext<string | null>(null);
+
 const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
 
 /** The phone's home: pinned notes, then the notes changed lately; folders and tags one tap away. */
 export function MobileHome({
   hidden,
+  current,
   tab,
   onTab,
   folder,
@@ -34,6 +38,8 @@ export function MobileHome({
   onSwitchVault,
 }: {
   hidden: boolean;
+  /** The note shown beside the list (tablet), marked in it. */
+  current: string | null;
   tab: HomeTab;
   onTab: (tab: HomeTab) => void;
   folder: string;
@@ -82,8 +88,10 @@ export function MobileHome({
             </button>
           ))}
         </div>
-        {tab === 'recent' && <RecentList />}
-        {tab === 'folders' && <FolderList folder={folder} onFolder={onFolder} />}
+        <CurrentNote.Provider value={current}>
+          {tab === 'recent' && <RecentList />}
+          {tab === 'folders' && <FolderList folder={folder} onFolder={onFolder} />}
+        </CurrentNote.Provider>
         {tab === 'tags' && <TagChips onSearch={onSearch} />}
       </div>
 
@@ -170,10 +178,16 @@ function NoteRow({ file, time, showFolder = true }: { file: VaultFile; time?: st
   const session = useSession();
   const text = file.extension === 'md' ? excerpt(session.vault.cachedRead(file.path) ?? '') : '';
   const press = useLongPress(({ x, y }) => session.ui.setState({ menu: { x, y, items: fileMenu(session, file.path) } }));
+  const current = useContext(CurrentNote);
   const label = file.extension === 'md' || file.extension === 'canvas' ? file.basename : file.name;
   return (
     <li>
-      <button className="mobile-row" onClick={() => session.openPath(file.path)} {...press}>
+      <button
+        className="mobile-row"
+        aria-current={current === file.path ? 'page' : undefined}
+        onClick={() => session.openPath(file.path)}
+        {...press}
+      >
         <span className="mobile-row-title">
           {file.extension === 'canvas' && <LayoutDashboard size={15} strokeWidth={2} aria-hidden />}
           {label}

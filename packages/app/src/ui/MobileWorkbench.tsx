@@ -38,7 +38,7 @@ import { useWorkbenchBasics } from './workbench-basics';
  * notes; a note pushes over it, a link pushes the next note; back (button, edge swipe, the browser's
  * own back) pops one screen.
  */
-export function MobileWorkbench({ onSwitchVault }: { onSwitchVault: () => void }) {
+export function MobileWorkbench({ onSwitchVault, split = false }: { onSwitchVault: () => void; split?: boolean }) {
   const session = useSession();
   const style = useWorkbenchBasics(onSwitchVault);
   const keyboard = useVisualViewport();
@@ -156,9 +156,10 @@ export function MobileWorkbench({ onSwitchVault }: { onSwitchVault: () => void }
   const below = useStore(session.workspace, previousView);
 
   return (
-    <div className={`mobile-workbench${keyboard ? ' has-keyboard' : ''}`} style={style}>
+    <div className={`mobile-workbench${keyboard ? ' has-keyboard' : ''}${split ? ' is-split' : ''}`} style={style}>
       <MobileHome
-        hidden={!home}
+        hidden={!home && !split}
+        current={shownPath}
         tab={homeTab}
         onTab={setHomeTab}
         folder={folder}
@@ -172,13 +173,18 @@ export function MobileWorkbench({ onSwitchVault }: { onSwitchVault: () => void }
           tab={shown.tab}
           paneId={shown.paneId}
           motion={motion}
-          backLabel={below ? viewLabel(below) : t('mobile.home')}
+          backLabel={below ? viewLabel(below) : split ? null : t('mobile.home')}
           onBack={back}
           onSearch={openSearch}
           onSheet={(tab) => openOverlay({ kind: 'sheet', tab })}
           onReveal={(path) => session.revealInTree(path)}
           keyboard={keyboard}
         />
+      )}
+      {split && (home || !shown) && (
+        <div className="mobile-split-empty">
+          <p>{t('mobile.split.empty')}</p>
+        </div>
       )}
       {overlay?.kind === 'search' && <MobileSearch onClose={closeOverlay} />}
       {overlay?.kind === 'sheet' && shownPath && (
@@ -235,7 +241,8 @@ function MobileScreen({
   tab: Tab;
   paneId: string;
   motion: 'push' | 'pop';
-  backLabel: string;
+  /** Null when nothing is below (the tablet's list stays beside the note). */
+  backLabel: string | null;
   onBack: () => void;
   onSearch: () => void;
   onSheet: (tab: SheetTab) => void;
@@ -342,10 +349,14 @@ function MobileScreen({
   return (
     <section className={`mobile-screen is-${motion}`} data-view={view.type} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
       <header className="mobile-topbar">
-        <button className="mobile-back" onClick={onBack}>
-          <ChevronLeft size={24} strokeWidth={2.2} aria-hidden />
-          <span>{backLabel}</span>
-        </button>
+        {backLabel === null ? (
+          <span />
+        ) : (
+          <button className="mobile-back" onClick={onBack}>
+            <ChevronLeft size={24} strokeWidth={2.2} aria-hidden />
+            <span>{backLabel}</span>
+          </button>
+        )}
         {path && (
           <div className="mobile-topbar-actions">
             <button
