@@ -59,4 +59,29 @@ describe('writing together', () => {
     toShared(tr.changes, text);
     expect(text.toString()).toBe(tr.state.doc.toString());
   });
+
+  it('keeps two editors of one note on the same device in step, without typing twice', () => {
+    const doc = new Y.Doc();
+    const text = doc.getText('t');
+    text.insert(0, 'bonjour');
+    // Each editor writes under its own name and hears every change but its own.
+    const writers = [{}, {}];
+    let docs = [EditorState.create({ doc: 'bonjour' }), EditorState.create({ doc: 'bonjour' })];
+    writers.forEach((writer, i) =>
+      text.observe((event, tr) => {
+        if (tr.origin === writer) return;
+        docs[i] = docs[i]!.update({ changes: fromShared(event.delta as never) }).state;
+      }),
+    );
+    const type = (i: number, at: number, insert: string, remove = 0) => {
+      const tr = docs[i]!.update({ changes: { from: at, to: at + remove, insert } });
+      docs[i] = tr.state;
+      doc.transact(() => toShared(tr.changes, text), writers[i]);
+    };
+    type(0, 7, ' à tous');
+    type(1, 0, 'Oh, ');
+    type(0, 0, '', 4);
+    expect(text.toString()).toBe('bonjour à tous');
+    expect(docs.map((d) => d.doc.toString())).toEqual(['bonjour à tous', 'bonjour à tous']);
+  });
 });

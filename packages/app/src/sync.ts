@@ -129,6 +129,16 @@ interface VaultRecord {
 }
 
 /** Device-wide sync preferences. */
+/** Another device on a note. */
+export interface NotePresence {
+  device: string;
+  name: string;
+  /** Which of the inks (0–4) marks this device. */
+  ink: number;
+  /** It reads the note; otherwise it writes, and its cursor shows in the text. */
+  reading: boolean;
+}
+
 export interface SyncPrefs {
   /** Show other devices' cursors in the editor (default: true). */
   showCursors: boolean;
@@ -483,8 +493,10 @@ export class SyncController {
     const token = {};
     return {
       text: () => this.node?.sync.textAt(path()) ?? null,
-      edit: (apply) => (this.node ? this.node.sync.change(apply) : apply()),
-      own: (origin) => this.node?.sync.isOwn(origin) ?? true,
+      // Each editor writes under its own name: another editor of the same note on this device (a
+      // second tab, a split) and the files (another program's change) reach it through the shared text.
+      edit: (apply) => (this.node ? this.node.sync.change(apply, token) : apply()),
+      own: (origin) => origin === token,
       cursors: () => (this.showCursors ? this.cursorsIn(path()) : []),
       subscribe: (listener) => {
         this.cursorListeners.add(listener);
@@ -510,6 +522,61 @@ export class SyncController {
     };
   }
 
+  /** The note's text as the devices share it now: ahead of the file by the time of a write. */
+  sharedText(path: string): string | null {
+    return this.node?.sync.textAt(path)?.toString() ?? null;
+  }
+
+  /** Calls back when the shared text of the note changes; returns the function that stops it. */
+  watchText(path: string, listener: () => void): () => void {
+    const text = this.node?.sync.textAt(path);
+    if (!text) return () => {};
+    text.observe(listener);
+    return () => text.unobserve(listener);
+  }
+
+  /** Tells the other devices this one reads the note; returns the function that takes it back. */
+  reading(path: string): () => void {
+    const node = this.node;
+    const entry = node?.sync.entryAt(path);
+    if (!node || !entry) return () => {};
+    const token = {};
+    this.publisher = token;
+    node.publishPresence(new TextEncoder().encode(JSON.stringify({ entry, reading: true })));
+    return () => {
+      if (this.publisher !== token) return;
+      this.publisher = null;
+      this.node?.publishPresence(null);
+    };
+  }
+
+  /** The other devices on this note, writing (their cursor shows in the text) or reading. */
+  devicesOn(path: string): NotePresence[] {
+    const node = this.node;
+    const entry = node?.sync.entryAt(path);
+    if (!node || !entry) return [];
+    const devices = node.devices();
+    const here: NotePresence[] = [];
+    for (const [device, data] of node.presences()) {
+      const info = devices.find((d) => d.id === device && !d.removed);
+      if (!info) continue;
+      try {
+        const where = JSON.parse(new TextDecoder().decode(data)) as { entry: string; anchor?: string; reading?: boolean };
+        if (where.entry !== entry) continue;
+        here.push({ device, name: info.name, ink: parseInt(device.slice(0, 4), 16) % 5, reading: !where.anchor });
+      } catch {
+        // Another device's presence that cannot be read: not shown.
+      }
+    }
+    return here.sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  /** Calls back when the other devices come to a note, leave it or move in it. */
+  onPresence(listener: () => void): () => void {
+    this.cursorListeners.add(listener);
+    return () => void this.cursorListeners.delete(listener);
+  }
+
   private cursorsIn(path: string): RemoteCursor[] {
     const node = this.node;
     const entry = node?.sync.entryAt(path);
@@ -520,8 +587,9 @@ export class SyncController {
       const info = devices.find((d) => d.id === device && !d.removed);
       if (!info) continue;
       try {
-        const where = JSON.parse(new TextDecoder().decode(data)) as { entry: string; anchor: string; head: string };
-        if (where.entry !== entry) continue;
+        const where = JSON.parse(new TextDecoder().decode(data)) as { entry: string; anchor?: string; head?: string };
+        // A device that only reads the note has no cursor in it.
+        if (where.entry !== entry || !where.anchor || !where.head) continue;
         const at = (rel: string) =>
           Y.createAbsolutePositionFromRelativePosition(Y.decodeRelativePosition(fromBase64(rel)), node.model.doc)?.index;
         const anchor = at(where.anchor);
