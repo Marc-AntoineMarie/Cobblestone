@@ -267,4 +267,34 @@ recette('32.17', async ({ app, ui }) => {
   await expect.poll(() => app.exists('photo.png')).toBe(true);
 });
 
+recette('32.18', async ({ app, ui }) => {
+  await app.start({ vault: baseVault(), tablet: true });
+  const { phone } = ui;
+  await expect(phone.root).toHaveClass(/is-split/);
+  await phone.row('Plan').tap();
+  await expect(phone.title).toHaveValue('Plan');
+  await expect(phone.home).toBeVisible();
+  await expect(phone.row('Plan')).toHaveAttribute('aria-current', 'page');
+  const list = (await phone.home.boundingBox())!;
+  const note = (await phone.screen.boundingBox())!;
+  expect(note.x).toBeGreaterThanOrEqual(list.x + list.width - 1);
+  await phone.screen.locator('a.internal-link', { hasText: 'Bienvenue' }).tap();
+  await phone.back.tap();
+  await expect(phone.title).toHaveValue('Plan');
+  await expect(phone.back).toHaveCount(0);
+  await ui.page.goBack();
+  await expect(phone.screen).toHaveCount(0);
+  await expect(phone.home).toBeVisible();
+  // The same width with a mouse keeps the desktop.
+  const desk = await ui.page
+    .context()
+    .browser()!
+    .newPage({ viewport: { width: 1024, height: 768 }, locale: 'fr-FR' });
+  await desk.goto(ui.page.url());
+  await desk.getByRole('button', { name: /Essayer la démo/ }).click();
+  await expect(desk.locator('.workbench')).toBeVisible();
+  await expect(desk.locator('.mobile-workbench')).toHaveCount(0);
+  await desk.close();
+});
+
 const PNG_BYTES = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
