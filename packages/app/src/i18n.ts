@@ -623,6 +623,16 @@ const en = {
   'mobile.sheet': 'About this note',
   'mobile.sheet.full': 'Expand',
   'mobile.sheet.half': 'Shrink',
+  'mobile.kb': 'Formatting',
+  'mobile.kb.link': 'Link to a note',
+  'mobile.kb.tag': 'Tag',
+  'mobile.kb.task': 'Checkbox',
+  'mobile.kb.heading': 'Heading',
+  'mobile.kb.list': 'List',
+  'mobile.kb.attach': 'Attach a photo or a file',
+  'mobile.kb.undo': 'Undo',
+  'mobile.kb.redo': 'Redo',
+  'mobile.kb.hide': 'Hide the keyboard',
 };
 
 export type MessageKey = keyof typeof en;
@@ -1257,6 +1267,16 @@ const fr: Messages = {
   'mobile.sheet': 'Autour de cette note',
   'mobile.sheet.full': 'Agrandir',
   'mobile.sheet.half': 'Réduire',
+  'mobile.kb': 'Mise en forme',
+  'mobile.kb.link': 'Lien vers une note',
+  'mobile.kb.tag': 'Tag',
+  'mobile.kb.task': 'Case à cocher',
+  'mobile.kb.heading': 'Titre',
+  'mobile.kb.list': 'Liste',
+  'mobile.kb.attach': 'Joindre une photo ou un fichier',
+  'mobile.kb.undo': 'Annuler',
+  'mobile.kb.redo': 'Rétablir',
+  'mobile.kb.hide': 'Masquer le clavier',
 };
 
 export const LANGUAGES = { en: 'English', fr: 'Français' } as const;

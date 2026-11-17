@@ -6,6 +6,7 @@ ajouté, modifié et supprimé, les tests, les fichiers et les commits. Ce somma
 
 | Date       | Changement                                                                                                                     | Type          | Branche                       |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------- | ----------------------------- |
+| 2026-11-17 | [Téléphone : barre au-dessus du clavier](journal/2026-11-17-feat-mobile-clavier.md)                                            | nouveauté     | `feat/mobile-clavier`         |
 | 2026-11-17 | [Téléphone : feuille d'infos de la note](journal/2026-11-17-feat-mobile-feuille.md)                                            | nouveauté     | `feat/mobile-feuille`         |
 | 2026-11-16 | [Téléphone : accueil et navigation en pile](journal/2026-11-16-feat-mobile-accueil.md)                                         | nouveauté     | `feat/mobile-accueil`         |
 | 2026-11-16 | [Recette de l'accueil : quatre actions](journal/2026-11-16-fix-recette-accueil.md)                                             | correction    | `fix/recette-accueil`         |

@@ -49,7 +49,7 @@ export function useLongPress(onLong: (point: { x: number; y: number }) => void, 
 
 /**
  * Follows the part of the screen the keyboard leaves free (iOS shrinks the visual viewport, not the
- * page): sets --vvh and --keyboard on the root, and tells whether the keyboard is up.
+ * page): sets --vvh, --vv-top and --keyboard on the root, and tells whether the keyboard is up.
  */
 export function useVisualViewport(): boolean {
   const [keyboard, setKeyboard] = useState(false);
@@ -60,6 +60,7 @@ export function useVisualViewport(): boolean {
     const update = () => {
       const covered = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
       root.style.setProperty('--vvh', `${vv.height}px`);
+      root.style.setProperty('--vv-top', `${vv.offsetTop}px`);
       root.style.setProperty('--keyboard', `${covered}px`);
       setKeyboard(covered > 120);
     };
@@ -70,6 +71,7 @@ export function useVisualViewport(): boolean {
       vv.removeEventListener('resize', update);
       vv.removeEventListener('scroll', update);
       root.style.removeProperty('--vvh');
+      root.style.removeProperty('--vv-top');
       root.style.removeProperty('--keyboard');
     };
   }, []);

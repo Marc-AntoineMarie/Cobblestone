@@ -221,3 +221,50 @@ recette('32.15', async ({ app, ui }) => {
   await ui.page.locator('.mobile-scrim').tap({ position: { x: 20, y: 40 } });
   await expect(preview).toHaveCount(0);
 });
+
+recette('32.16', async ({ app, ui }) => {
+  await app.start({ vault: baseVault(), iphone: true });
+  const { phone } = ui;
+  await phone.row('Idées').tap();
+  await phone.tools.getByRole('button', { name: 'Modifier' }).tap();
+  await phone.screen.locator('.cm-line').first().tap();
+  await ui.page.keyboard.press('End');
+  await phone.keyboard(true);
+  const bar = (await phone.kbBar.boundingBox())!;
+  expect(Math.round(bar.y + bar.height)).toBe(844 - 336);
+  await ui.page.keyboard.press('Enter');
+  await phone.kbBar.getByRole('button', { name: 'Lien vers une note' }).tap();
+  await ui.page.keyboard.type('Pla');
+  const suggestion = ui.page.locator('.cm-tooltip-autocomplete li', { hasText: 'Plan' }).first();
+  await expect(suggestion).toBeVisible();
+  expect((await suggestion.boundingBox())!.y).toBeLessThan(bar.y);
+  await suggestion.tap();
+  await phone.kbBar.getByRole('button', { name: 'Titre' }).tap();
+  await expect(phone.screen.locator('.cm-content')).toBeFocused();
+  await phone.kbBar.getByRole('button', { name: 'Gras' }).tap();
+  await ui.page.keyboard.type('fort');
+  await phone.kbBar.getByRole('button', { name: 'Annuler' }).tap();
+  await phone.kbBar.getByRole('button', { name: 'Case à cocher' }).tap();
+  await expect.poll(() => app.read('Idées.md')).toContain('- [ ] # [[Plan]]');
+  expect(await app.read('Idées.md')).not.toContain('fort');
+  await phone.kbBar.getByRole('button', { name: 'Terminé' }).tap();
+  await phone.keyboard(false);
+  await expect(phone.screen.locator('.reading-view')).toBeVisible();
+});
+
+recette('32.17', async ({ app, ui }) => {
+  await app.start({ vault: baseVault(), iphone: true });
+  const { phone } = ui;
+  await phone.row('Idées').tap();
+  await phone.tools.getByRole('button', { name: 'Modifier' }).tap();
+  await phone.screen.locator('.cm-line').first().tap();
+  await ui.page.keyboard.press('End');
+  await phone.keyboard(true);
+  const chooser = ui.page.waitForEvent('filechooser');
+  await phone.kbBar.getByRole('button', { name: 'Joindre une photo ou un fichier' }).tap();
+  await (await chooser).setFiles({ name: 'photo.png', mimeType: 'image/png', buffer: Buffer.from(PNG_BYTES, 'base64') });
+  await expect.poll(() => app.read('Idées.md')).toContain('![[photo.png]]');
+  await expect.poll(() => app.exists('photo.png')).toBe(true);
+});
+
+const PNG_BYTES = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';

@@ -274,6 +274,14 @@ export class Ui {
       search: page.locator('.mobile-search'),
       searchField: page.locator('.mobile-search input'),
       cancelSearch: page.locator('.mobile-cancel'),
+      kbBar: page.locator('.mobile-kb'),
+      /** The on-screen keyboard, which Chrome's emulation lacks: the visual viewport shrinks as on iOS. */
+      keyboard: (open: boolean) =>
+        page.evaluate((open) => {
+          const vv = window.visualViewport!;
+          Object.defineProperty(vv, 'height', { configurable: true, get: () => window.innerHeight - (open ? 336 : 0) });
+          vv.dispatchEvent(new Event('resize'));
+        }, open),
       /** A long press, as a finger does it. */
       longPress: async (target: Locator) => {
         const box = (await target.boundingBox())!;
