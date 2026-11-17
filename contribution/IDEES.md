@@ -83,13 +83,13 @@ Demande du 30 septembre : une interface ergonomique, intuitive, optimisée pour 
 
 Refonte validée sur le prototype : pas de barre d'onglets, accueil épinglées puis récentes, note du
 jour en un geste. Fait : zoom iPhone corrigé, accueil et navigation en pile, feuille d'infos de la
-note. Reste, dans l'ordre :
+note, barre au-dessus du clavier. Reste, dans l'ordre :
 
-1. **Barre au-dessus du clavier** (à faire) : `[[ ]]`, `#`, case, titre, gras, italique, liste,
-   trombone (photo, fichiers), annuler ; suggestions de liens dans cette barre.
-2. **Tablette** (à faire) : de 768 à 1180 px, liste à gauche et note à droite ; au-delà, l'atelier.
-3. **Réglages téléphone** (à faire) : « Ouvrir les notes en » lecture ou écriture, avec aperçu ;
+1. **Tablette** (à faire) : de 768 à 1180 px, liste à gauche et note à droite ; au-delà, l'atelier.
+2. **Réglages téléphone** (à faire) : « Ouvrir les notes en » lecture ou écriture, avec aperçu ;
    propriétés en pastilles sous le titre en lecture.
+3. **À vérifier sur un vrai iPhone** (à faire) : position de la barre du clavier et de la recherche
+   quand Safari fait défiler la page sous le clavier.
 4. Applications natives Android et iOS avec Capacitor (plus tard), avec de vrais dossiers (stockage
    partagé sur Android, app Fichiers sur iPhone). Détails dans [docs/DISTRIBUTION.md](../docs/DISTRIBUTION.md).
 
