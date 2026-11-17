@@ -749,3 +749,6 @@ Deux apps de bureau sur le même réseau (la recette automatique lance deux apps
 - **32.10** · Web · auto · « … » d'une note, puis « Déplacer vers… » → Le menu propose partager, renommer, déplacer, copier le lien, graphe, dossier, source et corbeille ; la note change de dossier.
 - **32.11** · Web · auto · Graphe et réglages depuis l'accueil, palette de commandes depuis la recherche → Chacun s'ouvre en plein écran et « ‹ » ramène à l'accueil ; la palette liste les commandes de l'app (note du jour, nouvelle note…).
 - **32.12** · Web · manuel · App installée sur l'écran d'accueil de l'iPhone : glisser depuis le bord gauche → Retour à l'écran précédent.
+- **32.13** · Web · auto · Note ouverte : toucher le bouton des liens, puis chaque pastille de la feuille → Une feuille monte du bas : rétroliens (avec mentions non liées), liens sortants, plan, propriétés et graphe local ; toucher une note la ferme et ouvre cette note.
+- **32.14** · Web · auto · Feuille ouverte : toucher la poignée, puis revenir (retour du navigateur ou voile) → La feuille passe en plein écran ; le retour la ferme sans quitter la note.
+- **32.15** · Web · auto · Appui long sur un lien d'une note en lecture → L'aperçu de la note liée s'affiche en bas, sans suivre le lien ; toucher ailleurs le ferme.
