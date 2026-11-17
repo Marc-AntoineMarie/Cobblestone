@@ -2,66 +2,63 @@ import { describe, expect, it } from 'vitest';
 import {
   applyPreset,
   DEFAULT_LAYOUT,
-  movePanel,
   normalizeLayout,
-  panelsIn,
-  PANELS,
-  PRESETS,
   setLayoutOption,
-  shiftPanel,
+  shiftRailTab,
+  toggleRailTab,
+  type LayoutPreferences,
 } from './layout';
 
-describe('layout', () => {
-  it('starts classic: finding and files on the left, the note’s context on the right', () => {
-    expect(panelsIn(DEFAULT_LAYOUT, 'left')).toEqual(['search', 'bookmarks', 'files', 'tags']);
-    expect(panelsIn(DEFAULT_LAYOUT, 'right')).toEqual(['backlinks', 'outline', 'outgoing', 'properties']);
-    expect(panelsIn(DEFAULT_LAYOUT, 'hidden')).toEqual([]);
+describe('layout of the workbench', () => {
+  it('starts complete: the list, the margin, tabs once several notes are open', () => {
+    expect(DEFAULT_LAYOUT).toMatchObject({ preset: 'complet', list: true, margin: true, tabs: 'several', statusBar: true });
   });
 
-  it('places every panel in every preset', () => {
-    for (const preset of Object.values(PRESETS)) {
-      expect(Object.keys(preset.zones).sort()).toEqual([...PANELS].sort());
-      expect([...preset.order].sort()).toEqual([...PANELS].sort());
-    }
-    const mirror = applyPreset(DEFAULT_LAYOUT, 'mirror');
-    expect(panelsIn(mirror, 'left')).toEqual(panelsIn(DEFAULT_LAYOUT, 'right'));
-    const focus = applyPreset({ ...DEFAULT_LAYOUT, width: 'wide' }, 'focus');
-    expect(panelsIn(focus, 'hidden')).toHaveLength(PANELS.length);
-    expect(focus).toMatchObject({ tabs: false, statusBar: false, width: 'wide' });
+  it('goes from a ready-made layout to another, keeping the width', () => {
+    const wide = setLayoutOption(DEFAULT_LAYOUT, 'width', 'wide');
+    const focused = applyPreset(wide, 'concentre');
+    expect(focused).toMatchObject({ preset: 'concentre', list: false, margin: false, width: 'wide' });
+    expect(applyPreset(focused, 'complet')).toMatchObject({ preset: 'complet', list: true, margin: true, width: 'wide' });
   });
 
-  it('moves a panel to another zone, before another panel or at the end', () => {
-    const moved = movePanel(DEFAULT_LAYOUT, 'tags', 'right', 'outline');
-    expect(panelsIn(moved, 'right')).toEqual(['backlinks', 'tags', 'outline', 'outgoing', 'properties']);
-    expect(panelsIn(moved, 'left')).toEqual(['search', 'bookmarks', 'files']);
-    expect(moved.preset).toBe('custom');
-    const atEnd = movePanel(DEFAULT_LAYOUT, 'search', 'right');
-    expect(panelsIn(atEnd, 'right').at(-1)).toBe('search');
-    const hidden = movePanel(DEFAULT_LAYOUT, 'properties', 'hidden');
-    expect(panelsIn(hidden, 'hidden')).toEqual(['properties']);
+  it('becomes custom when a setting leaves its layout, and finds the layout back', () => {
+    const without = setLayoutOption(DEFAULT_LAYOUT, 'margin', false);
+    expect(without.preset).toBe('custom');
+    expect(setLayoutOption(without, 'margin', true).preset).toBe('complet');
+    // The width is a matter of taste: it does not make the layout custom.
+    expect(setLayoutOption(DEFAULT_LAYOUT, 'width', 'narrow').preset).toBe('complet');
   });
 
-  it('moves a panel up or down among its neighbours only', () => {
-    const down = shiftPanel(DEFAULT_LAYOUT, 'search', 1);
-    expect(panelsIn(down, 'left')).toEqual(['bookmarks', 'search', 'files', 'tags']);
-    expect(shiftPanel(DEFAULT_LAYOUT, 'search', -1)).toBe(DEFAULT_LAYOUT);
-    expect(shiftPanel(DEFAULT_LAYOUT, 'tags', 1)).toBe(DEFAULT_LAYOUT);
+  it('hides and shows a button of the rail, keeping the order', () => {
+    const without = toggleRailTab(DEFAULT_LAYOUT, 'outline');
+    expect(without.rail).toEqual(['links', 'properties', 'graph']);
+    expect(without.preset).toBe('custom');
+    expect(toggleRailTab(without, 'outline').rail).toEqual(['links', 'outline', 'properties', 'graph']);
   });
 
-  it('keeps a preset for the width, and makes it custom for the rest', () => {
-    expect(setLayoutOption(DEFAULT_LAYOUT, 'width', 'wide').preset).toBe('classic');
-    expect(setLayoutOption(DEFAULT_LAYOUT, 'activityLabels', false).preset).toBe('classic');
-    expect(setLayoutOption(DEFAULT_LAYOUT, 'statusBar', false).preset).toBe('custom');
-    expect(setLayoutOption(DEFAULT_LAYOUT, 'tabs', true).preset).toBe('classic');
+  it('moves a button of the rail, and stops at the ends', () => {
+    expect(shiftRailTab(DEFAULT_LAYOUT, 'outline', -1).rail).toEqual(['outline', 'links', 'properties', 'graph']);
+    expect(shiftRailTab(DEFAULT_LAYOUT, 'links', -1)).toBe(DEFAULT_LAYOUT);
+    expect(shiftRailTab(DEFAULT_LAYOUT, 'graph', 1)).toBe(DEFAULT_LAYOUT);
   });
 
-  it('completes a stored layout that misses panels or holds unknown ones', () => {
-    const stored = { preset: 'custom' as const, zones: { files: 'right' as const }, order: ['files' as const, 'old' as never] };
-    const layout = normalizeLayout(stored);
-    expect(layout.zones.files).toBe('right');
-    expect(layout.zones.search).toBe('left');
-    expect(layout.order[0]).toBe('files');
-    expect([...layout.order].sort()).toEqual([...PANELS].sort());
+  it('completes a stored layout, and brings an old one (panels in zones) over', () => {
     expect(normalizeLayout(undefined)).toEqual(DEFAULT_LAYOUT);
+    const old = {
+      preset: 'focus',
+      zones: { search: 'hidden', files: 'hidden', bookmarks: 'hidden', tags: 'hidden', backlinks: 'right', outline: 'right' },
+      tabs: false,
+      statusBar: false,
+      width: 'wide',
+    } as unknown as Partial<LayoutPreferences>;
+    const brought = normalizeLayout(old);
+    expect(brought).toMatchObject({ list: false, margin: true, tabs: 'never', statusBar: false, width: 'wide' });
+    expect(brought.rail).toEqual(['links', 'outline', 'properties', 'graph']);
+    expect(normalizeLayout({ rail: ['nope'] } as unknown as Partial<LayoutPreferences>).rail).toEqual([
+      'links',
+      'outline',
+      'properties',
+      'graph',
+    ]);
   });
 });

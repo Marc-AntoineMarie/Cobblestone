@@ -1,144 +1,124 @@
 /*
- * Where each panel of the workbench goes. Two side zones hold panels stacked
- * in order; a panel may also be hidden (its commands stay in the palette).
- * Layouts ready to use set every panel at once; changing one panel afterwards
- * makes the layout "custom".
+ * The shape of the workbench on a computer: the list of notes on the left, the
+ * note in the middle, and the margin on the right — a rail of buttons, each
+ * opening one panel about the note. Layouts ready to use set it all at once;
+ * changing one thing afterwards makes the layout "custom".
  */
 
-export type PanelId = 'search' | 'bookmarks' | 'files' | 'tags' | 'backlinks' | 'outline' | 'outgoing' | 'properties';
+/** A panel of the margin, reached by its button in the rail. */
+export type MarginTab = 'links' | 'outline' | 'properties' | 'graph';
 
-export type Zone = 'left' | 'right' | 'hidden';
+/** What the list shows. */
+export type ListTab = 'recent' | 'folders' | 'tags';
 
-export type PresetId = 'classic' | 'focus' | 'researcher' | 'mirror';
+export type PresetId = 'complet' | 'lecture' | 'concentre';
 
 export type PanelWidth = 'narrow' | 'normal' | 'wide';
 
+/** Tabs above the notes: always, only once several are open, or never. */
+export type TabsWhen = 'always' | 'several' | 'never';
+
 export interface LayoutPreferences {
-  /** The layout ready to use it started from, or "custom" once a panel was moved. */
+  /** The layout ready to use it started from, or "custom" once something moved. */
   preset: PresetId | 'custom';
-  zones: Record<PanelId, Zone>;
-  /** Order of the panels; each zone shows its own in this order. */
-  order: PanelId[];
-  /** Tabs above the notes. */
-  tabs: boolean;
+  /** The list of notes, on the left. */
+  list: boolean;
+  /** The margin, on the right: its rail and the panel a button opens. */
+  margin: boolean;
+  /** Buttons of the rail, in order; the ones left out are hidden. */
+  rail: MarginTab[];
+  tabs: TabsWhen;
   statusBar: boolean;
-  activityBar: boolean;
-  /** Names under the activity bar's buttons. */
-  activityLabels: boolean;
   width: PanelWidth;
 }
 
-/** Every panel, in its default order. */
-export const PANELS: PanelId[] = ['search', 'bookmarks', 'files', 'tags', 'backlinks', 'outline', 'outgoing', 'properties'];
+/** Every panel of the margin, in its default order. */
+export const MARGIN_TABS: MarginTab[] = ['links', 'outline', 'properties', 'graph'];
 
-/** Panels about the open note: they show when a note is open. */
-export const NOTE_PANELS: PanelId[] = ['backlinks', 'outline', 'outgoing', 'properties'];
+/** Width of the list and of the margin's panel, in pixels. */
+export const PANEL_WIDTHS: Record<PanelWidth, number> = { narrow: 252, normal: 292, wide: 340 };
 
-/** Width of a side zone, in pixels. */
-export const PANEL_WIDTHS: Record<PanelWidth, number> = { narrow: 232, normal: 272, wide: 320 };
-
-const zones = (left: PanelId[], right: PanelId[]): Record<PanelId, Zone> =>
-  Object.fromEntries(PANELS.map((id) => [id, left.includes(id) ? 'left' : right.includes(id) ? 'right' : 'hidden'])) as Record<
-    PanelId,
-    Zone
-  >;
-
-export const PRESETS: Record<PresetId, Omit<LayoutPreferences, 'preset' | 'width' | 'activityLabels'>> = {
-  classic: {
-    zones: zones(['search', 'bookmarks', 'files', 'tags'], ['backlinks', 'outline', 'outgoing', 'properties']),
-    order: PANELS,
-    tabs: true,
-    statusBar: true,
-    activityBar: true,
-  },
-  focus: {
-    zones: zones([], []),
-    order: PANELS,
-    tabs: false,
-    statusBar: false,
-    activityBar: false,
-  },
-  researcher: {
-    zones: zones(['search', 'files', 'bookmarks'], ['backlinks', 'outgoing', 'outline']),
-    order: ['search', 'files', 'bookmarks', 'tags', 'backlinks', 'outgoing', 'outline', 'properties'],
-    tabs: true,
-    statusBar: true,
-    activityBar: true,
-  },
-  mirror: {
-    zones: zones(['backlinks', 'outline', 'outgoing', 'properties'], ['search', 'bookmarks', 'files', 'tags']),
-    order: PANELS,
-    tabs: true,
-    statusBar: true,
-    activityBar: true,
-  },
+export const PRESETS: Record<PresetId, Omit<LayoutPreferences, 'preset' | 'width'>> = {
+  complet: { list: true, margin: true, rail: MARGIN_TABS, tabs: 'several', statusBar: true },
+  lecture: { list: true, margin: false, rail: MARGIN_TABS, tabs: 'never', statusBar: false },
+  concentre: { list: false, margin: false, rail: MARGIN_TABS, tabs: 'never', statusBar: false },
 };
 
-export const DEFAULT_LAYOUT: LayoutPreferences = { preset: 'classic', ...PRESETS.classic, width: 'normal', activityLabels: true };
+export const DEFAULT_LAYOUT: LayoutPreferences = { preset: 'complet', ...PRESETS.complet, width: 'normal' };
 
 /** The layout of a preset, keeping the chosen width. */
 export function applyPreset(layout: LayoutPreferences, preset: PresetId): LayoutPreferences {
-  return { ...layout, preset, ...PRESETS[preset], order: [...PRESETS[preset].order] };
+  return { ...layout, preset, ...PRESETS[preset], rail: [...PRESETS[preset].rail] };
 }
 
-/** The panels of a zone, in order. */
-export function panelsIn(layout: LayoutPreferences, zone: Zone): PanelId[] {
-  return layout.order.filter((id) => layout.zones[id] === zone);
-}
-
-/**
- * Puts a panel in a zone, before `before` (another panel of that zone) or at
- * the end. The layout becomes custom.
- */
-export function movePanel(layout: LayoutPreferences, id: PanelId, zone: Zone, before?: PanelId): LayoutPreferences {
-  const order = layout.order.filter((p) => p !== id);
-  const at = before && before !== id ? order.indexOf(before) : -1;
-  if (at === -1) {
-    // At the end of the zone: after its last panel, or at the very end.
-    const last = order.map((p) => layout.zones[p]).lastIndexOf(zone);
-    order.splice(last === -1 ? order.length : last + 1, 0, id);
-  } else {
-    order.splice(at, 0, id);
-  }
-  return { ...layout, preset: 'custom', zones: { ...layout.zones, [id]: zone }, order };
-}
-
-/** Moves a panel one step up or down among the panels of its zone. */
-export function shiftPanel(layout: LayoutPreferences, id: PanelId, step: -1 | 1): LayoutPreferences {
-  const siblings = panelsIn(layout, layout.zones[id]);
-  const index = siblings.indexOf(id);
-  const target = siblings[index + step];
-  if (!target) return layout;
-  const order = [...layout.order];
-  const a = order.indexOf(id);
-  const b = order.indexOf(target);
-  [order[a], order[b]] = [order[b]!, order[a]!];
-  return { ...layout, preset: 'custom', order };
-}
-
-/** Changes one of the other layout settings; a preset stays a preset only for its own values. */
-export function setLayoutOption<K extends 'tabs' | 'statusBar' | 'activityBar' | 'activityLabels' | 'width'>(
+/** Changes one setting of the layout; it stays a preset only while it matches one. */
+export function setLayoutOption<K extends 'list' | 'margin' | 'tabs' | 'statusBar' | 'width'>(
   layout: LayoutPreferences,
   key: K,
   value: LayoutPreferences[K],
 ): LayoutPreferences {
   const next = { ...layout, [key]: value };
-  // The width and the names are matters of taste on top of any layout; the rest makes it custom.
-  const taste = key === 'width' || key === 'activityLabels';
-  if (!taste && layout.preset !== 'custom' && PRESETS[layout.preset][key as 'tabs'] !== value) next.preset = 'custom';
+  // The width is a matter of taste on top of any layout; the rest makes it custom.
+  if (key !== 'width') next.preset = presetOf(next);
   return next;
 }
 
-/** A stored layout, completed: panels added in later versions go where the classic layout puts them. */
+/** Shows or hides a button of the rail, keeping the order of the others. */
+export function toggleRailTab(layout: LayoutPreferences, tab: MarginTab): LayoutPreferences {
+  const rail = layout.rail.includes(tab)
+    ? layout.rail.filter((id) => id !== tab)
+    : MARGIN_TABS.filter((id) => id === tab || layout.rail.includes(id));
+  return { ...layout, rail, preset: presetOf({ ...layout, rail }) };
+}
+
+/** Moves a button of the rail one step up or down. */
+export function shiftRailTab(layout: LayoutPreferences, tab: MarginTab, step: -1 | 1): LayoutPreferences {
+  const rail = [...layout.rail];
+  const at = rail.indexOf(tab);
+  if (at === -1 || !rail[at + step]) return layout;
+  [rail[at], rail[at + step]] = [rail[at + step]!, rail[at]!];
+  return { ...layout, rail, preset: presetOf({ ...layout, rail }) };
+}
+
+/** The preset this layout is exactly, else "custom". */
+function presetOf(layout: LayoutPreferences): PresetId | 'custom' {
+  const same = (a: MarginTab[], b: MarginTab[]) => a.length === b.length && a.every((id, i) => id === b[i]);
+  for (const [id, preset] of Object.entries(PRESETS) as [PresetId, (typeof PRESETS)[PresetId]][]) {
+    if (
+      preset.list === layout.list &&
+      preset.margin === layout.margin &&
+      preset.tabs === layout.tabs &&
+      preset.statusBar === layout.statusBar &&
+      same(preset.rail, layout.rail)
+    )
+      return id;
+  }
+  return 'custom';
+}
+
+/**
+ * A stored layout, completed. A layout from before the workbench was reshaped
+ * (panels in two zones) keeps what it can: its width, its tabs and its status
+ * bar; its panels come back as the rail's buttons.
+ */
 export function normalizeLayout(stored: Partial<LayoutPreferences> | undefined): LayoutPreferences {
-  const base = { ...DEFAULT_LAYOUT, ...stored };
-  const known = (base.order ?? []).filter((id): id is PanelId => PANELS.includes(id as PanelId));
-  const order = [...new Set([...known, ...PANELS])];
-  const zonesFixed = Object.fromEntries(
-    PANELS.map((id) => {
-      const zone = base.zones?.[id];
-      return [id, zone === 'left' || zone === 'right' || zone === 'hidden' ? zone : PRESETS.classic.zones[id]];
-    }),
-  ) as Record<PanelId, Zone>;
-  return { ...base, order, zones: zonesFixed };
+  const old = stored as { zones?: Record<string, string>; tabs?: unknown } | undefined;
+  const fromZones = old?.zones
+    ? {
+        list: ['search', 'files', 'bookmarks', 'tags'].some((id) => old.zones![id] && old.zones![id] !== 'hidden'),
+        margin: ['backlinks', 'outline', 'outgoing', 'properties'].some((id) => old.zones![id] && old.zones![id] !== 'hidden'),
+      }
+    : {};
+  const base = { ...DEFAULT_LAYOUT, ...stored, ...fromZones };
+  const width = (['narrow', 'normal', 'wide'] as PanelWidth[]).includes(base.width) ? base.width : 'normal';
+  const tabs: TabsWhen =
+    base.tabs === 'always' || base.tabs === 'several' || base.tabs === 'never'
+      ? base.tabs
+      : base.tabs === false
+        ? 'never'
+        : 'several';
+  const known = (Array.isArray(base.rail) ? base.rail : []).filter((id): id is MarginTab => MARGIN_TABS.includes(id));
+  const rail = known.length ? known : MARGIN_TABS;
+  const layout = { ...base, list: !!base.list, margin: !!base.margin, statusBar: !!base.statusBar, rail, tabs, width };
+  return { ...layout, preset: presetOf(layout) };
 }
