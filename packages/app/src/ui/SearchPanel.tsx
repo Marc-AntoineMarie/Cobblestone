@@ -89,7 +89,7 @@ interface Hit {
 }
 
 /** One field that finds notes by name, searches their text, or creates one. */
-function FindResults({
+export function FindResults({
   query,
   onDone,
   inputRef,

@@ -259,7 +259,7 @@ function TabButton({
   );
 }
 
-function TabView({ tab, paneId, visible }: { tab: Tab; paneId: string; visible: boolean }) {
+export function TabView({ tab, paneId, visible }: { tab: Tab; paneId: string; visible: boolean }) {
   const view = tab.view;
   switch (view.type) {
     case 'note':

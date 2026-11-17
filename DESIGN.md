@@ -189,7 +189,19 @@ One family, Archivo (variable weight and width), carries the whole system; Commi
 - **Sheet** (center): tabs across the top (they can be hidden), then the note at a 70ch measure with generous margins. Sheets can split right or down.
 - **Status bar** (28px, can be hidden): where the vault stands (sync status), the active note's words, characters and backlinks, and the Appearance button that opens quick settings (themes, paper, text size, line length, layout).
 - Spacing rhythm 4 / 8 / 12 / 20 / 32 / 56. More space above a heading than below it.
-- Narrow screens (under 760px): the top bar keeps the vault, a magnifier and the zone buttons; no activity bar; zones open as drawers over the sheet with a scrim; the sheet keeps a 16px gutter. Under 1180px the right zone is a drawer.
+- Under 1180px the right zone is a drawer. Under 768px the phone workbench takes over (see Phone).
+
+## Phone
+
+Under 768px the workbench becomes a stack of full screens, one at a time, for the thumb.
+
+- **Home**: the vault name (switch vault) with Graph and Settings at the top; a 34px "Notes" title; three segments (Recent, Folders, Tags). Recent shows Pinned cards (Today first, on the accent) then notes changed lately: title, time, folder and the first words. Folders go one level per screen, with the parent as a back row. Long press on a row opens its menu.
+- **Dock**: the search field and the New note button float over the bottom edge, in the thumb's reach. Long press on New note: today's note, canvas, folder.
+- **A screen**: a top bar with "‹ previous" (the name of the screen below) and, for a note, Pin and More; the view fills the rest, the desktop note bar hidden. Notes open for reading; a floating toolbar at the bottom holds Edit/Done and Search, and hides while the keyboard is up. Back pops one screen: the button, the browser's own back, or a swipe from the left edge in the installed app.
+- **Search**: full screen, the field at the bottom above the keyboard, results above it, operator chips (tag:, path:, file:…) and Commands.
+- **Menus** become an action sheet along the bottom edge, 48px rows.
+- **Sizes**: 44px touch targets at least, 52px rows, note text never under 16px (iOS zooms into smaller fields).
+- **Exceptions to the print rules, phone only**: the floating dock and toolbar are paper at 82% with a blur, since they lie over the text; touch controls (segments, search field, chips, toolbar) are pills; the New note button keeps the ink plate offset 3px under the pink one, as on the launcher's title.
 
 ## Elevation & Depth
 

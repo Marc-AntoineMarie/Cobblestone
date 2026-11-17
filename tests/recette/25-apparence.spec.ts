@@ -83,16 +83,12 @@ recette('25.5', async ({ app, ui }) => {
 
 recette('25.6', async ({ app, ui }) => {
   await app.start({ vault: baseVault(), viewport: { width: 700, height: 800 } });
-  await ui.open('Plan');
+  await expect(ui.phone.home).toBeVisible();
   await expect(ui.rail).toHaveCount(0);
   await expect(ui.margin).toHaveCount(0);
-  await ui.sideToggle('left').click();
-  await expect(ui.rail).toHaveClass(/is-drawer/);
-  await expect(ui.page.locator('.scrim')).toBeVisible();
-  await ui.page.locator('.scrim').click({ position: { x: 650, y: 400 } });
-  await expect(ui.rail).toHaveCount(0);
-  const crumbs = await ui.view.locator('.note-crumbs .crumb:visible').allTextContents();
-  expect(crumbs).toEqual(['Plan']);
+  await ui.phone.row('Plan').click();
+  await expect(ui.phone.screen).toBeVisible();
+  await expect(ui.tabs).toHaveCount(0);
 });
 
 recette('25.7', async ({ app, ui }) => {

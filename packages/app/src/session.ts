@@ -41,6 +41,7 @@ import {
   renamePaths,
   viewForPath,
   viewPath,
+  type EditorMode,
   type OpenTarget,
   type ViewState,
   type WorkspaceState,
@@ -113,6 +114,11 @@ export class Session {
   readonly events = new Emitter<SessionEvents>();
   /** Sync of this vault with the user's other devices. */
   readonly sync: SyncController;
+  /**
+   * Set by the phone workbench: views stack up in one tab (no splits or new tabs) and notes open
+   * for reading first.
+   */
+  phone = false;
   /** Recently opened files, most recent first. */
   recent: string[] = [];
   private resourceUrls = new Map<string, string>();
@@ -356,14 +362,15 @@ export class Session {
   }
 
   openView(view: ViewState, target: OpenTarget = 'current') {
+    if (this.phone && target !== 'tab') target = 'current';
     this.workspace.setState((s) => open(s, view, target));
   }
 
-  openPath(path: string, target: OpenTarget = 'current', subpath?: string) {
+  openPath(path: string, target: OpenTarget = 'current', subpath?: string, mode?: EditorMode) {
     const view = viewForPath(path);
     if (view.type === 'note') {
       if (subpath) view.subpath = subpath;
-      view.mode = this.settings.getState().defaultMode;
+      view.mode = mode ?? (this.phone ? 'read' : this.settings.getState().defaultMode);
     }
     this.openView(view, target);
   }
@@ -478,9 +485,9 @@ export class Session {
   async createNote(folder = this.newNoteFolder(), name = t('tree.untitled'), content = '', target: OpenTarget = 'current') {
     try {
       const file = await this.vault.create(this.availablePath(folder, name), content);
-      this.openPath(file.path, target);
+      this.openPath(file.path, target, undefined, this.phone ? 'live' : undefined);
       this.ui.setState({ focusTitle: file.path });
-      if (folder) this.revealInTree(file.path);
+      if (folder && !this.phone) this.revealInTree(file.path);
       return file.path;
     } catch (error) {
       this.fail(error);
@@ -588,7 +595,7 @@ export class Session {
     }
     try {
       const file = await this.vault.create(path, content);
-      this.openPath(file.path);
+      this.openPath(file.path, 'current', undefined, this.phone ? 'live' : undefined);
     } catch (error) {
       this.fail(error);
     }
