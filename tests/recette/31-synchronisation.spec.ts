@@ -359,3 +359,48 @@ recette('31.22', async ({ app, ui }, testInfo) => {
     await relay.close();
   }
 });
+
+recette('31.23', async ({ app, ui }, testInfo) => {
+  await twoDevices({ app, ui }, baseVault(), testInfo, async (a, b) => {
+    await pair(a, b);
+    await expect.poll(() => b.app.readOr('Idées.md')).toContain('Une idée');
+    await a.ui.open('Idées');
+    await a.ui.page.keyboard.press('Control+p');
+    await a.ui.palette.locator('input').fill('> diviser à droite');
+    await a.ui.page.keyboard.press('Enter');
+    await expect(a.ui.panes).toHaveCount(2);
+    await a.ui.append(' Écrit une seule fois.');
+    await a.ui.page.waitForTimeout(900);
+    for (let i = 0; i < 6; i++) await a.ui.page.keyboard.press('Backspace');
+    await a.ui.page.keyboard.type('FIN');
+    const expected = "Le plan avance. Une idée pour l'étude.\n\n#idee\n Écrit une seuleFIN";
+    await expect.poll(() => a.app.read('Idées.md')).toBe(expected);
+    await expect.poll(() => b.app.readOr('Idées.md'), { timeout: 15_000 }).toBe(expected);
+    await a.ui.page.waitForTimeout(1200);
+    expect(await b.app.read('Idées.md')).toBe(expected);
+    const views = await a.ui.page
+      .locator('.pane .tab-content:not([hidden]) .cm-content')
+      .evaluateAll((els) => els.map((el) => (el as HTMLElement & { cmView?: unknown }).innerText.replace(/\n+/g, '\n').trim()));
+    expect(views).toHaveLength(2);
+    expect(views[0]).toBe(views[1]);
+  });
+});
+
+recette('31.24', async ({ app, ui }, testInfo) => {
+  await twoDevices({ app, ui }, baseVault(), testInfo, async (a, b) => {
+    await pair(a, b);
+    await expect.poll(() => b.app.readOr('Idées.md')).toContain('Une idée');
+    await b.ui.open('Idées');
+    await b.ui.page.keyboard.press('Control+e');
+    await expect(b.ui.reading).toBeVisible();
+    await a.ui.open('Idées');
+    await a.ui.append(' Vu en direct.');
+    await expect(b.ui.reading).toContainText('Vu en direct.', { timeout: 15_000 });
+    const onA = a.ui.view.locator('.note-presence-device');
+    const onB = b.ui.view.locator('.note-presence-device');
+    await expect(onA).toHaveCount(1);
+    await expect(onA).toHaveAttribute('data-reading', 'true');
+    await expect(onB).toHaveCount(1);
+    await expect(onB).toHaveAttribute('data-reading', 'false');
+  });
+});
