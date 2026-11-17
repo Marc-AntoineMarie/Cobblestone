@@ -27,7 +27,7 @@ Refonte de l'atelier sur ordinateur, décidée avec l'utilisateur sur trois dire
 - `Panel.tsx` : un panneau est un titre et un corps ; plus de pliage, de menu ni de glisser-déposer entre zones.
 - `LayoutView.tsx` : les onglets apparaissent à la deuxième note ouverte.
 - `mobile.css` scindé : `list.css` porte la liste commune ; la commande « Montrer cette note dans son dossier » remplace « …dans la barre latérale ».
-- Recette : section 6 réécrite (la liste), section 14 (la marge, un panneau à la fois), 25.5 et 25.28 à 25.31 (dispositions), 5.39, 5.40, 8.9, 8.11, 8.23, 3.7, 13.x, 16.13, 24.1.
+- Recette : section 6 réécrite (la liste), section 14 (la marge, un panneau à la fois), 25.5 et 25.28 à 25.31 (dispositions), 5.36, 5.39, 5.40, 8.9, 8.10, 8.11, 8.23, 3.7, 16.13, 24.1 ; `ui.tree()` amène les dossiers dans la liste pour les vérifications de l'arborescence, et 24.1 et 24.22 comptent les sections Synchronisation et Compte, oubliées lors de leur ajout.
 - `DESIGN.md` (Layout, Components) ; `IDEES.md` : étapes restantes.
 
 ## Supprimé
@@ -37,7 +37,7 @@ Refonte de l'atelier sur ordinateur, décidée avec l'utilisateur sur trois dire
 
 ## Tests
 
-Unitaires : 237 réussis (6 nouveaux pour le modèle de disposition). Recette web section 6 lancée pendant le travail : 26 réussis, 2 corrigés depuis. **La recette complète reste à lancer** (demande de l'utilisateur) : `npm run e2e -- tests/recette/03 tests/recette/05 tests/recette/06 tests/recette/08 tests/recette/13 tests/recette/14 tests/recette/16 tests/recette/24 tests/recette/25`.
+Unitaires : 237 réussis (6 nouveaux pour le modèle de disposition). Recette des neuf sections touchées (3, 5, 6, 8, 13, 14, 16, 24, 25) sur les deux plateformes : tout passe. Deux bugs trouvés par la recette et corrigés : le bouton « Nouvelle note » de la liste forçait la racine au lieu du dossier réglé, et la liste en tiroir passait sous le voile. Les sections non touchées n'ont pas été relancées.
 Relecture visuelle : captures de l'accueil, d'une note, du panneau Liens, des dossiers, de la recherche et des réglages à 1440 px.
 
 ## Fichiers
