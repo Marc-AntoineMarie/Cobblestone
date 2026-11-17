@@ -92,15 +92,19 @@ note, barre au-dessus du clavier, tablette. Reste, dans l'ordre :
 3. Applications natives Android et iOS avec Capacitor (plus tard), avec de vrais dossiers (stockage
    partagé sur Android, app Fichiers sur iPhone). Détails dans [docs/DISTRIBUTION.md](../docs/DISTRIBUTION.md).
 
-## Refonte de l'interface sur ordinateur — à décider (demandée le 2026-11-17)
+## Refonte de l'interface sur ordinateur — en cours (fusion validée le 2026-11-17)
 
-Garder toutes les fonctions reprises d'Obsidian, mais rendre l'app plus accessible, plus belle et
-conforme aux usages actuels. **Des artifacts d'abord, validés par l'utilisateur, avant tout code.**
+L'ossature est faite : la liste des notes à gauche (récentes, dossiers, tags, recherche), la note au
+milieu, la marge à droite (rail de boutons, un panneau à la fois). Reste, dans l'ordre :
 
-1. Refonte graphique complète de l'atelier de bureau (disposition, hiérarchie, accessibilité).
-2. Interfaces au choix de l'utilisateur : une vue « document » façon Google Docs (page, barre
-   d'outils de mise en forme, sans Markdown visible) et une vue « tableur » façon Excel pour les
-   tableaux (cellules, tri, colonnes), les fichiers restant du Markdown.
+1. **Barre de mise en forme** (à faire) : en écriture, gras, italique, titre, liste, case, lien,
+   tableau, image, et la bascule Document / Markdown (vue sans Markdown visible).
+2. **Tableaux** (à faire) : édition en cellules dans la note (ajouter une ligne, une colonne, trier),
+   et une vue tableur plein écran ; le fichier reste un tableau Markdown.
+3. **Groupes de favoris** (à décider) : les favoris importés d'Obsidian en groupes s'affichent à plat
+   dans les épinglées ; décider comment montrer les groupes.
+4. **Assistant dans la marge** (à décider) : un cinquième bouton du rail, une fois l'IA et les MCP en
+   place (voir la section suivante).
 
 ## IA et MCP — à décider (demandés le 2026-11-17)
 

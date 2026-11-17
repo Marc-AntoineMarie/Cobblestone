@@ -182,14 +182,13 @@ One family, Archivo (variable weight and width), carries the whole system; Commi
 
 ## Layout
 
-- **Top bar** (44px): the vault on the left (its menu: settings, vault folder, switch vault), the command field in the middle ("Search, open a note or run a command", with its shortcut), and the buttons that show or hide the left and right zones.
-- **Activity bar** (48px, left edge): one button per shown panel (it opens the panel's zone, unfolds it and brings it into view), then Today and Graph, and Settings at the bottom.
-- **Side zones**, left and right, 272px by default (232 narrow, 320 wide): panels stacked in order, each folding by its title. Panels: Search, Bookmarks, Notes (the tree), Tags, Backlinks, Outline, Links out, Properties. A panel goes left, right or hidden — from its title's menu, by dragging its title to the other zone, or in Settings › Layout. The panels about a note show a single line when no note is open.
-- **Ready-made layouts**: Classic (finding and files left, the note's context right), Focus (nothing around the text: no panels, tabs or bars), Researcher (search and files left; backlinks, links and outline right), Mirror (Classic swapped). Changing one panel makes the layout Custom. Layouts are a preference of the device; each is also a command in the palette.
-- **Sheet** (center): tabs across the top (they can be hidden), then the note at a 70ch measure with generous margins. Sheets can split right or down.
-- **Status bar** (28px, can be hidden): where the vault stands (sync status), the active note's words, characters and backlinks, and the Appearance button that opens quick settings (themes, paper, text size, line length, layout).
+- **The list** (left, 252/292/340px): the vault and its menu, one field that finds, creates or asks, then three segments — Recent (the pinned cards, Today first, then the notes changed lately with their first words), Folders (the tree, dragged and dropped), Tags (chips with their counts). At the bottom: New note (its menu holds today's note, a canvas, a folder), the graph, the settings, and where the vault stands. Typing in the field replaces the list with the results, names then text.
+- **The sheets** (centre): tabs across the top once a second note is open (always or never, as the reader likes), then the note at a 70ch measure with generous margins. Sheets can split right or down.
+- **The margin** (right): a rail of buttons — Links (backlinks and links out, with their count), Outline, Properties, the local Graph — each opening its panel beside the note, closed again by the same button. The panels about a note say so when something else is in view.
+- **Status bar** (28px, can be hidden): the active note's words, characters and backlinks, and the Appearance button that opens quick settings (themes, paper, text size, line length, layout).
+- **Ready-made layouts**: Complete (the list and the margin), Reading (the list and the note), Focus (the note alone). Changing one thing makes the layout Custom; each layout is also a command in the palette.
 - Spacing rhythm 4 / 8 / 12 / 20 / 32 / 56. More space above a heading than below it.
-- Under 1180px the right zone is a drawer. Under 768px, and on touch tablets up to 1180px, the phone workbench takes over (see Phone).
+- Under 1000px the list lies over the notes with a scrim. Under 768px, and on touch tablets up to 1180px, the phone workbench takes over (see Phone).
 
 ## Phone
 
@@ -218,10 +217,11 @@ Paper is cut, not moulded: `--radius` corners on controls (3px by default; the r
 
 - **Buttons**: primary is an accent ink block with on-accent text (pink and navy in Atelier); secondary is paper with a 1px ink rule; ghost is ink text that gains a paper-3 ground on hover. 13px, weight 600.
 - **Links in notes**: ink text, 2px accent underline offset 3px; hover overprints an accent block behind the word. Unresolved links use a dashed underline in ink-3.
+- **List rows**: a note's name, the time it changed, then its folder and first words in one grey line; the note in view is on the yellow mark, hovering gives the paper-3 ground. A pinned card is 124px wide on paper-2, Today on the accent. A right click (or a long press) opens the row's menu.
 - **Tree rows**: `--row` tall (28px by default; the density setting makes it 24 compact or 34 airy, tags follow), icon and name, tabular counts right-aligned; hover paper-3, selected yellow overprint.
 - **Settings**: one page, the sections listed on the left (following the scroll), a search field that keeps only matching settings, and on wide screens a live preview on the right: the app in miniature, painted with the theme pointed at.
 - **Tabs**: paper tabs whose active sheet shares the sheet's ground; inactive tabs sit on paper-2.
-- **Panels**: a 36px title in chrome labels with a fold chevron and a count; right-click for Move left/right, Up, Down, Hide; drag the title to move it (a dashed accent outline marks the zone, an accent rule the place).
+- **Panels**: a 36px title in chrome labels with a count. In the margin they open one at a time, named by the panel's own header; which buttons the rail shows, and in what order, is set in Settings › Layout.
 - **Focus**: 2px accent ring offset 2px on every interactive element.
 - **Sync status**: named states, each a word and a shape: Synced (filled dot), Syncing (half dot), Offline (hollow dot), Conflict (triangle).
 - **Presence on a note**: one pill per other device on the note, bordered in its ink, with its name: a full dot when it writes (its caret also shows in the text), a ring when it reads. In the note bar on the desktop, in the top bar on the phone.
