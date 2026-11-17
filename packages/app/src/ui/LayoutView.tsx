@@ -120,7 +120,9 @@ function PaneView({ pane }: { pane: Pane }) {
   const activePane = useStore(session.workspace, (s) => s.activePane);
   const isActive = activePane === pane.id;
   const [dragOver, setDragOver] = useState<number | null>(null);
-  const showTabs = usePreferences().preferences.layout.tabs;
+  const tabsWhen = usePreferences().preferences.layout.tabs;
+  // "Several": the row of tabs appears once a second note is open.
+  const showTabs = tabsWhen === 'always' || (tabsWhen === 'several' && pane.tabs.length > 1);
 
   const focusPane = () => {
     if (!isActive) session.workspace.setState((s) => activate(s, pane.id));

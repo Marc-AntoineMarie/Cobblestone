@@ -1,23 +1,26 @@
 import { useEffect } from 'react';
-import { movePanel, PRESETS } from '../layout';
-import { ActivityBar, StatusBar, TopBar } from './Bars';
+import { t } from '../i18n';
+import { setLayoutOption } from '../layout';
+import { StatusBar } from './Bars';
 import { ContextMenu } from './ContextMenu';
+import { DeskList } from './DeskList';
 import { Finder } from './Finder';
 import { HoverPreview } from './HoverPreview';
 import { useMediaQuery, useMobile, useSession, useStore } from './hooks';
 import { LayoutView } from './LayoutView';
+import { Marge } from './Marge';
 import { MobileWorkbench } from './MobileWorkbench';
 import { usePreferences } from './preferences';
 import { PairingDialog } from './PairingDialog';
 import { ShareSheet } from './ShareSheet';
-import { SideZone } from './SideZone';
 import { Toasts } from './Toasts';
+import { UpdateReady } from './UpdateReady';
 import { useWorkbenchBasics } from './workbench-basics';
 
 /**
- * The open vault: the top bar, the activity bar, the side zones around the
- * sheets, the status bar, and the floating layers. Where each panel goes is a
- * preference of the device (see layout.ts).
+ * The open vault: the list of notes on the left, the notes in the middle, the
+ * margin on the right, and the floating layers. What shows is a preference of
+ * the device (see layout.ts).
  */
 export function Workbench({ onSwitchVault }: { onSwitchVault: () => void }) {
   const mobile = useMobile();
@@ -30,47 +33,43 @@ export function Workbench({ onSwitchVault }: { onSwitchVault: () => void }) {
 function DesktopWorkbench({ onSwitchVault }: { onSwitchVault: () => void }) {
   const session = useSession();
   const { preferences, update } = usePreferences();
-  const leftOpen = useStore(session.ui, (s) => s.leftOpen);
-  const rightOpen = useStore(session.ui, (s) => s.rightOpen);
   const style = useWorkbenchBasics(onSwitchVault);
-  const reveal = useStore(session.ui, (s) => s.reveal);
-  const wide = useMediaQuery('(min-width: 1180px)');
-  const narrow = useMediaQuery('(max-width: 760px)');
   const layout = preferences.layout;
+  // Under 1000 px the list lies over the notes instead of beside them.
+  const narrow = useMediaQuery('(max-width: 1000px)');
+  const reveal = useStore(session.ui, (s) => s.reveal);
+  const revealSeq = reveal?.seq;
 
-  // A panel asked for: its zone opens; a hidden panel goes back to its classic side.
+  // A part of the list asked for elsewhere brings the list back.
   useEffect(() => {
-    if (!reveal) return;
-    let zone = layout.zones[reveal.panel];
-    if (zone === 'hidden') {
-      zone = PRESETS.classic.zones[reveal.panel];
-      update({ layout: movePanel(layout, reveal.panel, zone) });
+    if (reveal && ['files', 'tags', 'bookmarks'].includes(reveal.panel) && !layout.list) {
+      update({ layout: setLayoutOption(layout, 'list', true) });
     }
-    session.ui.setState(zone === 'left' ? { leftOpen: true } : { rightOpen: true });
-    // Only a new request, not a change of layout.
-  }, [reveal]);
+    // Only a new request opens the list, not a re-render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [revealSeq]);
 
-  // Narrow windows start with the drawers closed; below 1180 px the right zone is a drawer, closed until asked for.
-  useEffect(() => {
-    if (narrow) session.ui.setState({ leftOpen: false, rightOpen: false });
-    else if (!wide) session.ui.setState({ rightOpen: false });
-  }, [narrow, wide, session]);
+  const closeList = () => update({ layout: setLayoutOption(layout, 'list', false) });
 
   return (
-    <div
-      className="workbench"
-      data-left={leftOpen ? (narrow ? 'drawer' : 'docked') : 'closed'}
-      data-right={rightOpen ? (wide ? 'docked' : 'drawer') : 'closed'}
-      style={style}
-    >
-      <TopBar onSwitchVault={onSwitchVault} />
+    <div className="workbench" data-list={layout.list ? (narrow ? 'drawer' : 'docked') : 'closed'} style={style}>
       <div className="workbench-body">
-        {layout.activityBar && !narrow && <ActivityBar />}
-        <SideZone side="left" drawer={narrow} />
+        {layout.list && narrow && <div className="scrim" onClick={closeList} aria-hidden />}
+        {layout.list && <DeskList width={layout.width} onSwitchVault={onSwitchVault} />}
+        {!layout.list && (
+          <button
+            className="list-handle"
+            aria-label={t('list.show')}
+            title={t('list.show')}
+            onClick={() => update({ layout: setLayoutOption(layout, 'list', true) })}
+          >
+            <span aria-hidden />
+          </button>
+        )}
         <main className="sheets" id="sheets">
           <LayoutView />
         </main>
-        <SideZone side="right" drawer={!wide} />
+        {layout.margin && <Marge rail={layout.rail} width={layout.width} />}
       </div>
       {layout.statusBar && <StatusBar />}
       <Finder />
@@ -79,6 +78,7 @@ function DesktopWorkbench({ onSwitchVault }: { onSwitchVault: () => void }) {
       <PairingDialog />
       <HoverPreview />
       <Toasts />
+      <UpdateReady platform={session.platform} />
     </div>
   );
 }

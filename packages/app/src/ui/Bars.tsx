@@ -1,133 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import {
-  CalendarDays,
-  ChevronsUpDown,
-  Minus,
-  Network,
-  Palette,
-  PanelLeft,
-  PanelRight,
-  Plus,
-  Search,
-  Settings,
-  type LucideIcon,
-} from 'lucide-react';
-import { hotkeyLabel, parseHotkey } from '../commands';
+import { Minus, Palette, Plus } from 'lucide-react';
 import { t } from '../i18n';
-import { applyPreset, panelsIn, PRESETS, type PresetId } from '../layout';
+import { applyPreset, PRESETS, type PresetId } from '../layout';
 import { TEXT_SIZES } from '../settings';
 import { BUILT_IN_THEMES, completeColors, type Theme } from '../themes';
 import { themeName } from './AppearanceSettings';
 import { useNoteRevision, useSession, useStore } from './hooks';
-import { Mark } from './Mark';
-import { PANEL_INFO, panelLabel } from './Panel';
 import { usePreferences } from './preferences';
-import { PressStatus } from './PressStatus';
 import { Segmented } from './settings-parts';
-import { SyncStatus } from './SyncStatus';
-
-/** The shortcut of the finder (see app-commands), shown in the command field. */
-const FINDER_KEY = hotkeyLabel(parseHotkey('Mod+K'));
-
-/** The vault, the command field in the middle, and the buttons of the side panels. */
-export function TopBar({ onSwitchVault }: { onSwitchVault: () => void }) {
-  const session = useSession();
-  const leftOpen = useStore(session.ui, (s) => s.leftOpen);
-  const rightOpen = useStore(session.ui, (s) => s.rightOpen);
-  const { preferences } = usePreferences();
-  const layout = preferences.layout;
-
-  const vaultMenu = (event: React.MouseEvent) => {
-    const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
-    session.ui.setState({
-      menu: {
-        x: rect.left,
-        y: rect.bottom + 4,
-        items: [
-          { label: t('rail.settings'), run: () => session.openView({ type: 'settings' }, 'tab') },
-          ...(session.canRevealInSystem ? [{ label: t('rail.openVaultFolder'), run: () => session.revealInSystem('') }] : []),
-          { label: t('rail.switchVault'), run: onSwitchVault },
-        ],
-      },
-    });
-  };
-
-  return (
-    <header className="top-bar">
-      <button className="vault-switch" onClick={vaultMenu} aria-haspopup="menu">
-        <Mark size={22} />
-        <span className="vault-name">{session.vault.name}</span>
-        <ChevronsUpDown size={14} strokeWidth={1.75} aria-hidden />
-      </button>
-      <button className="command-field" onClick={() => session.ui.setState({ finder: { mode: 'notes' } })}>
-        <Search size={15} strokeWidth={1.75} aria-hidden />
-        <span className="command-field-text">{t('top.command')}</span>
-        <kbd>{FINDER_KEY}</kbd>
-      </button>
-      <div className="top-actions">
-        {panelsIn(layout, 'left').length > 0 && (
-          <button
-            className="icon-button"
-            aria-pressed={leftOpen}
-            aria-label={t('side.toggleLeft')}
-            title={t('side.toggleLeft')}
-            onClick={() => session.ui.setState({ leftOpen: !leftOpen })}
-          >
-            <PanelLeft size={17} strokeWidth={1.75} />
-          </button>
-        )}
-        {panelsIn(layout, 'right').length > 0 && (
-          <button
-            className="icon-button"
-            aria-pressed={rightOpen}
-            aria-label={t('side.toggleRight')}
-            title={t('side.toggleRight')}
-            onClick={() => session.ui.setState({ rightOpen: !rightOpen })}
-          >
-            <PanelRight size={17} strokeWidth={1.75} />
-          </button>
-        )}
-      </div>
-    </header>
-  );
-}
-
-/** One button of the activity bar: an icon, and its name under it unless the reader hid the names. */
-function ActivityButton({ icon: Icon, label, onClick }: { icon: LucideIcon; label: string; onClick: () => void }) {
-  return (
-    <button className="activity-button" aria-label={label} title={label} onClick={onClick}>
-      <Icon size={19} strokeWidth={1.75} aria-hidden />
-      <span className="activity-label" aria-hidden>
-        {label}
-      </span>
-    </button>
-  );
-}
-
-/**
- * Along the left edge: the panels of the left side (a click shows one, its
- * side opened), then today's note and the graph, and the settings at the bottom.
- */
-export function ActivityBar() {
-  const session = useSession();
-  const { preferences } = usePreferences();
-  const layout = preferences.layout;
-  // A panel with nothing to show (no bookmarks yet) gets no button.
-  const hasBookmarks = useStore(session.bookmarks, (b) => b.length > 0);
-  const shown = panelsIn(layout, 'left').filter((id) => id !== 'bookmarks' || hasBookmarks);
-  return (
-    <nav className={`activity-bar${layout.activityLabels ? ' has-labels' : ''}`} aria-label={t('activity.label')}>
-      {shown.map((id) => (
-        <ActivityButton key={id} icon={PANEL_INFO[id].icon} label={panelLabel(id)} onClick={() => session.revealPanel(id)} />
-      ))}
-      <span className="activity-rule" aria-hidden />
-      <ActivityButton icon={CalendarDays} label={t('rail.today')} onClick={() => void session.openDailyNote()} />
-      <ActivityButton icon={Network} label={t('rail.graph')} onClick={() => session.openView({ type: 'graph' }, 'tab')} />
-      <span className="activity-space" />
-      <ActivityButton icon={Settings} label={t('rail.settings')} onClick={() => session.openView({ type: 'settings' }, 'tab')} />
-    </nav>
-  );
-}
 
 function countWords(text: string): { words: number; chars: number } {
   const body = text.replace(/^---\n[\s\S]*?\n---\n?/, '').replace(/%%[\s\S]*?%%/g, '');
@@ -146,13 +26,13 @@ function NoteStatus({ path }: { path: string }) {
     const text = session.vault.cachedRead(path) ?? '';
     return { ...countWords(text), backlinks: session.vault.cache.getBacklinks(path).length };
   }, [session, path, revision]);
-  const backlinksShown = preferences.layout.zones.backlinks !== 'hidden';
+  const backlinksShown = preferences.layout.margin && preferences.layout.rail.includes('links');
   return (
     <div className="note-status" aria-live="off">
       <span>{t('status.words', { count: stats.words })}</span>
       <span>{t('status.chars', { count: stats.chars })}</span>
       {backlinksShown ? (
-        <button className="status-link" onClick={() => session.revealPanel('backlinks')}>
+        <button className="status-link" onClick={() => session.revealPanel('links')}>
           {t('status.backlinks', { count: stats.backlinks })}
         </button>
       ) : (
@@ -162,17 +42,15 @@ function NoteStatus({ path }: { path: string }) {
   );
 }
 
-/** Along the bottom: where the vault stands, the active note's counts, and the appearance. */
+/** Along the bottom: the active note's counts, and the appearance at hand. */
 export function StatusBar() {
   const session = useSession();
   const notePath = useStore(session.workspace, () => (session.activeView?.type === 'note' ? session.activePath : null));
   const [quick, setQuick] = useState(false);
   return (
     <footer className="status-bar">
-      <PressStatus />
       <span className="status-space" />
       {notePath && <NoteStatus path={notePath} />}
-      <SyncStatus />
       <div className="status-appearance">
         <button
           className={`status-button${quick ? ' is-on' : ''}`}

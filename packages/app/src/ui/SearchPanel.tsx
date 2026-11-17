@@ -1,82 +1,9 @@
 import { useDeferredValue, useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
-import { FilePlus2, FolderPlus, Search, X } from 'lucide-react';
+import { FilePlus2 } from 'lucide-react';
 import { searchDocuments, stem } from '@cobblestone/core';
 import { t } from '../i18n';
-import { FileTree } from './FileTree';
 import { fuzzyMatch, highlightSegments } from './fuzzy';
 import { useSession, useStore, useVaultRevision } from './hooks';
-import { Panel } from './Panel';
-
-/**
- * One field that finds notes by name, searches their text, or creates one.
- * While it holds a query, its zone shows only the results.
- */
-export function SearchPanel() {
-  const session = useSession();
-  const query = useStore(session.ui, (s) => s.searchQuery);
-  const setQuery = (searchQuery: string) => session.ui.setState({ searchQuery });
-  const findRef = useRef<HTMLInputElement>(null);
-  return (
-    <Panel id="search" grow={!!query.trim()}>
-      <div className="search-field">
-        <Search size={15} strokeWidth={1.75} aria-hidden className="search-field-icon" />
-        <input
-          ref={findRef}
-          type="search"
-          value={query}
-          placeholder={t('rail.findPlaceholder')}
-          aria-label={t('rail.find')}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Escape') {
-              setQuery('');
-              e.currentTarget.blur();
-            }
-          }}
-        />
-        {query && (
-          <button className="icon-button search-field-clear" onClick={() => setQuery('')} aria-label={t('launcher.cancel')}>
-            <X size={14} strokeWidth={1.75} />
-          </button>
-        )}
-      </div>
-      {query.trim() && <FindResults query={query} onDone={() => setQuery('')} inputRef={findRef} />}
-    </Panel>
-  );
-}
-
-/** The notes and folders of the vault, with buttons to create them. */
-export function FilesPanel() {
-  const session = useSession();
-  return (
-    <Panel
-      id="files"
-      grow
-      actions={
-        <>
-          <button
-            className="icon-button"
-            onClick={() => void session.createNote()}
-            title={t('rail.newNote')}
-            aria-label={t('rail.newNote')}
-          >
-            <FilePlus2 size={15} strokeWidth={1.75} />
-          </button>
-          <button
-            className="icon-button"
-            onClick={() => void session.createFolder('')}
-            title={t('rail.newFolder')}
-            aria-label={t('rail.newFolder')}
-          >
-            <FolderPlus size={15} strokeWidth={1.75} />
-          </button>
-        </>
-      }
-    >
-      <FileTree />
-    </Panel>
-  );
-}
 
 interface Hit {
   key: string;

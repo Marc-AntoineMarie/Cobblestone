@@ -22,13 +22,14 @@ import {
   saveBookmarks,
   toggleFileBookmark,
   type Bookmark,
+  removeBookmark,
 } from './bookmarks';
 import type { EditorView } from '@codemirror/view';
 import { CommandRegistry } from './commands';
 import { describeError } from './errors';
 import { getLanguage, t } from './i18n';
 import type { Platform, VaultEntry } from './platform';
-import type { PanelId } from './layout';
+import type { MarginTab } from './layout';
 import { DEFAULT_SETTINGS, formatDate, loadVaultSettings, saveVaultSettings, type VaultSettings } from './settings';
 import { SyncController } from './sync';
 import { applyTemplate, findTemplatesFolder, listTemplates } from './templates';
@@ -68,14 +69,12 @@ export interface Toast {
   kind: 'info' | 'error';
 }
 
+/** What `revealPanel` can bring into view. */
+export type RevealTarget = 'search' | 'files' | 'tags' | 'bookmarks' | MarginTab;
+
 export interface UIState {
-  /** The side zones, open or closed. */
-  leftOpen: boolean;
-  rightOpen: boolean;
-  /** Panels folded to their title. */
-  collapsed: Partial<Record<PanelId, boolean>>;
-  /** A panel to bring into view: its zone opens, and a hidden panel comes back. */
-  reveal: { panel: PanelId; seq: number } | null;
+  /** A part of the workbench to bring into view: the list goes there, or the margin opens it. */
+  reveal: { panel: RevealTarget; seq: number } | null;
   /** A section of the settings to scroll to when they open. */
   settingsSection: string | null;
   finder: { mode: 'notes' | 'commands' } | PickRequest | null;
@@ -140,9 +139,6 @@ export class Session {
     this.bookmarks = createStore<Bookmark[]>(() => bookmarks);
     this.workspace = createStore(() => workspace);
     this.ui = createStore<UIState>(() => ({
-      leftOpen: true,
-      rightOpen: true,
-      collapsed: {},
       reveal: null,
       settingsSection: null,
       finder: null,
@@ -402,6 +398,11 @@ export class Session {
     }
   }
 
+  /** Takes one bookmark out, whatever it points at. */
+  unpin(bookmark: Bookmark) {
+    this.bookmarks.setState((b) => removeBookmark(b, bookmark), true);
+  }
+
   toggleBookmark(path: string) {
     const kind = this.vault.getFolder(path) ? 'folder' : 'file';
     this.bookmarks.setState((b) => toggleFileBookmark(b, path, kind), true);
@@ -438,12 +439,9 @@ export class Session {
     this.openView({ type: 'settings' }, 'tab');
   }
 
-  /** Brings a panel into view: unfolded, its zone open (the workbench does the rest). */
-  revealPanel(panel: PanelId) {
-    this.ui.setState((s) => ({
-      reveal: { panel, seq: (s.reveal?.seq ?? 0) + 1 },
-      collapsed: { ...s.collapsed, [panel]: false },
-    }));
+  /** Brings a part of the workbench into view (the list, or a panel of the margin). */
+  revealPanel(panel: RevealTarget) {
+    this.ui.setState((s) => ({ reveal: { panel, seq: (s.reveal?.seq ?? 0) + 1 } }));
   }
 
   /** Whether files can be shown in the system's file manager (a desktop vault on disk). */
