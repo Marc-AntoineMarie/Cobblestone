@@ -246,4 +246,38 @@ describe('VaultSync', () => {
     const again = await device({}, store, a.adapter);
     expect(again.sync.model.live().map((e) => e.path)).toEqual(['Reste.md']);
   });
+
+  it('tells the editors of this device apart: one hears what the other types, the file does not echo', async () => {
+    const a = await device({ 'Note.md': 'abc' });
+    const b = await device();
+    link(a, b);
+    await settle(a, b);
+    const text = a.sync.textAt('Note.md')!;
+    const first = {};
+    const second = {};
+    const heardBySecond: string[] = [];
+    text.observe((_event, transaction) => {
+      if (transaction.origin !== second) heardBySecond.push(text.toString());
+    });
+    a.sync.change(() => text.insert(3, 'd'), first);
+    expect(heardBySecond).toEqual(['abcd']);
+    expect(a.sync.isOwn(first)).toBe(true);
+    await settle(a, b);
+    // The other device has it; this one did not write its own file for it (its editor saves).
+    expect(b.sync.textAt('Note.md')!.toString()).toBe('abcd');
+    expect(await a.vault.read('Note.md')).toBe('abc');
+  });
+
+  it('takes a real change to a text whose expected write never echoed', async () => {
+    const a = await device({ 'Note.md': 'abc' });
+    const text = a.sync.textAt('Note.md')!;
+    // An editor announces a save of the text the file already holds: no echo comes.
+    a.sync.expectWrite('Note.md', 'abc');
+    await a.vault.modify('Note.md', 'abc');
+    a.sync.change(() => text.insert(3, 'd'));
+    a.sync.expectWrite('Note.md', 'abcd');
+    await a.vault.modify('Note.md', 'abcd');
+    await a.sync.settled();
+    expect(text.toString()).toBe('abcd');
+  });
 });
