@@ -168,3 +168,56 @@ recette.manuel(
   '32.12',
   'Le geste du bord gauche ne vaut que pour l’app installée sur l’écran d’accueil, que l’émulation ne reproduit pas',
 );
+
+recette('32.13', async ({ app, ui }) => {
+  await app.start({ vault: baseVault(), iphone: true });
+  const { phone } = ui;
+  await phone.row('Plan').tap();
+  await phone.tools.getByRole('button', { name: /liens/ }).tap();
+  const sheet = phone.sheet;
+  await expect(sheet.getByRole('tab', { name: 'Rétroliens 2' })).toHaveAttribute('aria-selected', 'true');
+  await expect(sheet.locator('[role=tabpanel]')).toContainText('Bienvenue');
+  await sheet.getByRole('tab', { name: /Liens sortants/ }).tap();
+  await expect(sheet.locator('[role=tabpanel]')).toContainText('Bienvenue');
+  await sheet.getByRole('tab', { name: 'Plan' }).tap();
+  await expect(sheet.locator('[role=tabpanel]')).toContainText('Étapes');
+  await sheet.getByRole('tab', { name: 'Propriétés' }).tap();
+  await expect(sheet.locator('[role=tabpanel]')).toContainText('statut');
+  await sheet.getByRole('tab', { name: 'Graphe' }).tap();
+  await expect(sheet.locator('.graph-view')).toBeVisible();
+  await sheet.getByRole('tab', { name: 'Rétroliens 2' }).tap();
+  await sheet.locator('[role=tabpanel]').getByText('Réunion', { exact: true }).first().tap();
+  await expect(sheet).toHaveCount(0);
+  await expect(phone.title).toHaveValue('Réunion');
+});
+
+recette('32.14', async ({ app, ui }) => {
+  await app.start({ vault: baseVault(), iphone: true });
+  const { phone } = ui;
+  await phone.row('Plan').tap();
+  await phone.tools.getByRole('button', { name: 'Plan' }).tap();
+  const half = (await phone.sheet.boundingBox())!.height;
+  await phone.sheet.getByRole('button', { name: 'Agrandir' }).tap();
+  await expect.poll(async () => (await phone.sheet.boundingBox())!.height).toBeGreaterThan(half + 100);
+  await ui.page.goBack();
+  await expect(phone.sheet).toHaveCount(0);
+  await expect(phone.title).toHaveValue('Plan');
+  await phone.tools.getByRole('button', { name: 'Plan' }).tap();
+  await ui.page.locator('.mobile-scrim').tap({ position: { x: 20, y: 40 } });
+  await expect(phone.sheet).toHaveCount(0);
+  await ui.page.goBack();
+  await expect(phone.home).toBeVisible();
+});
+
+recette('32.15', async ({ app, ui }) => {
+  await app.start({ vault: baseVault(), iphone: true });
+  const { phone } = ui;
+  await phone.row('Bienvenue').tap();
+  const link = phone.screen.locator('a.internal-link', { hasText: 'Plan' });
+  await phone.longPress(link);
+  const preview = ui.page.locator('.hover-preview');
+  await expect(preview).toContainText('Étapes');
+  await expect(phone.title).toHaveValue('Bienvenue');
+  await ui.page.locator('.mobile-scrim').tap({ position: { x: 20, y: 40 } });
+  await expect(preview).toHaveCount(0);
+});

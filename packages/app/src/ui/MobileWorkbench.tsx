@@ -1,5 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Bookmark as BookmarkIcon, BookmarkCheck, Check, ChevronLeft, MoreHorizontal, PenLine, Search } from 'lucide-react';
+import {
+  Bookmark as BookmarkIcon,
+  BookmarkCheck,
+  Check,
+  ChevronLeft,
+  Link2,
+  ListTree,
+  MoreHorizontal,
+  PenLine,
+  Search,
+} from 'lucide-react';
 import { dirname, stem } from '@cobblestone/core';
 import { isBookmarked } from '../bookmarks';
 import { t, type MessageKey } from '../i18n';
@@ -10,7 +20,9 @@ import { HoverPreview } from './HoverPreview';
 import { useSession, useStore } from './hooks';
 import { TabView } from './LayoutView';
 import { MobileHome, type HomeTab } from './MobileHome';
+import { MobileNoteSheet, useLinkCounts, type SheetTab } from './MobileNoteSheet';
 import { MobileSearch } from './MobileSearch';
+import { hidePreviewNow } from './preview';
 import { isStandalone, useVisualViewport } from './mobile-hooks';
 import { homeWorkspace, mobileBack, previousView, screenKey, shownTab } from './mobile-nav';
 import { moveToFolder } from './mobile-menus';
@@ -31,15 +43,15 @@ export function MobileWorkbench({ onSwitchVault }: { onSwitchVault: () => void }
   const keyboard = useVisualViewport();
   const key = useStore(session.workspace, screenKey);
   const [home, setHome] = useState(true);
-  const [searching, setSearching] = useState(false);
+  const [overlay, setOverlay] = useState<Overlay>(null);
   const [homeTab, setHomeTab] = useState<HomeTab>('recent');
   const [folder, setFolder] = useState('');
   const [motion, setMotion] = useState<'push' | 'pop'>('push');
   /** Screens pushed onto the browser's history, so its back gesture and button pop them. */
   const depth = useRef(0);
   const popping = useRef(false);
-  /** The search screen has its own history entry: a note opened from it takes that entry over. */
-  const searchEntry = useRef(false);
+  /** The search and the note sheet have their own history entry: a note opened from them takes it over. */
+  const overlayEntry = useRef(false);
   const lastKey = useRef<string | null>(screenKey(session.workspace.getState()));
 
   useEffect(() => {
@@ -60,14 +72,14 @@ export function MobileWorkbench({ onSwitchVault }: { onSwitchVault: () => void }
       return;
     }
     setHome(false);
-    setSearching(false);
+    setOverlay(null);
     if (popping.current) {
       popping.current = false;
       return;
     }
     setMotion('push');
-    if (searchEntry.current) {
-      searchEntry.current = false;
+    if (overlayEntry.current) {
+      overlayEntry.current = false;
       window.history.replaceState({ cobblestone: depth.current }, '');
       return;
     }
@@ -75,17 +87,18 @@ export function MobileWorkbench({ onSwitchVault }: { onSwitchVault: () => void }
     window.history.pushState({ cobblestone: depth.current }, '');
   }, [key]);
 
-  const openSearch = useCallback(() => {
-    if (searchEntry.current) return;
-    searchEntry.current = true;
+  const openOverlay = useCallback((next: NonNullable<Overlay>) => {
+    setOverlay(next);
+    if (overlayEntry.current) return;
+    overlayEntry.current = true;
     depth.current += 1;
     window.history.pushState({ cobblestone: depth.current }, '');
-    setSearching(true);
   }, []);
+  const openSearch = useCallback(() => openOverlay({ kind: 'search' }), [openOverlay]);
 
-  const closeSearch = useCallback(() => {
-    if (searchEntry.current) window.history.back();
-    else setSearching(false);
+  const closeOverlay = useCallback(() => {
+    if (overlayEntry.current) window.history.back();
+    else setOverlay(null);
   }, []);
 
   const goHome = useCallback(() => {
@@ -107,9 +120,9 @@ export function MobileWorkbench({ onSwitchVault }: { onSwitchVault: () => void }
   useEffect(() => {
     const onPop = () => {
       depth.current = Math.max(0, depth.current - 1);
-      if (searchEntry.current) {
-        searchEntry.current = false;
-        setSearching(false);
+      if (overlayEntry.current) {
+        overlayEntry.current = false;
+        setOverlay(null);
       } else if (!home) pop();
     };
     window.addEventListener('popstate', onPop);
@@ -123,7 +136,9 @@ export function MobileWorkbench({ onSwitchVault }: { onSwitchVault: () => void }
   useEffect(() => {
     if (!reveal) return;
     if (reveal.panel === 'search') openSearch();
-    else if (reveal.panel === 'files') {
+    else if (SHEET_PANELS.includes(reveal.panel as SheetTab)) {
+      if (!home && shownPath) openOverlay({ kind: 'sheet', tab: reveal.panel as SheetTab });
+    } else if (reveal.panel === 'files') {
       const target = session.ui.getState().revealed;
       if (target != null) setFolder(session.vault.getFolder(target) ? target : dirname(target));
       setHomeTab('folders');
@@ -136,6 +151,7 @@ export function MobileWorkbench({ onSwitchVault }: { onSwitchVault: () => void }
   const shownTabState = useStore(session.workspace, (s) => shownTab(s)?.tab ?? null);
   const shownPane = useStore(session.workspace, (s) => shownTab(s)?.paneId ?? null);
   const shown = shownTabState && shownPane ? { tab: shownTabState, paneId: shownPane } : null;
+  const shownPath = shown?.tab.view.type === 'note' ? shown.tab.view.path : null;
   const below = useStore(session.workspace, previousView);
 
   return (
@@ -158,11 +174,21 @@ export function MobileWorkbench({ onSwitchVault }: { onSwitchVault: () => void }
           backLabel={below ? viewLabel(below) : t('mobile.home')}
           onBack={back}
           onSearch={openSearch}
+          onSheet={(tab) => openOverlay({ kind: 'sheet', tab })}
           onReveal={(path) => session.revealInTree(path)}
           keyboard={keyboard}
         />
       )}
-      {searching && <MobileSearch onClose={closeSearch} />}
+      {overlay?.kind === 'search' && <MobileSearch onClose={closeOverlay} />}
+      {overlay?.kind === 'sheet' && shownPath && (
+        <MobileNoteSheet
+          path={shownPath}
+          tab={overlay.tab}
+          onTab={(tab) => setOverlay({ kind: 'sheet', tab })}
+          onClose={closeOverlay}
+        />
+      )}
+      <PreviewScrim />
 
       <Finder />
       <ContextMenu />
@@ -173,6 +199,17 @@ export function MobileWorkbench({ onSwitchVault }: { onSwitchVault: () => void }
       <UpdateReady platform={session.platform} />
     </div>
   );
+}
+
+type Overlay = { kind: 'search' } | { kind: 'sheet'; tab: SheetTab } | null;
+
+const SHEET_PANELS: SheetTab[] = ['backlinks', 'outgoing', 'outline', 'properties'];
+
+/** A link preview opened by a long press closes with a tap anywhere else. */
+function PreviewScrim() {
+  const session = useSession();
+  const open = useStore(session.ui, (s) => !!s.preview);
+  return open ? <div className="mobile-scrim is-clear" onClick={() => hidePreviewNow(session)} /> : null;
 }
 
 const VIEW_NAMES: Partial<Record<ViewState['type'], MessageKey>> = { graph: 'graph.title', settings: 'settings.title' };
@@ -190,6 +227,7 @@ function MobileScreen({
   backLabel,
   onBack,
   onSearch,
+  onSheet,
   onReveal,
   keyboard,
 }: {
@@ -199,6 +237,7 @@ function MobileScreen({
   backLabel: string;
   onBack: () => void;
   onSearch: () => void;
+  onSheet: (tab: SheetTab) => void;
   onReveal: (path: string) => void;
   keyboard: boolean;
 }) {
@@ -208,6 +247,58 @@ function MobileScreen({
   const bookmarked = useStore(session.bookmarks, (b) => (path ? isBookmarked(b, path) : false));
   const defaultMode = useStore(session.settings, (s) => s.defaultMode);
   const mode = view.type === 'note' ? (view.mode ?? defaultMode) : null;
+  const counts = useLinkCounts(path ?? '');
+  const viewRef = useRef<HTMLDivElement>(null);
+
+  // Long press on a link previews its note instead of following it.
+  useEffect(() => {
+    const el = viewRef.current;
+    if (!el || !path) return;
+    let timer: number | undefined;
+    let swallow = false;
+    let origin: { x: number; y: number } | null = null;
+    const down = (e: PointerEvent) => {
+      const link = (e.target as HTMLElement).closest<HTMLAnchorElement>('a.internal-link');
+      swallow = false;
+      if (!link) return;
+      origin = { x: e.clientX, y: e.clientY };
+      timer = window.setTimeout(() => {
+        swallow = true;
+        const r = link.getBoundingClientRect();
+        session.ui.setState({
+          preview: {
+            linktext: link.dataset.href ?? '',
+            sourcePath: path,
+            rect: { left: r.left, right: r.right, top: r.top, bottom: r.bottom },
+          },
+        });
+      }, 450);
+    };
+    const cancel = () => window.clearTimeout(timer);
+    const move = (e: PointerEvent) => {
+      if (origin && Math.hypot(e.clientX - origin.x, e.clientY - origin.y) > 10) cancel();
+    };
+    const click = (e: MouseEvent) => {
+      if (!swallow) return;
+      swallow = false;
+      e.preventDefault();
+      e.stopPropagation();
+    };
+    el.addEventListener('pointerdown', down);
+    el.addEventListener('pointermove', move);
+    el.addEventListener('pointerup', cancel);
+    el.addEventListener('pointercancel', cancel);
+    el.addEventListener('click', click, true);
+    return () => {
+      cancel();
+      el.removeEventListener('pointerdown', down);
+      el.removeEventListener('pointermove', move);
+      el.removeEventListener('pointerup', cancel);
+      el.removeEventListener('pointercancel', cancel);
+      el.removeEventListener('click', click, true);
+    };
+  }, [session, path]);
+
   const setTabMode = (next: 'live' | 'source' | 'read') => session.workspace.setState((s) => setMode(s, paneId, tab.id, next));
 
   // Edge swipe back where no browser does it (installed on the home screen).
@@ -270,7 +361,7 @@ function MobileScreen({
           </div>
         )}
       </header>
-      <div className="mobile-view">
+      <div className="mobile-view" ref={viewRef}>
         <TabView tab={tab} paneId={paneId} visible />
       </div>
       {mode && !keyboard && (
@@ -286,6 +377,16 @@ function MobileScreen({
               {t('mobile.done')}
             </button>
           )}
+          <button
+            onClick={() => onSheet('backlinks')}
+            aria-label={t('mobile.links', { count: counts.backlinks + counts.outgoing })}
+          >
+            <Link2 size={18} strokeWidth={2} aria-hidden />
+            <span className="mobile-tools-count">{counts.backlinks + counts.outgoing}</span>
+          </button>
+          <button onClick={() => onSheet('outline')} aria-label={t('mobile.outline')}>
+            <ListTree size={18} strokeWidth={2} aria-hidden />
+          </button>
           <button onClick={onSearch} aria-label={t('rail.find')}>
             <Search size={18} strokeWidth={2} aria-hidden />
           </button>

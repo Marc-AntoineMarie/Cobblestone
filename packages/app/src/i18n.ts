@@ -618,6 +618,11 @@ const en = {
   'mobile.done': 'Done',
   'mobile.hideSource': 'Hide Markdown source',
   'mobile.revealFolder': 'Show in its folder',
+  'mobile.links': '{count} links',
+  'mobile.outline': 'Outline',
+  'mobile.sheet': 'About this note',
+  'mobile.sheet.full': 'Expand',
+  'mobile.sheet.half': 'Shrink',
 };
 
 export type MessageKey = keyof typeof en;
@@ -1247,6 +1252,11 @@ const fr: Messages = {
   'mobile.done': 'Terminé',
   'mobile.hideSource': 'Masquer la source Markdown',
   'mobile.revealFolder': 'Afficher dans son dossier',
+  'mobile.links': '{count} liens',
+  'mobile.outline': 'Plan',
+  'mobile.sheet': 'Autour de cette note',
+  'mobile.sheet.full': 'Agrandir',
+  'mobile.sheet.half': 'Réduire',
 };
 
 export const LANGUAGES = { en: 'English', fr: 'Français' } as const;

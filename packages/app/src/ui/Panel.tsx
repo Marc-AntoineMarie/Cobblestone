@@ -1,4 +1,4 @@
-import type { DragEvent, MouseEvent, ReactNode } from 'react';
+import { createContext, useContext, type DragEvent, type MouseEvent, type ReactNode } from 'react';
 import { Bookmark, ChevronRight, FolderTree, Hash, Link2, ListTree, Search, Tags, Undo2, type LucideIcon } from 'lucide-react';
 import { t, type MessageKey } from '../i18n';
 import { movePanel, type PanelId } from '../layout';
@@ -16,6 +16,9 @@ export const PANEL_INFO: Record<PanelId, { label: MessageKey; icon: LucideIcon }
   outgoing: { label: 'margin.outgoing', icon: Link2 },
   properties: { label: 'margin.properties', icon: Hash },
 };
+
+/** False inside a container that names the panel itself (the phone's note sheet): body only, always open. */
+export const PanelChrome = createContext(true);
 
 export const panelLabel = (id: PanelId) => t(PANEL_INFO[id].label);
 
@@ -46,6 +49,7 @@ export function Panel({
   const layout = preferences.layout;
   const collapsed = useStore(session.ui, (s) => !!s.collapsed[id]);
   const toggle = () => session.ui.setState((s) => ({ collapsed: { ...s.collapsed, [id]: !collapsed } }));
+  const chrome = useContext(PanelChrome);
 
   const menu = (event: MouseEvent) => {
     event.preventDefault();
@@ -81,6 +85,14 @@ export function Panel({
     event.dataTransfer.setData(PANEL_DRAG, id);
     event.dataTransfer.effectAllowed = 'move';
   };
+
+  if (!chrome) {
+    return (
+      <section className="panel is-bare" data-panel={id}>
+        <div className="panel-body">{children}</div>
+      </section>
+    );
+  }
 
   return (
     <section

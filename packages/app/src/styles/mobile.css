@@ -634,6 +634,159 @@
   color: var(--accent-deep);
 }
 
+/* ---------------------------------------------------------------- the note sheet */
+
+.mobile-tools-count {
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
+}
+
+.mobile-view a.internal-link {
+  -webkit-touch-callout: none;
+}
+
+.mobile-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: rgb(10 12 22 / 0.36);
+  animation: mobile-fade 200ms var(--ease);
+}
+
+.mobile-scrim.is-clear {
+  background: transparent;
+  animation: none;
+  z-index: 60;
+}
+
+@keyframes mobile-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+.mobile-sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 31;
+  height: min(62dvh, calc(var(--vvh, 100dvh) - 60px));
+  display: flex;
+  flex-direction: column;
+  padding-bottom: env(safe-area-inset-bottom);
+  border-radius: 20px 20px 0 0;
+  background: var(--paper);
+  box-shadow: var(--shadow-sheet);
+  transition:
+    height 260ms var(--ease),
+    transform 260ms var(--ease);
+  animation: mobile-sheet-in 280ms var(--ease);
+}
+
+.mobile-sheet.is-full {
+  height: calc(var(--vvh, 100dvh) - max(12px, env(safe-area-inset-top)));
+}
+
+.mobile-sheet.is-dragging {
+  transition: none;
+}
+
+@keyframes mobile-sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-sheet {
+    animation: none;
+    transition: none;
+  }
+}
+
+.mobile-sheet-handle {
+  flex: none;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  touch-action: none;
+}
+
+.mobile-sheet-handle span {
+  width: 40px;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--paper-3);
+}
+
+.mobile-sheet-tabs {
+  flex: none;
+  display: flex;
+  gap: 6px;
+  padding: 0 var(--mobile-gutter) 10px;
+  border-bottom: 1px solid var(--rule);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.mobile-sheet-tabs button {
+  flex: none;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: var(--paper-2);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+
+.mobile-sheet-tabs button[aria-selected='true'] {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.mobile-sheet-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 8px var(--mobile-gutter) 20px;
+  font-size: 16px;
+}
+
+.mobile-sheet-body.is-graph {
+  padding: 0;
+  overflow: hidden;
+}
+
+.mobile-sheet-body.is-graph .graph-view {
+  height: 100%;
+}
+
+.mobile-sheet-body .panel.is-bare,
+.mobile-sheet-body .panel-body {
+  border: 0;
+  padding: 0;
+}
+
+.mobile-sheet-body button,
+.mobile-sheet-body a {
+  min-height: 40px;
+}
+
+/* A link's preview, from a long press: along the bottom, like the menus. */
+.mobile-workbench .hover-preview {
+  left: max(8px, env(safe-area-inset-left)) !important;
+  right: max(8px, env(safe-area-inset-right));
+  top: auto !important;
+  bottom: var(--mobile-bottom);
+  width: auto !important;
+  max-height: 60dvh;
+  border-radius: 16px;
+  z-index: 61;
+}
+
 /* ---------------------------------------------------------------- sheets laid on top */
 
 /* Menus become an action sheet along the bottom edge. */

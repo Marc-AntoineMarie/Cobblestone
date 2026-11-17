@@ -270,6 +270,7 @@ export class Ui {
       back: screen.locator('.mobile-back'),
       tools: screen.locator('.mobile-tools'),
       title: screen.locator('.note-title'),
+      sheet: page.locator('.mobile-sheet'),
       search: page.locator('.mobile-search'),
       searchField: page.locator('.mobile-search input'),
       cancelSearch: page.locator('.mobile-cancel'),
