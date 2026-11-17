@@ -633,6 +633,7 @@ const en = {
   'mobile.kb.undo': 'Undo',
   'mobile.kb.redo': 'Redo',
   'mobile.kb.hide': 'Hide the keyboard',
+  'mobile.split.empty': 'Pick a note in the list, or create one with +.',
 };
 
 export type MessageKey = keyof typeof en;
@@ -1277,6 +1278,7 @@ const fr: Messages = {
   'mobile.kb.undo': 'Annuler',
   'mobile.kb.redo': 'Rétablir',
   'mobile.kb.hide': 'Masquer le clavier',
+  'mobile.split.empty': 'Choisis une note dans la liste, ou crée-en une avec +.',
 };
 
 export const LANGUAGES = { en: 'English', fr: 'Français' } as const;

@@ -21,7 +21,9 @@ import { useWorkbenchBasics } from './workbench-basics';
  */
 export function Workbench({ onSwitchVault }: { onSwitchVault: () => void }) {
   const mobile = useMobile();
-  if (mobile) return <MobileWorkbench onSwitchVault={onSwitchVault} />;
+  // Touch tablets (768 to 1180 px): the list on the left, the note on the right. With a mouse, the desktop.
+  const tablet = useMediaQuery('(min-width: 768px) and (max-width: 1180px) and (pointer: coarse)');
+  if (mobile || tablet) return <MobileWorkbench onSwitchVault={onSwitchVault} split={!mobile} />;
   return <DesktopWorkbench onSwitchVault={onSwitchVault} />;
 }
 

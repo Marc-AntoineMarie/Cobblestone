@@ -25,6 +25,8 @@ export interface StartOptions {
   open?: boolean;
   /** Web: an iPhone with Safari (touch screen, phone size, iOS user agent). */
   iphone?: boolean;
+  /** Web: an iPad with Safari (touch screen, 1024 × 768, iPadOS presenting itself as a Mac). */
+  tablet?: boolean;
   /** Web: a browser without the File System Access API (Firefox, Safari). */
   withoutFolderAccess?: boolean;
   /** Desktop: more entries in the recent list, pointing wherever they like. */
@@ -137,10 +139,18 @@ export class Cobble {
           hasTouch: true,
           deviceScaleFactor: 3,
         }
-      : {};
+      : this.options.tablet
+        ? {
+            userAgent:
+              'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15',
+            isMobile: true,
+            hasTouch: true,
+            viewport: { width: 1024, height: 768 },
+          }
+        : {};
     this.context = await this.browser!.newContext({
-      ...iphone,
       viewport: this.options.viewport ?? (this.options.iphone ? { width: 390, height: 844 } : { width: 1280, height: 800 }),
+      ...iphone,
       locale: this.options.lang === 'en' ? 'en-US' : 'fr-FR',
       permissions: ['clipboard-read', 'clipboard-write'],
     });

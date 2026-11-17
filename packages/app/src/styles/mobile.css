@@ -938,6 +938,47 @@
   min-height: 48px;
 }
 
+/* ---------------------------------------------------------------- tablet: list and note side by side */
+
+.mobile-workbench.is-split {
+  --split-list: clamp(300px, 34vw, 380px);
+}
+
+.is-split .mobile-home {
+  right: auto;
+  width: var(--split-list);
+  border-right: 1px solid var(--rule);
+}
+
+.is-split .mobile-screen,
+.is-split .mobile-split-empty {
+  left: var(--split-list);
+}
+
+.is-split .mobile-row[aria-current='page'] {
+  margin: 0 -10px;
+  padding-inline: 10px;
+  border-radius: 10px;
+  border-bottom-color: transparent;
+  background: var(--paper-2);
+}
+
+.mobile-split-empty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+  color: var(--ink-3);
+  font-size: 16px;
+  text-align: center;
+}
+
+.is-split .mobile-view .page {
+  max-width: calc(var(--body) * var(--line-width) + 2 * var(--mobile-gutter));
+  margin: 0 auto;
+}
+
 /* ---------------------------------------------------------------- iOS zoom */
 
 @media (max-width: 767px) {
