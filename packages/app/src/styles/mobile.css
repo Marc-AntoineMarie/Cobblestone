@@ -787,6 +787,123 @@
   z-index: 61;
 }
 
+/* ---------------------------------------------------------------- the bar above the keyboard */
+
+/* iOS shrinks the visual viewport, not the page: the bar follows the visual one. */
+.mobile-kb {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: calc(var(--vv-top, 0px) + var(--vvh, 100dvh) - 50px);
+  height: 50px;
+  z-index: 25;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 6px 0 max(4px, env(safe-area-inset-left));
+  border-top: 1px solid var(--rule);
+  background: var(--paper-2);
+}
+
+.mobile-kb-scroll {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.mobile-kb button {
+  flex: none;
+  min-width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 10px;
+  color: var(--ink);
+}
+
+.mobile-kb button:active {
+  background: var(--paper-3);
+}
+
+.mobile-kb-text {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.mobile-kb .mobile-kb-done {
+  padding: 0 12px;
+  border-radius: 21px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 650;
+}
+
+/* While writing, the screen ends at the keyboard's bar, so the line being typed stays in sight. */
+.mobile-workbench.has-keyboard {
+  height: var(--vvh, 100dvh);
+}
+
+.has-keyboard .mobile-screen {
+  bottom: 50px;
+}
+
+.has-keyboard .mobile-view .page {
+  padding-bottom: 24px;
+}
+
+/* Link suggestions as a strip just above the bar, in place of the keyboard's own. */
+.mobile-workbench .cm-tooltip-autocomplete {
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  top: calc(var(--vv-top, 0px) + var(--vvh, 100dvh) - 96px) !important;
+  bottom: auto !important;
+  height: 46px;
+  max-width: none !important;
+  border: 0;
+  border-top: 1px solid var(--rule);
+  border-radius: 0;
+  background: var(--paper);
+  box-shadow: none;
+}
+
+.mobile-workbench .cm-tooltip-autocomplete > ul {
+  display: flex;
+  gap: 6px;
+  height: 100%;
+  max-height: none !important;
+  padding: 5px 8px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+}
+
+.mobile-workbench .cm-tooltip-autocomplete > ul > li {
+  flex: none;
+  display: flex;
+  align-items: center;
+  padding: 0 12px !important;
+  border-radius: 10px;
+  background: var(--paper-2);
+  font-size: 15px;
+  line-height: 36px;
+}
+
+.mobile-workbench .cm-tooltip-autocomplete > ul > li[aria-selected] {
+  background: var(--mark);
+  color: var(--mark-ink);
+}
+
+.mobile-workbench .cm-completionInfo {
+  display: none;
+}
+
 /* ---------------------------------------------------------------- sheets laid on top */
 
 /* Menus become an action sheet along the bottom edge. */

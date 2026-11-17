@@ -345,7 +345,7 @@ export class Session {
     setTimeout(() => this.ui.setState((s) => ({ toasts: s.toasts.filter((x) => x.id !== id) })), kind === 'error' ? 6000 : 3500);
   }
 
-  private fail(error: unknown) {
+  fail(error: unknown) {
     this.notify(t('error.generic', { error: describeError(error) }), 'error');
   }
 

@@ -20,6 +20,7 @@ import { HoverPreview } from './HoverPreview';
 import { useSession, useStore } from './hooks';
 import { TabView } from './LayoutView';
 import { MobileHome, type HomeTab } from './MobileHome';
+import { MobileKeyboardBar } from './MobileKeyboardBar';
 import { MobileNoteSheet, useLinkCounts, type SheetTab } from './MobileNoteSheet';
 import { MobileSearch } from './MobileSearch';
 import { hidePreviewNow } from './preview';
@@ -364,6 +365,15 @@ function MobileScreen({
       <div className="mobile-view" ref={viewRef}>
         <TabView tab={tab} paneId={paneId} visible />
       </div>
+      {path && mode && mode !== 'read' && keyboard && (
+        <MobileKeyboardBar
+          path={path}
+          onDone={() => {
+            session.activeEditor?.contentDOM.blur();
+            setTabMode('read');
+          }}
+        />
+      )}
       {mode && !keyboard && (
         <div className="mobile-tools" role="toolbar" aria-label={t('mobile.tools')}>
           {mode === 'read' ? (
