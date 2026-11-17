@@ -131,6 +131,9 @@ export function Editor({ path, tabId, mode, subpath, onView }: Props) {
       if (file.path !== pathRef.current || !viewRef.current || content === null) return;
       // Ignore echoes of our own pending edit.
       if (pending.current) return;
+      // Writing together: the shared text brings every change here, this one included. Taking it
+      // from the file as well would apply it twice, or bring back a text the others moved on from.
+      if (live.current.text()) return;
       applyExternal(viewRef.current, content);
     });
     const offJump = session.events.on('jump', (target, line) => {

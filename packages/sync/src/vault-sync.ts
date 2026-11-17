@@ -31,6 +31,8 @@ export class AdapterSyncStore implements SyncStore {
 
 /** Changes made on this device, from its files. */
 const LOCAL = Symbol('local');
+/** How long a write is expected to echo back, in milliseconds. */
+const EXPECTED_FOR = 10_000;
 /** The state saved by a previous run. */
 const STORE = Symbol('store');
 
@@ -51,7 +53,9 @@ export class VaultSync {
   private idOnDisk = new Map<string, string>();
   private pathOfId = new Map<string, string>();
   /** Texts this device is writing, to recognise their echo from the vault. */
-  private writing = new Map<string, Set<string>>();
+  private writing = new Map<string, Map<string, number>>();
+  /** Who writes on the CRDT here beside the files: the editors, each told apart (see change). */
+  private writers = new WeakSet<object>();
   /** Renames ("from\nto") and deletions this device is making, for the same reason. */
   private echoes = new Set<string>();
   /** Hash of each binary file on disk. */
@@ -114,7 +118,7 @@ export class VaultSync {
 
     // What other devices changed: noted by entry, written once the transaction is over.
     const onDeep = (events: Y.YEvent<Y.AbstractType<unknown>>[], transaction: Y.Transaction) => {
-      if (transaction.origin === LOCAL || transaction.origin === STORE) return;
+      if (this.isOwn(transaction.origin)) return;
       for (const event of events) {
         if (event.target === this.model.files) {
           for (const key of (event as Y.YMapEvent<unknown>).keysChanged) this.dirty.add(key);
@@ -127,7 +131,7 @@ export class VaultSync {
     this.model.files.observeDeep(onDeep);
     this.disposers.push(() => this.model.files.unobserveDeep(onDeep));
     const onAfter = (transaction: Y.Transaction) => {
-      if (transaction.origin !== LOCAL && transaction.origin !== STORE && this.dirty.size) this.run(() => this.applyRemote());
+      if (!this.isOwn(transaction.origin) && this.dirty.size) this.run(() => this.applyRemote());
     };
     this.doc.on('afterTransaction', onAfter);
     this.disposers.push(() => this.doc.off('afterTransaction', onAfter));
@@ -178,8 +182,21 @@ export class VaultSync {
    */
   expectWrite(path: string, text: string) {
     let texts = this.writing.get(path);
-    if (!texts) this.writing.set(path, (texts = new Set()));
-    texts.add(text);
+    if (!texts) this.writing.set(path, (texts = new Map()));
+    texts.set(text, Date.now());
+  }
+
+  /**
+   * Whether a change of a file is the echo of an expected write. An expectation whose write never
+   * echoed (the file already held that text) lapses, so that a later, real change to the same text
+   * is not taken for it.
+   */
+  private expected(path: string, text: string): boolean {
+    const texts = this.writing.get(path);
+    const at = texts?.get(text);
+    if (!texts || at === undefined) return false;
+    texts.delete(text);
+    return Date.now() - at < EXPECTED_FOR;
   }
 
   /** The shared text of a note on disk, for an editor to work on directly. */
@@ -195,7 +212,7 @@ export class VaultSync {
 
   /** Whether a change of the CRDT was made on this device. */
   isOwn(origin: unknown): boolean {
-    return origin === LOCAL || origin === STORE;
+    return origin === LOCAL || origin === STORE || (typeof origin === 'object' && origin !== null && this.writers.has(origin));
   }
 
   /** Attachments this device still waits for from the others. */
@@ -203,9 +220,14 @@ export class VaultSync {
     return this.wanted.size;
   }
 
-  /** Changes the CRDT as this device (devices, settings of the sync), not as a file. */
-  change(apply: () => void) {
-    this.doc.transact(apply, LOCAL);
+  /**
+   * Changes the CRDT as this device (devices, settings of the sync), not as a file. `writer` names
+   * who makes the change (an editor): still this device, but told apart from its other writers, so
+   * that two editors of one note hear each other through the shared text.
+   */
+  change(apply: () => void, writer?: object) {
+    if (writer) this.writers.add(writer);
+    this.doc.transact(apply, writer ?? LOCAL);
   }
 
   /** Starts exchanging with another device; returns a function that ends it. */
@@ -249,9 +271,7 @@ export class VaultSync {
   private async onLocalChange(path: string, content: string | null) {
     if (!this.vault.getFile(path)) return;
     if (this.isLocal(path)) return;
-    if (content !== null && this.writing.get(path)?.delete(content)) {
-      return;
-    }
+    if (content !== null && this.expected(path, content)) return;
     const id = this.idOnDisk.get(path);
     if (kindOf(path) === 'text') {
       const text = content ?? (await this.vault.read(path).catch(() => null));

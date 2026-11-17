@@ -6,6 +6,7 @@ import { isBookmarked } from '../bookmarks';
 import { t } from '../i18n';
 import { navigate, setMode, split, type EditorMode, type Tab, type ViewState } from '../workspace/workspace';
 import { Editor } from './Editor';
+import { NotePresenceList } from './NotePresenceList';
 import { useSession, useStore } from './hooks';
 import { ReadingView } from './ReadingView';
 
@@ -85,6 +86,7 @@ export function NoteView({ tab, paneId, view, visible }: { tab: Tab; paneId: str
           <span className="crumb is-current">{stem(view.path)}</span>
         </nav>
         <div className="note-actions">
+          <NotePresenceList path={view.path} />
           <div className="segmented" role="group" aria-label={t('cmd.toggleMode')}>
             <button aria-pressed={mode !== 'read'} onClick={() => setTabMode(mode === 'source' ? 'source' : 'live')}>
               {mode === 'source' ? t('note.modeSource') : t('note.modeEdit')}
@@ -121,7 +123,7 @@ export function NoteView({ tab, paneId, view, visible }: { tab: Tab; paneId: str
           {/* Keyed by path: a fresh field per note, so a new note's title is selected, not the previous one's. */}
           <NoteTitle key={view.path} path={view.path} onEnter={() => editorView.current?.focus()} />
           {mode === 'read' ? (
-            <ReadingView path={view.path} subpath={view.subpath} />
+            <ReadingView path={view.path} subpath={view.subpath} visible={visible} />
           ) : (
             <Editor
               key={`${tab.id}:${tab.nav ?? 0}`}

@@ -27,6 +27,7 @@ import { hidePreviewNow } from './preview';
 import { isStandalone, useVisualViewport } from './mobile-hooks';
 import { homeWorkspace, mobileBack, previousView, screenKey, shownTab } from './mobile-nav';
 import { moveToFolder } from './mobile-menus';
+import { NotePresenceList } from './NotePresenceList';
 import { PairingDialog } from './PairingDialog';
 import { ShareSheet } from './ShareSheet';
 import { Toasts } from './Toasts';
@@ -357,6 +358,7 @@ function MobileScreen({
             <span>{backLabel}</span>
           </button>
         )}
+        {path && <NotePresenceList path={path} />}
         {path && (
           <div className="mobile-topbar-actions">
             <button

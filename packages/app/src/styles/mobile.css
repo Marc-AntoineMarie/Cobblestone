@@ -431,6 +431,12 @@
   white-space: nowrap;
 }
 
+.mobile-topbar .note-presence {
+  flex: 1;
+  justify-content: flex-end;
+  margin: 0 4px;
+}
+
 .mobile-view {
   flex: 1;
   min-height: 0;

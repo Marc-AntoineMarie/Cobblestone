@@ -412,6 +412,9 @@ const en = {
   'sync.first.text':
     'Add a device: this one shows a code, you type it on the other, and the vault is copied there. After that, every change travels by itself.',
   'sync.addDevice': 'Add a device',
+  'sync.presence': 'Devices on this note',
+  'sync.presence.reading': '{name} is reading this note',
+  'sync.presence.writing': '{name} is writing in this note',
   'sync.how': 'How it works',
   'sync.how.1.title': 'Here',
   'sync.how.1': '“Add a device” shows a code, valid for five minutes.',
@@ -1053,6 +1056,9 @@ const fr: Messages = {
   'sync.first.text':
     'Ajoute un appareil : celui-ci affiche un code, tu le saisis sur l’autre, et le coffre s’y copie. Ensuite, chaque modification passe d’elle-même.',
   'sync.addDevice': 'Ajouter un appareil',
+  'sync.presence': 'Appareils sur cette note',
+  'sync.presence.reading': '{name} lit cette note',
+  'sync.presence.writing': '{name} écrit dans cette note',
   'sync.how': 'Comment ça marche',
   'sync.how.1.title': 'Ici',
   'sync.how.1': '« Ajouter un appareil » affiche un code, valable cinq minutes.',
