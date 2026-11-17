@@ -6,6 +6,7 @@ ajouté, modifié et supprimé, les tests, les fichiers et les commits. Ce somma
 
 | Date       | Changement                                                                                                                     | Type          | Branche                       |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------- | ----------------------------- |
+| 2026-11-17 | [Temps réel : texte en double et lecture en direct](journal/2026-11-17-fix-temps-reel.md)                                      | correction    | `fix/temps-reel`              |
 | 2026-11-17 | [Tablette : liste et note côte à côte](journal/2026-11-17-feat-tablette.md)                                                    | nouveauté     | `feat/tablette`               |
 | 2026-11-17 | [Téléphone : barre au-dessus du clavier](journal/2026-11-17-feat-mobile-clavier.md)                                            | nouveauté     | `feat/mobile-clavier`         |
 | 2026-11-17 | [Téléphone : feuille d'infos de la note](journal/2026-11-17-feat-mobile-feuille.md)                                            | nouveauté     | `feat/mobile-feuille`         |
