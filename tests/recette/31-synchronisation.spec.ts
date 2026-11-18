@@ -407,3 +407,32 @@ recette('31.24', async ({ app, ui }, testInfo) => {
     await expect(onB).toHaveAttribute('data-reading', 'false');
   });
 });
+
+recette('31.25', async ({ app, ui }, testInfo) => {
+  await twoDevices({ app, ui }, baseVault(), testInfo, async (a, b) => {
+    await pair(a, b);
+    await expect.poll(() => b.app.readOr('Idées.md')).toContain('Une idée');
+    await b.ui.open('Idées');
+    await b.ui.page.waitForTimeout(1200);
+    // Reopened, the app shows the note before sync has started.
+    await b.app.restart();
+    await b.app.electron.evaluate(({ BrowserWindow }) =>
+      BrowserWindow.getAllWindows().forEach((w) => w.webContents.setBackgroundThrottling(false)),
+    );
+    await expect(b.ui.editor).toBeVisible();
+    await expect(syncStatus(b.ui)).toHaveText('À jour · 2 appareils', { timeout: 20_000 });
+    await a.ui.open('Idées');
+    await a.ui.append(' Reçu note ouverte.');
+    await expect.poll(() => b.ui.doc(), { timeout: 15_000 }).toContain('Reçu note ouverte.');
+    await b.ui.append(' Et répondu.');
+    await expect.poll(() => a.ui.doc(), { timeout: 15_000 }).toContain('Et répondu.');
+    await a.ui.page.waitForTimeout(1500);
+    expect(await a.ui.doc()).toContain('Reçu note ouverte.');
+    expect(await a.app.read('Idées.md')).toBe(await b.app.read('Idées.md'));
+  });
+});
+
+recette.manuel(
+  '31.26',
+  'demande un vrai appareil mis en veille par son système ; le réveil du relais est couvert par relay.test.ts',
+);

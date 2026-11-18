@@ -77,7 +77,12 @@ Transports:
   moves encrypted bytes only, and refuses unknown tags, slow greetings and oversized frames.
   Windows reach it through IPC, only for their own links.
 - **Relay** (`relay.ts` here, `apps/relay` there): a WebSocket, usable from a browser, Electron or
-  Node. It reconnects by itself and re-announces what the device listens for. This is how the web
+  Node. It reconnects by itself and re-announces what the device listens for. A socket the system
+  put to sleep (a phone locked, a tab left aside) often comes back open but deaf: nothing arrives
+  and no close is reported. `wake()` drops a socket nothing has been heard on for over a minute —
+  the relay pings every 30 s — and connects again at once; the app calls it whenever the device
+  comes back (`visibilitychange`, `focus`, `online`, `pageshow`), which is what makes a phone pick
+  the others up again instead of looking connected and receiving nothing. This is how the web
   app syncs at all, and how two desktops on different networks meet.
 - `NetworkSet` joins both; the relay's address is a per-device setting (default
   `sync.cobblestone.marc-antoinemarie.com`, see [accounts-and-relay.md](accounts-and-relay.md)).
@@ -114,7 +119,15 @@ and the relay settings. Keeping the known devices outside the vault means a lost
 
 `packages/app/src/editor/collab.ts` connects the editor to the note's `Y.Text`: each keystroke goes
 into the shared text at once, remote changes arrive as CodeMirror changes, and the file is still
-saved (the engine recognises those saves as its own). Cursors travel as `presence` messages with
+saved (the engine recognises those saves as its own).
+
+`LiveBinding` keeps the editor on the shared text the note has **now**. It binds as soon as that
+text exists (sync starting, a new note getting its entry), and moves to another one if the note's
+entry changes. The editor asks it again at every outside change of the file (`followShared`): a
+change is taken from the file only while no shared text exists. An editor left on a text nobody
+writes any more would miss what the others type, then send its stale text back over it. A change
+taken from the file before binding does not count as typing; only real typing made before the
+shared text existed wins when they meet. Cursors travel as `presence` messages with
 relative positions, and are forgotten when a link ends. Each device gets one of five inks.
 
 ## Testing sync
