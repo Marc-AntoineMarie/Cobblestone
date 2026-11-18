@@ -221,8 +221,10 @@ mark {
 }
 
 .segmented button {
-  height: 24px;
-  padding: 0 10px;
+  min-height: 24px;
+  padding: 3px 10px;
+  line-height: 1.2;
+  text-wrap: balance;
   border-radius: var(--radius);
   color: var(--ink-2);
   font-weight: 550;

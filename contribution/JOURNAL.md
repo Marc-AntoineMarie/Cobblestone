@@ -6,6 +6,7 @@ ajouté, modifié et supprimé, les tests, les fichiers et les commits. Ce somma
 
 | Date       | Changement                                                                                                                      | Type          | Branche                       |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------- | ------------- | ----------------------------- |
+| 2026-11-18 | [Popovers coupés et boutons « Papier » trop petits](journal/2026-11-18-fix-popovers-coupes.md)                                  | correction    | `fix/popovers-coupes`         |
 | 2026-11-18 | [Un écran de redémarrage pour la mise à jour, et son statut toujours visible](journal/2026-11-18-feat-ecran-redemarrage-maj.md) | nouveauté     | `feat/ecran-redemarrage-maj`  |
 | 2026-11-18 | [Un guide du fonctionnement, pour tout comprendre avec la seule documentation](journal/2026-11-18-docs-guide-fonctionnement.md) | documentation | `docs/guide-fonctionnement`   |
 | 2026-11-18 | [Une barre de mise en forme sous la barre de la note, en écriture](journal/2026-11-18-feat-barre-mise-en-forme.md)              | nouveauté     | `feat/barre-mise-en-forme`    |

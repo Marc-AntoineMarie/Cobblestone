@@ -383,7 +383,7 @@
 
 .update-popover {
   position: absolute;
-  right: 0;
+  left: 0;
   bottom: calc(100% + 8px);
   z-index: 60;
   width: 300px;
