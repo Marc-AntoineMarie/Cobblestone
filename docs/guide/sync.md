@@ -68,7 +68,10 @@ enough for the relay to bring the right two devices together, useless for guessi
 `SyncNode` runs one device's part for one vault: it keeps `VaultSync` going, announces the vault's
 tag, opens one session per device found (the same one kept on both sides), closes the session of a
 removed device, and hosts pairings (five minutes, three wrong codes). `receiveVault` is the other
-side of a pairing.
+side of a pairing. A removed device is refused from the moment the shared document says so: its
+messages are dropped, its session closes a moment later (300 ms, so it hears of its removal first),
+and a new session is refused with `removed`. What a device that has not heard of the removal yet may
+still take is in [security.md](security.md).
 
 Transports:
 

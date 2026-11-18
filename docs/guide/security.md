@@ -82,6 +82,13 @@ Tracked in `contribution/IDEES.md`; listed here so nobody rediscovers them as su
   pressure: data loss, not disclosure.
 - **Deposits reveal size and timing.** The relay sees how large a vault's state is and when devices
   exchange. No padding or cover traffic.
+- **A removal only binds the devices that heard it.** `removeDevice` writes the removal in the
+  shared document; every device refuses the removed one from the moment it has that change, and
+  closes its session a moment later. A device that has not received it yet — offline, or cut off
+  from the device that removed — still takes what the removed device sends, and that change then
+  spreads like any other. There is no ordering authority, so an edit made in the same moment as the
+  removal cannot be told from one made just before. Remove a device while the others are reachable;
+  a renewable membership lease would bound the window.
 - **No version history yet**, so a destructive sync (a device that deletes everything) propagates.
   `.trash/` softens it; real history is on the roadmap.
 
