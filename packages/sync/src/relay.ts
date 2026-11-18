@@ -54,6 +54,9 @@ class RelayLink implements ByteChannel {
   }
 }
 
+/** Heard nothing for this long with the relay pinging every 30 s: the socket is dead. */
+const SILENCE = 70_000;
+
 export class RelayNetwork implements Network {
   private socket: WebSocket | null = null;
   private readonly listens = new Map<string, number>();
@@ -68,8 +71,11 @@ export class RelayNetwork implements Network {
   private request = 0;
   private retry = 1_000;
   private timers: ReturnType<typeof setTimeout>[] = [];
+  private reconnect: ReturnType<typeof setTimeout> | undefined;
   private stopped = false;
   private openWaiters: (() => void)[] = [];
+  /** When the relay was last heard from: a silent socket is a dead one. */
+  private lastHeard = 0;
 
   constructor(
     readonly url: string,
@@ -90,12 +96,14 @@ export class RelayNetwork implements Network {
     this.socket = socket;
     socket.onopen = () => {
       this.retry = 1_000;
+      this.lastHeard = Date.now();
       this.text({ t: 'hello', device: this.device, token: this.token ?? undefined });
       for (const tag of this.listens.keys()) this.text({ t: 'listen', tag });
       for (const tag of this.watches.keys()) this.text({ t: 'watch', tag });
       this.openWaiters.splice(0).forEach((resolve) => resolve());
     };
     socket.onmessage = (event) => {
+      this.lastHeard = Date.now();
       if (typeof event.data === 'string') return this.onText(event.data);
       const data = new Uint8Array(event.data as ArrayBuffer);
       // Deposit payload: announced by a previous 'deposited' text message.
@@ -117,10 +125,40 @@ export class RelayNetwork implements Network {
       for (const waiting of this.pending.values()) waiting.reject(new Error('Relay connection lost'));
       this.pending.clear();
       if (this.stopped) return;
-      this.timers.push(setTimeout(() => this.open(), this.retry));
+      clearTimeout(this.reconnect);
+      this.reconnect = setTimeout(() => this.open(), this.retry);
       this.retry = Math.min(this.retry * 2, 30_000);
     };
     socket.onerror = () => socket.close();
+  }
+
+  /**
+   * The device is back (a phone unlocked, a tab shown again, the network back).
+   * A socket put to sleep by the system often comes back open but deaf: nothing
+   * arrives and no close is reported, so nothing would ever reconnect. One that
+   * has not been heard from since well over the relay's heartbeat is dropped,
+   * and a connection is made again at once instead of after the waiting time.
+   */
+  wake() {
+    if (this.stopped) return;
+    const socket = this.socket;
+    if (socket?.readyState === WebSocket.OPEN) {
+      if (Date.now() - this.lastHeard < SILENCE) return void this.search();
+      this.socket = null;
+      socket.onclose = null;
+      socket.onmessage = null;
+      socket.onerror = null;
+      socket.close();
+      for (const link of [...this.links.values()]) link.ended();
+      this.links.clear();
+      for (const waiting of this.pending.values()) waiting.reject(new Error('Relay connection lost'));
+      this.pending.clear();
+    } else if (socket?.readyState === WebSocket.CONNECTING) {
+      return;
+    }
+    clearTimeout(this.reconnect);
+    this.retry = 1_000;
+    this.open();
   }
 
   private onText(data: string) {
@@ -263,6 +301,7 @@ export class RelayNetwork implements Network {
   close() {
     this.stopped = true;
     this.timers.forEach((timer) => clearTimeout(timer));
+    clearTimeout(this.reconnect);
     this.socket?.close();
   }
 }
