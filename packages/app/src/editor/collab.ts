@@ -1,4 +1,13 @@
-import { Annotation, StateEffect, type ChangeSet, type ChangeSpec, type Extension } from '@codemirror/state';
+import {
+  Annotation,
+  StateEffect,
+  type ChangeSet,
+  type ChangeSpec,
+  type EditorState,
+  type Extension,
+  type Transaction,
+  type TransactionSpec,
+} from '@codemirror/state';
 import { Decoration, ViewPlugin, WidgetType, type DecorationSet, type EditorView, type ViewUpdate } from '@codemirror/view';
 import type * as Y from 'yjs';
 
@@ -107,61 +116,123 @@ class Caret extends WidgetType {
   }
 }
 
+/** What the binding needs of an editor: its state, and a way to change it. */
+export interface BoundEditor {
+  readonly state: EditorState;
+  dispatch(spec: TransactionSpec): void;
+}
+
+/**
+ * Keeps one editor on the shared text of its note — the one the note has *now*.
+ * It binds as soon as that text exists, and moves to another if the note's entry
+ * changes (a copy merged with an identical one, say): an editor left on a text
+ * nobody writes any more would miss what the others type, then send its stale
+ * text back over it.
+ */
+export class LiveBinding {
+  text: Y.Text | null = null;
+  /** Typed here before the shared text was there: it wins when they meet. */
+  edited = false;
+  private unobserve: (() => void) | null = null;
+
+  constructor(
+    private readonly source: LiveSource,
+    private readonly view: BoundEditor,
+  ) {}
+
+  /** Binds to the note's current shared text; returns whether the editor is on it. */
+  follow(): boolean {
+    const text = this.source.text();
+    if (text === this.text) return !!text;
+    if (this.text) {
+      this.unobserve?.();
+      this.unobserve = null;
+      this.text = null;
+      // What was typed reached the old text and the file; the current text holds the rest.
+      this.edited = false;
+    }
+    if (!text) return false;
+    this.text = text;
+    const doc = this.view.state.doc.toString();
+    if (this.edited) {
+      const change = difference(text.toString(), doc) as { from: number; to: number; insert: string } | null;
+      if (change)
+        this.source.edit(() => {
+          text.delete(change.from, change.to - change.from);
+          text.insert(change.from, change.insert);
+        });
+    } else {
+      const change = difference(doc, text.toString());
+      if (change) this.view.dispatch({ changes: change, annotations: fromOthers.of(true) });
+    }
+    const observer = (event: Y.YTextEvent, transaction: Y.Transaction) => {
+      if (this.source.own(transaction.origin)) return;
+      this.view.dispatch({
+        changes: fromShared(event.delta as { insert?: unknown; delete?: number; retain?: number }[]),
+        annotations: fromOthers.of(true),
+      });
+    };
+    text.observe(observer);
+    this.unobserve = () => text.unobserve(observer);
+    return true;
+  }
+
+  /** A transaction of the editor: what this device typed goes into the shared text. */
+  local(tr: Transaction) {
+    if (!tr.docChanged || tr.annotation(fromOthers)) return;
+    const text = this.text;
+    if (text) this.source.edit(() => toShared(tr.changes, text));
+    // A change taken from the file (the shared text wrote it) is not typing.
+    else if (!tr.isUserEvent('external')) this.edited = true;
+  }
+
+  stop() {
+    this.unobserve?.();
+    this.unobserve = null;
+  }
+}
+
+const bindings = new WeakMap<EditorView, LiveBinding>();
+
+/**
+ * For an outside change of the note's file: binds the editor to the shared text
+ * if it can. True: the shared text brings every change, this one included.
+ */
+export function followShared(view: EditorView): boolean {
+  return bindings.get(view)?.follow() ?? false;
+}
+
 export function liveText(source: LiveSource): Extension {
   return ViewPlugin.fromClass(
     class {
       decorations: DecorationSet = Decoration.none;
-      text: Y.Text | null = null;
-      /** Typed here before the shared text was there: it wins when they meet. */
-      edited = false;
+      binding: LiveBinding;
       stop: (() => void)[] = [];
       timer: ReturnType<typeof setTimeout> | undefined;
 
       constructor(readonly view: EditorView) {
-        this.stop.push(source.subscribe(() => queueMicrotask(() => this.view.dispatch({ effects: redraw.of(null) }))));
-        queueMicrotask(() => this.bind());
-      }
-
-      bind() {
-        if (this.text) return;
-        const text = source.text();
-        if (!text) return;
-        this.text = text;
-        const doc = this.view.state.doc.toString();
-        if (this.edited) {
-          const change = difference(text.toString(), doc) as { from: number; to: number; insert: string } | null;
-          if (change)
-            source.edit(() => {
-              text.delete(change.from, change.to - change.from);
-              text.insert(change.from, change.insert);
-            });
-        } else {
-          const change = difference(doc, text.toString());
-          if (change) this.view.dispatch({ changes: change, annotations: fromOthers.of(true) });
-        }
-        const observer = (event: Y.YTextEvent, transaction: Y.Transaction) => {
-          if (source.own(transaction.origin)) return;
-          this.view.dispatch({
-            changes: fromShared(event.delta as { insert?: unknown; delete?: number; retain?: number }[]),
-            annotations: fromOthers.of(true),
-          });
-        };
-        text.observe(observer);
-        this.stop.push(() => text.unobserve(observer));
+        this.binding = new LiveBinding(source, view);
+        bindings.set(view, this.binding);
+        // Sync starting, or the devices changing, may bring the note's shared text.
+        this.stop.push(
+          source.subscribe(() =>
+            queueMicrotask(() => {
+              this.binding.follow();
+              this.view.dispatch({ effects: redraw.of(null) });
+            }),
+          ),
+        );
+        queueMicrotask(() => this.binding.follow());
       }
 
       update(update: ViewUpdate) {
-        const text = this.text;
-        for (const tr of update.transactions) {
-          if (!tr.docChanged || tr.annotation(fromOthers)) continue;
-          if (text) source.edit(() => toShared(tr.changes, text));
-          else this.edited = true;
-        }
-        if (!text && update.docChanged) queueMicrotask(() => this.bind());
+        for (const tr of update.transactions) this.binding.local(tr);
+        if (!this.binding.text && update.docChanged) queueMicrotask(() => this.binding.follow());
         if (update.docChanged || update.selectionSet || update.transactions.some((tr) => tr.effects.some((e) => e.is(redraw)))) {
           this.decorations = this.draw();
         }
-        if (text && update.view.hasFocus && (update.selectionSet || update.docChanged || update.focusChanged)) this.publishSoon();
+        if (this.binding.text && update.view.hasFocus && (update.selectionSet || update.docChanged || update.focusChanged))
+          this.publishSoon();
       }
 
       publishSoon() {
@@ -190,6 +261,8 @@ export function liveText(source: LiveSource): Extension {
 
       destroy() {
         clearTimeout(this.timer);
+        this.binding.stop();
+        bindings.delete(this.view);
         this.stop.forEach((stop) => stop());
         source.leave();
       }

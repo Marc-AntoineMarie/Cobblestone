@@ -100,10 +100,23 @@ export function deviceNetworkFor(platform: Platform, device: string): Promise<Ne
   return deviceNetwork(platform, device);
 }
 
+/**
+ * A phone locked, a tab left aside or a network gone puts the relay's socket to sleep: it often
+ * comes back open but deaf, and nothing would reconnect. Every return wakes it.
+ */
+function wakeOnReturn() {
+  const wake = () => shared?.relay?.wake();
+  document.addEventListener('visibilitychange', () => document.visibilityState === 'visible' && wake());
+  window.addEventListener('focus', wake);
+  window.addEventListener('online', wake);
+  window.addEventListener('pageshow', wake);
+}
+
 async function deviceNetwork(platform: Platform, device: string): Promise<NetworkSet> {
   if (!shared) {
     const account = await platform.storage.get<{ token: string }>('account');
     shared = { networks: new NetworkSet(), relay: null, device, token: account?.token ?? null };
+    wakeOnReturn();
     if (platform.syncNetwork) shared.networks.add(platform.syncNetwork(device));
     applyRelay(await relaySettings(platform));
   }
@@ -364,6 +377,8 @@ export class SyncController {
       offPresence();
       offRefresh();
     };
+    // The notes already open can now work on the shared text.
+    this.cursorListeners.forEach((l) => l());
     this.timer = setInterval(() => this.refresh(), 1000);
   }
 
