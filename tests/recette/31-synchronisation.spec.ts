@@ -247,6 +247,9 @@ recette('31.16', async ({ app, ui }, testInfo) => {
     await expect.poll(() => b.ui.doc()).toContain('Au début. ');
     await expect.poll(() => a.app.readOr('Idées.md')).toMatch(/^Au début\. .*À la fin\.$/s);
     await expect.poll(() => b.app.readOr('Idées.md')).toBe(await a.app.read('Idées.md'));
+    // Each device shows the other's cursor, at its name.
+    await expect(a.ui.page.locator('.cm-remote-caret', { hasText: 'PC fixe' })).toBeVisible();
+    await expect(b.ui.page.locator('.cm-remote-caret')).toBeVisible();
   });
 });
 
