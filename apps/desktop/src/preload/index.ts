@@ -1,4 +1,5 @@
 import { contextBridge, ipcRenderer, type IpcRendererEvent } from 'electron';
+import type { UpdateStatus } from '@cobblestone/app';
 
 /**
  * The only bridge between the sandboxed renderer and the main process.
@@ -59,9 +60,9 @@ const api = {
     onClosed: (listener: (id: string) => void) => on('lan:closed', (id: string) => listener(id)),
   },
   updates: {
-    /** The version downloaded and ready, if any. */
-    ready: () => ipcRenderer.invoke('updates:ready') as Promise<string | null>,
-    onReady: (listener: (version: string) => void) => on('updates:ready', (version: string) => listener(version)),
+    status: () => ipcRenderer.invoke('updates:status') as Promise<UpdateStatus>,
+    onStatus: (listener: (status: UpdateStatus) => void) => on('updates:status', (status: UpdateStatus) => listener(status)),
+    check: () => ipcRenderer.invoke('updates:check') as Promise<void>,
     install: () => ipcRenderer.invoke('updates:install') as Promise<void>,
   },
   openExternal: (url: string) => ipcRenderer.invoke('shell:openExternal', url),

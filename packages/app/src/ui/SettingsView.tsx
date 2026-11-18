@@ -26,7 +26,7 @@ import { SyncSettings } from './SyncSettings';
 declare const __APP_VERSION__: string | undefined;
 
 /** Set by the build (the version CI gives the app); tests run without it. */
-const VERSION = typeof __APP_VERSION__ === 'string' ? __APP_VERSION__ : 'dev';
+export const VERSION = typeof __APP_VERSION__ === 'string' ? __APP_VERSION__ : 'dev';
 
 const SECTIONS = [
   { id: 'general', icon: Languages, title: () => t('settings.general') },

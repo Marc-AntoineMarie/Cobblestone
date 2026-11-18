@@ -4,7 +4,7 @@ import { App } from './ui/App';
 import type { Platform } from './platform';
 import { lockIosAutoZoom } from './viewport';
 
-export type { MovedVault, Platform, VaultEntry } from './platform';
+export type { MovedVault, Platform, UpdateStatus, VaultEntry } from './platform';
 export { demoVaultFiles } from './demo-vault';
 
 /** Mounts the whole application into `root` for the given host platform. */

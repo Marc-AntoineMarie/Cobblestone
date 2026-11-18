@@ -88,3 +88,4 @@ recette.manuel(
 recette.manuel('27.10', 'l’icône de la fenêtre se voit dans la barre des tâches, sous X11');
 
 recette.manuel('27.11', 'il faut une version publiée sur GitHub par la CI, et une app installée');
+recette.manuel('27.12', 'même contrainte que 27.11 : une version publiée sur GitHub par la CI, et une app installée');

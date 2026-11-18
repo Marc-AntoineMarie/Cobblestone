@@ -8,6 +8,7 @@ import { newNoteMenu } from './MobileHome';
 import { NoteListBody } from './NoteList';
 import { FindResults } from './SearchPanel';
 import { SyncStatus } from './SyncStatus';
+import { UpdateStatus } from './UpdateStatus';
 
 /**
  * The list of notes, down the left of the workbench: the vault and one field
@@ -141,6 +142,7 @@ export function DeskList({ width, onSwitchVault }: { width: PanelWidth; onSwitch
             <Settings size={17} strokeWidth={1.75} />
           </button>
         </div>
+        <UpdateStatus platform={session.platform} />
         <SyncStatus />
       </footer>
     </nav>
