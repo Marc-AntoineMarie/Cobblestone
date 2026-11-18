@@ -119,7 +119,8 @@ recette('31.8', async ({ app, ui }, testInfo) => {
     await syncStatus(a.ui).click();
     const popover = syncPopover(a.ui);
     await expect(popover).toContainText('PC fixe');
-    await expect(popover).toContainText('En ligne, sur le même réseau');
+    await expect(popover).toContainText('En ligne');
+    await expect(popover).toBeInViewport({ ratio: 1 });
     await expect(popover.getByRole('button', { name: 'Mettre en pause' })).toBeVisible();
     await popover.getByRole('button', { name: 'Réglages de synchronisation' }).click();
     await expect(a.ui.view.locator('[data-section="sync"]')).toBeInViewport();

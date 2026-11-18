@@ -223,6 +223,12 @@ recette('6.27', async ({ app, ui }) => {
   await expect(quick.getByRole('radiogroup', { name: 'Thème' })).toBeVisible();
   await expect(quick.getByRole('group', { name: 'Taille du texte' })).toBeVisible();
   await expect(quick.getByRole('radiogroup', { name: 'Disposition' })).toBeVisible();
+  const clipped = await quick
+    .locator('.segmented button')
+    .evaluateAll((buttons) =>
+      buttons.filter((b) => b.scrollHeight > b.clientHeight + 1 || b.scrollWidth > b.clientWidth + 1).map((b) => b.textContent),
+    );
+  expect(clipped).toEqual([]);
   await ui.page.keyboard.press('Escape');
   await expect(quick).toHaveCount(0);
 });

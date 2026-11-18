@@ -200,7 +200,7 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 - **6.24** · Les deux · auto · Menu du nom du coffre dans la démo → Pas d'entrée « Ouvrir le dossier du coffre » (rien n'est sur le disque).
 - **6.25** · Les deux · auto · Bouton « Nouvelle note » en bas de la liste, puis clic droit dessus → Une note vide s'ouvre ; le clic droit propose la note du jour, un canevas et un dossier.
 - **6.26** · Les deux · auto · Ctrl+clic sur une note de la liste → Elle s'ouvre dans un nouvel onglet.
-- **6.27** · Les deux · auto · Barre d'état › « Apparence » → Un panneau rapide : thèmes, papier, taille du texte, largeur des lignes, disposition ; Échap le ferme.
+- **6.27** · Les deux · auto · Barre d'état › « Apparence » → Un panneau rapide : thèmes, papier, taille du texte, largeur des lignes, disposition ; chaque bouton contient son libellé entier ; Échap le ferme.
 - **6.28** · Les deux · auto · Fenêtre de moins de 1000 px → La liste passe par-dessus les notes, avec un voile ; cliquer le voile la referme.
 - **6.29** · Les deux · auto · « Concentré » depuis l'apparence rapide, puis palette › « Disposition : Complet » → La liste et la marge disparaissent, puis reviennent.
 
@@ -725,7 +725,7 @@ Deux apps de bureau sur le même réseau (la recette automatique lance deux apps
 - **31.5** · Bureau · auto · Créer, renommer puis supprimer une note sur l'un → L'autre suit : même nom, liens compris ; la note supprimée part dans sa corbeille.
 - **31.6** · Bureau · auto · Saisir un code faux, puis un code mal formé → « Aucun appareil autour n'affiche ce code », puis « Un code a neuf lettres et chiffres » ; rien n'est reçu.
 - **31.7** · Bureau · auto · Refuser l'appareil sur le premier → Le second affiche « L'autre appareil a refusé celui-ci » ; le premier propose un nouveau code.
-- **31.8** · Bureau · auto · Barre d'état des deux côtés → « À jour · 2 appareils » ; un clic montre l'autre appareil en ligne, « Mettre en pause » et les réglages.
+- **31.8** · Bureau · auto · Barre d'état des deux côtés → « À jour · 2 appareils » ; un clic montre, en entier dans la fenêtre, l'autre appareil en ligne, « Mettre en pause » et les réglages.
 - **31.9** · Bureau · auto · Mettre en pause sur l'un, écrire, reprendre → Rien ne passe pendant la pause ; tout arrive à la reprise.
 - **31.10** · Bureau · auto · Retirer le second depuis les réglages du premier → Il quitte la liste ; ce qu'il écrit ensuite n'arrive plus ; sa barre d'état dit « Retiré de ce coffre ».
 - **31.11** · Bureau · auto · Fermer le second, écrire sur le premier, rouvrir le second → Il se reconnecte seul et reçoit le texte.
