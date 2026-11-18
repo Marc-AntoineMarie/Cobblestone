@@ -160,8 +160,11 @@ describe('SyncNode', () => {
       expect(online(a)).toEqual(['B', 'C']);
     });
 
-    // C writes at once, before it hears of its removal: A and B do not take it.
+    // The removal reaches B, then C writes without knowing: neither A nor B takes it.
+    // A device that has not heard of the removal yet still takes what C sends (docs/guide/security.md).
     a.node.removeDevice(c.identity.id);
+    await settle(a, b);
+    expect(b.node.devices().find((d) => d.id === c.identity.id)?.removed).toBe(true);
     await c.vault.modify('Note.md', 'début, écrit par C après son retrait');
     await settle(a, b, c);
     await new Promise((resolve) => setTimeout(resolve, 400));
