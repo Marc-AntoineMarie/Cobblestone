@@ -105,6 +105,7 @@ export function deviceNetworkFor(platform: Platform, device: string): Promise<Ne
  * comes back open but deaf, and nothing would reconnect. Every return wakes it.
  */
 function wakeOnReturn() {
+  if (typeof document === 'undefined' || typeof window === 'undefined') return;
   const wake = () => shared?.relay?.wake();
   document.addEventListener('visibilitychange', () => document.visibilityState === 'visible' && wake());
   window.addEventListener('focus', wake);
@@ -645,6 +646,8 @@ export class SyncController {
  */
 export class BackgroundSyncManager {
   private nodes = new Map<string, SyncNode>();
+  /** Vaults an open session took over: never synced in the background beside it. */
+  private readonly taken = new Set<string>();
   private started = false;
 
   async start(platform: Platform): Promise<void> {
@@ -658,7 +661,7 @@ export class BackgroundSyncManager {
     const network = await deviceNetwork(platform, identity.id);
 
     for (const [entryId, record] of Object.entries(allRecords)) {
-      if (record.paused) continue;
+      if (record.paused || this.taken.has(entryId)) continue;
       const entry = allEntries.find((e) => e.id === entryId);
       if (!entry) continue;
       let adapter: VaultAdapter | null = null;
@@ -689,6 +692,12 @@ export class BackgroundSyncManager {
           maxAttachmentBytes: opts.maxAttachmentMb > 0 ? opts.maxAttachmentMb * 1024 * 1024 : undefined,
         });
         await node.start();
+        // The vault may have been opened while this one was starting: one node per vault, or the
+        // two would send what the other wrote back through the files, doubling it on the others.
+        if (this.taken.has(entryId)) {
+          await node.stop().catch(() => undefined);
+          continue;
+        }
         this.nodes.set(entryId, node);
       } catch (e) {
         console.error('[bg-sync] could not start for', entryId, e);
@@ -696,8 +705,14 @@ export class BackgroundSyncManager {
     }
   }
 
+  /** The vaults synced in the background now. */
+  vaults(): string[] {
+    return [...this.nodes.keys()];
+  }
+
   /** Stops the background node for `entryId` so the foreground session can take over. */
   async release(entryId: string): Promise<void> {
+    this.taken.add(entryId);
     const node = this.nodes.get(entryId);
     if (!node) return;
     this.nodes.delete(entryId);
