@@ -148,6 +148,28 @@ export class Ui {
   get noteBar() {
     return this.view.locator('.note-bar');
   }
+  /** The formatting bar, shown while the note is being written. */
+  get toolbar() {
+    return this.view.locator('.note-toolbar');
+  }
+  /** Selects the first word of the note's text that matches. */
+  async selectWord(word: string) {
+    await this.editor.click();
+    await this.editor.evaluate((el, w) => {
+      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+      for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+        const at = node.textContent!.indexOf(w);
+        if (at === -1) continue;
+        const range = document.createRange();
+        range.setStart(node, at);
+        range.setEnd(node, at + w.length);
+        const selection = getSelection()!;
+        selection.removeAllRanges();
+        selection.addRange(range);
+        return;
+      }
+    }, word);
+  }
   /** Counts of the active note, in the status bar. */
   get status() {
     return this.statusBar.locator('.note-status');

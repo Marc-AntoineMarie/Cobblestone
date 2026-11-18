@@ -287,3 +287,102 @@ recette('8.26', async ({ app, ui }) => {
     'Impossible de lire cette note : le système refuse l’accès à cet emplacement.',
   );
 });
+
+recette('8.27', async ({ app, ui }) => {
+  await app.start({ vault: baseVault() });
+  await ui.open('Idées');
+  await expect(ui.toolbar).toBeVisible();
+  await ui.mode('Lire');
+  await expect(ui.toolbar).toHaveCount(0);
+  await ui.mode('Écrire');
+  await expect(ui.toolbar).toBeVisible();
+});
+
+recette('8.28', async ({ app, ui }) => {
+  await app.start({ vault: baseVault({ 'Essai.md': 'un mot ici' }) });
+  await ui.open('Essai');
+  for (const [label, marks] of [
+    ['Gras', '**mot**'],
+    ['Italique', '*mot*'],
+    ['Surligner', '==mot=='],
+  ] as const) {
+    await ui.selectWord('mot');
+    await ui.toolbar.getByRole('button', { name: label }).click();
+    await expect.poll(() => app.read('Essai.md')).toContain(marks);
+    await expect(ui.editor).toBeFocused();
+    await ui.toolbar.getByRole('button', { name: label }).click();
+    await expect.poll(() => app.read('Essai.md')).toBe('un mot ici');
+  }
+});
+
+recette('8.29', async ({ app, ui }) => {
+  await app.start({ vault: baseVault({ 'Essai.md': 'une ligne' }) });
+  await ui.open('Essai');
+  const style = ui.toolbar.getByLabel('Style de la ligne');
+  await ui.editEnd();
+  await style.selectOption('2');
+  await expect.poll(() => app.read('Essai.md')).toBe('## une ligne');
+  await expect(style).toHaveValue('2');
+  await style.selectOption('0');
+  await expect.poll(() => app.read('Essai.md')).toBe('une ligne');
+});
+
+recette('8.30', async ({ app, ui }) => {
+  await app.start({ vault: baseVault({ 'Essai.md': 'une ligne' }) });
+  await ui.open('Essai');
+  await ui.editEnd();
+  await ui.toolbar.getByRole('button', { name: 'Liste' }).click();
+  await expect.poll(() => app.read('Essai.md')).toBe('- une ligne');
+  await ui.toolbar.getByRole('button', { name: 'Case à cocher' }).click();
+  await expect.poll(() => app.read('Essai.md')).toBe('- [ ] une ligne');
+});
+
+recette('8.31', async ({ app, ui }) => {
+  await app.start({ vault: baseVault({ 'Essai.md': 'une ligne' }) });
+  await ui.open('Essai');
+  await ui.editEnd();
+  await ui.toolbar.getByRole('button', { name: 'Lier une note' }).click();
+  await ui.page.keyboard.type('Plan');
+  await ui.page.keyboard.press('Escape');
+  await expect.poll(() => app.read('Essai.md')).toContain('une ligne[[Plan]]');
+  await ui.toolbar.getByRole('button', { name: 'Tableau' }).click();
+  await expect.poll(() => app.read('Essai.md')).toContain('| Colonne 1 | Colonne 2 | Colonne 3 |');
+  expect(await app.read('Essai.md')).toContain('| --- | --- | --- |');
+});
+
+recette('8.32', async ({ app, ui }) => {
+  await app.start({ vault: baseVault({ 'Essai.md': 'une ligne' }) });
+  await ui.open('Essai');
+  await ui.editEnd();
+  const chooser = ui.page.waitForEvent('filechooser');
+  await ui.toolbar.getByRole('button', { name: 'Image ou fichier' }).click();
+  await (await chooser).setFiles({ name: 'photo.png', mimeType: 'image/png', buffer: Buffer.from(PNG64, 'base64') });
+  await expect.poll(() => app.read('Essai.md')).toContain('![[photo.png]]');
+  await expect.poll(() => app.exists('photo.png')).toBe(true);
+});
+
+recette('8.33', async ({ app, ui }) => {
+  await app.start({ vault: baseVault() });
+  await ui.open('Plan');
+  const view = ui.toolbar.getByRole('group', { name: 'Ce que la note montre' });
+  await view.getByRole('button', { name: 'Markdown' }).click();
+  await expect(ui.view.locator('.note-view')).toHaveAttribute('data-mode', 'source');
+  await expect(ui.lines.first()).toContainText('---');
+  await view.getByRole('button', { name: 'Document' }).click();
+  await expect(ui.view.locator('.note-view')).toHaveAttribute('data-mode', 'live');
+  await expect(ui.toolbar).toBeVisible();
+});
+
+recette('8.34', async ({ app, ui }) => {
+  await app.start({ vault: baseVault({ 'Essai.md': 'une ligne' }) });
+  await ui.open('Essai');
+  await ui.editEnd();
+  await ui.toolbar.getByRole('button', { name: 'Liste' }).click();
+  await expect.poll(() => app.read('Essai.md')).toBe('- une ligne');
+  await ui.toolbar.getByRole('button', { name: 'Annuler' }).click();
+  await expect.poll(() => app.read('Essai.md')).toBe('une ligne');
+  await ui.toolbar.getByRole('button', { name: 'Rétablir' }).click();
+  await expect.poll(() => app.read('Essai.md')).toBe('- une ligne');
+});
+
+const PNG64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';

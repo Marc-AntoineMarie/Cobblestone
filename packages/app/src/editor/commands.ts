@@ -133,3 +133,55 @@ export function insertText(view: EditorView, text: string): boolean {
   view.dispatch(view.state.replaceSelection(text), { scrollIntoView: true, userEvent: 'input' });
   return true;
 }
+
+/** The heading level of the line the cursor is on: 0 for plain text. */
+export function headingLevelAt(state: EditorState): number {
+  const line = state.doc.lineAt(state.selection.main.head);
+  return HEADING.exec(line.text)?.[1]?.length ?? 0;
+}
+
+/** Makes each selected line a heading of that level, or plain text at 0. */
+export function setHeadingLevel(view: EditorView, level: number): boolean {
+  view.dispatch(setHeadingSpec(view.state, level));
+  return true;
+}
+
+export function setHeadingSpec(state: EditorState, level: number): TransactionSpec {
+  const changes: ChangeSpec[] = [];
+  const seen = new Set<number>();
+  for (const range of state.selection.ranges) {
+    for (let n = state.doc.lineAt(range.from).number; n <= state.doc.lineAt(range.to).number; n++) {
+      if (seen.has(n)) continue;
+      seen.add(n);
+      const line = state.doc.line(n);
+      const m = HEADING.exec(line.text);
+      changes.push({ from: line.from, to: line.from + (m ? m[0].length : 0), insert: level ? '#'.repeat(level) + ' ' : '' });
+    }
+  }
+  return { changes, userEvent: 'input' };
+}
+
+/** A table of `columns` columns and `rows` rows of data, on its own lines. */
+export function tableMarkdown(columns: number, rows: number): string {
+  const head = Array.from({ length: columns }, (_, i) => ` Colonne ${i + 1} `);
+  const rule = Array.from({ length: columns }, () => ' --- ');
+  const body = Array.from({ length: rows }, () => Array.from({ length: columns }, () => '   '));
+  return [head, rule, ...body].map((cells) => `|${cells.join('|')}|`).join('\n');
+}
+
+/** Inserts an empty table, on its own lines, and puts the cursor in its first cell. */
+export function insertTable(view: EditorView, columns = 3, rows = 2): boolean {
+  const { state } = view;
+  const line = state.doc.lineAt(state.selection.main.head);
+  const table = tableMarkdown(columns, rows);
+  const before = line.text.trim() ? '\n\n' : '';
+  const at = line.text.trim() ? line.to : line.from;
+  const after = at === state.doc.length ? '\n' : '\n\n';
+  view.dispatch({
+    changes: { from: at, insert: before + table + after },
+    selection: EditorSelection.cursor(at + before.length + 2),
+    scrollIntoView: true,
+    userEvent: 'input',
+  });
+  return true;
+}

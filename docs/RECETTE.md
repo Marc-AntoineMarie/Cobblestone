@@ -264,6 +264,15 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 - **8.25** · Bureau · auto · Menu « ⋯ » d'une note › « Afficher dans le gestionnaire de fichiers » → Son dossier s'ouvre, la note sélectionnée.
 - **8.26** · Les deux · auto · Ouvrir une note que le système refuse de lire (droits retirés : chmod 000) → « Impossible de lire cette note : le système refuse l'accès à cet emplacement. » au lieu d'une page vide.
 
+- **8.27** · Les deux · auto · Passer en lecture puis en écriture → La barre de mise en forme n'apparaît qu'en écriture, sous la barre de la note.
+- **8.28** · Les deux · auto · Sélectionner un mot, puis Gras, Italique, Surligner → Les marques entourent le mot ; recliquer les enlève ; le curseur reste dans le texte.
+- **8.29** · Les deux · auto · Menu « Texte / Titre 1, 2, 3 » → La ligne devient un titre de ce niveau, puis redevient du texte ; le menu montre le niveau de la ligne où est le curseur.
+- **8.30** · Les deux · auto · Boutons Liste puis Case à cocher → La ligne prend une puce, puis une case à cocher.
+- **8.31** · Les deux · auto · Boutons « Lier une note » et « Tableau » → `[[]]` avec le curseur au milieu ; un tableau vide de trois colonnes et deux lignes, sur ses propres lignes.
+- **8.32** · Les deux · auto · Bouton « Image ou fichier », choisir une image → Elle est enregistrée dans le dossier des pièces jointes et intégrée à l'endroit du curseur.
+- **8.33** · Les deux · auto · Bascule « Document » / « Markdown » de la barre → La note passe de la page écrite à sa source Markdown et revient ; la barre reste.
+- **8.34** · Les deux · auto · Boutons Annuler et Rétablir de la barre → La dernière mise en forme est défaite, puis refaite.
+
 ## 9. Éditeur : écriture et mise en forme
 
 - **9.1** · Les deux · auto · Taper du texte, puis ouvrir le fichier dans un autre éditeur → Le curseur est rose ; le fichier est enregistré un instant après la frappe.

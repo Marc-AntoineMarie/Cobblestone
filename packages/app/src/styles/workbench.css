@@ -1392,3 +1392,62 @@ button.crumb:hover {
   padding: 0 8px;
   flex: none;
 }
+
+/* ------------------------------------------------------------ the note's formatting bar */
+
+.note-toolbar {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 10px 6px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.note-toolbar .icon-button {
+  width: 30px;
+  height: 30px;
+}
+
+.toolbar-rule {
+  width: 1px;
+  height: 18px;
+  margin: 0 6px;
+  background: var(--rule-strong);
+}
+
+.toolbar-space {
+  flex: 1;
+}
+
+.toolbar-heading select {
+  height: 30px;
+  padding: 0 6px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 600;
+}
+
+.toolbar-heading select:hover {
+  border-color: var(--rule-strong);
+  background: var(--paper);
+}
+
+.toolbar-mark {
+  padding: 0 4px;
+  background: var(--mark);
+  color: var(--mark-ink);
+  font-weight: 700;
+}
+
+.segmented.is-small button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 26px;
+  padding: 0 10px;
+}
