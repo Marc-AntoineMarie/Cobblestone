@@ -1,5 +1,9 @@
 # Architecture
 
+The one-page map of the whole system. Each part is covered in depth in [guide/](guide/) — start with
+[guide/orientation.md](guide/orientation.md). When this page and a guide page disagree, the guide
+page is the one that was written last.
+
 ## Principles
 
 - **Files are the truth.** A vault is a folder of Markdown files and attachments. Every feature reads and writes those files; nothing important lives only in a database.
@@ -48,7 +52,9 @@ apps/desktop      Electron host
 
 ## Sync (`packages/sync`)
 
-The engine is written; no host runs it yet. See [ROADMAP.md](ROADMAP.md).
+Devices of one vault sync directly, over the local network (desktop) or through a relay (both
+hosts); accounts on a relay are optional and only help devices find each other. Full detail:
+[guide/sync.md](guide/sync.md) and [guide/accounts-and-relay.md](guide/accounts-and-relay.md).
 
 - **One CRDT per vault** (`model.ts`): a Yjs map of files by a stable id that survives renames. A text file holds a `Y.Text`, merged character by character; a binary file holds the SHA-256 of its bytes, fetched by hash from a device that has them. A deleted file stays as a tombstone. Two live files on one path are settled the same way on every device: the smallest id keeps the name, an identical copy is merged, a different one is renamed "Name (conflit abcd).md".
 - **Files stay the truth** (`vault-sync.ts`): `VaultSync` turns the vault's events into CRDT changes (a text edit becomes the smallest diff) and writes what other devices changed back through the vault, so the app shows it like any other change: deletions, then moves, then contents. It recognises the echo of its own writes. The CRDT is saved in `.cobblestone/sync/vault.bin`; on start, what changed on disk meanwhile is taken in.
@@ -59,6 +65,6 @@ The engine is written; no host runs it yet. See [ROADMAP.md](ROADMAP.md).
 - **Local network** (`apps/desktop/src/main/lan.ts`, `lan-ipc.ts`, `renderer/network.ts`): on desktop, the main process announces tags by UDP multicast and carries links over TCP (length-prefixed frames, the first naming the tag); it only moves encrypted bytes, and refuses unknown tags, slow greetings and oversized frames. Windows reach it through IPC, only for their own links and for announced addresses. `Platform.syncNetwork` gives it to the app.
 - **In the app** (`packages/app/src/sync.ts`): `SyncController` keeps the device's key pair and the vaults it syncs in the host's storage (never in the vault), with the devices it knew so that a lost `.cobblestone/sync` does not strand it. The interface: Settings › Sync, the add-device dialog, « Receive a vault » on the start screen, the status bar.
 - **Live editing** (`packages/app/src/editor/collab.ts`): the editor works on the note's `Y.Text` (each keystroke goes to it, remote changes come in as CodeMirror changes); the file is still saved, and the engine recognises those saves. Cursors travel as `presence` messages (relative positions), forgotten when a link ends.
-- **Relay** (`apps/relay`, `packages/sync/src/relay.ts`): over the Internet (and for the web app), devices meet on a WebSocket relay by tag and get links on which it only passes encrypted frames; it keeps nothing. `NetworkSet` joins the local network and the relay; the relay's address is a device setting (`sync:relay`). Pairing tags come from the first three symbols of the code, so a public relay never learns the code. Deployment: `deploy/relay` (Docker, Caddy), see `docs/RELAIS.md`.
+- **Relay** (`apps/relay`, `packages/sync/src/relay.ts`): over the Internet (and for the web app), devices meet on a WebSocket relay by tag and get links on which it only passes encrypted frames. It keeps nothing of a live link; for a device that is offline, another may **deposit** the vault's state sealed for it alone (ephemeral X25519 + AES-256-GCM), which the relay holds in memory for 48 hours at most and cannot open. `NetworkSet` joins the local network and the relay; the relay's address is a device setting (`sync:relay`). Pairing tags come from the first three symbols of the code, so a public relay never learns the code. Deployment: `deploy/relay` (Docker, Caddy), see `docs/RELAIS.md`.
 - **Accounts** (`apps/relay/src/accounts.ts`, `api.ts`; `packages/app/src/account.ts`, `account-link.ts`; `packages/sync/src/account-link.ts`): optional e-mail accounts on the relay's server (scrypt passwords, hashed tokens and codes, codes by e-mail through Brevo). A signed-in device presents its token to the relay, which lets the account's devices meet under the tag "account". A device trusted by none asks one that is; both show a six-digit check from their keys, which the user compares (the server cannot slip a device in), then the new device is trusted and receives the vaults offered to the account (a per-vault switch). Trusted account devices are accepted by an offered vault's sync and join its device list.
 - **Next**: background sync of every offered vault, and sharing; WebRTC to go direct when possible with a small, self-hostable signaling service, and an encrypted relay for when no other device is online.

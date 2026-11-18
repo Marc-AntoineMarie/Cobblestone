@@ -11,14 +11,23 @@ The goal is a complete replacement for Obsidian, then everything Obsidian charge
 - Import of `.obsidian/` settings; `.obsidian/` is never modified.
 - Design system "The Community Print Shop" (see `DESIGN.md`), day and night paper, English and French.
 
-## 2. Sync and sharing — next
+## 2. Sync and sharing — under way
 
-Priority: direct sync between your own devices, with no server holding your notes.
+Priority: direct sync between your own devices, with no server holding your notes. How it works:
+[guide/sync.md](guide/sync.md).
 
-- Every note becomes a CRDT document (Yjs) bridged to its Markdown file, so edits from several devices or people merge without conflicts, and the file on disk stays the source of truth.
-- **Device-to-device sync** over WebRTC. Devices pair with a code or QR code; everything is end-to-end encrypted. A tiny signaling service connects peers and can be self-hosted.
-- **Sharing by link** for a note or a folder, with read, comment or edit rights. Collaborators appear with their own ink colour, cursors and presence.
-- **Always-on relay** so shares keep working when your devices are off: self-hosted (Docker, one command) or the Cobblestone cloud with a free quota. The relay only stores encrypted data.
+Done:
+
+- ~~The vault as a CRDT (Yjs) bridged to the Markdown files, so edits from several devices merge without conflicts and the files stay the source of truth.~~
+- ~~**Device-to-device sync**: pairing with a nine-symbol code (CPace), end-to-end encrypted sessions, over the local network (desktop) or through a relay (both hosts).~~
+- ~~**Always-on relay**, self-hosted with one command (`deploy/relay`), which only passes encrypted frames and holds a sealed deposit for an offline device for 48 h at most.~~
+- ~~**Optional accounts** on a relay, so a person's devices find each other from anywhere without the server being able to read anything.~~
+- ~~**Writing together**: cursors and presence, each device in its own ink.~~
+
+Still to come:
+
+- **Sharing by link** for a note or a folder, with read, comment or edit rights.
+- **WebRTC** to go direct when the network allows it, instead of through the relay.
 - **Your own storage**: Git, S3, WebDAV, Dropbox, Google Drive.
 - **Version history** for every note, browsable and restorable.
 - Comments on notes.
@@ -27,7 +36,7 @@ Priority: direct sync between your own devices, with no server holding your note
 
 Sync is what makes a phone useful: mobile browsers cannot open a folder, so notes reach the phone through it.
 
-- **Installable web app (PWA)** built from the web app: offline support, home screen icon, and an interface reworked for touch (bottom bar, drawers, large targets, on-screen keyboard).
+- ~~**Installable web app (PWA)** built from the web app: offline support, home screen icon, and an interface reworked for touch (one screen at a time, sheets, large targets, on-screen keyboard bar)~~ (done; the remaining mobile work is listed in `contribution/IDEES.md`).
 - **Native apps** (Android, iOS) wrapping the same code with Capacitor, with real folders (shared storage on Android, the Files app on iOS).
 - Channels and costs: see [DISTRIBUTION.md](DISTRIBUTION.md).
 
