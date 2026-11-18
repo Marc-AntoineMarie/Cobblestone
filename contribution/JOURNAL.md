@@ -6,6 +6,7 @@ ajouté, modifié et supprimé, les tests, les fichiers et les commits. Ce somma
 
 | Date       | Changement                                                                                                                     | Type          | Branche                       |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------- | ----------------------------- |
+| 2026-11-18 | [Une barre de mise en forme sous la barre de la note, en écriture](journal/2026-11-18-feat-barre-mise-en-forme.md)             | nouveauté     | `feat/barre-mise-en-forme`    |
 | 2026-11-17 | [Ordinateur : la liste, la note, la marge](journal/2026-11-17-feat-atelier.md)                                                 | nouveauté     | `feat/atelier`                |
 | 2026-11-17 | [Temps réel : texte en double et lecture en direct](journal/2026-11-17-fix-temps-reel.md)                                      | correction    | `fix/temps-reel`              |
 | 2026-11-17 | [Tablette : liste et note côte à côte](journal/2026-11-17-feat-tablette.md)                                                    | nouveauté     | `feat/tablette`               |
