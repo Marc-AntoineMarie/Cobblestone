@@ -81,7 +81,7 @@ describe('the relay', () => {
     expect(seen).not.toContain('vault-a');
   });
 
-  it('makes a new connection for a socket that went to sleep and came back deaf', async () => {
+  it('keeps a long-silent socket the relay still answers on', async () => {
     const { url } = await relay();
     const one = network(url, '0000000000000001');
     const two = network(url, '0000000000000002');
@@ -90,13 +90,33 @@ describe('the relay', () => {
     one.listen('vault-a');
     two.watch('vault-a');
     await vi.waitFor(() => expect(seen).toContain('vault-a'));
-    // The system put the device to sleep: its socket stays open and hears nothing more.
+    // Nothing was heard for a while: the relay's heartbeat alone does not reach the app's code.
     const inside = two as unknown as { socket: unknown; lastHeard: number };
+    const awake = inside.socket;
+    inside.lastHeard = Date.now() - 120_000;
+    two.wake();
+    // The relay answers, so the socket and everything on it stay: no device loses its session.
+    await vi.waitFor(() => expect(Date.now() - inside.lastHeard).toBeLessThan(10_000));
+    expect(inside.socket).toBe(awake);
+  });
+
+  it('makes a new connection for a socket that went to sleep and came back deaf', { timeout: 20_000 }, async () => {
+    const { url } = await relay();
+    const one = network(url, '0000000000000001');
+    const two = network(url, '0000000000000002');
+    const seen: string[] = [];
+    two.onFound((tag) => seen.push(tag));
+    one.listen('vault-a');
+    two.watch('vault-a');
+    await vi.waitFor(() => expect(seen).toContain('vault-a'));
+    // The system put the device to sleep: its socket stays open and carries nothing any more.
+    const inside = two as unknown as { socket: { send(data: unknown): void }; lastHeard: number };
     const asleep = inside.socket;
+    inside.socket.send = () => {};
     inside.lastHeard = Date.now() - 120_000;
     seen.length = 0;
     two.wake();
-    expect(inside.socket).not.toBe(asleep);
+    await vi.waitFor(() => expect(inside.socket).not.toBe(asleep), { timeout: 15_000 });
     await vi.waitFor(() => expect(seen).toContain('vault-a'));
   });
 

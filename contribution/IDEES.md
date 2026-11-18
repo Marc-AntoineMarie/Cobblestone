@@ -39,6 +39,9 @@ appareil a sa copie.
 - Options de la maquette pas encore faites : dossiers qui restent sur l'appareil, pièces jointes
   (oui/non, taille maximale), réglages du coffre (`.cobblestone/`, pas synchronisé aujourd'hui),
   service de mise en relation personnalisé, option pour masquer les curseurs des autres appareils.
+- Garde-fou contre deux nœuds sur un même coffre (le bug du 18 novembre, corrigé côté app) : un
+  verrou dans `.cobblestone/sync/` ou un refus au démarrage rendrait la règle impossible à enfreindre,
+  y compris entre deux fenêtres ou deux apps ouvertes sur le même dossier.
 - Comparer les deux versions d'une note en conflit (aujourd'hui : ouvrir la copie).
 - Historique des versions de chaque note.
 - Retirer un appareil le refuse aux sessions, mais il garde les notes déjà reçues ; quand un relais

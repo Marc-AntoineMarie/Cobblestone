@@ -82,11 +82,14 @@ Transports:
 - **Relay** (`relay.ts` here, `apps/relay` there): a WebSocket, usable from a browser, Electron or
   Node. It reconnects by itself and re-announces what the device listens for. A socket the system
   put to sleep (a phone locked, a tab left aside) often comes back open but deaf: nothing arrives
-  and no close is reported. `wake()` drops a socket nothing has been heard on for over a minute —
-  the relay pings every 30 s — and connects again at once; the app calls it whenever the device
-  comes back (`visibilitychange`, `focus`, `online`, `pageshow`), which is what makes a phone pick
-  the others up again instead of looking connected and receiving nothing. This is how the web
-  app syncs at all, and how two desktops on different networks meet.
+  and no close is reported. `wake()`, called whenever the device comes back (`visibilitychange`,
+  `focus`, `online`, `pageshow`), asks the relay to introduce the devices again; if nothing has
+  been heard for over a minute it also sends a `ping` and waits five seconds for the answer. Only
+  a socket that says nothing back is dropped and made again. A working socket is kept with its
+  links: ending one costs every device its session, its cursors and a full state exchange, and the
+  relay's own 30-second heartbeat never reaches a browser's code (hence the text `ping`, see
+  [accounts-and-relay.md](accounts-and-relay.md)). This is how the web app syncs at all, and how
+  two desktops on different networks meet.
 - `NetworkSet` joins both; the relay's address is a per-device setting (default
   `sync.cobblestone.marc-antoinemarie.com`, see [accounts-and-relay.md](accounts-and-relay.md)).
 
@@ -113,7 +116,12 @@ and the relay settings. Keeping the known devices outside the vault means a lost
 - `BackgroundSyncManager` syncs every vault offered to the account while the app is open, even those
   not currently open, using `Platform.openVaultSilent` (so: desktop folders and browser-stored
   vaults; a picked folder on the web cannot sync in the background because the browser would need
-  to ask for permission). The foreground session takes over through `release()`.
+  to ask for permission). The foreground session takes over through `release()`, which also marks
+  the vault as taken: a vault opened while the background manager was still starting gets no node
+  of its own afterwards. **One node per vault and per device** is a rule, not a detail: two nodes
+  on one vault hold two documents over the same files, so each sends back what the other wrote and
+  the text arrives twice on the other devices, while the other devices keep only one session for
+  this device — the one whose cursors and changes the open vault may never see.
 - Interface: Settings › Sync, the add-device dialog (`ui/PairingDialog.tsx`), "Receive a vault" on
   the start screen (`ui/ReceiveVault.tsx`), the vault offers of an account (`ui/AccountOffers.tsx`),
   the status bar (`ui/SyncStatus.tsx`), and the devices on a note (`ui/NotePresenceList.tsx`).

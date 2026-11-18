@@ -16,11 +16,13 @@ Client → relay (text)   hello {device, token?}
                         search
                         connect {req, to, tag} · close {link}
                         deposit {for}            (next binary frame is the payload)
+                        ping                     (is this socket still carrying?)
 Relay → client (text)   welcome {id} · account {signedIn}
                         found {tag, address, device}
                         linked {req, link} · refused {req}
                         incoming {link, tag} · closed {link}
                         deposited {from}         (next binary frame is the payload)
+                        ping (every 30 s) · pong (an answer to the client's ping)
 Both ways (binary)      4 bytes of link id, then the frame
 ```
 
@@ -31,6 +33,11 @@ Both ways (binary)      4 bytes of link id, then the frame
 - The tag `account` is special: it is rewritten server-side to `account-of-<account id>`, and only
   a device whose session token belongs to **that very device** gets it. No one can listen for
   another account's tag.
+- **`ping`** both ways tells a live socket from a dead one. The 30-second heartbeat sends a
+  WebSocket ping (which drops a client that stops answering) **and** a text `ping`, because a
+  browser never sees a protocol ping: without it, an app could not tell a quiet relay from a socket
+  of its own that went deaf. A client that comes back from sleep sends `ping` and keeps its socket
+  if `pong` comes back.
 - Limits: 64 MB per frame, 32 connections per address, 64 links and 64 tags per client, a daily
   traffic cap (30 GB by default) counted per account or per address — an abuse guard, not a quota.
   A dead connection is dropped by a 30-second heartbeat.

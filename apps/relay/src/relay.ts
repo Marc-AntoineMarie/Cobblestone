@@ -201,6 +201,10 @@ export async function createRelay(options: RelayOptions = {}) {
         (message.t === 'unlisten' ? client.listens : client.watches).delete(tag);
         drop(message.t === 'unlisten' ? listeners : watchers, tag, client.id);
         return;
+      case 'ping':
+        // A device back from sleep asks whether this socket still carries: a deaf one hears nothing.
+        send(client, { t: 'pong' });
+        return;
       case 'search':
         for (const t of new Set([...client.listens, ...client.watches])) introduce(client, t);
         return;
@@ -304,12 +308,15 @@ export async function createRelay(options: RelayOptions = {}) {
     socket.on('error', () => socket.terminate());
   });
 
-  // A device that stopped answering (a laptop closed without saying so) is let go.
+  // A device that stopped answering (a laptop closed without saying so) is let go. The protocol
+  // ping never reaches a browser's code, so a text one goes with it: a device can then tell a
+  // silent relay from a socket of its own that went deaf.
   const heartbeat = setInterval(() => {
     for (const client of clients.values()) {
       if (!client.alive) client.socket.terminate();
       client.alive = false;
       client.socket.ping();
+      send(client, { t: 'ping' });
     }
   }, 30_000);
   heartbeat.unref();
