@@ -81,6 +81,25 @@ describe('the relay', () => {
     expect(seen).not.toContain('vault-a');
   });
 
+  it('makes a new connection for a socket that went to sleep and came back deaf', async () => {
+    const { url } = await relay();
+    const one = network(url, '0000000000000001');
+    const two = network(url, '0000000000000002');
+    const seen: string[] = [];
+    two.onFound((tag) => seen.push(tag));
+    one.listen('vault-a');
+    two.watch('vault-a');
+    await vi.waitFor(() => expect(seen).toContain('vault-a'));
+    // The system put the device to sleep: its socket stays open and hears nothing more.
+    const inside = two as unknown as { socket: unknown; lastHeard: number };
+    const asleep = inside.socket;
+    inside.lastHeard = Date.now() - 120_000;
+    seen.length = 0;
+    two.wake();
+    expect(inside.socket).not.toBe(asleep);
+    await vi.waitFor(() => expect(seen).toContain('vault-a'));
+  });
+
   it('refuses a link to a device that does not listen for the tag', async () => {
     const { url } = await relay();
     const one = network(url, '0000000000000001');

@@ -104,7 +104,8 @@ recette('23.9', async ({ app, ui }) => {
   await rename(app.root, renamed);
   await ui.lost.getByRole('button', { name: 'Suivre ce changement' }).click();
   await expect(ui.vaultName).toHaveText('MonCoffre bis');
-  await expect(ui.tab('Idées')).toBeVisible();
+  // One note open: the tab is there, its bar hidden (tabs show « when several »).
+  await expect(ui.tab('Idées')).toHaveCount(1);
   await ui.append('\nÉcrit au nouvel endroit');
   await expect
     .poll(async () => (await import('node:fs/promises')).readFile(path.join(renamed, 'Idées.md'), 'utf8'))

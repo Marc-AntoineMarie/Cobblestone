@@ -10,6 +10,7 @@ import {
   spellcheckExtension,
   type EditorModeName,
 } from '../editor/setup';
+import { followShared } from '../editor/collab';
 import type { EditorHost } from '../editor/host';
 import { describeError } from '../errors';
 import { t } from '../i18n';
@@ -133,7 +134,8 @@ export function Editor({ path, tabId, mode, subpath, onView }: Props) {
       if (pending.current) return;
       // Writing together: the shared text brings every change here, this one included. Taking it
       // from the file as well would apply it twice, or bring back a text the others moved on from.
-      if (live.current.text()) return;
+      // An editor not yet on the note's shared text (or on a former one) is moved onto it first.
+      if (followShared(viewRef.current)) return;
       applyExternal(viewRef.current, content);
     });
     const offJump = session.events.on('jump', (target, line) => {
