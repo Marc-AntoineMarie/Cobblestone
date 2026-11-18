@@ -110,6 +110,35 @@ see [DESIGN.md](../../DESIGN.md), which the interface must respect or update).
   `app-data-folder`, `too-broad`…); this turns each code into a sentence the user can act on.
 - `notify` / `fail` on the session put a `Toast` on screen (errors stay longer).
 
+## Automatic updates (desktop)
+
+`apps/desktop/src/main/updates.ts` checks GitHub releases at start and every hour, and
+downloads a newer version in the background (`electron-updater`, `autoDownload: true`).
+A pure function, `nextStatus`, turns each `autoUpdater` event into one `UpdateStatus`
+(`idle` | `checking` | `up-to-date` | `downloading` | `ready` | `error`, defined in
+`platform.ts` so the type is shared) — this is the only part with a unit test; the rest
+needs a real GitHub release and an installed app, so it stays in the manual recette
+(section 27).
+
+The status is broadcast over IPC (`updates:status`) and reaches two components through
+`Platform.updates` (`status`/`onStatus`/`check`/`install`):
+
+- `ui/UpdateStatus.tsx`: a pill in the sidebar footer (`DeskList`), on the exact pattern
+  of `SyncStatus` — a short state word, never a color alone, a popover with a "Check for
+  updates" button (`check()`) and, once `ready`, a "Restart to update" button. This is
+  how a user who dismissed the toast can still see the app is up to date, or get it to
+  check again.
+- `ui/UpdateReady.tsx`: the toast that appears once a version is `ready`, with the same
+  restart action, plus "Later" (state stays `ready`, so the pill still shows it).
+
+Both restart actions mount `ui/UpdateInstalling.tsx`: a full-screen, opaque notice shown
+for ~900 ms before calling `install()` (`autoUpdater.quitAndInstall()`), so the freeze
+and relaunch that follow read as an expected restart, not a crash. It records the target
+version in `platform.storage` (`update.pendingVersion`) first; on the next launch,
+`UpdateReady` compares that to the build's `__APP_VERSION__` (`SettingsView.tsx`'s
+`VERSION`) and, on a match, shows a short "Updated: version … is now running." banner,
+then clears the key.
+
 ## Adding to the interface
 
 Keep the order: model first (a function in `workspace/` or a method on `Session`, with a unit test),

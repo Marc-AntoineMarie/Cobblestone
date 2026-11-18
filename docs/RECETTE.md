@@ -681,7 +681,8 @@ Les raccourcis sont donnés pour Linux et Windows ; sur Mac, Ctrl devient Cmd.
 - **27.8** · Bureau · auto · Fermer la fenêtre → L'app se quitte.
 - **27.9** · Bureau · manuel · Installer le .deb produit par `npm run dist -w @cobblestone/desktop` → L'icône Cobblestone (les pavés) apparaît dans le menu des applications et le dock, pas un engrenage.
 - **27.10** · Bureau · manuel · `npm run dev:desktop` sous X11 → La fenêtre porte l'icône Cobblestone.
-- **27.11** · Bureau · manuel · App installée depuis une version de test, puis un push sur `main` → Dans l'heure (ou au lancement suivant), « La version … est prête » ; « Redémarrer pour mettre à jour » relance l'app dans la nouvelle version.
+- **27.11** · Bureau · manuel · App installée depuis une version de test, puis un push sur `main` → Dans l'heure (ou au lancement suivant), « La version … est prête » ; « Redémarrer pour mettre à jour » affiche l'écran plein écran « Mise à jour en cours » puis relance l'app dans la nouvelle version, qui affiche à son tour « Mise à jour effectuée ».
+- **27.12** · Bureau · manuel · Même contexte que 27.11 → La pastille de mise à jour du pied de liste affiche l'état (vérification, à jour, téléchargement, prête) ; son popover propose « Vérifier les mises à jour », qui relance une vérification visible.
 
 ## 28. Sécurité
 

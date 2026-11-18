@@ -339,3 +339,85 @@
   box-shadow: var(--shadow-sheet);
   color: var(--ink);
 }
+
+/* The app is about to quit and install: opaque, above the "update ready" slip, so the freeze that follows reads as expected. */
+.update-installing {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: var(--paper);
+  color: var(--ink);
+  text-align: center;
+}
+
+.update-installing p {
+  max-width: 320px;
+  line-height: 1.45;
+}
+
+.update-turning {
+  animation: update-turn 1.6s linear infinite;
+}
+
+@keyframes update-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* The update check, in the status bar; same pattern as the sync pill. */
+.status-update {
+  position: relative;
+}
+
+.update-pill.is-error {
+  border-color: transparent;
+  background: var(--mark);
+  color: var(--mark-ink);
+}
+
+.update-popover {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
+  z-index: 60;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--rule-strong);
+  border-radius: calc(var(--radius) + 4px);
+  background: var(--paper);
+  box-shadow: var(--shadow-sheet);
+  color: var(--ink);
+}
+
+.update-popover header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.update-popover h2 {
+  font-size: 1rem;
+  font-weight: 750;
+}
+
+.update-popover-note {
+  color: var(--ink-2);
+  line-height: 1.45;
+}
+
+.update-popover-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}

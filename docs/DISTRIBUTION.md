@@ -38,8 +38,10 @@ ouverture (il faut passer par Réglages Système). Ça marche, mais ça fait fui
 - **macOS** : pas d'alternative au programme Apple Developer. Le même compte sert pour l'App Store
   iOS.
 
-**Mises à jour automatiques** (à faire) : electron-updater lit les releases GitHub. Elles marchent sur
-Linux (AppImage) et Windows ; sur macOS, seulement pour une app signée.
+**Mises à jour automatiques** : electron-updater lit les releases GitHub, vérifie au démarrage et
+toutes les heures, télécharge en arrière-plan, puis propose de redémarrer (pastille de statut et
+écran de redémarrage, voir [docs/guide/interface.md](guide/interface.md)). Ça marche sur Linux
+(AppImage) et Windows ; sur macOS, seulement pour une app signée.
 
 ## Web
 

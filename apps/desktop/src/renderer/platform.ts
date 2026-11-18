@@ -1,5 +1,5 @@
 import { MemoryAdapter, type AdapterChange, type FileStat, type VaultAdapter } from '@cobblestone/core';
-import { demoVaultFiles, type MovedVault, type Platform, type VaultEntry } from '@cobblestone/app';
+import { demoVaultFiles, type MovedVault, type Platform, type UpdateStatus, type VaultEntry } from '@cobblestone/app';
 import type { DesktopBridge } from '../preload/index';
 import { DesktopNetwork } from './network';
 
@@ -70,8 +70,9 @@ export const desktopPlatform: Platform = {
     }
   },
   updates: {
-    ready: () => bridge().updates.ready(),
-    onReady: (listener) => bridge().updates.onReady(listener),
+    status: () => bridge().updates.status() as Promise<UpdateStatus>,
+    onStatus: (listener) => bridge().updates.onStatus(listener),
+    check: () => void bridge().updates.check(),
     install: () => void bridge().updates.install(),
   },
   syncNetwork: (device) => (network ??= new DesktopNetwork(bridge().lan, device)),

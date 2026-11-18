@@ -24,6 +24,10 @@ export interface MovedVault {
   location: string;
 }
 
+/** Desktop: where the background update check stands. */
+export type UpdateStatus =
+  { kind: 'idle' | 'checking' | 'error' } | { kind: 'up-to-date' | 'downloading' | 'ready'; version: string };
+
 /**
  * Everything the shared UI needs from its host. The web app and the desktop
  * app each provide one; neither depends on the other.
@@ -55,10 +59,13 @@ export interface Platform {
   relocateVault(entry: VaultEntry, found?: MovedVault): Promise<VaultEntry | null>;
   /** Desktop: the folder of an open vault disappeared (true) or came back (false). */
   onVaultMissing?(listener: (vaultId: string, missing: boolean) => void): () => void;
-  /** Desktop: a newer version, downloaded in the background, ready to restart into. */
+  /** Desktop: the background check for a newer version, downloaded automatically. */
   updates?: {
-    ready(): Promise<string | null>;
-    onReady(listener: (version: string) => void): () => void;
+    status(): Promise<UpdateStatus>;
+    onStatus(listener: (status: UpdateStatus) => void): () => void;
+    /** Checks now, instead of waiting for the next hourly check. */
+    check(): void;
+    /** Only once a version is downloaded (status "ready"): quits and installs it. */
     install(): void;
   };
   /**
