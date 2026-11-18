@@ -43,6 +43,11 @@ appareil a sa copie.
 - Historique des versions de chaque note.
 - Retirer un appareil le refuse aux sessions, mais il garde les notes déjà reçues ; quand un relais
   gardera des données chiffrées, il faudra changer la clé du coffre au retrait d'un appareil.
+- Le retrait ne vaut que pour les appareils qui l'ont reçu : un troisième appareil qui ne le sait pas
+  encore (éteint, ou coupé de celui qui retire) prend encore une modification de l'appareil retiré,
+  et elle se propage ensuite comme une autre. Rien ne met les deux événements dans un ordre commun.
+  À atténuer : un bail de participation à renouveler, qui bornerait la fenêtre. Voir
+  [docs/guide/security.md](../docs/guide/security.md).
 - **Fait** : le relais officiel tourne sur le VPS de l'utilisateur (`sync.cobblestone.marc-antoinemarie.com`) ; l'app web sera à `cobblestone.marc-antoinemarie.com`.
 - Pas de quotas pour l'instant (décision du 1er octobre) : seulement un plafond contre les abus
   (30 Go par jour par compte ou par adresse IP). **Plus tard**, quand il y aura beaucoup d'utilisateurs :
