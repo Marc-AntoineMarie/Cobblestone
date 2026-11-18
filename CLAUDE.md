@@ -19,6 +19,18 @@ Ces règles s'appliquent strictement à chaque session. La méthode complète es
 - `npm run check` passe avant chaque commit. Un bug corrigé arrive avec son test.
 - Ne jamais pousser, créer de tag ou publier sans l'accord explicite de l'utilisateur.
 
+## Documentation (obligatoire)
+
+- La fiche du journal raconte un changement ; **le guide raconte le fonctionnement**. Les deux sont
+  obligatoires : la seule documentation doit suffire à comprendre le projet.
+- Carte : [docs/README.md](docs/README.md). Fonctionnement : [docs/guide/](docs/guide/) (orientation,
+  coffre et stockage, moteur, interface, éditeur et rendu, synchronisation, relais et comptes,
+  sécurité, tests et outillage), **en anglais** comme le code.
+- Un changement qui modifie un fonctionnement **met à jour la page du guide concernée dans la même
+  branche**, et sa fiche le dit. Idem pour `docs/RELAIS.md`, `deploy/` et `docs/ROADMAP.md`.
+- Le guide décrit le code en place, jamais le prévu (ROADMAP/IDEES). Une limite connue va dans
+  [docs/guide/security.md](docs/guide/security.md) **et** dans `contribution/IDEES.md`.
+
 ## Journal et idées (obligatoire)
 
 - **Chaque changement fusionné a sa fiche** dans `contribution/journal/` : `npm run journal -- new`

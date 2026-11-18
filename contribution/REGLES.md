@@ -123,22 +123,42 @@ commits.
 `npm run check` refuse une fiche incomplète, un sommaire pas à jour, ou une branche fusionnée sans
 fiche.
 
-## 8. Idées
+## 8. Documentation du fonctionnement
+
+La fiche du journal raconte **un changement** ; le guide raconte **le fonctionnement**. Les deux sont
+obligatoires, pour qu'une personne qui arrive (ou qui revient après des mois) comprenne le projet
+avec la seule documentation.
+
+- [docs/README.md](../docs/README.md) est la carte de toute la documentation.
+- [docs/guide/](../docs/guide/) explique chaque domaine : orientation, coffre et stockage, moteur,
+  interface, éditeur et rendu, synchronisation, relais et comptes, sécurité, tests et outillage.
+  Ces documents sont en **anglais**, comme le code ; `contribution/` reste en français.
+- **Un changement qui modifie un fonctionnement met à jour la page du guide concernée dans la même
+  branche**, et sa fiche du journal le dit. Même règle pour les documents de production
+  (`docs/RELAIS.md`, `deploy/`) et pour `docs/ROADMAP.md` quand une étape est franchie.
+- Une page du guide décrit ce qui est dans le code, pas ce qui est prévu : ce qui est prévu va dans
+  ROADMAP.md ou IDEES.md. Une limite connue (une faille, un risque de perte de données) est écrite
+  dans [docs/guide/security.md](../docs/guide/security.md) **et** dans IDEES.md.
+- Une documentation en retard est pire que pas de documentation : elle rend quelqu'un sûr de lui et
+  faux. En cas de doute entre ARCHITECTURE.md et le guide, le guide fait foi.
+
+## 9. Idées
 
 [IDEES.md](IDEES.md) garde tout ce qui n'est pas encore fait : idées, demandes, bugs repérés,
 décisions à prendre. Chaque idée a un statut (**à faire**, **à décider**, **en cours**,
 **plus tard**). Quand une idée est réalisée, elle sort d'IDEES.md et sa fiche du journal la remplace.
 
-## 9. Avant de fusionner
+## 10. Avant de fusionner
 
 - [ ] Les commits suivent la section 3.
 - [ ] `npm run check` passe, et la recette des sections touchées aussi (toute la recette si une base
       commune a changé, voir section 6).
 - [ ] Les lignes de recette sont ajoutées.
-- [ ] Les documents concernés sont à jour (README, docs/, PRODUCT.md, DESIGN.md, IDEES.md).
+- [ ] La page du guide concernée est à jour (section 8), ainsi que les autres documents touchés
+      (README, docs/, PRODUCT.md, DESIGN.md, IDEES.md).
 - [ ] La fiche du journal est écrite et le sommaire régénéré.
 
-## 10. Versions et publication
+## 11. Versions et publication
 
 Tout est dans [VERSIONS.md](VERSIONS.md) : numéros de version, ce que fait la CI, et la procédure
 pas à pas de `npm run release X.Y.Z`. L'essentiel :
