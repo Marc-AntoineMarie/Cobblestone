@@ -122,6 +122,25 @@ milieu, la marge à droite (rail de boutons, un panneau à la fois). Reste, dans
 - Frappe simultanée pendant une composition du clavier (correction automatique d'iOS, Android) : à
   tester à deux appareils réels.
 
+## Sécurité de l'app web — à faire (repéré le 2026-11-18, en écrivant le guide)
+
+Le domaine de l'app web contient le coffre (OPFS) **et** la clé privée de l'appareil (IndexedDB) :
+tout ce qui s'exécute sur cette origine les lit. Détail du modèle : [docs/guide/security.md](../docs/guide/security.md).
+
+- **En-têtes de sécurité absents** sur `deploy/web/cobblestone.nginx.conf` : pas de
+  `Content-Security-Policy`, pas de HSTS, pas de `X-Content-Type-Options`, pas de `frame-ancestors`.
+  L'app de bureau a une CSP (meta dans son `index.html`), l'app web n'a rien d'équivalent. À ajouter
+  côté nginx **et** en `<meta>` dans `apps/web/index.html` (pour un hébergement par quelqu'un
+  d'autre), avec une ligne de recette dans la section 28.
+- **Clés en clair au repos** : la clé privée de l'appareil est dans IndexedDB (web) et
+  `storage.json` (bureau). À décider : clé enveloppée par une phrase de passe, trousseau du système
+  (absent dans un navigateur), ou accepté tel quel et documenté.
+- **Pas de `navigator.storage.persist()`** : un coffre « dans le navigateur » peut être évincé si le
+  navigateur manque de place — risque de **perte de données**. À demander (et à expliquer dans
+  l'interface quand c'est refusé).
+- Les dépôts du relais révèlent la taille et le moment des échanges (pas de remplissage ni de trafic
+  de couverture) : à accepter explicitement ou à atténuer.
+
 ## Distribution — à décider
 
 - Compte Apple Developer (99 $ par an) : macOS sans alerte à l'ouverture, puis l'App Store iOS.
