@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { EditorSelection, EditorState } from '@codemirror/state';
-import { cycleHeadingSpec, toggleBulletSpec } from './commands';
+import { cycleHeadingSpec, setHeadingSpec, tableMarkdown, toggleBulletSpec } from './commands';
 
 const apply = (doc: string, at: number, spec: (s: EditorState) => object, to = at) => {
   const state = EditorState.create({ doc, selection: EditorSelection.range(at, to) });
@@ -13,6 +13,17 @@ describe('phone toolbar commands', () => {
     expect(apply('# Title', 4, cycleHeadingSpec)).toBe('## Title');
     expect(apply('## Title', 4, cycleHeadingSpec)).toBe('### Title');
     expect(apply('### Title', 5, cycleHeadingSpec)).toBe('Title');
+  });
+
+  it('sets a heading level, and takes it off at zero', () => {
+    expect(apply('Titre', 2, (s) => setHeadingSpec(s, 2))).toBe('## Titre');
+    expect(apply('### Titre', 5, (s) => setHeadingSpec(s, 1))).toBe('# Titre');
+    expect(apply('## Titre', 5, (s) => setHeadingSpec(s, 0))).toBe('Titre');
+    expect(apply('un\ndeux', 0, (s) => setHeadingSpec(s, 2), 5)).toBe('## un\n## deux');
+  });
+
+  it('writes a table with its header, its rule and its empty rows', () => {
+    expect(tableMarkdown(2, 1).split('\n')).toEqual(['| Colonne 1 | Colonne 2 |', '| --- | --- |', '|   |   |']);
   });
 
   it('puts a bullet on each selected line, or takes it off', () => {

@@ -7,6 +7,7 @@ import { t } from '../i18n';
 import { navigate, setMode, split, type EditorMode, type Tab, type ViewState } from '../workspace/workspace';
 import { Editor } from './Editor';
 import { NotePresenceList } from './NotePresenceList';
+import { NoteToolbar } from './NoteToolbar';
 import { useSession, useStore } from './hooks';
 import { ReadingView } from './ReadingView';
 
@@ -117,6 +118,8 @@ export function NoteView({ tab, paneId, view, visible }: { tab: Tab; paneId: str
           </button>
         </div>
       </header>
+
+      {mode !== 'read' && <NoteToolbar path={view.path} mode={mode} onMode={setTabMode} editor={() => editorView.current} />}
 
       <div className="note-scroll">
         <div className={`page${readable ? ' is-readable' : ''}`}>
