@@ -1092,6 +1092,11 @@ button.crumb:hover {
   gap: 8px;
 }
 
+/* A stretched segmented control shares its width evenly; a long label wraps inside its option. */
+.quick-row.is-stacked .segmented button {
+  flex: 1;
+}
+
 .quick-presets {
   display: flex;
   flex-wrap: wrap;
