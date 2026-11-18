@@ -75,6 +75,7 @@ recette('31.5', async ({ app, ui }, testInfo) => {
     await a.app.write('Nouvelle.md', 'toute neuve');
     await expect.poll(() => b.app.readOr('Nouvelle.md')).toBe('toute neuve');
 
+    await a.ui.tree();
     await a.ui.contextMenu('Cible.md', 'Renommer');
     await a.ui.page.locator('.tree-rename').fill('Cible renommée');
     await a.ui.page.locator('.tree-rename').press('Enter');
