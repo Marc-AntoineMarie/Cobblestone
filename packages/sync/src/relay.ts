@@ -54,8 +54,10 @@ class RelayLink implements ByteChannel {
   }
 }
 
-/** Heard nothing for this long with the relay pinging every 30 s: the socket is dead. */
+/** Heard nothing for this long with the relay pinging every 30 s: ask whether the socket carries. */
 const SILENCE = 70_000;
+/** How long the relay has to answer that question before its socket is taken for deaf. */
+const ANSWER_WITHIN = 5_000;
 
 export class RelayNetwork implements Network {
   private socket: WebSocket | null = null;
@@ -72,6 +74,8 @@ export class RelayNetwork implements Network {
   private retry = 1_000;
   private timers: ReturnType<typeof setTimeout>[] = [];
   private reconnect: ReturnType<typeof setTimeout> | undefined;
+  /** Waiting for the relay to answer that the socket still carries. */
+  private asking: ReturnType<typeof setTimeout> | undefined;
   private stopped = false;
   private openWaiters: (() => void)[] = [];
   /** When the relay was last heard from: a silent socket is a dead one. */
@@ -135,27 +139,52 @@ export class RelayNetwork implements Network {
   /**
    * The device is back (a phone unlocked, a tab shown again, the network back).
    * A socket put to sleep by the system often comes back open but deaf: nothing
-   * arrives and no close is reported, so nothing would ever reconnect. One that
-   * has not been heard from since well over the relay's heartbeat is dropped,
-   * and a connection is made again at once instead of after the waiting time.
+   * arrives and no close is reported, so nothing would ever reconnect. A socket
+   * that has said nothing for a long while is asked whether it still carries,
+   * and only a silent answer ends it: a working one is kept, with its sessions,
+   * because starting again would cost every device its link and its cursors.
    */
   wake() {
     if (this.stopped) return;
     const socket = this.socket;
+    if (socket?.readyState === WebSocket.CONNECTING) return;
     if (socket?.readyState === WebSocket.OPEN) {
-      if (Date.now() - this.lastHeard < SILENCE) return void this.search();
-      this.socket = null;
-      socket.onclose = null;
-      socket.onmessage = null;
-      socket.onerror = null;
-      socket.close();
-      for (const link of [...this.links.values()]) link.ended();
-      this.links.clear();
-      for (const waiting of this.pending.values()) waiting.reject(new Error('Relay connection lost'));
-      this.pending.clear();
-    } else if (socket?.readyState === WebSocket.CONNECTING) {
+      this.search();
+      if (Date.now() - this.lastHeard < SILENCE) return;
+      this.ask(socket);
       return;
     }
+    this.again();
+  }
+
+  /** Asks a long-silent relay whether it is still there; nothing back: the socket is deaf. */
+  private ask(socket: WebSocket) {
+    if (this.asking !== undefined) return;
+    const heard = this.lastHeard;
+    this.text({ t: 'ping' });
+    this.asking = setTimeout(() => {
+      this.asking = undefined;
+      if (this.stopped || this.socket !== socket || this.lastHeard !== heard) return;
+      this.drop(socket);
+      this.again();
+    }, ANSWER_WITHIN);
+  }
+
+  /** Lets a deaf socket go, with everything that went through it. */
+  private drop(socket: WebSocket) {
+    this.socket = null;
+    socket.onclose = null;
+    socket.onmessage = null;
+    socket.onerror = null;
+    socket.close();
+    for (const link of [...this.links.values()]) link.ended();
+    this.links.clear();
+    for (const waiting of this.pending.values()) waiting.reject(new Error('Relay connection lost'));
+    this.pending.clear();
+  }
+
+  /** Connects again now, instead of after the waiting time. */
+  private again() {
     clearTimeout(this.reconnect);
     this.retry = 1_000;
     this.open();
@@ -202,6 +231,10 @@ export class RelayNetwork implements Network {
         return;
       case 'deposited':
         if (typeof message.from === 'string') this.pendingDepositFrom = message.from;
+        return;
+      case 'ping':
+      case 'pong':
+        // The relay is there: hearing it is the whole point (see lastHeard).
         return;
     }
   }
@@ -302,6 +335,7 @@ export class RelayNetwork implements Network {
     this.stopped = true;
     this.timers.forEach((timer) => clearTimeout(timer));
     clearTimeout(this.reconnect);
+    clearTimeout(this.asking);
     this.socket?.close();
   }
 }
